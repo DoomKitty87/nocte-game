@@ -171,7 +171,7 @@ Rigidbody:
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 0
-  m_Constraints: 80
+  m_Constraints: 112
   m_CollisionDetection: 3
 --- !u!136 &70028132
 CapsuleCollider:
@@ -216,7 +216,7 @@ MeshRenderer:
   m_RenderingLayerMask: 257
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 73c176f402d2c2f4d929aa5da7585d17, type: 2}
+  - {fileID: 2100000, guid: e070baac7ac0c374ba010641b095c1b4, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -278,18 +278,24 @@ MonoBehaviour:
   _colliderMaterial: {fileID: 13400000, guid: 4b480f95db2b72f4c927c8b3921ad40e, type: 2}
   _xMouseMovementTransform: {fileID: 70028135}
   _yMouseMovementTransform: {fileID: 227975683}
+  _groundCheckOffset: {x: 0, y: -0.98, z: 0}
   _groundTag: Ground
-  _moveSpeed: 6
+  _maxMoveSpeed: 6
+  _moveAccel: 2
   _moveFriction: 0.5
+  _moveDrag: 5
   _slideSpeed: 8
   _slideFriction: 0
-  _slideForceExitSpeed: 2
-  _jumpForce: 2
-  _groundDrag: 5
+  _slideForceExitSpeed: 0.1
   _slideDrag: 0.1
+  _jumpForce: 8
+  _jumpMaxMoveSpeed: 6
+  _jumpMoveAccel: 1
   _airDrag: 0
+  _groundCheckSphereSize: 0.1
   _mouseSensitivity: 30
-  _grounded: 0
+  _moveState: 0
+  _delayGroundCheckAfterJumpUpdates: 5
   _sliding: 0
 --- !u!1 &208800702
 GameObject:
@@ -379,7 +385,7 @@ Transform:
   m_GameObject: {fileID: 208800702}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.67398703, y: 4.64, z: 3.6674538}
+  m_LocalPosition: {x: -2.583987, y: 5.2799997, z: 2.507454}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -903,10 +909,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Damping: {x: 0, y: 0, z: 0}
-  ShoulderOffset: {x: -1.91, y: 0.32, z: 0}
-  VerticalArmLength: 1.03
+  ShoulderOffset: {x: 0, y: 0.44, z: 0}
+  VerticalArmLength: 1.55
   CameraSide: 0
-  CameraDistance: 9.57
+  CameraDistance: 10.73
   CameraCollisionFilter:
     serializedVersion: 2
     m_Bits: 0
@@ -1242,7 +1248,7 @@ Transform:
   m_GameObject: {fileID: 1998142526}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.67398703, y: 4.64, z: 3.6674538}
+  m_LocalPosition: {x: -2.583987, y: 5.2799997, z: 2.507454}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
