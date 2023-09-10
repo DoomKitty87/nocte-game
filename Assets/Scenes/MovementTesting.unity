@@ -280,17 +280,41 @@ MonoBehaviour:
   _yMouseMovementTransform: {fileID: 227975683}
   _groundCheckOffset: {x: 0, y: -0.98, z: 0}
   _groundTag: Ground
-  _maxMoveSpeed: 6
+  _maxMoveSpeed: 8
   _moveAccel: 2
   _moveFriction: 0.5
   _moveDrag: 5
-  _slideSpeed: 8
+  _slideSpeedMultiplier: 2
   _slideFriction: 0
   _slideForceExitSpeed: 0.1
   _slideDrag: 0.1
   _jumpForce: 8
-  _jumpMaxMoveSpeed: 6
-  _jumpMoveAccel: 1
+  _jumpMaxMoveSpeed: 8
+  _jumpMoveAccelCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  _jumpMoveAccelMultiplier: 1
   _airDrag: 0
   _groundCheckSphereSize: 0.1
   _mouseSensitivity: 30
