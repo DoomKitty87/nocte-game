@@ -42,28 +42,35 @@ public class SimplexTiled : MonoBehaviour
                 MeshRenderer mr = go.AddComponent<MeshRenderer>();
                 mr.material = material;
                 mf.mesh = new Mesh();
-                GenerateGrid(mf.mesh, x * xSize, z * zSize);
-                WindTriangles(mf.mesh);
-                UpdateMesh(mf.mesh);
+                Mesh msh = mf.mesh;
+                msh.vertices = GenerateGrid(x * xSize, z * zSize);
+                WindTriangles(msh);
+                UpdateMesh(msh);
                 go.transform.position = new Vector3(x * xSize, 0, z * zSize);
             }
         }
     }
 
-    private void GenerateGrid(Mesh targetMesh, float xOffset, float zOffset)
+    private Vector3[] GenerateGrid(float xOffset, float zOffset)
     {
         Vector3[] vertices = new Vector3[(xSize + 1) * (zSize + 1)];
         for (int i = 0, z = 0; z <= zSize; z++)
         {
             for (int x = 0; x <= xSize; x++)
             {
-                float y = snoise(new float2((x + xOffset) * largeScale, (z + zOffset) * largeScale)) * largeAmplitude + snoise(new float2((x + xOffset) * mediumScale, (z + zOffset) * mediumScale)) * (Math.Abs(snoise(new float2((x + xOffset) * mediumScale, (z + zOffset) * mediumScale))) > 0.6f ? mediumAmplitude * ((Math.Abs(snoise(new float2((x + xOffset) * mediumScale, (z + zOffset) * mediumScale))) - 0.6f) / 0.4f) : 0) + snoise(new float2((x + xOffset) * smallScale, (z + zOffset) * smallScale)) * smallAmplitude;
+                float largeNoise = snoise(new float2((x + xOffset) * largeScale, (z + zOffset) * largeScale));
+                float mediumNoise = snoise(new float2((x + xOffset) * mediumScale, (z + zOffset) * mediumScale));
+                float smallNoise = snoise(new float2((x + xOffset) * smallScale, (z + zOffset) * smallScale));
+                float largeValue = largeNoise * (largeNoise > 0.4f ? Mathf.SmoothStep(0, 1, (largeNoise - 0.4f) / 0.6f) * largeAmplitude * 25 + largeAmplitude : largeAmplitude);
+                float mediumValue = mediumNoise * (Math.Abs(mediumNoise) > 0.6f && largeNoise > 0.4f ? mediumAmplitude * ((Math.Abs(mediumNoise) - 0.6f) / 0.4f) : 0);
+                float smallValue = smallNoise * smallAmplitude;
+                float y = largeValue + mediumValue + smallValue;
                 vertices[i] = new Vector3(x, y, z);
                 i++;
             }
         }
-        
-        targetMesh.vertices = vertices;
+
+        return vertices;
     }
 
     private void WindTriangles(Mesh targetMesh)
