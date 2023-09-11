@@ -1,36 +1,31 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
-using Unity.Mathematics;
-using static Unity.Mathematics.noise;
+using static NoiseMaps;
 
-public class SimplexTiled : MonoBehaviour
+public class ProcGen : MonoBehaviour
 {
-
+    
     public int xSize = 32;
     public int zSize = 32;
     
     public int xTiles = 1;
     public int zTiles = 1;
 
-    public float largeScale = 1000;
-    public float mediumScale = 50;
-    public float smallScale = 0.1f;
+    public float scale = 1000;
 
-    public float largeAmplitude = 50;
-    public float mediumAmplitude = 10;
-    public float smallAmplitude = 0.1f;
-
+    public float amplitude = 50;
+    public int octaves = 4;
+    
     public Material material;
 
     private Mesh[] _meshes;
 
     private void Start()
     {
-        largeScale = 1 / largeScale;
-        mediumScale = 1 / mediumScale;
-        smallScale = 1 / smallScale;
+        scale = 1 / scale;
         for (int z = 0; z < zTiles; z++)
         {
             for (int x = 0; x < xTiles; x++)
@@ -43,34 +38,12 @@ public class SimplexTiled : MonoBehaviour
                 mr.material = material;
                 mf.mesh = new Mesh();
                 Mesh msh = mf.mesh;
-                msh.vertices = GenerateGrid(x * xSize, z * zSize);
+                msh.vertices = NoiseMaps.GenerateTerrain(x * xSize, z * zSize, xSize, zSize, scale, amplitude, octaves);
                 WindTriangles(msh);
                 UpdateMesh(msh);
                 go.transform.position = new Vector3(x * xSize, 0, z * zSize);
             }
         }
-    }
-
-    private Vector3[] GenerateGrid(float xOffset, float zOffset)
-    {
-        Vector3[] vertices = new Vector3[(xSize + 1) * (zSize + 1)];
-        for (int i = 0, z = 0; z <= zSize; z++)
-        {
-            for (int x = 0; x <= xSize; x++)
-            {
-                float largeNoise = snoise(new float2((x + xOffset) * largeScale, (z + zOffset) * largeScale));
-                float mediumNoise = snoise(new float2((x + xOffset) * mediumScale, (z + zOffset) * mediumScale));
-                float smallNoise = snoise(new float2((x + xOffset) * smallScale, (z + zOffset) * smallScale));
-                float largeValue = largeNoise * (largeNoise > 0.4f ? Mathf.SmoothStep(0, 1, (largeNoise - 0.4f) / 0.6f) * largeAmplitude * 25 + largeAmplitude : largeAmplitude);
-                float mediumValue = mediumNoise * (Math.Abs(mediumNoise) > 0.6f && largeNoise > 0.4f ? mediumAmplitude * ((Math.Abs(mediumNoise) - 0.6f) / 0.4f) : 0);
-                float smallValue = smallNoise * smallAmplitude;
-                float y = largeValue + mediumValue + smallValue;
-                vertices[i] = new Vector3(x, y, z);
-                i++;
-            }
-        }
-
-        return vertices;
     }
 
     private void WindTriangles(Mesh targetMesh)
