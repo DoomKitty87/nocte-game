@@ -20,6 +20,7 @@ public static class NoiseMaps
         public float zOffset;
         public float scale;
         public float amplitude;
+        public int octaves;
 
         [WriteOnly] public NativeArray<float> output;
 
@@ -27,19 +28,18 @@ public static class NoiseMaps
         {
             float sampleX = index % xSize;
             float sampleZ = index / xSize;
-            float noiseValue1 = snoise(new float2((sampleX + xOffset) * scale, (sampleZ + zOffset) * scale));
-            float noise1 = noiseValue1 * (noiseValue1 > 0.4f ? Mathf.SmoothStep(0, 1, (noiseValue1 - 0.4f) / 0.6f) * amplitude * 4 + amplitude : amplitude);
-            float noiseValue2 = snoise(new float2((sampleX + xOffset) * (scale * 10), (sampleZ + zOffset) * (scale * 10)));
-            float noise2 = noiseValue2 * amplitude * 0.1f;
-            float noiseValue3 = snoise(new float2((sampleX + xOffset) * (scale * 1000), (sampleZ + zOffset) * (scale * 1000)));
-            float noise3 = noiseValue3 * amplitude * 0.001f;
-            float noise = noise1 + noise2 + noise3;
+            float noise = 0;
+            for (int i = 0; i < octaves; i++)
+            {
+                float octaveNoise = snoise(new float2((sampleX + xOffset) * (scale * Mathf.Pow(2, i)), (sampleZ + zOffset) * (scale * Mathf.Pow(2, i)))) * amplitude * (1 / Mathf.Pow(2, i));
+                noise += octaveNoise;
+            }
             output[index] = noise;
         }
 
     }
 
-    public static Vector3[] GenerateTerrain(float xOffset, float zOffset, int xSize, int zSize, float scale, float amplitude)
+    public static Vector3[] GenerateTerrain(float xOffset, float zOffset, int xSize, int zSize, float scale, float amplitude, int octaves)
     {
         var jobResult = new NativeArray<float>((xSize + 1) * (xSize + 1), Allocator.TempJob);
 
@@ -50,6 +50,7 @@ public static class NoiseMaps
             zOffset = zOffset,
             scale = scale,
             amplitude = amplitude,
+            octaves = octaves,
             output = jobResult
         };
 

@@ -16,6 +16,7 @@ public class HydraulicErosion : MonoBehaviour
     public float scale = 1000;
 
     public float amplitude = 50;
+    public int octaves = 4;
     
     public Material material;
 
@@ -36,7 +37,7 @@ public class HydraulicErosion : MonoBehaviour
                 mr.material = material;
                 mf.mesh = new Mesh();
                 Mesh msh = mf.mesh;
-                msh.vertices = NoiseMaps.GenerateTerrain(x * xSize, z * zSize, xSize, zSize, scale, amplitude);
+                msh.vertices = NoiseMaps.GenerateTerrain(x * xSize, z * zSize, xSize, zSize, scale, amplitude, octaves);
                 Erode(msh);
                 WindTriangles(msh);
                 UpdateMesh(msh);
@@ -45,7 +46,7 @@ public class HydraulicErosion : MonoBehaviour
         }
     }
 
-    private void Erode()
+    private void Erode(Mesh targetMesh)
     {
         return;
     }
