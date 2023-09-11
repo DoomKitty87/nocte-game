@@ -39,7 +39,7 @@ public static class NoiseMaps
 
     }
 
-    public static Vector3[] GenerateTerrain(float xOffset, float zOffset, int xSize, int zSize, float scale, float amplitude, int octaves)
+    public static Vector3[] GenerateTerrain(float xOffset, float zOffset, int xSize, int zSize, float scale, float amplitude, int octaves, AnimationCurve easeCurve)
     {
         var jobResult = new NativeArray<float>((xSize + 1) * (xSize + 1), Allocator.TempJob);
 
@@ -61,7 +61,7 @@ public static class NoiseMaps
         {
             for (int x = 0; x <= xSize; x++)
             {
-                vertices[i] = new Vector3(x, jobResult[i], z);
+                vertices[i] = new Vector3(x, easeCurve.Evaluate(jobResult[i]), z);
                 i++;
             }
         }

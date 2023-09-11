@@ -20,6 +20,7 @@ public class ProcGen : MonoBehaviour
     public int octaves = 4;
     
     public Material material;
+    public AnimationCurve easeCurve;
 
     private Mesh[] _meshes;
 
@@ -38,7 +39,7 @@ public class ProcGen : MonoBehaviour
                 mr.material = material;
                 mf.mesh = new Mesh();
                 Mesh msh = mf.mesh;
-                msh.vertices = NoiseMaps.GenerateTerrain(x * xSize, z * zSize, xSize, zSize, scale, amplitude, octaves);
+                msh.vertices = NoiseMaps.GenerateTerrain(x * xSize, z * zSize, xSize, zSize, scale, amplitude, octaves, easeCurve);
                 WindTriangles(msh);
                 UpdateMesh(msh);
                 go.transform.position = new Vector3(x * xSize, 0, z * zSize);
