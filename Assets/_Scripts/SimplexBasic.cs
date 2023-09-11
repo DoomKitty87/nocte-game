@@ -11,8 +11,8 @@ public class SimplexBasic : MonoBehaviour
     private Vector3[] _vertices;
     private int[] _triangles;
 
-    public int xSize = 50;
-    public int zSize = 50;
+    public int xSize = 32;
+    public int zSize = 32;
 
     private void Start()
     {
