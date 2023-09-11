@@ -36,12 +36,18 @@ public class HydraulicErosion : MonoBehaviour
                 mr.material = material;
                 mf.mesh = new Mesh();
                 Mesh msh = mf.mesh;
-                msh.vertices = NoiseMaps.GenerateTerrain(x * xSize, z * zSize, xSize, scale, amplitude);
+                msh.vertices = NoiseMaps.GenerateTerrain(x * xSize, z * zSize, xSize, zSize, scale, amplitude);
+                Erode(msh);
                 WindTriangles(msh);
                 UpdateMesh(msh);
                 go.transform.position = new Vector3(x * xSize, 0, z * zSize);
             }
         }
+    }
+
+    private void Erode()
+    {
+        return;
     }
 
     private void WindTriangles(Mesh targetMesh)

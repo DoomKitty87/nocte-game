@@ -12,7 +12,7 @@ public class ProceduralGeneration : MonoBehaviour
 {
 
     [BurstCompile]
-    public struct SimplexNoiseJob : IJobParallelFor
+    private struct SimplexNoiseJob : IJobParallelFor
     {
 
         public int chunkSize;
@@ -49,12 +49,12 @@ public class ProceduralGeneration : MonoBehaviour
     public int xTiles = 1;
     public int zTiles = 1;
 
-    public float largeScale = 1000;
-    public float mediumScale = 50;
+    public float largeScale = 2500;
+    public float mediumScale = 300;
     public float smallScale = 0.1f;
 
     public float largeAmplitude = 50;
-    public float mediumAmplitude = 10;
+    public float mediumAmplitude = 20;
     public float smallAmplitude = 0.1f;
 
     public Material material;

@@ -12,10 +12,10 @@ public static class NoiseMaps
 {
 
     [BurstCompile]
-    public struct SimplexNoiseJob : IJobParallelFor
+    private struct SimplexNoiseJob : IJobParallelFor
     {
 
-        public int chunkSize;
+        public int xSize;
         public float xOffset;
         public float zOffset;
         public float scale;
@@ -25,27 +25,27 @@ public static class NoiseMaps
 
         public void Execute(int index)
         {
-            float sampleX = index % chunkSize;
-            float sampleZ = index / chunkSize;
+            float sampleX = index % xSize;
+            float sampleZ = index / xSize;
             float noiseValue1 = snoise(new float2((sampleX + xOffset) * scale, (sampleZ + zOffset) * scale));
-            float noise1 = noiseValue1 * (noiseValue1 > 0.4f ? Mathf.SmoothStep(0, 1, (noiseValue1 - 0.4f) / 0.6f) * amplitude * 15 + amplitude : amplitude);
-            float noiseValue2 = snoise(new float2((sampleX + xOffset) * (scale / 2), (sampleZ * zOffset) * (scale / 2)));
-            float noise2 = noiseValue2 * amplitude / 2;
-            float noiseValue3 = snoise(new float2((sampleX + xOffset) * (scale / 4), (sampleZ * zOffset) * (scale / 4)));
-            float noise3 = noiseValue3 * amplitude / 4;
+            float noise1 = noiseValue1 * (noiseValue1 > 0.4f ? Mathf.SmoothStep(0, 1, (noiseValue1 - 0.4f) / 0.6f) * amplitude * 4 + amplitude : amplitude);
+            float noiseValue2 = snoise(new float2((sampleX + xOffset) * (scale * 10), (sampleZ + zOffset) * (scale * 10)));
+            float noise2 = noiseValue2 * amplitude * 0.1f;
+            float noiseValue3 = snoise(new float2((sampleX + xOffset) * (scale * 1000), (sampleZ + zOffset) * (scale * 1000)));
+            float noise3 = noiseValue3 * amplitude * 0.001f;
             float noise = noise1 + noise2 + noise3;
             output[index] = noise;
         }
 
     }
 
-    public static Vector3[] GenerateTerrain(float xOffset, float zOffset, int xSize, float scale, float amplitude)
+    public static Vector3[] GenerateTerrain(float xOffset, float zOffset, int xSize, int zSize, float scale, float amplitude)
     {
         var jobResult = new NativeArray<float>((xSize + 1) * (xSize + 1), Allocator.TempJob);
 
         var job = new SimplexNoiseJob()
         {
-            chunkSize = xSize + 1,
+            xSize = xSize + 1,
             xOffset = xOffset,
             zOffset = zOffset,
             scale = scale,
@@ -55,8 +55,8 @@ public static class NoiseMaps
 
         var handle = job.Schedule(jobResult.Length, 32);
         handle.Complete();
-        Vector3[] vertices = new Vector3[(xSize + 1) * (xSize + 1)];
-        for (int z = 0, i = 0; z <= xSize; z++)
+        Vector3[] vertices = new Vector3[(xSize + 1) * (zSize + 1)];
+        for (int z = 0, i = 0; z <= zSize; z++)
         {
             for (int x = 0; x <= xSize; x++)
             {

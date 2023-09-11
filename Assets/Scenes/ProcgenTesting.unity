@@ -132,10 +132,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1194400072}
-  - component: {fileID: 1194400074}
   - component: {fileID: 1194400073}
-  - component: {fileID: 1194400075}
-  - component: {fileID: 1194400076}
   m_Layer: 0
   m_Name: Holder
   m_TagString: Untagged
@@ -158,80 +155,7 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!23 &1194400073
-MeshRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1194400070}
-  m_Enabled: 1
-  m_CastShadows: 1
-  m_ReceiveShadows: 1
-  m_DynamicOccludee: 1
-  m_StaticShadowCaster: 0
-  m_MotionVectors: 1
-  m_LightProbeUsage: 1
-  m_ReflectionProbeUsage: 1
-  m_RayTracingMode: 2
-  m_RayTraceProcedural: 0
-  m_RenderingLayerMask: 257
-  m_RendererPriority: 0
-  m_Materials:
-  - {fileID: 2100000, guid: cba66c276aed0874091de1c33eb3950d, type: 2}
-  m_StaticBatchInfo:
-    firstSubMesh: 0
-    subMeshCount: 0
-  m_StaticBatchRoot: {fileID: 0}
-  m_ProbeAnchor: {fileID: 0}
-  m_LightProbeVolumeOverride: {fileID: 0}
-  m_ScaleInLightmap: 1
-  m_ReceiveGI: 1
-  m_PreserveUVs: 0
-  m_IgnoreNormalsForChartDetection: 0
-  m_ImportantGI: 0
-  m_StitchLightmapSeams: 1
-  m_SelectedEditorRenderState: 3
-  m_MinimumChartSize: 4
-  m_AutoUVMaxDistance: 0.5
-  m_AutoUVMaxAngle: 89
-  m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
-  m_SortingOrder: 0
-  m_AdditionalVertexStreams: {fileID: 0}
---- !u!33 &1194400074
-MeshFilter:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1194400070}
-  m_Mesh: {fileID: 0}
---- !u!114 &1194400075
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1194400070}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 056f01bb3d5f4af3b9645438697a5f0d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  xSize: 32
-  zSize: 32
-  xTiles: 100
-  zTiles: 100
-  largeScale: 2500
-  mediumScale: 300
-  smallScale: 0.1
-  largeAmplitude: 50
-  mediumAmplitude: 20
-  smallAmplitude: 0.1
-  material: {fileID: 2100000, guid: 36bce9ab6cae8ce43962938466458044, type: 2}
---- !u!114 &1194400076
+--- !u!114 &1194400073
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -240,20 +164,16 @@ MonoBehaviour:
   m_GameObject: {fileID: 1194400070}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6a000ae1e47945d58590c243a7e067fa, type: 3}
+  m_Script: {fileID: 11500000, guid: 453b682bf73b443ba713dfb5507cfcef, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   xSize: 32
   zSize: 32
-  xTiles: 250
-  zTiles: 250
-  largeScale: 2500
-  mediumScale: 300
-  smallScale: 0.1
-  largeAmplitude: 50
-  mediumAmplitude: 20
-  smallAmplitude: 0.1
-  material: {fileID: 2100000, guid: 663834164c6a04740aaa1b778249ce7e, type: 2}
+  xTiles: 25
+  zTiles: 25
+  scale: 2500
+  amplitude: 50
+  material: {fileID: 0}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
