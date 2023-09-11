@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
+using UnityEngine.UIElements;
 using static NoiseMaps;
+using Random = UnityEngine.Random;
 
 public class HydraulicErosion : MonoBehaviour
 {
@@ -45,10 +48,60 @@ public class HydraulicErosion : MonoBehaviour
             }
         }
     }
-
+    
     private void Erode(Mesh targetMesh)
     {
-        return;
+        Vector3[] vertices = targetMesh.vertices;
+        float[] heightMap = new float[vertices.Length];
+        int size = (int) Mathf.Sqrt(vertices.Length);
+        for (int i = 0; i < vertices.Length; i++)
+        {
+            heightMap[i] = (vertices[i].y);
+        }
+        for (int i = 0; i < 100000; i++)
+        {
+            int dropletPosition = Random.Range(0, heightMap.Length);
+            float sediment = 0;
+            float water = 1;
+            while (water > 0)
+            {   
+                int lowestNeighbour = dropletPosition;
+                for (int j = 0; j < 9; j++)
+                {
+                    if (j == 4) continue;
+                    int neighbour = i - size - 1 + (j % 3) + (j / 3 * size);
+                    if (neighbour >= heightMap.Length || neighbour < 0) continue;
+                    if (heightMap[neighbour] < heightMap[lowestNeighbour])
+                    {
+                        lowestNeighbour = neighbour;
+                    }
+                }
+
+                if (heightMap[lowestNeighbour] < heightMap[dropletPosition])
+                {
+                    if (sediment < 0.9f)
+                    {
+                        heightMap[lowestNeighbour] -= (1 - sediment) * 0.25f;
+                        sediment += (1 - sediment) * 0.25f;
+                    }
+                    else
+                    {
+                        heightMap[lowestNeighbour] += sediment * 0.25f;
+                        sediment *= 0.75f;
+                    }
+
+                    dropletPosition = lowestNeighbour;
+                }
+                water -= 0.001f;
+            }
+        }
+
+        for (int i = 0; i < vertices.Length; i++)
+        {
+            vertices[i].y = heightMap[i];
+        }
+
+        targetMesh.vertices = vertices;
     }
 
     private void WindTriangles(Mesh targetMesh)
