@@ -1,10 +1,5 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Timers;
-using TMPro;
+using System.Linq;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 [RequireComponent(typeof(Rigidbody))]
 public class PlayerMovement : MonoBehaviour
@@ -21,13 +16,14 @@ public class PlayerMovement : MonoBehaviour
   [SerializeField] private float _moveAccel = 2;
   [SerializeField] private float _moveFriction = 0.5f;
   [SerializeField] private float _moveDrag = 5;
-  [SerializeField] private float _slideSpeed = 8;
+  [SerializeField] private float _slideSpeedMultiplier = 2;
   [SerializeField] private float _slideFriction = 0f;
   [SerializeField] private float _slideForceExitSpeed = 0.1f;
   [SerializeField] private float _slideDrag = 0.1f;
   [SerializeField] private float _jumpForce = 8;
   [SerializeField] private float _jumpMaxMoveSpeed = 6;
-  [SerializeField] private float _jumpMoveAccel = 2;
+  [SerializeField] private AnimationCurve _jumpMoveAccelCurve = AnimationCurve.EaseInOut(0, 1, 1, 0.1f);
+  [SerializeField] private float _jumpMoveAccelMultiplier = 2;
   [SerializeField] private float _airDrag = 0;
   [SerializeField] private float _groundCheckSphereSize = 0.1f;
   [Header("Controls")]
@@ -44,10 +40,8 @@ public class PlayerMovement : MonoBehaviour
   
   [SerializeField] private int _delayGroundCheckAfterJumpUpdates = 8;
   private int _groundCheckDelay;
-  [SerializeField] private bool _sliding;
-  private bool _firstCrouchDown;
-  
-  
+
+
   private Vector3 GetInputDirectionVector() {
     Vector3 direction = Vector3.zero;
     if (Input.GetAxisRaw("Horizontal") != 0) {
@@ -64,12 +58,7 @@ public class PlayerMovement : MonoBehaviour
   }
   private bool Grounded() {
     Collider[] colliders = Physics.OverlapSphere(gameObject.transform.position + _groundCheckOffset, _groundCheckSphereSize);
-    foreach (Collider foundCollider in colliders) {
-      if (foundCollider.gameObject.CompareTag("Ground")) {
-        return true;
-      }
-    }
-    return false;
+    return colliders.Any(foundCollider => foundCollider.gameObject.CompareTag(_groundTag));
   }
   
   
@@ -77,25 +66,12 @@ public class PlayerMovement : MonoBehaviour
     _rigidbody = gameObject.GetComponent<Rigidbody>();
   }
   private void Start() {
-    Cursor.lockState = CursorLockMode.Locked; 
-    _firstCrouchDown = true;
+    Cursor.lockState = CursorLockMode.Locked;
     _groundCheckDelay = _delayGroundCheckAfterJumpUpdates;
   }
   private void Update() {
     _xMouseMovementTransform.transform.Rotate(Vector3.up, Input.GetAxisRaw("Mouse X") * _mouseSensitivity * Time.deltaTime, Space.Self);
     _yMouseMovementTransform.transform.Rotate(Vector3.left, Input.GetAxisRaw("Mouse Y") * _mouseSensitivity * Time.deltaTime, Space.Self);
-    if (_moveState == MovementState.Walking) {
-      
-    }
-    if (_moveState == MovementState.Dashing) {
-      
-    }
-    if (_moveState == MovementState.Sliding) {
-      
-    }
-    if (_moveState == MovementState.Falling) {
-      
-    }
   }
   private void FixedUpdate() {
     if (_moveState == MovementState.Walking) { // ------------
@@ -111,9 +87,10 @@ public class PlayerMovement : MonoBehaviour
       else if (Grounded() && Input.GetAxisRaw("Crouch") > 0) {
         _rigidbody.drag = _slideDrag;
         SetColliderFriction(_slideFriction, _colliderMaterial.staticFriction);
-        _rigidbody.velocity = _rigidbody.velocity.normalized * _slideSpeed;
+        _rigidbody.velocity *= _slideSpeedMultiplier;
         _moveState = MovementState.Sliding;
       }
+      
       else {
         _rigidbody.drag = _moveDrag;
         SetColliderFriction(_moveFriction, _colliderMaterial.staticFriction);
@@ -131,9 +108,15 @@ public class PlayerMovement : MonoBehaviour
     }
     if (_moveState == MovementState.Sliding) { // ----------
       
-      if (!Grounded()) {
+      if (!Grounded() && Input.GetAxisRaw("Crouch") == 0) {
         _moveState = MovementState.Falling;
       }
+      else if (Grounded() && Input.GetAxisRaw("Jump") > 0) {
+        _rigidbody.AddForce(Vector3.up * _jumpForce, ForceMode.VelocityChange);
+        _groundCheckDelay = _delayGroundCheckAfterJumpUpdates;
+        _moveState = MovementState.Falling;
+      }
+      
       else {
         if (Input.GetAxisRaw("Crouch") == 0) {
           _moveState = MovementState.Walking;
@@ -150,21 +133,23 @@ public class PlayerMovement : MonoBehaviour
         if (Input.GetAxisRaw("Crouch") > 0) {
           _rigidbody.drag = _slideDrag;
           SetColliderFriction(_slideFriction, _colliderMaterial.staticFriction);
-          _rigidbody.velocity = _rigidbody.velocity.normalized * _slideSpeed;
+          _rigidbody.velocity *= _slideSpeedMultiplier;
           _moveState = MovementState.Sliding;
         }
         else {
           _rigidbody.drag = _moveDrag;
           SetColliderFriction(_moveFriction, _colliderMaterial.staticFriction);
+          _rigidbody.velocity /= 2;
           _moveState = MovementState.Walking;
         }
       }
+      
       else {
         _groundCheckDelay--;
         _rigidbody.drag = _airDrag;
         SetColliderFriction(_moveFriction, _colliderMaterial.staticFriction);
-        _rigidbody.AddForce(transform.TransformDirection(GetInputDirectionVector()) * _jumpMoveAccel, ForceMode.VelocityChange);
         Vector3 velocityXZ = new Vector3(_rigidbody.velocity.x, 0, _rigidbody.velocity.z);
+        _rigidbody.AddForce(transform.TransformDirection(GetInputDirectionVector()) * (_jumpMoveAccelCurve.Evaluate(velocityXZ.magnitude / _jumpMaxMoveSpeed) * _jumpMoveAccelMultiplier), ForceMode.VelocityChange);
         if (velocityXZ.magnitude >= _jumpMaxMoveSpeed) {
           velocityXZ = velocityXZ.normalized * _jumpMaxMoveSpeed;
           _rigidbody.velocity = new Vector3(velocityXZ.x, _rigidbody.velocity.y, velocityXZ.z);
@@ -173,73 +158,10 @@ public class PlayerMovement : MonoBehaviour
       
     }
   }
-
-
-  //
-  // private void SlideCheck() {
-  //   if (Input.GetAxisRaw("Crouch") > 0 && _grounded) {
-  //     _sliding = true;
-  //     if (_firstCrouchDown) {
-  //       _rigidbody.velocity = _rigidbody.velocity.normalized * _slideSpeed;
-  //       _firstCrouchDown = false;
-  //     }
-  //   }
-  //   else {
-  //     _sliding = false;
-  //     _firstCrouchDown = true;
-  //   }
-  // }
-  //
-
-  // private void Update() {
-
-  //   if (!Grounded()) _grounded = false;
-  //   if (Input.GetAxisRaw("Jump") > 0 && _grounded) {
-  //     
-  //     _grounded = false; 
-  //   }
-  //   SlideCheck();
-  // }
-  // private void OnCollisionEnter(Collision other) {
-  //   if (other.gameObject.CompareTag(_groundTag)) {
-  //     _grounded = true;
-  //     SlideCheck();
-  //   }
-  // }
-  // private void OnCollisionStay(Collision other) {
-  //   if (other.gameObject.CompareTag(_groundTag)) {
-  //     _grounded = true;
-  //   }
-  // }
-
-  //
-  // private void SetXZVelocityDirToVector(Vector3 movementVector) {
-  //   movementVector.Normalize();
-  //   movementVector *= _moveSpeed;
-  //   _rigidbody.velocity = new Vector3(movementVector.x, _rigidbody.velocity.y, movementVector.z);
-  // }
-  
-  // private void UpdateDragAndFrictionType() {
-  //   _rigidbody.drag = _grounded ? _groundDrag : _airDrag;
-  //   if (_sliding) {
-  //     SetColliderFriction(_slideFriction, _colliderMaterial.staticFriction);
-  //     _rigidbody.drag = _slideDrag;
-  //   }
-  //   else {
-  //     SetColliderFriction(_moveFriction, _colliderMaterial.staticFriction);
-  //   }
-  // }
-  // private void FixedUpdate() {
-  //   Vector3 worldInputDirection = transform.TransformDirection(GetInputDirectionVector());
-  //   if (worldInputDirection != Vector3.zero) {
-  //     if (!_sliding) SetXZVelocityDirToVector(worldInputDirection);
-  //   }
-  //   UpdateDragAndFrictionType();
-  // }
-
   private void OnDrawGizmos() {
     Gizmos.color = Color.green;
-    Gizmos.DrawLine(gameObject.transform.position, gameObject.transform.position + _rigidbody.velocity);
-    Gizmos.DrawSphere(gameObject.transform.position + _groundCheckOffset, _groundCheckSphereSize);
+    Vector3 transformPosition = gameObject.transform.position;
+    Gizmos.DrawLine(transformPosition, transformPosition + _rigidbody.velocity);
+    Gizmos.DrawSphere(transformPosition + _groundCheckOffset, _groundCheckSphereSize);
   }
 }
