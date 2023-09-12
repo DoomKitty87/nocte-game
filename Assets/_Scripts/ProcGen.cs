@@ -45,16 +45,18 @@ public class ProcGen : MonoBehaviour
                 mr.material = material;
                 mf.mesh = new Mesh();
                 Mesh msh = mf.mesh;
-                msh.vertices = NoiseMaps.GenerateTerrain(x * xSize * xResolution + seed, z * zSize * zResolution + seed, xSize, zSize, scale, amplitude, octaves, easeCurve, xResolution, zResolution);
+                Vector3[] vertexData = NoiseMaps.GenerateTerrain(x * xSize * xResolution + seed, z * zSize * zResolution + seed, xSize, zSize, scale, amplitude, octaves, easeCurve, xResolution, zResolution);
+                msh.vertices = vertexData;
                 WindTriangles(msh);
                 UpdateMesh(msh);
-                float[] heightMap = new float[msh.vertices.Length];
-                for (int i = 0; i < msh.vertices.Length; i++)
-                {
-                    heightMap[i] = msh.vertices[i].y / (amplitude * 2);
-                }
-                float[] temperatureMap = NoiseMaps.GenerateTemperatureMap(heightMap, x * xSize * xResolution * seed, z * zSize * zResolution * seed, xSize, zSize, scale * temperatureScale, easeCurve, xResolution, zResolution);
-                float[] humidityMap = NoiseMaps.GenerateHumidityMap(heightMap, temperatureMap, x * xSize * xResolution / seed, z * zSize * zResolution / seed, xSize, zSize, scale * humidityScale, easeCurve, xResolution, zResolution);
+                //TODO: Optimize this (pass pointers to vertexData and find height from y value instead of dedicated array)
+                //float[] heightMap = new float[vertexData.Length];
+                //for (int i = 0; i < msh.vertices.Length; i++)
+                //{
+                //    heightMap[i] = msh.vertices[i].y / (amplitude * 2);
+                //}
+                //float[] temperatureMap = NoiseMaps.GenerateTemperatureMap(heightMap, x * xSize * xResolution * seed, z * zSize * zResolution * seed, xSize, zSize, scale / temperatureScale, easeCurve, xResolution, zResolution);
+                //float[] humidityMap = NoiseMaps.GenerateHumidityMap(heightMap, temperatureMap, x * xSize * xResolution / seed, z * zSize * zResolution / seed, xSize, zSize, scale / humidityScale, easeCurve, xResolution, zResolution);
                 go.transform.position = new Vector3(x * xSize * xResolution, 0, z * zSize * zResolution);
                 go.isStatic = true;
             }
