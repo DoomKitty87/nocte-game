@@ -1,94 +1,110 @@
 using UnityEngine;
+using UnityEngine.Serialization;
 
 public class LODGeneration : MonoBehaviour
 {
+    private struct WorldTile
+    {
+        public GameObject obj;
+        public Mesh mesh;
+        public float[] temperatureMap;
+        public float[] humidityMap;
+    }
     
-    public int xSize = 32;
-    public int zSize = 32;
+    public int _xSize = 32;
+    public int _zSize = 32;
 
-    public float xResolution = 0.25f;
-    public float zResolution = 0.25f;
+    public float _xResolution = 0.25f;
+    public float _zResolution = 0.25f;
     
-    public int xTiles = 100;
-    public int zTiles = 100;
+    public int _xTiles = 100;
+    public int _zTiles = 100;
+    public float _scale = 1000;
 
-    public float scale = 1000;
+    public float _amplitude = 50;
+    public int _octaves = 10;
 
-    public float amplitude = 50;
-    public int octaves = 10;
+    public float _temperatureScale = 2;
+    public float _humidityScale = 1.5f;
 
-    public float temperatureScale = 2;
-    public float humidityScale = 1.5f;
-
-    public int seed = 0;
+    public int _seed = 0;
     
-    public Material material;
-    public AnimationCurve easeCurve;
+    public Material _material;
+    public AnimationCurve _easeCurve;
 
-    public bool hasColliders;
+    public bool _hasColliders;
 
-    private GameObject[] tilePool;
+    private WorldTile[] _tilePool;
     
     private void Start()
     {
-        scale = 1 / scale;
+        _scale = 1 / _scale;
         SetupPool();
     }
 
     private void SetupPool()
     {
-        tilePool = new GameObject[xTiles * zTiles];
-        for (int x = 0; x < xTiles; x++)
+        _tilePool = new WorldTile[_xTiles * _zTiles];
+        for (int x = -_xTiles / 2, i = 0; x < _xTiles / 2; x++)
         {
-            for (int z = 0; z < zTiles; z++)
+            for (int z = -_zTiles / 2; z < _zTiles / 2; z++)
             {
-                GenerateTile(x, z);
+                GenerateTile(x, z, i);
             }
         }
     }
 
-    private void GenerateTile(int x, int z)
+    private void GenerateTile(int x, int z, int index)
     {
         GameObject go = new GameObject("Tile");
         go.transform.parent = transform;
                 
         MeshFilter mf = go.AddComponent<MeshFilter>();
         MeshRenderer mr = go.AddComponent<MeshRenderer>();
-        mr.material = material;
+        mr.material = _material;
         mf.mesh = new Mesh();
         Mesh msh = mf.mesh;
-        Vector3[] vertexData = NoiseMaps.GenerateTerrain(x * xSize * xResolution + seed, z * zSize * zResolution + seed, xSize, zSize, scale, amplitude, octaves, easeCurve, xResolution, zResolution);
+        Vector3[] vertexData = NoiseMaps.GenerateTerrain(x * _xSize * _xResolution + _seed, z * _zSize * _zResolution + _seed, _xSize, _zSize, _scale, _amplitude, _octaves, _easeCurve, _xResolution, _zResolution);
         msh.vertices = vertexData;
         WindTriangles(msh);
         UpdateMesh(msh);
-        float[] temperatureMap = NoiseMaps.GenerateTemperatureMap(vertexData, x * xSize * xResolution * seed, z * zSize * zResolution * seed, xSize, zSize, scale / temperatureScale, easeCurve, xResolution, zResolution);
-        float[] humidityMap = NoiseMaps.GenerateHumidityMap(vertexData, temperatureMap, x * xSize * xResolution / seed, z * zSize * zResolution / seed, xSize, zSize, scale / humidityScale, easeCurve, xResolution, zResolution);
-        if (hasColliders) go.AddComponent<MeshCollider>();
-        go.transform.position = new Vector3(x * xSize * xResolution, 0, z * zSize * zResolution);
+        float[] temperatureMap = NoiseMaps.GenerateTemperatureMap(vertexData, x * _xSize * _xResolution * _seed, z * _zSize * _zResolution * _seed, _xSize, _zSize, _scale / _temperatureScale, _easeCurve, _xResolution, _zResolution);
+        float[] humidityMap = NoiseMaps.GenerateHumidityMap(vertexData, temperatureMap, x * _xSize * _xResolution / _seed, z * _zSize * _zResolution / _seed, _xSize, _zSize, _scale / _humidityScale, _easeCurve, _xResolution, _zResolution);
+        if (_hasColliders) go.AddComponent<MeshCollider>();
+        go.transform.position = new Vector3(x * _xSize * _xResolution, 0, z * _zSize * _zResolution);
         go.isStatic = true;
-        tilePool[x * zTiles + z] = go;
+        WorldTile tile = new WorldTile();
+        tile.obj = go;
+        tile.mesh = msh;
+        tile.temperatureMap = temperatureMap;
+        tile.humidityMap = humidityMap;
+        _tilePool[index] = tile;
     }
-
-    private void UpdateTile(int index)
+    
+    //Regenerate given tile based on an LOD parameter.
+    private void UpdateTile(int index, int lod, int x, int z)
     {
-        
+        int lodFactor = (int) Mathf.Pow(2, lod);
+        _tilePool[index].mesh.vertices = NoiseMaps.GenerateTerrain(x * _xSize * _xResolution + _seed, z * _zSize * _zResolution + _seed, _xSize / lodFactor, _zSize / lodFactor, _scale, _amplitude, _octaves, _easeCurve, _xResolution * lodFactor, _zResolution * lodFactor);
+        _tilePool[index].temperatureMap = NoiseMaps.GenerateTemperatureMap(_tilePool[index].mesh.vertices, x * _xSize * _xResolution * _seed, z * _zSize * _zResolution * _seed, _xSize / lodFactor, _zSize / lodFactor, _scale / _temperatureScale, _easeCurve, _xResolution * lodFactor, _zResolution * lodFactor);
+        _tilePool[index].humidityMap = NoiseMaps.GenerateHumidityMap(_tilePool[index].mesh.vertices, _tilePool[index].temperatureMap, x * _xSize * _xResolution / _seed, z * _zSize * _zResolution / _seed, _xSize / lodFactor, _zSize / lodFactor, _scale / _humidityScale, _easeCurve, _xResolution * lodFactor, _zResolution * lodFactor);
     }
 
     private void WindTriangles(Mesh targetMesh)
     {
-        int[] triangles = new int[xSize * zSize * 6];
+        int[] triangles = new int[_xSize * _zSize * 6];
         int vert = 0;
         int tris = 0;
-        for (int z = 0; z < zSize; z++)
+        for (int z = 0; z < _zSize; z++)
         {
-            for (int x = 0; x < xSize; x++)
+            for (int x = 0; x < _xSize; x++)
             {
                 triangles[tris] = vert + 0;
-                triangles[tris + 1] = vert + xSize + 1;
+                triangles[tris + 1] = vert + _xSize + 1;
                 triangles[tris + 2] = vert + 1;
                 triangles[tris + 3] = vert + 1;
-                triangles[tris + 4] = vert + xSize + 1;
-                triangles[tris + 5] = vert + xSize + 2;
+                triangles[tris + 4] = vert + _xSize + 1;
+                triangles[tris + 5] = vert + _xSize + 2;
                 vert++;
                 tris += 6;
             }

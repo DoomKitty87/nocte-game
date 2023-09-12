@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 [RequireComponent(typeof(Rigidbody))]
 public class PlayerMovement : MonoBehaviour
@@ -17,7 +18,7 @@ public class PlayerMovement : MonoBehaviour
   [SerializeField] private float _moveAccel = 2;
   [SerializeField] private float _moveFriction = 0.5f;
   [SerializeField] private float _moveDrag = 5;
-  [SerializeField][Range(0, 180)] private float _maxDownwardsSnapAngle = 45;
+  [FormerlySerializedAs("_maxDownwardsSnapAngle")] [SerializeField][Range(0, 180)] private float _maxDownwardsSlopeAngle = 45;
   [SerializeField] private float _slideSpeedMultiplier = 2;
   [SerializeField] private float _slideFriction = 0f;
   [SerializeField] private float _slideForceExitSpeed = 0.1f;
@@ -102,9 +103,15 @@ public class PlayerMovement : MonoBehaviour
       else {
         _rigidbody.drag = _moveDrag;
         SetColliderFriction(_moveFriction, _colliderMaterial.staticFriction);
-        (Vector3, float) slopeOut = SlopeParallelDirAndAngle();
+        (Vector3 slopeGradeDirection, float slopeAngle) slopeOut = SlopeParallelDirAndAngle();
         // TODO: Figure out how to rotate InputAxis by slopeAngle in slopeDirection;
-        _rigidbody.AddForce(transform.TransformDirection(GetInputDirectionVector()) * _moveAccel, ForceMode.VelocityChange);
+        if (slopeOut.slopeAngle > _maxDownwardsSlopeAngle) {
+          _rigidbody.AddForce(transform.TransformDirection(GetInputDirectionVector()) * _moveAccel, ForceMode.VelocityChange);
+        }
+        else {
+          
+        }
+        
         
         if (_rigidbody.velocity.magnitude >= _maxMoveSpeed) {
           _rigidbody.velocity = _rigidbody.velocity.normalized * _maxMoveSpeed;
