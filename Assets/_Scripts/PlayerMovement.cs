@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using UnityEngine;
 
@@ -16,6 +17,7 @@ public class PlayerMovement : MonoBehaviour
   [SerializeField] private float _moveAccel = 2;
   [SerializeField] private float _moveFriction = 0.5f;
   [SerializeField] private float _moveDrag = 5;
+  [SerializeField][Range(0, 180)] private float _maxDownwardsSnapAngle = 45;
   [SerializeField] private float _slideSpeedMultiplier = 2;
   [SerializeField] private float _slideFriction = 0f;
   [SerializeField] private float _slideForceExitSpeed = 0.1f;
@@ -41,7 +43,6 @@ public class PlayerMovement : MonoBehaviour
   [SerializeField] private int _delayGroundCheckAfterJumpUpdates = 8;
   private int _groundCheckDelay;
 
-
   private Vector3 GetInputDirectionVector() {
     Vector3 direction = Vector3.zero;
     if (Input.GetAxisRaw("Horizontal") != 0) {
@@ -60,8 +61,13 @@ public class PlayerMovement : MonoBehaviour
     Collider[] colliders = Physics.OverlapSphere(gameObject.transform.position + _groundCheckOffset, _groundCheckSphereSize);
     return colliders.Any(foundCollider => foundCollider.gameObject.CompareTag(_groundTag));
   }
-  
-  
+
+  private (Vector3, float) SlopeParallelDirAndAngle() {
+    Physics.Raycast(transform.position, Vector3.down, out RaycastHit hit);
+    Vector3 xzNormal = new Vector3(hit.normal.x, 0, hit.normal.z);
+    return (xzNormal, Mathf.Atan2(xzNormal.magnitude, hit.distance) * 180 / Mathf.PI);
+  }
+
   private void OnValidate() {
     _rigidbody = gameObject.GetComponent<Rigidbody>();
   }
@@ -87,14 +93,19 @@ public class PlayerMovement : MonoBehaviour
       else if (Grounded() && Input.GetAxisRaw("Crouch") > 0) {
         _rigidbody.drag = _slideDrag;
         SetColliderFriction(_slideFriction, _colliderMaterial.staticFriction);
-        _rigidbody.velocity *= _slideSpeedMultiplier;
+        // TODO: When landing from a jump, sliding causes stupid movement speed, still an issue
+        Vector3 velocity = _rigidbody.velocity;
+        _rigidbody.velocity =  new Vector3(velocity.x * _slideSpeedMultiplier, velocity.y, velocity.z * _slideSpeedMultiplier);
         _moveState = MovementState.Sliding;
       }
       
       else {
         _rigidbody.drag = _moveDrag;
         SetColliderFriction(_moveFriction, _colliderMaterial.staticFriction);
+        (Vector3, float) slopeOut = SlopeParallelDirAndAngle();
+        // TODO: Figure out how to rotate InputAxis by slopeAngle in slopeDirection;
         _rigidbody.AddForce(transform.TransformDirection(GetInputDirectionVector()) * _moveAccel, ForceMode.VelocityChange);
+        
         if (_rigidbody.velocity.magnitude >= _maxMoveSpeed) {
           _rigidbody.velocity = _rigidbody.velocity.normalized * _maxMoveSpeed;
         }
@@ -102,9 +113,9 @@ public class PlayerMovement : MonoBehaviour
       
     }
     if (_moveState == MovementState.Dashing) { // -----------
-      
-      if (_moveState != MovementState.Dashing) return;
-      
+
+      throw new NotImplementedException();
+
     }
     if (_moveState == MovementState.Sliding) { // ----------
       
@@ -138,7 +149,7 @@ public class PlayerMovement : MonoBehaviour
         }
         else {
           _rigidbody.drag = _moveDrag;
-          SetColliderFriction(_moveFriction, _colliderMaterial.staticFriction);
+          SetColliderFriction(0, _colliderMaterial.staticFriction);
           _rigidbody.velocity /= 2;
           _moveState = MovementState.Walking;
         }
@@ -157,11 +168,17 @@ public class PlayerMovement : MonoBehaviour
       }
       
     }
+    
   }
   private void OnDrawGizmos() {
     Gizmos.color = Color.green;
     Vector3 transformPosition = gameObject.transform.position;
     Gizmos.DrawLine(transformPosition, transformPosition + _rigidbody.velocity);
     Gizmos.DrawSphere(transformPosition + _groundCheckOffset, _groundCheckSphereSize);
+    RaycastHit hit;
+    Physics.Raycast(transform.position, Vector3.down, out hit);
+    Gizmos.color = Color.cyan;
+    Gizmos.DrawLine(transform.position, hit.point);
+    Gizmos.DrawLine(hit.point, hit.point + hit.normal);
   }
 }
