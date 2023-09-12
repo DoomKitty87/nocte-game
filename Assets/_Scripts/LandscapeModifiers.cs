@@ -51,17 +51,5 @@ public static class LandscapeModifiers
 
         return vertices;
     }
-
-    public static Vector3[] ContourMountains(Vector3[] heightMap)
-    {
-        Vector3[] vertices = heightMap;
-
-        for (int i = 0; i < vertices.Length; i++)
-        {
-            
-        }
-
-        return vertices;
-    }
-
+    
 }

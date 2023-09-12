@@ -39,7 +39,7 @@ public class ProcGen : MonoBehaviour
                 mr.material = material;
                 mf.mesh = new Mesh();
                 Mesh msh = mf.mesh;
-                msh.vertices = LandscapeModifiers.ContourMountains(NoiseMaps.GenerateTerrain(x * xSize * xResolution + seed, z * zSize * zResolution + seed, xSize, zSize, scale, amplitude, octaves, easeCurve, xResolution, zResolution));
+                msh.vertices = NoiseMaps.GenerateTerrain(x * xSize * xResolution + seed, z * zSize * zResolution + seed, xSize, zSize, scale, amplitude, octaves, easeCurve, xResolution, zResolution);
                 WindTriangles(msh);
                 UpdateMesh(msh);
                 go.transform.position = new Vector3(x * xSize * xResolution, 0, z * zSize * zResolution);
