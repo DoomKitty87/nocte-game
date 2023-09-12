@@ -2,7 +2,11 @@ using System;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.Serialization;
-
+// ===============================================================
+// Matthew
+// Desc: Handles movement (with sliding, jumping, etc) for
+//       player object, highly configurable
+// ===============================================================
 [RequireComponent(typeof(Rigidbody))]
 public class PlayerMovement : MonoBehaviour
 {
@@ -63,6 +67,8 @@ public class PlayerMovement : MonoBehaviour
     return colliders.Any(foundCollider => foundCollider.gameObject.CompareTag(_groundTag));
   }
 
+  // Gets slope angle by finding inverse tangent of downwards raycast magnitude and hit point normal (without y factor)
+  // Gets slope direction from the hit point normal without y factor
   private (Vector3, float) SlopeParallelDirAndAngle() {
     Physics.Raycast(transform.position, Vector3.down, out RaycastHit hit);
     Vector3 xzNormal = new Vector3(hit.normal.x, 0, hit.normal.z);
@@ -104,14 +110,13 @@ public class PlayerMovement : MonoBehaviour
         _rigidbody.drag = _moveDrag;
         SetColliderFriction(_moveFriction, _colliderMaterial.staticFriction);
         (Vector3 slopeGradeDirection, float slopeAngle) slopeOut = SlopeParallelDirAndAngle();
-        // TODO: Figure out how to rotate InputAxis by slopeAngle in slopeDirection;
-        if (slopeOut.slopeAngle > _maxDownwardsSlopeAngle) {
-          _rigidbody.AddForce(transform.TransformDirection(GetInputDirectionVector()) * _moveAccel, ForceMode.VelocityChange);
+        Vector3 accel = transform.TransformDirection(GetInputDirectionVector()) * _moveAccel;
+        // Rotates acceleration vector by cross product of slope direction by slope angle; < 0.1 deg disabled to prevent weirdness
+        if ((slopeOut.slopeAngle < _maxDownwardsSlopeAngle) && !(slopeOut.slopeAngle < 0.1f)) {
+          Quaternion slopeRotation = Quaternion.AngleAxis(slopeOut.slopeAngle, Vector3.Cross(slopeOut.slopeGradeDirection, Vector3.down));
+          accel = slopeRotation * accel;
         }
-        else {
-          
-        }
-        
+        _rigidbody.AddForce(accel, ForceMode.VelocityChange);
         
         if (_rigidbody.velocity.magnitude >= _maxMoveSpeed) {
           _rigidbody.velocity = _rigidbody.velocity.normalized * _maxMoveSpeed;
@@ -185,7 +190,13 @@ public class PlayerMovement : MonoBehaviour
     RaycastHit hit;
     Physics.Raycast(transform.position, Vector3.down, out hit);
     Gizmos.color = Color.cyan;
-    Gizmos.DrawLine(transform.position, hit.point);
+    Gizmos.DrawLine(transformPosition, hit.point);
     Gizmos.DrawLine(hit.point, hit.point + hit.normal);
+    (Vector3 slopeGradeDirection, float slopeAngle) slopeOut = SlopeParallelDirAndAngle();
+    Gizmos.DrawLine(transformPosition, transformPosition + Vector3.Cross(slopeOut.slopeGradeDirection.normalized, Vector3.up));
+    Vector3 vel = transform.TransformDirection(GetInputDirectionVector()) * _moveAccel;
+    Quaternion slopeRotation = Quaternion.AngleAxis(slopeOut.slopeAngle, Vector3.Cross(slopeOut.slopeGradeDirection, Vector3.down));
+    Gizmos.color = Color.magenta;
+    Gizmos.DrawLine(transformPosition, transformPosition + slopeRotation * vel);
   }
 }
