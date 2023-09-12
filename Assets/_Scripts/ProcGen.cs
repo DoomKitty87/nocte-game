@@ -17,6 +17,9 @@ public class ProcGen : MonoBehaviour
     public float amplitude = 50;
     public int octaves = 4;
 
+    public float temperatureScale = 2;
+    public float humidityScale = 1.5f;
+
     public int seed = 0;
     
     public Material material;
@@ -50,8 +53,8 @@ public class ProcGen : MonoBehaviour
                 {
                     heightMap[i] = msh.vertices[i].y / (amplitude * 2);
                 }
-                float[] temperatureMap = NoiseMaps.GenerateTemperatureMap(heightMap, x * xSize * xResolution * seed, z * zSize * zResolution * seed, xSize, zSize, scale, easeCurve, xResolution, zResolution);
-                float[] humidityMap = NoiseMaps.GenerateHumidityMap(heightMap, temperatureMap, x * xSize * xResolution / seed, z * zSize * zResolution / seed, xSize, zSize, scale, easeCurve, xResolution, zResolution);
+                float[] temperatureMap = NoiseMaps.GenerateTemperatureMap(heightMap, x * xSize * xResolution * seed, z * zSize * zResolution * seed, xSize, zSize, scale * temperatureScale, easeCurve, xResolution, zResolution);
+                float[] humidityMap = NoiseMaps.GenerateHumidityMap(heightMap, temperatureMap, x * xSize * xResolution / seed, z * zSize * zResolution / seed, xSize, zSize, scale * humidityScale, easeCurve, xResolution, zResolution);
                 go.transform.position = new Vector3(x * xSize * xResolution, 0, z * zSize * zResolution);
                 go.isStatic = true;
             }
