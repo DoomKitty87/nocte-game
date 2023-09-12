@@ -25,6 +25,8 @@ public class LODGeneration : MonoBehaviour
     public Material material;
     public AnimationCurve easeCurve;
 
+    public bool hasColliders;
+
     private GameObject[] tilePool;
     
     private void Start()
@@ -61,6 +63,7 @@ public class LODGeneration : MonoBehaviour
         UpdateMesh(msh);
         float[] temperatureMap = NoiseMaps.GenerateTemperatureMap(vertexData, x * xSize * xResolution * seed, z * zSize * zResolution * seed, xSize, zSize, scale / temperatureScale, easeCurve, xResolution, zResolution);
         float[] humidityMap = NoiseMaps.GenerateHumidityMap(vertexData, temperatureMap, x * xSize * xResolution / seed, z * zSize * zResolution / seed, xSize, zSize, scale / humidityScale, easeCurve, xResolution, zResolution);
+        if (hasColliders) go.AddComponent<MeshCollider>();
         go.transform.position = new Vector3(x * xSize * xResolution, 0, z * zSize * zResolution);
         go.isStatic = true;
         tilePool[x * zTiles + z] = go;

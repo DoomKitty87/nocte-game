@@ -24,6 +24,8 @@ public class ProcGen : MonoBehaviour
     
     public Material material;
     public AnimationCurve easeCurve;
+
+    public bool hasColliders;
     
     private void Start()
     {
@@ -51,6 +53,7 @@ public class ProcGen : MonoBehaviour
                 UpdateMesh(msh);
                 float[] temperatureMap = NoiseMaps.GenerateTemperatureMap(vertexData, x * xSize * xResolution * seed, z * zSize * zResolution * seed, xSize, zSize, scale / temperatureScale, easeCurve, xResolution, zResolution);
                 float[] humidityMap = NoiseMaps.GenerateHumidityMap(vertexData, temperatureMap, x * xSize * xResolution / seed, z * zSize * zResolution / seed, xSize, zSize, scale / humidityScale, easeCurve, xResolution, zResolution);
+                if (hasColliders) go.AddComponent<MeshCollider>();
                 go.transform.position = new Vector3(x * xSize * xResolution, 0, z * zSize * zResolution);
                 go.isStatic = true;
             }
