@@ -25,7 +25,9 @@ public class PlayerMovement : MonoBehaviour
   [FormerlySerializedAs("_maxDownwardsSnapAngle")] [SerializeField][Range(0, 180)] private float _maxDownwardsSlopeAngle = 45;
   [SerializeField] private float _slideSpeedMultiplier = 2;
   [SerializeField] private float _slideFriction = 0f;
+  [SerializeField] private float _slideCooldownSeconds = 1;
   [SerializeField] private float _slideForceExitSpeed = 0.1f;
+  [SerializeField] private float _slideExitSpeedMultiplier = 0.5f;
   [SerializeField] private float _slideDrag = 0.1f;
   [SerializeField] private float _jumpForce = 8;
   [SerializeField] private float _jumpMaxMoveSpeed = 6;
@@ -47,6 +49,7 @@ public class PlayerMovement : MonoBehaviour
   
   [SerializeField] private int _delayGroundCheckAfterJumpUpdates = 8;
   private int _groundCheckDelay;
+  [SerializeField] private float _timeSinceLastSlide = 0;
 
   private Vector3 GetInputDirectionVector() {
     Vector3 direction = Vector3.zero;
@@ -85,6 +88,9 @@ public class PlayerMovement : MonoBehaviour
   private void Update() {
     _xMouseMovementTransform.transform.Rotate(Vector3.up, Input.GetAxisRaw("Mouse X") * _mouseSensitivity * Time.deltaTime, Space.Self);
     _yMouseMovementTransform.transform.Rotate(Vector3.left, Input.GetAxisRaw("Mouse Y") * _mouseSensitivity * Time.deltaTime, Space.Self);
+    if (_moveState != MovementState.Sliding) {
+      _timeSinceLastSlide += Time.deltaTime;
+    }
   }
   private void FixedUpdate() {
     if (_moveState == MovementState.Walking) { // ------------
@@ -97,12 +103,13 @@ public class PlayerMovement : MonoBehaviour
         _groundCheckDelay = _delayGroundCheckAfterJumpUpdates;
         _moveState = MovementState.Falling;
       }
-      else if (Grounded() && Input.GetAxisRaw("Crouch") > 0) {
+      else if (Grounded() && Input.GetAxisRaw("Crouch") > 0 && _timeSinceLastSlide > _slideCooldownSeconds) {
         _rigidbody.drag = _slideDrag;
         SetColliderFriction(_slideFriction, _colliderMaterial.staticFriction);
         // TODO: When landing from a jump, sliding causes stupid movement speed, still an issue
         Vector3 velocity = _rigidbody.velocity;
         _rigidbody.velocity =  new Vector3(velocity.x * _slideSpeedMultiplier, velocity.y, velocity.z * _slideSpeedMultiplier);
+        _timeSinceLastSlide = 0;
         _moveState = MovementState.Sliding;
       }
       
@@ -142,6 +149,8 @@ public class PlayerMovement : MonoBehaviour
       
       else {
         if (Input.GetAxisRaw("Crouch") == 0) {
+          Vector3 velocity = _rigidbody.velocity;
+          _rigidbody.velocity = velocity.normalized * velocity.magnitude / _slideExitSpeedMultiplier;
           _moveState = MovementState.Walking;
         }
         if (_rigidbody.velocity.magnitude < _slideForceExitSpeed) {
