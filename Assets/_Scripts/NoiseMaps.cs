@@ -82,7 +82,7 @@ public static class NoiseMaps
         return vertices;
     }
 
-    public static float[] GenerateTemperatureMap(float[] heightMap, float xOffset, float zOffset, int xSize, int zSize, float scale, AnimationCurve easeCurve, float xResolution=1, float zResolution=1)
+    public static float[] GenerateTemperatureMap(Vector3[] heightMap, float xOffset, float zOffset, int xSize, int zSize, float scale, AnimationCurve easeCurve, float xResolution=1, float zResolution=1)
     {
         
         float[] temperatureMap = new float[heightMap.Length];
@@ -107,7 +107,7 @@ public static class NoiseMaps
         
         for (int i = 0; i < temperatureMap.Length; i++)
         {
-            temperatureMap[i] = easeCurve.Evaluate(heightMap[i]) * jobResult[i];
+            temperatureMap[i] = easeCurve.Evaluate(heightMap[i].y) * jobResult[i];
         }
         
         jobResult.Dispose();
@@ -115,7 +115,7 @@ public static class NoiseMaps
         return temperatureMap;
     }
 
-    public static float[] GenerateHumidityMap(float[] heightMap, float[] temperatureMap, float xOffset, float zOffset, int xSize, int zSize, float scale, AnimationCurve easeCurve, float xResolution=1, float zResolution=1)
+    public static float[] GenerateHumidityMap(Vector3[] heightMap, float[] temperatureMap, float xOffset, float zOffset, int xSize, int zSize, float scale, AnimationCurve easeCurve, float xResolution=1, float zResolution=1)
     {
         float[] humidityMap = new float[heightMap.Length];
         
@@ -139,7 +139,7 @@ public static class NoiseMaps
 
         for (int i = 0; i < humidityMap.Length; i++)
         {
-            humidityMap[i] = easeCurve.Evaluate(heightMap[i] * temperatureMap[i]) * jobResult[i];
+            humidityMap[i] = easeCurve.Evaluate(heightMap[i].y * temperatureMap[i]) * jobResult[i];
         }
 
         jobResult.Dispose();
