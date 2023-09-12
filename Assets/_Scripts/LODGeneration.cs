@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.Serialization;
 
@@ -35,7 +36,7 @@ public class LODGeneration : MonoBehaviour
     public bool _hasColliders;
 
     private WorldTile[] _tilePool;
-    private int[] _tilePositions;
+    private int[,] _tilePositions;
 
     private int _lastPlayerChunkX;
     private int _lastPlayerChunkZ;
@@ -48,84 +49,88 @@ public class LODGeneration : MonoBehaviour
         int deltaX = playerXChunkScale - _lastPlayerChunkX;
         int deltaZ = playerZChunkScale - _lastPlayerChunkZ;
 
-        if (deltaX < 0)
-        {
-            //If i dont know how to do this just switch it to 2d array cause i hate 1d
+        if (deltaX < 0) {
             int[] tempValues = new int[_zTiles];
-            for (int i = 0; i < _zTiles; i++)
-            {
-                tempValues[i] = _tilePositions[(_xTiles - 1) * _zTiles + i];
+            for (int i = 0; i < _zTiles; i++) {
+                tempValues[i] = _tilePositions[_xTiles - 1, i];
             }
-
-            for (int i = _tilePositions.Length - 1 - _zTiles; i >= 0; i++)
-            {
-                _tilePositions[i + _zTiles] = _tilePositions[i];
+            
+            for (int x = _xTiles - 1; x > 0; x--) {
+                for (int z = 0; z < _zTiles; z++) {
+                    _tilePositions[x, z] = _tilePositions[x - 1, z];
+                }
             }
-
-            for (int i = 0; i < _zTiles; i++)
-            {
-                _tilePositions[i] = tempValues[i];
-                UpdateTile(tempValues[i], 0, playerXChunkScale - ((_xTiles - 1) / 2), i);
+            
+            for (int i = 0; i < _zTiles; i++) {
+                _tilePositions[0, i] = tempValues[i];
+            }
+            
+            for (int i = 0; i < _zTiles; i++) {
+                UpdateTile(_tilePositions[0, i], 0, playerXChunkScale - (_xTiles - 1) / 2, i + playerZChunkScale - (_zTiles - 1) / 2);
             }
         }
         else if (deltaX > 0) {
             int[] tempValues = new int[_zTiles];
-            for (int i = 0; i < _zTiles; i++)
-            {
-                tempValues[i] = _tilePositions[i];
+            for (int i = 0; i < _zTiles; i++) {
+                tempValues[i] = _tilePositions[0, i];
             }
-
-            for (int i = _zTiles - 1; i < _tilePositions.Length; i++)
-            {
-                _tilePositions[i - _zTiles] = _tilePositions[i];
+            
+            for (int x = 0; x < _xTiles - 1; x++) {
+                for (int z = 0; z < _zTiles; z++) {
+                    _tilePositions[x, z] = _tilePositions[x + 1, z];
+                }
             }
-
-            for (int i = 0; i < _zTiles; i++)
-            {
-                _tilePositions[i + (_xTiles - 1) * _zTiles] = tempValues[i];
-                UpdateTile(tempValues[i], 0, playerXChunkScale + ((_xTiles - 1) / 2), i);
+            
+            for (int i = 0; i < _zTiles; i++) {
+                _tilePositions[_xTiles - 1, i] = tempValues[i];
+            }
+            
+            for (int i = 0; i < _zTiles; i++) {
+                UpdateTile(_tilePositions[_xTiles - 1, i], 0, playerXChunkScale + (_xTiles - 1) / 2, i + playerZChunkScale - (_zTiles - 1) / 2);
             }
         }
 
-        if (deltaZ < 0)
-        {
-            //If i dont know how to do this just switch it to 2d array cause i hate 1d
+        if (deltaZ < 0) {
             int[] tempValues = new int[_xTiles];
-            for (int i = 0; i < _xTiles; i++)
-            {
-                tempValues[i] = _tilePositions[_zTiles * i - 1];
+            for (int i = 0; i < _xTiles; i++) {
+                tempValues[i] = _tilePositions[i, _zTiles - 1];
             }
-            //figure out
-            for (int i = _tilePositions.Length - 1 - _xTiles; i >= 0; i++)
-            {
-                _tilePositions[i + _xTiles] = _tilePositions[i];
+            
+            for (int x = 0; x < _xTiles; x++) {
+                for (int z = _zTiles - 1; z > 0; z--) {
+                    _tilePositions[x, z] = _tilePositions[x, z - 1];
+                }
             }
-
-            for (int i = 0; i < _xTiles; i++)
-            {
-                _tilePositions[i] = tempValues[i];
-                UpdateTile(tempValues[i], 0, playerZChunkScale - ((_zTiles - 1) / 2), i);
+            
+            for (int i = 0; i < _xTiles; i++) {
+                _tilePositions[i, 0] = tempValues[i];
+            }
+            
+            for (int i = 0; i < _xTiles; i++) {
+                UpdateTile(_tilePositions[i, 0], 0, i + playerXChunkScale - (_xTiles - 1) / 2, playerZChunkScale - (_zTiles - 1) / 2);
             }
         }
         else if (deltaZ > 0) {
             int[] tempValues = new int[_xTiles];
-            for (int i = 0; i < _xTiles; i++)
-            {
-                tempValues[i] = _tilePositions[i];
+            for (int i = 0; i < _xTiles; i++) {
+                tempValues[i] = _tilePositions[i, 0];
             }
-
-            for (int i = _xTiles - 1; i < _tilePositions.Length; i++)
-            {
-                _tilePositions[i - _xTiles] = _tilePositions[i];
+            
+            for (int x = 0; x < _xTiles; x++) {
+                for (int z = 0; z < _zTiles - 1; z++) {
+                    _tilePositions[x, z] = _tilePositions[x, z + 1];
+                }
             }
-
-            for (int i = 0; i < _xTiles; i++)
-            {
-                _tilePositions[i + (_zTiles - 1) * _xTiles] = tempValues[i];
-                UpdateTile(tempValues[i], 0, playerZChunkScale + ((_zTiles - 1) / 2), i);
+            
+            for (int i = 0; i < _xTiles; i++) {
+                _tilePositions[i, _zTiles - 1] = tempValues[i];
+            }
+            
+            for (int i = 0; i < _xTiles; i++) {
+                UpdateTile(_tilePositions[i, _zTiles - 1], 0, i + playerXChunkScale - (_xTiles - 1) / 2, playerZChunkScale + (_zTiles - 1) / 2);
             }
         }
-
+        
         _lastPlayerChunkX = playerXChunkScale;
         _lastPlayerChunkZ = playerZChunkScale;
     }
@@ -135,17 +140,17 @@ public class LODGeneration : MonoBehaviour
         _scale = 1 / _scale;
         SetupPool();
     }
-
-    //Tile positions are setup as
-    //Z horizontal * X vertical (in a 2d array)
+    
     private void SetupPool()
     {
         _tilePool = new WorldTile[_xTiles * _zTiles];
-        for (int x = -_xTiles / 2, i = 0; x < _xTiles / 2; x++)
+        _tilePositions = new int[_xTiles, _zTiles];
+        for (int x = -(_xTiles - 1) / 2, i = 0; x <= (_xTiles - 1) / 2; x++)
         {
-            for (int z = -_zTiles / 2; z < _zTiles / 2; z++)
+            for (int z = -(_zTiles - 1) / 2; z <= (_zTiles - 1) / 2; z++)
             {
                 GenerateTile(x, z, i);
+                i++;
             }
         }
     }
@@ -175,12 +180,12 @@ public class LODGeneration : MonoBehaviour
         tile.temperatureMap = temperatureMap;
         tile.humidityMap = humidityMap;
         _tilePool[index] = tile;
-        _tilePositions[index] = index;
+        Debug.Log(x);
+        _tilePositions[index / _zTiles, index % _zTiles] = index;
     }
     
     //Regenerate given tile based on an LOD parameter.
-    private void UpdateTile(int index, int lod, int x, int z)
-    {
+    private void UpdateTile(int index, int lod, int x, int z) {
         int lodFactor = (int) Mathf.Pow(2, lod);
         _tilePool[index].mesh.vertices = NoiseMaps.GenerateTerrain(x * _xSize * _xResolution + _seed, z * _zSize * _zResolution + _seed, _xSize / lodFactor, _zSize / lodFactor, _scale, _amplitude, _octaves, _easeCurve, _xResolution * lodFactor, _zResolution * lodFactor);
         _tilePool[index].temperatureMap = NoiseMaps.GenerateTemperatureMap(_tilePool[index].mesh.vertices, x * _xSize * _xResolution * _seed, z * _zSize * _zResolution * _seed, _xSize / lodFactor, _zSize / lodFactor, _scale / _temperatureScale, _easeCurve, _xResolution * lodFactor, _zResolution * lodFactor);

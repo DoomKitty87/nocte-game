@@ -37,6 +37,8 @@ public class PlayerMovement : MonoBehaviour
   [SerializeField] private float _groundCheckSphereSize = 0.1f;
   [Header("Controls")]
   [SerializeField] private float _mouseSensitivity = 30;
+
+  [SerializeField] private LODGeneration _procGen;
   public enum MovementState
   {
     Walking,
@@ -91,6 +93,8 @@ public class PlayerMovement : MonoBehaviour
     if (_moveState != MovementState.Sliding) {
       _timeSinceLastSlide += Time.deltaTime;
     }
+
+    _procGen.UpdatePlayerLoadedChunks(transform.position.x, transform.position.z);
   }
   private void FixedUpdate() {
     if (_moveState == MovementState.Walking) { // ------------
