@@ -5,6 +5,9 @@ public class ProcGen : MonoBehaviour
     
     public int xSize = 32;
     public int zSize = 32;
+
+    public float xResolution = 1;
+    public float zResolution = 1;
     
     public int xTiles = 1;
     public int zTiles = 1;
@@ -36,10 +39,10 @@ public class ProcGen : MonoBehaviour
                 mr.material = material;
                 mf.mesh = new Mesh();
                 Mesh msh = mf.mesh;
-                msh.vertices = LandscapeModifiers.ContourMountains(NoiseMaps.GenerateTerrain(x * xSize + seed, z * zSize + seed, xSize, zSize, scale, amplitude, octaves, easeCurve));
+                msh.vertices = LandscapeModifiers.ContourMountains(NoiseMaps.GenerateTerrain(x * xSize * xResolution + seed, z * zSize * zResolution + seed, xSize, zSize, scale, amplitude, octaves, easeCurve, xResolution, zResolution));
                 WindTriangles(msh);
                 UpdateMesh(msh);
-                go.transform.position = new Vector3(x * xSize, 0, z * zSize);
+                go.transform.position = new Vector3(x * xSize * xResolution, 0, z * zSize * zResolution);
             }
         }
     }
