@@ -82,4 +82,69 @@ public static class NoiseMaps
         return vertices;
     }
 
+    public static float[] GenerateTemperatureMap(float[] heightMap, float xOffset, float zOffset, int xSize, int zSize, float scale, AnimationCurve easeCurve, float xResolution=1, float zResolution=1)
+    {
+        
+        float[] temperatureMap = new float[heightMap.Length];
+        
+        var jobResult = new NativeArray<float>((xSize + 1) * (xSize + 1), Allocator.TempJob);
+
+        var job = new SimplexNoiseJob()
+        {
+            xSize = xSize + 1,
+            xOffset = xOffset,
+            zOffset = zOffset,
+            scale = scale,
+            xResolution = xResolution,
+            zResolution = zResolution,
+            amplitude = 1,
+            octaves = 1,
+            output = jobResult
+        };
+        
+        var handle = job.Schedule(jobResult.Length, 32);
+        handle.Complete();
+        
+        for (int i = 0; i < temperatureMap.Length; i++)
+        {
+            temperatureMap[i] = easeCurve.Evaluate(heightMap[i]) * jobResult[i];
+        }
+        
+        jobResult.Dispose();
+
+        return temperatureMap;
+    }
+
+    public static float[] GenerateHumidityMap(float[] heightMap, float[] temperatureMap, float xOffset, float zOffset, int xSize, int zSize, float scale, AnimationCurve easeCurve, float xResolution=1, float zResolution=1)
+    {
+        float[] humidityMap = new float[heightMap.Length];
+        
+        var jobResult = new NativeArray<float>((xSize + 1) * (xSize + 1), Allocator.TempJob);
+
+        var job = new SimplexNoiseJob()
+        {
+            xSize = xSize + 1,
+            xOffset = xOffset,
+            zOffset = zOffset,
+            scale = scale,
+            xResolution = xResolution,
+            zResolution = zResolution,
+            amplitude = 1,
+            octaves = 1,
+            output = jobResult
+        };
+        
+        var handle = job.Schedule(jobResult.Length, 32);
+        handle.Complete();
+
+        for (int i = 0; i < humidityMap.Length; i++)
+        {
+            humidityMap[i] = easeCurve.Evaluate(heightMap[i] * temperatureMap[i]) * jobResult[i];
+        }
+
+        jobResult.Dispose();
+
+        return humidityMap;
+    }
+
 }

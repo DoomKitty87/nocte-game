@@ -45,6 +45,13 @@ public class ProcGen : MonoBehaviour
                 msh.vertices = NoiseMaps.GenerateTerrain(x * xSize * xResolution + seed, z * zSize * zResolution + seed, xSize, zSize, scale, amplitude, octaves, easeCurve, xResolution, zResolution);
                 WindTriangles(msh);
                 UpdateMesh(msh);
+                float[] heightMap = new float[msh.vertices.Length];
+                for (int i = 0; i < msh.vertices.Length; i++)
+                {
+                    heightMap[i] = msh.vertices[i].y / (amplitude * 2);
+                }
+                float[] temperatureMap = NoiseMaps.GenerateTemperatureMap(heightMap, x * xSize * xResolution * seed, z * zSize * zResolution * seed, xSize, zSize, scale, easeCurve, xResolution, zResolution);
+                float[] humidityMap = NoiseMaps.GenerateHumidityMap(heightMap, temperatureMap, x * xSize * xResolution / seed, z * zSize * zResolution / seed, xSize, zSize, scale, easeCurve, xResolution, zResolution);
                 go.transform.position = new Vector3(x * xSize * xResolution, 0, z * zSize * zResolution);
                 go.isStatic = true;
             }
