@@ -35,6 +35,47 @@ public class LODGeneration : MonoBehaviour
     public bool _hasColliders;
 
     private WorldTile[] _tilePool;
+    private int[] _tilePositions;
+
+    private int _lastPlayerChunkX;
+    private int _lastPlayerChunkZ;
+
+    public void UpdatePlayerLoadedChunks(float playerX, float playerZ)
+    {
+        int playerXChunkScale = (int) (playerX / (_xSize * _xResolution));
+        int playerZChunkScale = (int) (playerZ / (_zSize * _zResolution));
+
+        int deltaX = playerXChunkScale - _lastPlayerChunkX;
+        int deltaZ = playerZChunkScale - _lastPlayerChunkZ;
+
+        if (deltaX < 0)
+        {
+            //If i dont know how to do this just switch it to 2d array cause i hate 1d
+            int[] tempValues = new int[_zTiles];
+            for (int i = 0; i < _zTiles; i++)
+            {
+                tempValues[i] = _tilePositions[(_xTiles - 1) * _zTiles + i];
+            }
+
+            for (int i = _tilePositions.Length - 1 - _zTiles; i >= 0; i++)
+            {
+                _tilePositions[i + _zTiles] = _tilePositions[i];
+            }
+
+            for (int i = 0; i < _zTiles; i++)
+            {
+                _tilePositions[i] = tempValues[i];
+            }
+        }
+
+        if (deltaZ != 0)
+        {
+            
+        }
+
+        _lastPlayerChunkX = playerXChunkScale;
+        _lastPlayerChunkZ = playerZChunkScale;
+    }
     
     private void Start()
     {
@@ -42,6 +83,8 @@ public class LODGeneration : MonoBehaviour
         SetupPool();
     }
 
+    //Tile positions are setup as
+    //Z horizontal * X vertical (in a 2d array)
     private void SetupPool()
     {
         _tilePool = new WorldTile[_xTiles * _zTiles];
@@ -79,6 +122,7 @@ public class LODGeneration : MonoBehaviour
         tile.temperatureMap = temperatureMap;
         tile.humidityMap = humidityMap;
         _tilePool[index] = tile;
+        _tilePositions[index] = index;
     }
     
     //Regenerate given tile based on an LOD parameter.
