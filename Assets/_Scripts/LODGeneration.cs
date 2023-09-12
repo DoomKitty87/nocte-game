@@ -180,7 +180,6 @@ public class LODGeneration : MonoBehaviour
         tile.temperatureMap = temperatureMap;
         tile.humidityMap = humidityMap;
         _tilePool[index] = tile;
-        Debug.Log(x);
         _tilePositions[index / _zTiles, index % _zTiles] = index;
     }
     
@@ -222,6 +221,7 @@ public class LODGeneration : MonoBehaviour
     private static void UpdateMesh(Mesh targetMesh)
     {
         targetMesh.RecalculateNormals();
+        targetMesh.RecalculateBounds();
     }
 
 }
