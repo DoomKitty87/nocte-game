@@ -43,6 +43,7 @@ public class ProcGen : MonoBehaviour
                 WindTriangles(msh);
                 UpdateMesh(msh);
                 go.transform.position = new Vector3(x * xSize * xResolution, 0, z * zSize * zResolution);
+                go.isStatic = true;
             }
         }
     }
