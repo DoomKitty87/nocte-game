@@ -21,10 +21,13 @@ public class ProcGen : MonoBehaviour
     
     public Material material;
     public AnimationCurve easeCurve;
-
-    private Mesh[] _meshes;
-
+    
     private void Start()
+    {
+        GenerateLandscape();
+    }
+
+    private void GenerateLandscape()
     {
         scale = 1 / scale;
         for (int z = 0; z < zTiles; z++)
