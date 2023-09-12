@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using UnityEngine;
-using static NoiseMaps;
+﻿using UnityEngine;
 
 public class ProcGen : MonoBehaviour
 {
@@ -18,6 +13,8 @@ public class ProcGen : MonoBehaviour
 
     public float amplitude = 50;
     public int octaves = 4;
+
+    public int seed = 0;
     
     public Material material;
     public AnimationCurve easeCurve;
@@ -39,7 +36,7 @@ public class ProcGen : MonoBehaviour
                 mr.material = material;
                 mf.mesh = new Mesh();
                 Mesh msh = mf.mesh;
-                msh.vertices = NoiseMaps.GenerateTerrain(x * xSize, z * zSize, xSize, zSize, scale, amplitude, octaves, easeCurve);
+                msh.vertices = LandscapeModifiers.ContourMountains(NoiseMaps.GenerateTerrain(x * xSize + seed, z * zSize + seed, xSize, zSize, scale, amplitude, octaves, easeCurve));
                 WindTriangles(msh);
                 UpdateMesh(msh);
                 go.transform.position = new Vector3(x * xSize, 0, z * zSize);

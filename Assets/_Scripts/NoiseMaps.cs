@@ -1,13 +1,10 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using Unity.Mathematics;
 using static Unity.Mathematics.noise;
 using Unity.Jobs;
 using Unity.Burst;
 using Unity.Collections;
-using System.Linq;
 
 public static class NoiseMaps
 {
@@ -35,7 +32,10 @@ public static class NoiseMaps
                 float octaveNoise = snoise(new float2((sampleX + xOffset) * (scale * Mathf.Pow(2, i)), (sampleZ + zOffset) * (scale * Mathf.Pow(2, i)))) * amplitude * (1 / Mathf.Pow(2, i));
                 noise += octaveNoise;
             }
-            output[index] = Math.Min(Math.Abs(noise), amplitude * 2);
+
+            noise = Math.Min(Math.Abs(noise), amplitude * 2);
+            
+            output[index] = noise;
         }
 
     }
