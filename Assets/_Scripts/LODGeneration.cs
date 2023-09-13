@@ -10,6 +10,10 @@ public class LODGeneration : MonoBehaviour
         public Mesh mesh;
         public float[] temperatureMap;
         public float[] humidityMap;
+        public int x;
+        public int z;
+        public int lod;
+
     }
     
     public int _xSize = 32;
@@ -74,7 +78,10 @@ public class LODGeneration : MonoBehaviour
                 if (Mathf.Abs(0 - (_xTiles - 1) * 2) > 10 || Mathf.Abs(i - (_zTiles - 1) * 2) > 10) {
                     lod = 2;
                 }
-                UpdateTile(_tilePositions[0, i], lod, playerXChunkScale - (_xTiles - 1) / 2, i + playerZChunkScale - (_zTiles - 1) / 2);
+
+                _tilePool[_tilePositions[0, i]].x = playerXChunkScale - (_xTiles - 1) / 2;
+                _tilePool[_tilePositions[0, i]].z = i + playerZChunkScale - (_zTiles - 1) / 2;
+                UpdateTile(_tilePositions[0, i], lod);
             }
         }
         else if (deltaX > 0) {
@@ -98,7 +105,9 @@ public class LODGeneration : MonoBehaviour
                 if (Mathf.Abs(_xTiles - 1 - (_xTiles - 1) * 2) > 10 || Mathf.Abs(i - (_zTiles - 1) * 2) > 10) {
                     lod = 2;
                 }
-                UpdateTile(_tilePositions[_xTiles - 1, i], lod, playerXChunkScale + (_xTiles - 1) / 2, i + playerZChunkScale - (_zTiles - 1) / 2);
+                _tilePool[_tilePositions[_xTiles - 1, i]].x = playerXChunkScale + (_xTiles - 1) / 2;
+                _tilePool[_tilePositions[_xTiles - 1, i]].z = i + playerZChunkScale - (_zTiles - 1) / 2;
+                UpdateTile(_tilePositions[_xTiles - 1, i], lod);
             }
         }
 
@@ -123,7 +132,9 @@ public class LODGeneration : MonoBehaviour
                 if (Mathf.Abs(i - (_xTiles - 1) * 2) > 10 || Mathf.Abs(0 - (_zTiles - 1) * 2) > 10) {
                     lod = 2;
                 }
-                UpdateTile(_tilePositions[i, 0], lod, i + playerXChunkScale - (_xTiles - 1) / 2, playerZChunkScale - (_zTiles - 1) / 2);
+                _tilePool[_tilePositions[i, 0]].x = i + playerXChunkScale - (_xTiles - 1) / 2;
+                _tilePool[_tilePositions[i, 0]].z = playerZChunkScale - (_zTiles - 1) / 2;
+                UpdateTile(_tilePositions[i, 0], lod);
             }
         }
         else if (deltaZ > 0) {
@@ -147,7 +158,17 @@ public class LODGeneration : MonoBehaviour
                 if (Mathf.Abs(i - (_xTiles - 1) * 2) > 10 || Mathf.Abs(_zTiles - 1 - (_zTiles - 1) * 2) > 10) {
                     lod = 2;
                 }
-                UpdateTile(_tilePositions[i, _zTiles - 1], lod, i + playerXChunkScale - (_xTiles - 1) / 2, playerZChunkScale + (_zTiles - 1) / 2);
+                _tilePool[_tilePositions[i, _zTiles - 1]].x = i + playerXChunkScale - (_xTiles - 1) / 2;
+                _tilePool[_tilePositions[i, _zTiles - 1]].z = playerZChunkScale + (_zTiles - 1) / 2;
+                UpdateTile(_tilePositions[i, _zTiles - 1], lod);
+            }
+        }
+
+        for (int x = 0; x < _xTiles; x++) {
+            for (int z = 0; z < _zTiles; z++) {
+                int lod = 0;
+                if (Mathf.Abs(_tilePool[_tilePositions[x, z]].x - playerXChunkScale) > 10 || Mathf.Abs(_tilePool[_tilePositions[x, z]].z - playerZChunkScale) > 10) lod = 2;
+                if (lod != _tilePool[_tilePositions[x, z]].lod) UpdateTile(_tilePositions[x, z], lod);
             }
         }
         
@@ -207,13 +228,19 @@ public class LODGeneration : MonoBehaviour
         tile.mesh = msh;
         tile.temperatureMap = temperatureMap;
         tile.humidityMap = humidityMap;
+        tile.x = x;
+        tile.z = z;
+        tile.lod = lod;
         _tilePool[index] = tile;
         _tilePositions[index / _zTiles, index % _zTiles] = index;
     }
     
     //Regenerate given tile based on an LOD parameter.
-    private void UpdateTile(int index, int lod, int x, int z) {
+    private void UpdateTile(int index, int lod) {
+        int x = _tilePool[index].x;
+        int z = _tilePool[index].z;
         int lodFactor = (int) Mathf.Pow(2, lod);
+        _tilePool[index].mesh.Clear();
         _tilePool[index].mesh.vertices = NoiseMaps.GenerateTerrain(x * _xSize * _xResolution + _seed, z * _zSize * _zResolution + _seed, _xSize / lodFactor, _zSize / lodFactor, _scale, _amplitude, _octaves, _easeCurve, _xResolution * lodFactor, _zResolution * lodFactor);
         _tilePool[index].temperatureMap = NoiseMaps.GenerateTemperatureMap(_tilePool[index].mesh.vertices, x * _xSize * _xResolution * _seed, z * _zSize * _zResolution * _seed, _xSize / lodFactor, _zSize / lodFactor, _scale / _temperatureScale, _easeCurve, _xResolution * lodFactor, _zResolution * lodFactor);
         _tilePool[index].humidityMap = NoiseMaps.GenerateHumidityMap(_tilePool[index].mesh.vertices, _tilePool[index].temperatureMap, x * _xSize * _xResolution / _seed, z * _zSize * _zResolution / _seed, _xSize / lodFactor, _zSize / lodFactor, _scale / _humidityScale, _easeCurve, _xResolution * lodFactor, _zResolution * lodFactor);
@@ -222,6 +249,7 @@ public class LODGeneration : MonoBehaviour
         else CalculateColors(_tilePool[index].mesh, lodFactor);
         UpdateMesh(_tilePool[index].mesh);
         _tilePool[index].obj.transform.position = new Vector3(x * _xSize * _xResolution, 0, z * _zSize * _zResolution);
+        _tilePool[index].lod = lod;
     }
 
     private void WindTriangles(Mesh targetMesh, int lod) {
