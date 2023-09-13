@@ -8,6 +8,7 @@ public class LODGeneration : MonoBehaviour
     {
         public GameObject obj;
         public Mesh mesh;
+        public MeshCollider meshCollider;
         public float[] temperatureMap;
         public float[] humidityMap;
         public int x;
@@ -25,9 +26,7 @@ public class LODGeneration : MonoBehaviour
     public int _xTiles = 101;
     public int _zTiles = 101;
     public float _scale = 1000;
-
-    public int _lodNoFalloffDist = 10;
-
+    
     public float _amplitude = 50;
     public int _octaves = 10;
 
@@ -40,6 +39,9 @@ public class LODGeneration : MonoBehaviour
     public Gradient _colorGradient;
     public bool _useColorGradient;
     public AnimationCurve _easeCurve;
+    public AnimationCurve _lodCurve;
+
+    public int _maxLODDecrease = 0;
 
     public bool _hasColliders;
 
@@ -56,7 +58,7 @@ public class LODGeneration : MonoBehaviour
 
         int deltaX = playerXChunkScale - _lastPlayerChunkX;
         int deltaZ = playerZChunkScale - _lastPlayerChunkZ;
-
+        
         if (deltaX < 0) {
             int[] tempValues = new int[_zTiles];
             for (int i = 0; i < _zTiles; i++) {
@@ -74,11 +76,8 @@ public class LODGeneration : MonoBehaviour
             }
             
             for (int i = 0; i < _zTiles; i++) {
-                int lod = 0;
-                if (Mathf.Abs(0 - (_xTiles - 1) * 2) > 10 || Mathf.Abs(i - (_zTiles - 1) * 2) > 10) {
-                    lod = 2;
-                }
-
+                float maxDist = Mathf.Max(Mathf.Abs(0 - (_xTiles - 1) * 2), Mathf.Abs(i - (_zTiles - 1) * 2));
+                int lod = (int)(_lodCurve.Evaluate(maxDist / (_xTiles - 1) * 2) * _maxLODDecrease);
                 _tilePool[_tilePositions[0, i]].x = playerXChunkScale - (_xTiles - 1) / 2;
                 _tilePool[_tilePositions[0, i]].z = i + playerZChunkScale - (_zTiles - 1) / 2;
                 UpdateTile(_tilePositions[0, i], lod);
@@ -101,10 +100,8 @@ public class LODGeneration : MonoBehaviour
             }
             
             for (int i = 0; i < _zTiles; i++) {
-                int lod = 0;
-                if (Mathf.Abs(_xTiles - 1 - (_xTiles - 1) * 2) > 10 || Mathf.Abs(i - (_zTiles - 1) * 2) > 10) {
-                    lod = 2;
-                }
+                float maxDist = Mathf.Max(Mathf.Abs(_xTiles - 1 - (_xTiles - 1) * 2), Mathf.Abs(i - (_zTiles - 1) * 2));
+                int lod = (int)(_lodCurve.Evaluate(maxDist / (_xTiles - 1) * 2) * _maxLODDecrease);
                 _tilePool[_tilePositions[_xTiles - 1, i]].x = playerXChunkScale + (_xTiles - 1) / 2;
                 _tilePool[_tilePositions[_xTiles - 1, i]].z = i + playerZChunkScale - (_zTiles - 1) / 2;
                 UpdateTile(_tilePositions[_xTiles - 1, i], lod);
@@ -128,10 +125,8 @@ public class LODGeneration : MonoBehaviour
             }
             
             for (int i = 0; i < _xTiles; i++) {
-                int lod = 0;
-                if (Mathf.Abs(i - (_xTiles - 1) * 2) > 10 || Mathf.Abs(0 - (_zTiles - 1) * 2) > 10) {
-                    lod = 2;
-                }
+                float maxDist = Mathf.Max(Mathf.Abs(i - (_xTiles - 1) * 2), Mathf.Abs(0 - (_zTiles - 1) * 2));
+                int lod = (int)(_lodCurve.Evaluate(maxDist / (_xTiles - 1) * 2) * _maxLODDecrease);
                 _tilePool[_tilePositions[i, 0]].x = i + playerXChunkScale - (_xTiles - 1) / 2;
                 _tilePool[_tilePositions[i, 0]].z = playerZChunkScale - (_zTiles - 1) / 2;
                 UpdateTile(_tilePositions[i, 0], lod);
@@ -154,21 +149,23 @@ public class LODGeneration : MonoBehaviour
             }
             
             for (int i = 0; i < _xTiles; i++) {
-                int lod = 0;
-                if (Mathf.Abs(i - (_xTiles - 1) * 2) > 10 || Mathf.Abs(_zTiles - 1 - (_zTiles - 1) * 2) > 10) {
-                    lod = 2;
-                }
+                float maxDist = Mathf.Max(Mathf.Abs(i - (_xTiles - 1) * 2), Mathf.Abs(_zTiles - 1 - (_zTiles - 1) * 2));
+                int lod = (int)(_lodCurve.Evaluate(maxDist / (_xTiles - 1) * 2) * _maxLODDecrease);
                 _tilePool[_tilePositions[i, _zTiles - 1]].x = i + playerXChunkScale - (_xTiles - 1) / 2;
                 _tilePool[_tilePositions[i, _zTiles - 1]].z = playerZChunkScale + (_zTiles - 1) / 2;
                 UpdateTile(_tilePositions[i, _zTiles - 1], lod);
             }
         }
 
-        for (int x = 0; x < _xTiles; x++) {
-            for (int z = 0; z < _zTiles; z++) {
-                int lod = 0;
-                if (Mathf.Abs(_tilePool[_tilePositions[x, z]].x - playerXChunkScale) > 10 || Mathf.Abs(_tilePool[_tilePositions[x, z]].z - playerZChunkScale) > 10) lod = 2;
-                if (lod != _tilePool[_tilePositions[x, z]].lod) UpdateTile(_tilePositions[x, z], lod);
+        if (deltaZ != 0 || deltaX != 0) {
+            for (int x = 0; x < _xTiles; x++) {
+                for (int z = 0; z < _zTiles; z++) {
+                    float maxDist = Mathf.Max(Mathf.Abs(_tilePool[_tilePositions[x, z]].x - playerXChunkScale), Mathf.Abs(_tilePool[_tilePositions[x, z]].z - playerZChunkScale));
+                    int lod = (int)(_lodCurve.Evaluate(maxDist / (_xTiles - 1) * 2) * _maxLODDecrease);
+                    if (lod != _tilePool[_tilePositions[x, z]].lod) UpdateTile(_tilePositions[x, z], lod);
+                    if (_hasColliders && maxDist < 2) UpdateCollider(_tilePositions[x, z]);
+                    else if (_hasColliders) _tilePool[_tilePositions[x, z]].meshCollider.enabled = false;
+                }
             }
         }
         
@@ -189,10 +186,8 @@ public class LODGeneration : MonoBehaviour
         for (int x = -(_xTiles - 1) / 2, i = 0; x <= (_xTiles - 1) / 2; x++)
         {
             for (int z = -(_zTiles - 1) / 2; z <= (_zTiles - 1) / 2; z++) {
-                int lod = 0;
-                if (Mathf.Abs(x - (_xTiles - 1) * 2) > 10 || Mathf.Abs(z - (_zTiles - 1) * 2) > 10) {
-                    lod = 2;
-                }
+                float maxDist = Mathf.Max(Mathf.Abs(x), Mathf.Abs(z));
+                int lod = (int) (_lodCurve.Evaluate(maxDist / (_xTiles - 1) * 2) * _maxLODDecrease);
                 GenerateTile(x, z, i, lod);
                 i++;
             }
@@ -204,6 +199,7 @@ public class LODGeneration : MonoBehaviour
         GameObject go = new GameObject("Tile");
         go.transform.parent = transform;
         int lodFactor = (int) Mathf.Pow(2, lod);
+        Debug.Log(lodFactor);
         MeshFilter mf = go.AddComponent<MeshFilter>();
         MeshRenderer mr = go.AddComponent<MeshRenderer>();
         mr.material = _material;
@@ -217,13 +213,18 @@ public class LODGeneration : MonoBehaviour
         UpdateMesh(msh);
         float[] temperatureMap = NoiseMaps.GenerateTemperatureMap(vertexData, x * _xSize * _xResolution * _seed, z * _zSize * _zResolution * _seed, _xSize / lodFactor, _zSize / lodFactor, _scale / _temperatureScale, _easeCurve, _xResolution * lodFactor, _zResolution * lodFactor);
         float[] humidityMap = NoiseMaps.GenerateHumidityMap(vertexData, temperatureMap, x * _xSize * _xResolution / _seed, z * _zSize * _zResolution / _seed, _xSize / lodFactor, _zSize / lodFactor, _scale / _humidityScale, _easeCurve, _xResolution * lodFactor, _zResolution * lodFactor);
-        if (_hasColliders) go.AddComponent<MeshCollider>();
         go.transform.position = new Vector3(x * _xSize * _xResolution, 0, z * _zSize * _zResolution);
         go.isStatic = true;
         
         //If you need to put anything else (tag, components, etc) on the tile, do it here. If it needs to change every time the LOD is changed, do it in the UpdateTile function.
+        go.tag = "Ground";
         
         WorldTile tile = new WorldTile();
+        if (_hasColliders) {
+            tile.meshCollider = go.AddComponent<MeshCollider>();
+            if (Math.Abs(x) < 2 && Math.Abs(z) < 2) tile.meshCollider.sharedMesh = msh;
+            else tile.meshCollider.enabled = false;
+        }
         tile.obj = go;
         tile.mesh = msh;
         tile.temperatureMap = temperatureMap;
@@ -299,6 +300,11 @@ public class LODGeneration : MonoBehaviour
         }
 
         targetMesh.colors = colors;
+    }
+
+    private void UpdateCollider(int index) {
+        _tilePool[index].meshCollider.enabled = true;
+        _tilePool[index].meshCollider.sharedMesh = _tilePool[index].mesh;
     }
 
     private static void UpdateMesh(Mesh targetMesh)
