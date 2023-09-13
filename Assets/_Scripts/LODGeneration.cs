@@ -33,6 +33,8 @@ public class LODGeneration : MonoBehaviour
     public int _seed = 0;
     
     public Material _material;
+    public Gradient _colorGradient;
+    public bool _useColorGradient;
     public AnimationCurve _easeCurve;
 
     public bool _hasColliders;
@@ -189,7 +191,8 @@ public class LODGeneration : MonoBehaviour
         Vector3[] vertexData = NoiseMaps.GenerateTerrain(x * _xSize * _xResolution + _seed, z * _zSize * _zResolution + _seed, _xSize / lodFactor, _zSize / lodFactor, _scale, _amplitude, _octaves, _easeCurve, _xResolution * lodFactor, _zResolution * lodFactor);
         msh.vertices = vertexData;
         WindTriangles(msh, lodFactor);
-        CalculateUVs(msh, lodFactor);
+        if (!_useColorGradient) CalculateUVs(msh, lodFactor);
+        else CalculateColors(msh, lodFactor);
         UpdateMesh(msh);
         float[] temperatureMap = NoiseMaps.GenerateTemperatureMap(vertexData, x * _xSize * _xResolution * _seed, z * _zSize * _zResolution * _seed, _xSize / lodFactor, _zSize / lodFactor, _scale / _temperatureScale, _easeCurve, _xResolution * lodFactor, _zResolution * lodFactor);
         float[] humidityMap = NoiseMaps.GenerateHumidityMap(vertexData, temperatureMap, x * _xSize * _xResolution / _seed, z * _zSize * _zResolution / _seed, _xSize / lodFactor, _zSize / lodFactor, _scale / _humidityScale, _easeCurve, _xResolution * lodFactor, _zResolution * lodFactor);
@@ -215,7 +218,8 @@ public class LODGeneration : MonoBehaviour
         _tilePool[index].temperatureMap = NoiseMaps.GenerateTemperatureMap(_tilePool[index].mesh.vertices, x * _xSize * _xResolution * _seed, z * _zSize * _zResolution * _seed, _xSize / lodFactor, _zSize / lodFactor, _scale / _temperatureScale, _easeCurve, _xResolution * lodFactor, _zResolution * lodFactor);
         _tilePool[index].humidityMap = NoiseMaps.GenerateHumidityMap(_tilePool[index].mesh.vertices, _tilePool[index].temperatureMap, x * _xSize * _xResolution / _seed, z * _zSize * _zResolution / _seed, _xSize / lodFactor, _zSize / lodFactor, _scale / _humidityScale, _easeCurve, _xResolution * lodFactor, _zResolution * lodFactor);
         WindTriangles(_tilePool[index].mesh, lodFactor);
-        CalculateUVs(_tilePool[index].mesh, lodFactor);
+        if (!_useColorGradient) CalculateUVs(_tilePool[index].mesh, lodFactor);
+        else CalculateColors(_tilePool[index].mesh, lodFactor);
         UpdateMesh(_tilePool[index].mesh);
         _tilePool[index].obj.transform.position = new Vector3(x * _xSize * _xResolution, 0, z * _zSize * _zResolution);
     }
@@ -257,6 +261,16 @@ public class LODGeneration : MonoBehaviour
         }
 
         targetMesh.uv = uvs;
+    }
+
+    private void CalculateColors(Mesh targetMesh, int lod) {
+        Vector3[] vertices = targetMesh.vertices;
+        Color[] colors = new Color[vertices.Length];
+        for (int i = 0; i < vertices.Length; i++) {
+            colors[i] = _colorGradient.Evaluate(vertices[i].y / (_amplitude * 2));
+        }
+
+        targetMesh.colors = colors;
     }
 
     private static void UpdateMesh(Mesh targetMesh)
