@@ -38,7 +38,7 @@ public class PlayerMovement : MonoBehaviour
   [Header("Controls")]
   [SerializeField] private float _mouseSensitivity = 30;
 
-  [SerializeField] private LODGeneration _procGen;
+  [SerializeField] private WorldGen _procGen;
   public enum MovementState
   {
     Walking,

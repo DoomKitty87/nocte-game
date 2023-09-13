@@ -354,7 +354,7 @@ MonoBehaviour:
   _airDrag: 0
   _groundCheckSphereSize: 0.1
   _mouseSensitivity: 30
-  _procGen: {fileID: 1194400074}
+  _procGen: {fileID: 1194400075}
   _moveState: 0
   _delayGroundCheckAfterJumpUpdates: 5
   _timeSinceLastSlide: 0
@@ -800,8 +800,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1194400072}
-  - component: {fileID: 1194400073}
-  - component: {fileID: 1194400074}
+  - component: {fileID: 1194400075}
   m_Layer: 0
   m_Name: Holder
   m_TagString: Untagged
@@ -824,57 +823,7 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1194400073
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1194400070}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7910fbfcfbb847c19225ebe2f3f0102b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  xSize: 32
-  zSize: 32
-  xResolution: 0.25
-  zResolution: 0.25
-  xTiles: 100
-  zTiles: 100
-  scale: 1000
-  amplitude: 50
-  octaves: 10
-  temperatureScale: 2
-  humidityScale: 1.5
-  seed: 0
-  material: {fileID: 2100000, guid: 5e148de6cdf2d164aa3e3f90ce8c852c, type: 2}
-  easeCurve:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 0
-      inSlope: 2
-      outSlope: 2
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0
-    - serializedVersion: 3
-      time: 1
-      value: 1
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
-  hasColliders: 0
---- !u!114 &1194400074
+--- !u!114 &1194400075
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -883,7 +832,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1194400070}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2b678b9bb4a0402897ec4362bb4390d7, type: 3}
+  m_Script: {fileID: 11500000, guid: efe1f3ff171a4053b2812f029aefd483, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   _xSize: 64
@@ -954,32 +903,7 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  _lodCurve:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 0
-      inSlope: 2
-      outSlope: 2
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0
-    - serializedVersion: 3
-      time: 1
-      value: 1
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
-  _maxLODDecrease: 0
-  _maxUpdatesPerFrame: 4
+  _maxUpdatesPerFrame: 2
   _hasColliders: 1
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
