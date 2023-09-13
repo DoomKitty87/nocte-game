@@ -195,6 +195,9 @@ public class LODGeneration : MonoBehaviour
         if (_hasColliders) go.AddComponent<MeshCollider>();
         go.transform.position = new Vector3(x * _xSize * _xResolution, 0, z * _zSize * _zResolution);
         go.isStatic = true;
+        
+        //If you need to put anything else (tag, components, etc) on the tile, do it here. If it needs to change every time the LOD is changed, do it in the UpdateTile function.
+        
         WorldTile tile = new WorldTile();
         tile.obj = go;
         tile.mesh = msh;
