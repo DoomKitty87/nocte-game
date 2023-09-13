@@ -189,6 +189,7 @@ public class LODGeneration : MonoBehaviour
         Vector3[] vertexData = NoiseMaps.GenerateTerrain(x * _xSize * _xResolution + _seed, z * _zSize * _zResolution + _seed, _xSize / lodFactor, _zSize / lodFactor, _scale, _amplitude, _octaves, _easeCurve, _xResolution * lodFactor, _zResolution * lodFactor);
         msh.vertices = vertexData;
         WindTriangles(msh, lodFactor);
+        CalculateUVs(msh, lodFactor);
         UpdateMesh(msh);
         float[] temperatureMap = NoiseMaps.GenerateTemperatureMap(vertexData, x * _xSize * _xResolution * _seed, z * _zSize * _zResolution * _seed, _xSize / lodFactor, _zSize / lodFactor, _scale / _temperatureScale, _easeCurve, _xResolution * lodFactor, _zResolution * lodFactor);
         float[] humidityMap = NoiseMaps.GenerateHumidityMap(vertexData, temperatureMap, x * _xSize * _xResolution / _seed, z * _zSize * _zResolution / _seed, _xSize / lodFactor, _zSize / lodFactor, _scale / _humidityScale, _easeCurve, _xResolution * lodFactor, _zResolution * lodFactor);
@@ -214,6 +215,7 @@ public class LODGeneration : MonoBehaviour
         _tilePool[index].temperatureMap = NoiseMaps.GenerateTemperatureMap(_tilePool[index].mesh.vertices, x * _xSize * _xResolution * _seed, z * _zSize * _zResolution * _seed, _xSize / lodFactor, _zSize / lodFactor, _scale / _temperatureScale, _easeCurve, _xResolution * lodFactor, _zResolution * lodFactor);
         _tilePool[index].humidityMap = NoiseMaps.GenerateHumidityMap(_tilePool[index].mesh.vertices, _tilePool[index].temperatureMap, x * _xSize * _xResolution / _seed, z * _zSize * _zResolution / _seed, _xSize / lodFactor, _zSize / lodFactor, _scale / _humidityScale, _easeCurve, _xResolution * lodFactor, _zResolution * lodFactor);
         WindTriangles(_tilePool[index].mesh, lodFactor);
+        CalculateUVs(_tilePool[index].mesh, lodFactor);
         UpdateMesh(_tilePool[index].mesh);
         _tilePool[index].obj.transform.position = new Vector3(x * _xSize * _xResolution, 0, z * _zSize * _zResolution);
     }
@@ -241,6 +243,20 @@ public class LODGeneration : MonoBehaviour
         }
 
         targetMesh.triangles = triangles;
+    }
+
+    private void CalculateUVs(Mesh targetMesh, int lod) {
+        int xSize = _xSize / lod + 1;
+        int zSize = _zSize / lod + 1;
+
+        Vector2[] uvs = new Vector2[xSize * zSize];
+
+        Vector3[] vertices = targetMesh.vertices;
+        for (int i = 0; i < vertices.Length; i++) {
+            uvs[i] = new Vector2(vertices[i].x / xSize, vertices[i].z / xSize);
+        }
+
+        targetMesh.uv = uvs;
     }
 
     private static void UpdateMesh(Mesh targetMesh)
