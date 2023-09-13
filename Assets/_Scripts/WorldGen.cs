@@ -296,6 +296,7 @@ public class WorldGen : MonoBehaviour
     }
 
     private void UpdateCollider(int index) {
+        if (_tilePool[index].meshCollider.enabled) return;
         _tilePool[index].meshCollider.enabled = true;
         _tilePool[index].meshCollider.sharedMesh = _tilePool[index].mesh;
     }
