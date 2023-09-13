@@ -19,10 +19,12 @@ public class PlayerMovement : MonoBehaviour
   [SerializeField] private string _groundTag = "Ground";
   [Header("Settings")]
   [SerializeField] private float _maxMoveSpeed = 6;
-  [SerializeField] private float _moveAccel = 2;
+  [SerializeField] private float _moveInitToMaxAccel = 0.1f;
+  [SerializeField] private float _maxMoveSpeedInit = 5;
+  [SerializeField] private float _moveInitAccel = 2;
   [SerializeField] private float _moveFriction = 0.5f;
   [SerializeField] private float _moveDrag = 5;
-  [FormerlySerializedAs("_maxDownwardsSnapAngle")] [SerializeField][Range(0, 180)] private float _maxDownwardsSlopeAngle = 45;
+  [SerializeField][Range(0, 180)] private float _maxDownwardsSlopeAngle = 45;
   [SerializeField] private float _slideSpeedMultiplier = 2;
   [SerializeField] private float _slideFriction = 0f;
   [SerializeField] private float _slideCooldownSeconds = 1;
@@ -52,6 +54,7 @@ public class PlayerMovement : MonoBehaviour
   [SerializeField] private int _delayGroundCheckAfterJumpUpdates = 8;
   private int _groundCheckDelay;
   [SerializeField] private float _timeSinceLastSlide = 0;
+  private Vector3 _lastInputVector;
 
   private Vector3 GetInputDirectionVector() {
     Vector3 direction = Vector3.zero;
@@ -86,6 +89,7 @@ public class PlayerMovement : MonoBehaviour
   private void Start() {
     Cursor.lockState = CursorLockMode.Locked;
     _groundCheckDelay = _delayGroundCheckAfterJumpUpdates;
+    _lastInputVector = Vector3.zero;
   }
   private void Update() {
     _xMouseMovementTransform.transform.Rotate(Vector3.up, Input.GetAxisRaw("Mouse X") * _mouseSensitivity * Time.deltaTime, Space.Self);
@@ -94,7 +98,7 @@ public class PlayerMovement : MonoBehaviour
       _timeSinceLastSlide += Time.deltaTime;
     }
 
-    _procGen.UpdatePlayerLoadedChunks(transform.position.x, transform.position.z);
+    // _procGen.UpdatePlayerLoadedChunks(transform.position.x, transform.position.z);
   }
   private void FixedUpdate() {
     if (_moveState == MovementState.Walking) { // ------------
@@ -120,18 +124,32 @@ public class PlayerMovement : MonoBehaviour
       else {
         _rigidbody.drag = _moveDrag;
         SetColliderFriction(_moveFriction, _colliderMaterial.staticFriction);
+        Vector3 input = GetInputDirectionVector();
+        float accelScaler;
+        // TODO: Acceleration doesn't increase speed smoothly to max by initToMaxAccel since it needs to overcome drag.
+        if (input == _lastInputVector && _rigidbody.velocity.magnitude >= _maxMoveSpeedInit) {
+          SetColliderFriction(0, _colliderMaterial.staticFriction);
+          accelScaler = _moveInitToMaxAccel;
+        }
+        else {
+          SetColliderFriction(_moveFriction, _colliderMaterial.staticFriction);
+          accelScaler = _moveInitAccel;
+        }
+        Vector3 accel = transform.TransformDirection(input) * accelScaler;
+        
         (Vector3 slopeGradeDirection, float slopeAngle) slopeOut = SlopeParallelDirAndAngle();
-        Vector3 accel = transform.TransformDirection(GetInputDirectionVector()) * _moveAccel;
         // Rotates acceleration vector by cross product of slope direction by slope angle; < 0.1 deg disabled to prevent weirdness
         if ((slopeOut.slopeAngle < _maxDownwardsSlopeAngle) && !(slopeOut.slopeAngle < 0.1f)) {
           Quaternion slopeRotation = Quaternion.AngleAxis(slopeOut.slopeAngle, Vector3.Cross(slopeOut.slopeGradeDirection, Vector3.down));
           accel = slopeRotation * accel;
         }
-        _rigidbody.AddForce(accel, ForceMode.VelocityChange);
         
+        _rigidbody.AddForce(accel, ForceMode.VelocityChange);
+
         if (_rigidbody.velocity.magnitude >= _maxMoveSpeed) {
           _rigidbody.velocity = _rigidbody.velocity.normalized * _maxMoveSpeed;
         }
+        _lastInputVector = input;
       }
       
     }
@@ -174,7 +192,7 @@ public class PlayerMovement : MonoBehaviour
         }
         else {
           _rigidbody.drag = _moveDrag;
-          SetColliderFriction(0, _colliderMaterial.staticFriction);
+          SetColliderFriction(0, 0);
           _rigidbody.velocity /= 2;
           _moveState = MovementState.Walking;
         }
@@ -207,7 +225,7 @@ public class PlayerMovement : MonoBehaviour
     Gizmos.DrawLine(hit.point, hit.point + hit.normal);
     (Vector3 slopeGradeDirection, float slopeAngle) slopeOut = SlopeParallelDirAndAngle();
     Gizmos.DrawLine(transformPosition, transformPosition + Vector3.Cross(slopeOut.slopeGradeDirection.normalized, Vector3.up));
-    Vector3 vel = transform.TransformDirection(GetInputDirectionVector()) * _moveAccel;
+    Vector3 vel = transform.TransformDirection(GetInputDirectionVector()) * _moveInitAccel;
     Quaternion slopeRotation = Quaternion.AngleAxis(slopeOut.slopeAngle, Vector3.Cross(slopeOut.slopeGradeDirection, Vector3.down));
     Gizmos.color = Color.magenta;
     Gizmos.DrawLine(transformPosition, transformPosition + slopeRotation * vel);
