@@ -807,7 +807,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 2147483647
   m_IsActive: 1
 --- !u!4 &1194400072
 Transform:
@@ -886,12 +886,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2b678b9bb4a0402897ec4362bb4390d7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _xSize: 32
-  _zSize: 32
+  _xSize: 64
+  _zSize: 64
   _xResolution: 0.25
   _zResolution: 0.25
-  _xTiles: 101
-  _zTiles: 101
+  _xTiles: 51
+  _zTiles: 51
   _scale: 1000
   _amplitude: 50
   _octaves: 10
@@ -979,6 +979,7 @@ MonoBehaviour:
     m_PostInfinity: 2
     m_RotationOrder: 4
   _maxLODDecrease: 0
+  _maxUpdatesPerFrame: 4
   _hasColliders: 1
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
