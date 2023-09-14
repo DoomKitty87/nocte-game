@@ -314,7 +314,9 @@ MonoBehaviour:
   _groundCheckOffset: {x: 0, y: -0.98, z: 0}
   _groundTag: Ground
   _maxMoveSpeed: 8
-  _moveAccel: 2
+  _moveInitToMaxAccel: 0.1
+  _maxMoveSpeedInit: 5
+  _moveInitAccel: 2
   _moveFriction: 0.5
   _moveDrag: 5
   _maxDownwardsSlopeAngle: 2.5
@@ -847,7 +849,7 @@ MonoBehaviour:
   _temperatureScale: 2
   _humidityScale: 1.5
   _seed: 0
-  _material: {fileID: 2100000, guid: 853d20181ae88ba47b1084b10a15569b, type: 2}
+  _material: {fileID: 2100000, guid: 8d530ffe6c4968843806085897955b9d, type: 2}
   _colorGradient:
     serializedVersion: 2
     key0: {r: 1, g: 1, b: 1, a: 1}
@@ -905,6 +907,15 @@ MonoBehaviour:
     m_RotationOrder: 4
   _maxUpdatesPerFrame: 2
   _hasColliders: 1
+  _computeShader: {fileID: 7200000, guid: 955b5c50ab4542688e99601dc273bf9c, type: 3}
+  _grassMesh: {fileID: 7482515421123071202, guid: 32f554346a65ae849bc2233780fe6162,
+    type: 3}
+  _grassMaterial: {fileID: 2100000, guid: b5bb5b8ec6934244a87c424ffd9fefe5, type: 2}
+  _minBladeHeight: 1
+  _maxBladeHeight: 1
+  _minOffset: 0
+  _maxOffset: 0
+  _grassScale: 1
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

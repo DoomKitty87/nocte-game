@@ -7,6 +7,10 @@ Shader "Custom/Grass"
     _BottomColor("Bottom Color", Color) = (1, 1, 1, 1)
     _TranslucentGain("Translucent Gain", Range(0, 1)) = 0.5
     _BendRotationRandom("Bend Rotation Random", Range(0, 1)) = 0.2
+    _BladeWidth("Blade Width", Float) = 0.05
+    _BladeWidthRandom("Blade Width Random", Float) = 0.02
+    _BladeHeight("Blade Height", Float) = 0.5
+    _BladeHeightRandom("Blade Height Random", Float) = 0.3
   }
 
   CGINCLUDE
@@ -14,10 +18,15 @@ Shader "Custom/Grass"
   #include "Autolight.cginc"
 
   float _BendRotationRandom;
+  float _BladeHeight;
+  float _BladeHeightRandom;
+  float _BladeWidth;
+  float _BladeWidthRandom;
 
   struct geometryOutput
   {
     float4 pos : SV_POSITION;
+    float2 uv : TEXCOORD0;
   };
 
   struct vertexInput
@@ -42,31 +51,6 @@ Shader "Custom/Grass"
     return o;
   }
 
-  [maxvertexcount(3)]
-  void geo(triangle vertexOutput IN[3] : SV_POSITION, inout TriangleStream<geometryOutput> triStream)
-  {
-    float3 vNormal = IN[0].normal;
-    float4 vTangent = IN[0].tangent;
-    float3 vBinormal = cross(vNormal, vTangent) * vTangent.w;
-
-    float3x3 tangentToLocal = float3x3(
-      vTangent.x, vBinormal.x, vNormal.x,
-      vTangent.y, vBinormal.y, vNormal.y,
-      vtangent.z, vBinormal.z, vNormal.z
-    );
-
-    float3x3 facingRotationMatrix = AngleAxis3x3(rand(pos) * UNITY_TWO_PI, float3(0, 0, 1));
-
-    float3x3 transformationMatrix = mul(tangentToLocal, facingRotationMatrix);
-
-    float3 pos = IN[0].vertex;
-
-    geometryOutput o;
-    triStream.append(VertexOutput(pos + mul(transformationMatrix, float3(0.5, 0, 0)), float2(0, 0)));
-    triStream.append(VertexOutput(pos + mul(transformationMatrix, float3(-0.5, 0, 0)), float2(1, 0)));
-    triStream.append(VertexOutput(pos + mul(transformationMatrix, float3(0, 0, 1)), float2(0.5, 1)));
-  }
-
   float rand(float3 co)
   {
     return frac(sin(dot(co.xyz, float3(12.9898, 78.233, 53.539))) * 43758.5453);
@@ -89,6 +73,36 @@ Shader "Custom/Grass"
     );
   }
 
+  [maxvertexcount(3)]
+  void geo(triangle vertexOutput IN[3] : SV_POSITION, inout TriangleStream<geometryOutput> triStream)
+  {
+    float3 vNormal = IN[0].normal;
+    float4 vTangent = IN[0].tangent;
+    float3 vBinormal = cross(vNormal, vTangent) * vTangent.w;
+
+    float3 pos = IN[0].vertex;
+
+    float3x3 tangentToLocal = float3x3(
+      vTangent.x, vBinormal.x, vNormal.x,
+      vTangent.y, vBinormal.y, vNormal.y,
+      vTangent.z, vBinormal.z, vNormal.z
+    );
+
+    float3x3 facingRotationMatrix = AngleAxis3x3(rand(pos) * UNITY_TWO_PI, float3(0, 0, 1));
+
+    float3x3 bendRotationMatrix = AngleAxis3x3(rand(pos.zzx) * _BendRotationRandom * UNITY_PI * 0.5, float3(-1, 0, 0));
+    
+    float3x3 transformationMatrix = mul(mul(tangentToLocal, facingRotationMatrix), bendRotationMatrix);
+
+    float height = (rand(pos.zyx) * 2 - 1) * _BladeHeightRandom + _BladeHeight;
+    float width = (rand(pos.xzy) * 2 - 1) * _BladeWidthRandom + _BladeWidth;
+    
+    geometryOutput o;
+    triStream.Append(VertexOutput(pos + mul(transformationMatrix, float3(width, 0, 0)), float2(0, 0)));
+    triStream.Append(VertexOutput(pos + mul(transformationMatrix, float3(-width, 0, 0)), float2(1, 0)));
+    triStream.Append(VertexOutput(pos + mul(transformationMatrix, float3(0, 0, height)), float2(0.5, 1)));
+  }
+
   vertexOutput vert(vertexInput v)
   {
     vertexOutput o;
@@ -109,6 +123,7 @@ Shader "Custom/Grass"
         {
           "RenderType" = "Opaque"
           "LightMode" = "ForwardBase"
+          "RenderPipeline" = "HighDefinitionRenderPipeline"
         }
 
         CGPROGRAM
@@ -122,7 +137,7 @@ Shader "Custom/Grass"
         float4 _BottomColor;
         float _TranslucentGain;
 
-        float4 frag (geometryOutput i, fixed facing : VFACE)
+        float4 frag (geometryOutput i, fixed facing : VFACE) : SV_Target
         {
           return lerp(_BottomColor, _TopColor, i.uv.y);
         }
