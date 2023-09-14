@@ -1,6 +1,7 @@
 ﻿using System;
 using UnityEngine;
 using System.Collections.Generic;
+
 public class WorldGen : MonoBehaviour
 {
     private struct WorldTile
@@ -41,6 +42,9 @@ public class WorldGen : MonoBehaviour
     public int _maxUpdatesPerFrame = 5;
 
     public bool _hasColliders;
+
+    public GameObject _scatterMesh;
+    public float _scatterDensity = 0.05f;
 
     private WorldTile[] _tilePool;
     private int[,] _tilePositions;
@@ -209,11 +213,10 @@ public class WorldGen : MonoBehaviour
         Vector3[] vertexData = NoiseMaps.GenerateTerrain(x * _xSize * _xResolution + _seed, z * _zSize * _zResolution + _seed, _xSize, _zSize, _scale, _amplitude, _octaves, _easeCurve, _xResolution, _zResolution);
         msh.vertices = vertexData;
         WindTriangles(msh);
-        if (!_useColorGradient) CalculateUVs(msh);
-        else CalculateColors(msh);
         UpdateMesh(msh);
-        float[] temperatureMap = NoiseMaps.GenerateTemperatureMap(vertexData, x * _xSize * _xResolution * _seed, z * _zSize * _zResolution * _seed, _xSize, _zSize, _scale / _temperatureScale, _easeCurve, _xResolution, _zResolution);
-        float[] humidityMap = NoiseMaps.GenerateHumidityMap(vertexData, temperatureMap, x * _xSize * _xResolution / _seed, z * _zSize * _zResolution / _seed, _xSize, _zSize, _scale / _humidityScale, _easeCurve, _xResolution, _zResolution);
+        
+        float[] temperatureMap = NoiseMaps.GenerateTemperatureMap(vertexData, x * _xSize * _xResolution + (_seed * 2), z * _zSize * _zResolution + (_seed * 2), _xSize, _zSize, _scale / _temperatureScale, _easeCurve, _xResolution, _zResolution);
+        float[] humidityMap = NoiseMaps.GenerateHumidityMap(vertexData, temperatureMap, x * _xSize * _xResolution + (_seed * 0.5f), z * _zSize * _zResolution + (_seed * 0.5f), _xSize, _zSize, _scale / _humidityScale, _easeCurve, _xResolution, _zResolution);
         go.transform.position = new Vector3(x * _xSize * _xResolution, 0, z * _zSize * _zResolution);
         go.isStatic = true;
         
@@ -233,6 +236,9 @@ public class WorldGen : MonoBehaviour
         tile.x = x;
         tile.z = z;
         _tilePool[index] = tile;
+        if (!_useColorGradient) CalculateUVs(msh);
+        else CalculateColors(index);
+        //ScatterObjects(msh, _scatterMesh, _scatterDensity, index);
         _tilePositions[index / _zTiles, index % _zTiles] = index;
     }
 
@@ -253,12 +259,13 @@ public class WorldGen : MonoBehaviour
         int z = _tilePool[index].z;
         _tilePool[index].mesh.Clear();
         _tilePool[index].mesh.vertices = NoiseMaps.GenerateTerrain(x * _xSize * _xResolution + _seed, z * _zSize * _zResolution + _seed, _xSize, _zSize, _scale, _amplitude, _octaves, _easeCurve, _xResolution, _zResolution);
-        _tilePool[index].temperatureMap = NoiseMaps.GenerateTemperatureMap(_tilePool[index].mesh.vertices, x * _xSize * _xResolution * _seed, z * _zSize * _zResolution * _seed, _xSize, _zSize, _scale / _temperatureScale, _easeCurve, _xResolution, _zResolution);
-        _tilePool[index].humidityMap = NoiseMaps.GenerateHumidityMap(_tilePool[index].mesh.vertices, _tilePool[index].temperatureMap, x * _xSize * _xResolution / _seed, z * _zSize * _zResolution / _seed, _xSize, _zSize, _scale / _humidityScale, _easeCurve, _xResolution, _zResolution);
+        _tilePool[index].temperatureMap = NoiseMaps.GenerateTemperatureMap(_tilePool[index].mesh.vertices, x * _xSize * _xResolution + (_seed * 2), z * _zSize * _zResolution + (_seed * 2), _xSize, _zSize, _scale / _temperatureScale, _easeCurve, _xResolution, _zResolution);
+        _tilePool[index].humidityMap = NoiseMaps.GenerateHumidityMap(_tilePool[index].mesh.vertices, _tilePool[index].temperatureMap, x * _xSize * _xResolution + (_seed * 0.5f), z * _zSize * _zResolution + (_seed * 0.5f), _xSize, _zSize, _scale / _humidityScale, _easeCurve, _xResolution, _zResolution);
         WindTriangles(_tilePool[index].mesh);
-        if (!_useColorGradient) CalculateUVs(_tilePool[index].mesh);
-        else CalculateColors(_tilePool[index].mesh);
         UpdateMesh(_tilePool[index].mesh);
+        if (!_useColorGradient) CalculateUVs(_tilePool[index].mesh);
+        else CalculateColors(index);
+        //ScatterObjects(_tilePool[index].mesh, _scatterMesh, _scatterDensity, index);
         _tilePool[index].obj.transform.position = new Vector3(x * _xSize * _xResolution, 0, z * _zSize * _zResolution);
     }
 
@@ -299,14 +306,23 @@ public class WorldGen : MonoBehaviour
         targetMesh.uv = uvs;
     }
 
-    private void CalculateColors(Mesh targetMesh) {
-        Vector3[] vertices = targetMesh.vertices;
-        Color[] colors = new Color[vertices.Length];
-        for (int i = 0; i < vertices.Length; i++) {
-            colors[i] = _colorGradient.Evaluate(vertices[i].y / (_amplitude * 2));
+    private void CalculateColors(int index) {
+        Color[] colors = new Color[_tilePool[index].temperatureMap.Length];
+        for (int i = 0; i < _tilePool[index].temperatureMap.Length; i++) {
+            colors[i] = _colorGradient.Evaluate(_tilePool[index].temperatureMap[i]);
         }
 
-        targetMesh.colors = colors;
+        _tilePool[index].mesh.colors = colors;
+    }
+
+    private void ScatterObjects(Mesh targetMesh, GameObject toScatter, float density, int index) {
+        Vector3[] vertices = targetMesh.vertices;
+        List<Vector2> points = PoissonDisk.GeneratePoints(1 / density, new Vector2(_xSize, _zSize));
+        for (int i = 0; i < points.Count; i++) {
+            Vector3 vertex = vertices[(int)points[i].x + (int)points[i].y * _xSize];
+            GameObject go = Instantiate(toScatter, new Vector3(vertex.x + (_tilePool[index].x * _xSize * _xResolution), vertex.y, vertex.z + (_tilePool[index].z * _zSize * _zResolution)), Quaternion.identity);
+            go.transform.parent = transform;
+        }
     }
 
     private void UpdateCollider(int index) {

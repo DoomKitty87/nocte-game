@@ -846,14 +846,14 @@ MonoBehaviour:
   _scale: 1000
   _amplitude: 50
   _octaves: 10
-  _temperatureScale: 2
+  _temperatureScale: 0.5
   _humidityScale: 1.5
   _seed: 0
-  _material: {fileID: 2100000, guid: 8d530ffe6c4968843806085897955b9d, type: 2}
+  _material: {fileID: 2100000, guid: a7c32a0ac34abb6468aa79eb35c12775, type: 2}
   _colorGradient:
     serializedVersion: 2
-    key0: {r: 1, g: 1, b: 1, a: 1}
-    key1: {r: 1, g: 1, b: 1, a: 1}
+    key0: {r: 1, g: 0, b: 0, a: 1}
+    key1: {r: 0.028004408, g: 1, b: 0, a: 1}
     key2: {r: 0, g: 0, b: 0, a: 0}
     key3: {r: 0, g: 0, b: 0, a: 0}
     key4: {r: 0, g: 0, b: 0, a: 0}
@@ -880,7 +880,7 @@ MonoBehaviour:
     m_ColorSpace: -1
     m_NumColorKeys: 2
     m_NumAlphaKeys: 2
-  _useColorGradient: 0
+  _useColorGradient: 1
   _easeCurve:
     serializedVersion: 2
     m_Curve:
@@ -907,15 +907,9 @@ MonoBehaviour:
     m_RotationOrder: 4
   _maxUpdatesPerFrame: 2
   _hasColliders: 1
-  _computeShader: {fileID: 7200000, guid: 955b5c50ab4542688e99601dc273bf9c, type: 3}
-  _grassMesh: {fileID: 7482515421123071202, guid: 32f554346a65ae849bc2233780fe6162,
+  _scatterMesh: {fileID: 9082107728382147507, guid: b692e1d72bc75c24da12cca50106e45b,
     type: 3}
-  _grassMaterial: {fileID: 2100000, guid: b5bb5b8ec6934244a87c424ffd9fefe5, type: 2}
-  _minBladeHeight: 1
-  _maxBladeHeight: 1
-  _minOffset: 0
-  _maxOffset: 0
-  _grassScale: 1
+  _scatterDensity: 0.025
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
