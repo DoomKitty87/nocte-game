@@ -49,6 +49,7 @@ public class WorldGen : MonoBehaviour
     private int _lastPlayerChunkZ;
     
     private List<int> _updateQueue = new List<int>();
+    private List<int[]> _generateQueue = new List<int[]>();
 
     public void UpdatePlayerLoadedChunks(float playerX, float playerZ)
     {
@@ -170,21 +171,27 @@ public class WorldGen : MonoBehaviour
 
     private void Update() {
         for (int i = 0; i < _maxUpdatesPerFrame; i++) {
-            if (_updateQueue.Count > 0) {
+            if (_updateQueue.Count > 0 && _generateQueue.Count == 0) {
                 UpdateTile(_updateQueue[0]);
                 _updateQueue.RemoveAt(0);
             }
+            else if (_generateQueue.Count > 0) {
+                GenerateTile(_generateQueue[0][0], _generateQueue[0][1], _generateQueue[0][2]);
+                _generateQueue.RemoveAt(0);
+                if (_generateQueue.Count == 0) Time.timeScale = 1f;
+            }
+            else break;
         }
     }
     
-    private void SetupPool()
-    {
+    private void SetupPool() {
+        Time.timeScale = 0f;
         _tilePool = new WorldTile[_xTiles * _zTiles];
         _tilePositions = new int[_xTiles, _zTiles];
         for (int x = -(_xTiles - 1) / 2, i = 0; x <= (_xTiles - 1) / 2; x++)
         {
             for (int z = -(_zTiles - 1) / 2; z <= (_zTiles - 1) / 2; z++) {
-                GenerateTile(x, z, i);
+                QueueTileGen(x, z, i);
                 i++;
             }
         }
@@ -232,6 +239,13 @@ public class WorldGen : MonoBehaviour
     private void QueueTileUpdate(int index) {
         _updateQueue.Add(index);
     }
+
+    private void QueueTileGen(int x, int z, int index) {
+        _generateQueue.Add(new int[] {
+            x, z, index
+        }); 
+    } 
+
     
     //Regenerate given tile based on an LOD parameter.
     private void UpdateTile(int index) {
