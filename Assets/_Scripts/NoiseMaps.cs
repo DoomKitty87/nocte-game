@@ -107,7 +107,7 @@ public static class NoiseMaps
         
         for (int i = 0; i < temperatureMap.Length; i++)
         {
-            temperatureMap[i] = easeCurve.Evaluate(heightMap[i].y) * jobResult[i];
+            temperatureMap[i] = jobResult[i] / (1 + easeCurve.Evaluate(heightMap[i].y));
         }
         
         jobResult.Dispose();
