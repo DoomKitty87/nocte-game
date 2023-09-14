@@ -8,37 +8,47 @@ using UnityEngine.Serialization;
 //       player object, highly configurable
 // ===============================================================
 [RequireComponent(typeof(Rigidbody))]
-public class PlayerMovement : MonoBehaviour
+public class Movement : MonoBehaviour
 {
   [Header("References")]
   [SerializeField] private Rigidbody _rigidbody;
   [SerializeField] private PhysicMaterial _colliderMaterial;
-  [SerializeField] private Transform _xMouseMovementTransform;
-  [SerializeField] private Transform _yMouseMovementTransform;
   [SerializeField] private Vector3 _groundCheckOffset;
   [SerializeField] private string _groundTag = "Ground";
+
+  [Header("Script Interfaces")] 
+  [SerializeField] private Vector3 _inputVector;
+  public void SetInputVector(Vector3 inputVector) {
+    _inputVector = inputVector.normalized;
+  }
+  [SerializeField] private bool _jumpInput;
+  [SerializeField] private bool _slideInput;
+  public void SetBoolInputs(bool jumpInput, bool slideInput) {
+    _jumpInput = jumpInput;
+    _slideInput = slideInput;
+  }
+  
   [Header("Settings")]
-  [SerializeField] private float _maxMoveSpeed = 6;
-  [SerializeField] private float _moveInitToMaxAccel = 0.1f;
+  [SerializeField] private float _maxMoveSpeed = 10;
+  [SerializeField] private float _moveInitToMaxAccel = 1;
   [SerializeField] private float _maxMoveSpeedInit = 5;
   [SerializeField] private float _moveInitAccel = 2;
   [SerializeField] private float _moveFriction = 0.5f;
   [SerializeField] private float _moveDrag = 5;
   [SerializeField][Range(0, 180)] private float _maxDownwardsSlopeAngle = 45;
   [SerializeField] private float _slideSpeedMultiplier = 2;
-  [SerializeField] private float _slideFriction = 0f;
+  [SerializeField] private float _slideFriction = 0;
   [SerializeField] private float _slideCooldownSeconds = 1;
   [SerializeField] private float _slideForceExitSpeed = 0.1f;
   [SerializeField] private float _slideExitSpeedMultiplier = 0.5f;
   [SerializeField] private float _slideDrag = 0.1f;
   [SerializeField] private float _jumpForce = 8;
-  [SerializeField] private float _jumpMaxMoveSpeed = 6;
+  [SerializeField] private float _jumpMaxMoveSpeed = 8;
   [SerializeField] private AnimationCurve _jumpMoveAccelCurve = AnimationCurve.EaseInOut(0, 1, 1, 0.1f);
   [SerializeField] private float _jumpMoveAccelMultiplier = 2;
   [SerializeField] private float _airDrag = 0;
   [SerializeField] private float _groundCheckSphereSize = 0.1f;
-  [Header("Controls")]
-  [SerializeField] private float _mouseSensitivity = 30;
+  
 
   public enum MovementState
   {
@@ -47,25 +57,15 @@ public class PlayerMovement : MonoBehaviour
     Sliding,
     Falling,
   }
-  [Header("Other")]
   public MovementState _moveState;
   
+  [Header("Other")]
   [SerializeField] private WorldGen _procGen;
   [SerializeField] private int _delayGroundCheckAfterJumpUpdates = 8;
   private int _groundCheckDelay;
   [SerializeField] private float _timeSinceLastSlide = 0;
   private Vector3 _lastInputVector;
-
-  private Vector3 GetInputDirectionVector() {
-    Vector3 direction = Vector3.zero;
-    if (Input.GetAxisRaw("Horizontal") != 0) {
-      direction.x = Input.GetAxisRaw("Horizontal");
-    }
-    if (Input.GetAxisRaw("Vertical") != 0) {
-      direction.z = Input.GetAxisRaw("Vertical");
-    }
-    return direction.normalized;
-  }
+  
   private void SetColliderFriction(float dynamicValue, float staticValue) {
     _colliderMaterial.dynamicFriction = dynamicValue;
     _colliderMaterial.staticFriction = staticValue;
@@ -90,10 +90,12 @@ public class PlayerMovement : MonoBehaviour
     Cursor.lockState = CursorLockMode.Locked;
     _groundCheckDelay = _delayGroundCheckAfterJumpUpdates;
     _lastInputVector = Vector3.zero;
+    _inputVector = Vector3.zero;
+    _jumpInput = false;
+    _slideInput = false;
   }
   private void Update() {
-    _xMouseMovementTransform.transform.Rotate(Vector3.up, Input.GetAxisRaw("Mouse X") * _mouseSensitivity * Time.deltaTime, Space.Self);
-    _yMouseMovementTransform.transform.Rotate(Vector3.left, Input.GetAxisRaw("Mouse Y") * _mouseSensitivity * Time.deltaTime, Space.Self);
+    
     if (_moveState != MovementState.Sliding) {
       _timeSinceLastSlide += Time.deltaTime;
     }
@@ -106,12 +108,12 @@ public class PlayerMovement : MonoBehaviour
       if (!Grounded()) {
         _moveState = MovementState.Falling;
       }
-      else if (Grounded() && Input.GetAxisRaw("Jump") > 0) {
+      else if (Grounded() && _jumpInput) {
         _rigidbody.AddForce(Vector3.up * _jumpForce, ForceMode.VelocityChange);
         _groundCheckDelay = _delayGroundCheckAfterJumpUpdates;
         _moveState = MovementState.Falling;
       }
-      else if (Grounded() && Input.GetAxisRaw("Crouch") > 0 && _timeSinceLastSlide > _slideCooldownSeconds) {
+      else if (Grounded() && _slideInput && _timeSinceLastSlide > _slideCooldownSeconds) {
         _rigidbody.drag = _slideDrag;
         SetColliderFriction(_slideFriction, _colliderMaterial.staticFriction);
         // TODO: When landing from a jump, sliding causes stupid movement speed, still an issue
@@ -124,7 +126,7 @@ public class PlayerMovement : MonoBehaviour
       else {
         _rigidbody.drag = _moveDrag;
         SetColliderFriction(_moveFriction, _colliderMaterial.staticFriction);
-        Vector3 input = GetInputDirectionVector();
+        Vector3 input = _inputVector;
         float accelScaler;
         // TODO: Acceleration doesn't increase speed smoothly to max by initToMaxAccel since it needs to overcome drag.
         if (input == _lastInputVector && _rigidbody.velocity.magnitude >= _maxMoveSpeedInit) {
@@ -160,17 +162,17 @@ public class PlayerMovement : MonoBehaviour
     }
     if (_moveState == MovementState.Sliding) { // ----------
       
-      if (!Grounded() && Input.GetAxisRaw("Crouch") == 0) {
+      if (!Grounded() && !_slideInput) {
         _moveState = MovementState.Falling;
       }
-      else if (Grounded() && Input.GetAxisRaw("Jump") > 0) {
+      else if (Grounded() && _jumpInput) {
         _rigidbody.AddForce(Vector3.up * _jumpForce, ForceMode.VelocityChange);
         _groundCheckDelay = _delayGroundCheckAfterJumpUpdates;
         _moveState = MovementState.Falling;
       }
       
       else {
-        if (Input.GetAxisRaw("Crouch") == 0) {
+        if (!_slideInput) {
           Vector3 velocity = _rigidbody.velocity;
           _rigidbody.velocity = velocity.normalized * velocity.magnitude / _slideExitSpeedMultiplier;
           _moveState = MovementState.Walking;
@@ -184,7 +186,7 @@ public class PlayerMovement : MonoBehaviour
     if (_moveState == MovementState.Falling) { // -----------
       
       if (Grounded() && _groundCheckDelay <= 0) {
-        if (Input.GetAxisRaw("Crouch") > 0) {
+        if (_slideInput) {
           _rigidbody.drag = _slideDrag;
           SetColliderFriction(_slideFriction, _colliderMaterial.staticFriction);
           _rigidbody.velocity *= _slideSpeedMultiplier;
@@ -203,7 +205,7 @@ public class PlayerMovement : MonoBehaviour
         _rigidbody.drag = _airDrag;
         SetColliderFriction(_moveFriction, _colliderMaterial.staticFriction);
         Vector3 velocityXZ = new Vector3(_rigidbody.velocity.x, 0, _rigidbody.velocity.z);
-        _rigidbody.AddForce(transform.TransformDirection(GetInputDirectionVector()) * (_jumpMoveAccelCurve.Evaluate(velocityXZ.magnitude / _jumpMaxMoveSpeed) * _jumpMoveAccelMultiplier), ForceMode.VelocityChange);
+        _rigidbody.AddForce(transform.TransformDirection(_inputVector) * (_jumpMoveAccelCurve.Evaluate(velocityXZ.magnitude / _jumpMaxMoveSpeed) * _jumpMoveAccelMultiplier), ForceMode.VelocityChange);
         if (velocityXZ.magnitude >= _jumpMaxMoveSpeed) {
           velocityXZ = velocityXZ.normalized * _jumpMaxMoveSpeed;
           _rigidbody.velocity = new Vector3(velocityXZ.x, _rigidbody.velocity.y, velocityXZ.z);
@@ -225,7 +227,7 @@ public class PlayerMovement : MonoBehaviour
     Gizmos.DrawLine(hit.point, hit.point + hit.normal);
     (Vector3 slopeGradeDirection, float slopeAngle) slopeOut = SlopeParallelDirAndAngle();
     Gizmos.DrawLine(transformPosition, transformPosition + Vector3.Cross(slopeOut.slopeGradeDirection.normalized, Vector3.up));
-    Vector3 vel = transform.TransformDirection(GetInputDirectionVector()) * _moveInitAccel;
+    Vector3 vel = transform.TransformDirection(_inputVector) * _moveInitAccel;
     Quaternion slopeRotation = Quaternion.AngleAxis(slopeOut.slopeAngle, Vector3.Cross(slopeOut.slopeGradeDirection, Vector3.down));
     Gizmos.color = Color.magenta;
     Gizmos.DrawLine(transformPosition, transformPosition + slopeRotation * vel);
