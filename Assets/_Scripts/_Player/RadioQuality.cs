@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Audio;
 
 public class RadioQuality : MonoBehaviour
 {
@@ -9,11 +10,10 @@ public class RadioQuality : MonoBehaviour
 
   private void Start() {
     _audioSource = GetComponent<AudioSource>();
-    _audioSource.output =_audioMixer;
   }
 
   private void Update() {
-    float distance = Vector2.Magnitude(transform.position.xz);
+    float distance = new Vector2(transform.position.x, transform.position.z).magnitude;
     bool isBlocked = Physics.Raycast(Vector3.up * 10, transform.position.normalized, distance);
     if (isBlocked) distance *= 5;
     float distortionLevel = Mathf.Min(distance / 100f, 1);
