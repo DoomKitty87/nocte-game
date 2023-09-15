@@ -63,6 +63,8 @@ public class WorldGen : MonoBehaviour
     
     private List<int> _updateQueue = new List<int>();
     private List<int[]> _generateQueue = new List<int[]>();
+
+    private Texture2D _wind;
     
     public Material _material2;
     public Mesh _mesh;
@@ -196,6 +198,7 @@ public class WorldGen : MonoBehaviour
                             if (normals[i].y < 0.6f) continue;
                             GrassData gd = new GrassData();
                             gd.position = new Vector4(vertexData[i].x + (_tilePool[_tilePositions[x, z]].x * _xSize * _xResolution), vertexData[i].y, vertexData[i].z + (_tilePool[_tilePositions[x, z]].z * _zSize * _zResolution), 0);
+                            gd.uv = new Vector2(gd.position.x / (_xSize * _xResolution * _xTiles), gd.position.z / (_zSize * _zResolution * _zTiles));
                             _grassData.Add(gd);
                         }
                     }
@@ -215,6 +218,14 @@ public class WorldGen : MonoBehaviour
         _commandData = new GraphicsBuffer.IndirectDrawIndexedArgs[_commandCount];
         _grassData = new List<GrassData>();
         _positionsBuffer = new ComputeBuffer((_xSize + 1) * (_zSize + 1) * _xTiles * _zTiles, sizeof(float) * 7, ComputeBufferType.Default);
+        _wind = new Texture2D(1024, 1024);
+        for (int x = 0; x < 1024; x++) {
+            for (int y = 0; y < 1024; y++) {
+                float xyVal = x * 0.05f + y * 0.1f + 2.3f * Unity.Mathematics.noise.snoise(new Unity.Mathematics.float2(x * 2.3f, y * 2.3f));
+                float val = (Mathf.Sin(xyVal + 1.5f)) * 1.5f; 
+                _wind.SetPixel(x, y, new Color(val, val, val, 1));
+            }
+        }
     }
 
     private void Update() {
@@ -299,6 +310,7 @@ public class WorldGen : MonoBehaviour
                 if (normals[i].y < 0.6f) continue;
                 GrassData gd = new GrassData();
                 gd.position = new Vector4(vertexData[i].x + (x * _xSize * _xResolution), vertexData[i].y, vertexData[i].z + (z * _zSize * _zResolution), 0);
+                gd.uv = new Vector2(Mathf.Abs(gd.position.x / (_xSize * _xResolution * _xTiles)), Mathf.Abs(gd.position.z / (_zSize * _zResolution * _zTiles)));
                 _grassData.Add(gd);
             }
         }
@@ -340,6 +352,7 @@ public class WorldGen : MonoBehaviour
                 if (normals[i].y < 0.6f) continue;
                 GrassData gd = new GrassData();
                 gd.position = new Vector4(vertexData[i].x + (_tilePool[index].x * _xSize * _xResolution), vertexData[i].y, vertexData[i].z + (_tilePool[index].z * _zSize * _zResolution), 0);
+                gd.uv = new Vector2(gd.position.x / (_xSize * _xResolution * _xTiles), gd.position.z / (_zSize * _zResolution * _zTiles));
                 _grassData.Add(gd);
             }
         }
@@ -354,6 +367,7 @@ public class WorldGen : MonoBehaviour
         _rp.matProps = new MaterialPropertyBlock();
         _rp.matProps.SetMatrix("_ObjectToWorld", Matrix4x4.Translate(new Vector3(0, 0, 0)));
         _rp.matProps.SetBuffer("_PositionsBuffer", _positionsBuffer);
+        _rp.matProps.SetTexture("_Wind", _wind);
         _commandData[0].indexCountPerInstance = _mesh.GetIndexCount(0);
         _commandData[0].instanceCount = (uint) _grassData.Count;
         _commandData[1].indexCountPerInstance = _mesh.GetIndexCount(0);
