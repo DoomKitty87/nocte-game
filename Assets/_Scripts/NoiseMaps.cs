@@ -87,7 +87,7 @@ public static class NoiseMaps
         
         float[] temperatureMap = new float[heightMap.Length];
         
-        var jobResult = new NativeArray<float>((xSize + 1) * (xSize + 1), Allocator.TempJob);
+        var jobResult = new NativeArray<float>((xSize + 1) * (zSize + 1), Allocator.TempJob);
 
         var job = new SimplexNoiseJob()
         {

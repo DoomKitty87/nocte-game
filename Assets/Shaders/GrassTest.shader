@@ -1,12 +1,15 @@
           Shader "ExampleShader"
 {
+    Properties
+    {
+        _Color("Main Color", Color) = (1, 1, 1, 1)
+    }
     SubShader
     {
         Pass
         {
+            Cull Off
             CGPROGRAM
-// Upgrade NOTE: excluded shader from DX11, OpenGL ES 2.0 because it uses unsized arrays
-#pragma exclude_renderers d3d11 gles
             #pragma vertex vert
             #pragma fragment frag
 
@@ -21,7 +24,9 @@
             };
 
             uniform float4x4 _ObjectToWorld;
-            uniform float _ArrayPositions[9];
+            uniform StructuredBuffer <float> _PositionsBuffer;
+
+            float4 _Color;
 
             v2f vert(appdata_base v, uint svInstanceID : SV_InstanceID)
             {
@@ -29,9 +34,9 @@
                 v2f o;
                 uint cmdID = GetCommandID(0);
                 uint instanceID = GetIndirectInstanceID(svInstanceID);
-                float4 wpos = mul(_ObjectToWorld, v.vertex + float4(_ArrayPositions[instanceID * 3], 0, _ArrayPositions[instanceID * 3 + 2], 0));
+                float4 wpos = mul(_ObjectToWorld, v.vertex + float4(_PositionsBuffer[instanceID * 3], _PositionsBuffer[instanceID * 3 + 1], _PositionsBuffer[instanceID * 3 + 2], 0));
                 o.pos = mul(UNITY_MATRIX_VP, wpos);
-                o.color = float4(cmdID & 1 ? 0.0f : 1.0f, cmdID & 1 ? 1.0f : 0.0f, instanceID / float(GetIndirectInstanceCount()), 0.0f);
+                o.color = _Color;
                 return o;
             }
 

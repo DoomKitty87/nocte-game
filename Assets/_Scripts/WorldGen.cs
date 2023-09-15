@@ -54,6 +54,21 @@ public class WorldGen : MonoBehaviour
     
     private List<int> _updateQueue = new List<int>();
     private List<int[]> _generateQueue = new List<int[]>();
+    
+    public Material _material2;
+    public Mesh _mesh;
+
+    public int _maxGrassDistChunks = 10;
+
+    GraphicsBuffer _commandBuf;
+    GraphicsBuffer.IndirectDrawIndexedArgs[] _commandData;
+    private ComputeBuffer _positionsBuffer;
+    const int _commandCount = 2;
+    private List<float> _positions;
+    private RenderParams _rp;
+
+    private float _playerX, _playerZ;
+    private int _playerXChunkScale, _playerZChunkScale;
 
     public void UpdatePlayerLoadedChunks(float playerX, float playerZ)
     {
@@ -62,6 +77,11 @@ public class WorldGen : MonoBehaviour
 
         int deltaX = playerXChunkScale - _lastPlayerChunkX;
         int deltaZ = playerZChunkScale - _lastPlayerChunkZ;
+
+        _playerX = playerX;
+        _playerZ = playerZ;
+        _playerXChunkScale = playerXChunkScale;
+        _playerZChunkScale = playerZChunkScale;
         
         if (deltaX < 0) {
             int[] tempValues = new int[_zTiles];
@@ -154,11 +174,22 @@ public class WorldGen : MonoBehaviour
         }
 
         if (deltaZ != 0 || deltaX != 0) {
+            _positions.Clear();
             for (int x = 0; x < _xTiles; x++) {
                 for (int z = 0; z < _zTiles; z++) {
                     float maxDist = Mathf.Max(Mathf.Abs(_tilePool[_tilePositions[x, z]].x - playerXChunkScale), Mathf.Abs(_tilePool[_tilePositions[x, z]].z - playerZChunkScale));
                     if (_hasColliders && maxDist < 2) UpdateCollider(_tilePositions[x, z]);
                     else if (_hasColliders) _tilePool[_tilePositions[x, z]].meshCollider.enabled = false;
+                    if (maxDist <= _maxGrassDistChunks && !(x == _xTiles - 1 && deltaX == 1) && !(x == 0 && deltaX == -1) && !(z == _zTiles - 1 && deltaZ == 1) && !(z == 0 && deltaZ == -1)) {
+                        Vector3[] normals = _tilePool[_tilePositions[x, z]].mesh.normals;
+                        Vector3[] vertexData = _tilePool[_tilePositions[x, z]].mesh.vertices;
+                        for (int i = 0; i < vertexData.Length; i += 3) {
+                            if (normals[i].y < 0.6f) continue;
+                            _positions.Add(vertexData[i].x + (_tilePool[_tilePositions[x, z]].x * _xSize * _xResolution));
+                            _positions.Add(vertexData[i].y);
+                            _positions.Add(vertexData[i].z + (_tilePool[_tilePositions[x, z]].z * _zSize * _zResolution));
+                        }
+                    }
                 }
             }
         }
@@ -171,6 +202,10 @@ public class WorldGen : MonoBehaviour
     {
         _scale = 1 / _scale;
         SetupPool();
+        _commandBuf = new GraphicsBuffer(GraphicsBuffer.Target.IndirectArguments, _commandCount, GraphicsBuffer.IndirectDrawIndexedArgs.size);
+        _commandData = new GraphicsBuffer.IndirectDrawIndexedArgs[_commandCount];
+        _positions = new List<float>();
+        _positionsBuffer = new ComputeBuffer((_xSize + 1) * (_zSize + 1) * _xTiles * _zTiles * 3, sizeof(float), ComputeBufferType.Default);
     }
 
     private void Update() {
@@ -186,6 +221,8 @@ public class WorldGen : MonoBehaviour
             }
             else break;
         }
+        if (_generateQueue.Count != 0) return;
+        Graphics.RenderMeshIndirect(_rp, _mesh, _commandBuf, _commandCount);
     }
     
     private void SetupPool() {
@@ -199,6 +236,13 @@ public class WorldGen : MonoBehaviour
                 i++;
             }
         }
+    }
+
+    private void OnDestroy() {
+        _commandBuf?.Release();
+        _positionsBuffer?.Release();
+        _commandBuf = null;
+        _positionsBuffer = null;
     }
 
     private void GenerateTile(int x, int z, int index)
@@ -240,6 +284,29 @@ public class WorldGen : MonoBehaviour
         else CalculateColors(index);
         //ScatterObjects(msh, _scatterMesh, _scatterDensity, index);
         _tilePositions[index / _zTiles, index % _zTiles] = index;
+        if (Mathf.Max(Mathf.Abs(x), Mathf.Abs(z)) < _maxGrassDistChunks) {
+            Vector3[] normals = msh.normals;
+            for (int i = 0; i < vertexData.Length; i++) {
+                if (normals[i].y < 0.6f) continue;
+                _positions.Add(vertexData[i].x + (x * _xSize * _xResolution));
+                _positions.Add(vertexData[i].y);
+                _positions.Add(vertexData[i].z + (z * _zSize * _zResolution));
+            }
+        }
+
+        if (index == (_xTiles * _zTiles) - 1) {
+            _rp = new RenderParams(_material2);
+            _rp.worldBounds = new Bounds(new Vector3(_playerX, 0, _playerZ), _xTiles * _xSize * _xResolution * Vector3.one); // use tighter bounds for better FOV culling
+            _rp.matProps = new MaterialPropertyBlock();
+            _rp.matProps.SetMatrix("_ObjectToWorld", Matrix4x4.Translate(new Vector3(0, 0, 0)));
+            _rp.matProps.SetBuffer("_PositionsBuffer", _positionsBuffer);
+            _commandData[0].indexCountPerInstance = _mesh.GetIndexCount(0);
+            _commandData[0].instanceCount = (uint) _positions.Count / 3;
+            _commandData[1].indexCountPerInstance = _mesh.GetIndexCount(0);
+            _commandData[1].instanceCount = (uint) _positions.Count / 3;
+            _commandBuf.SetData(_commandData);
+            _positionsBuffer.SetData(_positions);
+        }
     }
 
     private void QueueTileUpdate(int index) {
@@ -250,8 +317,7 @@ public class WorldGen : MonoBehaviour
         _generateQueue.Add(new int[] {
             x, z, index
         }); 
-    } 
-
+    }
     
     //Regenerate given tile based on an LOD parameter.
     private void UpdateTile(int index) {
@@ -267,6 +333,30 @@ public class WorldGen : MonoBehaviour
         else CalculateColors(index);
         //ScatterObjects(_tilePool[index].mesh, _scatterMesh, _scatterDensity, index);
         _tilePool[index].obj.transform.position = new Vector3(x * _xSize * _xResolution, 0, z * _zSize * _zResolution);
+        int maxDist = Mathf.Max(Mathf.Abs(x - _playerXChunkScale), Mathf.Abs(z - _playerZChunkScale));
+        if (maxDist <= _maxGrassDistChunks) {
+            Vector3[] normals = _tilePool[index].mesh.normals;
+            Vector3[] vertexData = _tilePool[index].mesh.vertices;
+            for (int i = 0; i < vertexData.Length; i += 3) {
+                if (normals[i].y < 0.6f) continue;
+                _positions.Add(vertexData[i].x + (_tilePool[index].x * _xSize * _xResolution));
+                _positions.Add(vertexData[i].y);
+                _positions.Add(vertexData[i].z + (_tilePool[index].z * _zSize * _zResolution));
+            }
+        }
+
+        if (_updateQueue.Count > 1) return;
+        _rp = new RenderParams(_material2);
+        _rp.worldBounds = new Bounds(new Vector3(_playerX, 0, _playerZ), _xTiles * _xSize * _xResolution * Vector3.one); // use tighter bounds for better FOV culling
+        _rp.matProps = new MaterialPropertyBlock();
+        _rp.matProps.SetMatrix("_ObjectToWorld", Matrix4x4.Translate(new Vector3(0, 0, 0)));
+        _rp.matProps.SetBuffer("_PositionsBuffer", _positionsBuffer);
+        _commandData[0].indexCountPerInstance = _mesh.GetIndexCount(0);
+        _commandData[0].instanceCount = (uint) _positions.Count / 3;
+        _commandData[1].indexCountPerInstance = _mesh.GetIndexCount(0);
+        _commandData[1].instanceCount = (uint) _positions.Count / 3;
+        _commandBuf.SetData(_commandData);
+        _positionsBuffer.SetData(_positions);
     }
 
     private void WindTriangles(Mesh targetMesh) {

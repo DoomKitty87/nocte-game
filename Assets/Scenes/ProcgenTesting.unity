@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 262.30203, g: 324.99054, b: 430.14313, a: 1}
+  m_IndirectSpecularColor: {r: 261.80212, g: 324.32928, b: 429.2493, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -356,8 +356,8 @@ MonoBehaviour:
   _airDrag: 0
   _groundCheckSphereSize: 0.1
   _mouseSensitivity: 30
-  _procGen: {fileID: 1194400075}
   _moveState: 0
+  _procGen: {fileID: 1194400075}
   _delayGroundCheckAfterJumpUpdates: 5
   _timeSinceLastSlide: 0
 --- !u!23 &344888778
@@ -552,7 +552,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &914996084
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -855,7 +855,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 2147483647
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &1194400072
 Transform:
   m_ObjectHideFlags: 0
@@ -887,8 +887,8 @@ MonoBehaviour:
   _zSize: 64
   _xResolution: 0.25
   _zResolution: 0.25
-  _xTiles: 51
-  _zTiles: 51
+  _xTiles: 13
+  _zTiles: 13
   _scale: 1000
   _amplitude: 50
   _octaves: 10
@@ -956,6 +956,9 @@ MonoBehaviour:
   _scatterMesh: {fileID: 9082107728382147507, guid: b692e1d72bc75c24da12cca50106e45b,
     type: 3}
   _scatterDensity: 0.025
+  _material2: {fileID: 2100000, guid: 4acb093d21f9f424db5b95a56fbed982, type: 2}
+  _mesh: {fileID: -462981019419857548, guid: 71ecff4ba9093444fa01dd2b55b6e59c, type: 3}
+  _maxGrassDistChunks: 10
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
