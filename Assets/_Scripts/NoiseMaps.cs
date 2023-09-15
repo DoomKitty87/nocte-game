@@ -41,6 +41,27 @@ public static class NoiseMaps
 
     }
 
+    [BurstCompile]
+    private struct WindSimplexJob : IJobParallelFor
+    {
+
+        public int width;
+        public float xOffset;
+        public float zOffset;
+        public float scale;
+
+        [WriteOnly] public NativeArray<float> output;
+        
+        public void Execute(int index)
+        {
+            float sampleX = index % width;
+            float sampleZ = index / width;
+            float noise = snoise(new float2((sampleX + xOffset) * scale, (sampleZ + zOffset) * scale));
+            output[index] = noise;
+        }
+
+    }
+
     public static Vector3[] GenerateTerrain(float xOffset, float zOffset, int xSize, int zSize, float scale, float amplitude, int octaves, AnimationCurve easeCurve, float xResolution=1, float zResolution=1)
     {
         var jobResult = new NativeArray<float>((xSize + 1) * (xSize + 1), Allocator.TempJob);
@@ -145,6 +166,24 @@ public static class NoiseMaps
         jobResult.Dispose();
 
         return humidityMap;
+    }
+
+    public static float[] GenerateWindMap(int width, int depth, float xOffset, float zOffset, float scale) {
+        float[] windMap;
+        var jobResult = new NativeArray<float>(width * depth, Allocator.TempJob);
+
+        var job = new WindSimplexJob() {
+            width = width,
+            xOffset = xOffset,
+            zOffset = zOffset,
+            scale = scale,
+            output = jobResult
+        };
+        var handle = job.Schedule(jobResult.Length, 32);
+        handle.Complete();
+        windMap = jobResult.ToArray();
+        jobResult.Dispose();
+        return windMap;
     }
 
 }

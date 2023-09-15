@@ -81,6 +81,8 @@ public class WorldGen : MonoBehaviour
     private float _playerX, _playerZ;
     private int _playerXChunkScale, _playerZChunkScale;
 
+    private Vector2 _windPos;
+
     public void UpdatePlayerLoadedChunks(Vector3 playerPos)
     {
         int playerXChunkScale = (int) (playerPos.x / (_xSize * _xResolution));
@@ -212,25 +214,23 @@ public class WorldGen : MonoBehaviour
     }
     
     private void Start() {
-        _rp = new RenderParams(_material2);
-        _rp.matProps = new MaterialPropertyBlock();
         _scale = 1 / _scale;
         SetupPool();
         _commandBuf = new GraphicsBuffer(GraphicsBuffer.Target.IndirectArguments, _commandCount, GraphicsBuffer.IndirectDrawIndexedArgs.size);
         _commandData = new GraphicsBuffer.IndirectDrawIndexedArgs[_commandCount];
         _grassData = new List<GrassData>();
         _positionsBuffer = new ComputeBuffer((_xSize + 1) * (_zSize + 1) * _xTiles * _zTiles, sizeof(float) * 7, ComputeBufferType.Default);
-        _wind = new Texture2D(1024, 1024);
-        for (int x = 0; x < 1024; x++) {
-            for (int y = 0; y < 1024; y++) {
-                float xyVal = x * 0.05f + y * 0.1f + 2.3f * Unity.Mathematics.noise.snoise(new Unity.Mathematics.float2(x * 2.3f, y * 2.3f));
-                float val = (Mathf.Sin(xyVal + 1.5f)) * 1.5f; 
-                _wind.SetPixel(x, y, new Color(val, val, val, 1));
-            }
-        }
+        _rp = new RenderParams(_material2);
+        _rp.matProps = new MaterialPropertyBlock();
+        _wind = new Texture2D(128, 128);
+        _rp.matProps.SetTexture("_Wind", _wind);
+        _rp.matProps.SetMatrix("_ObjectToWorld", Matrix4x4.Translate(new Vector3(0, 0, 0)));
+        _rp.matProps.SetBuffer("_PositionsBuffer", _positionsBuffer);
     }
 
     private void Update() {
+        UpdateWind();
+        _wind.Apply();
         for (int i = 0; i < _maxUpdatesPerFrame; i++) {
             if (_updateQueue.Count > 0 && _generateQueue.Count == 0) {
                 UpdateTile(_updateQueue[0]);
@@ -265,6 +265,15 @@ public class WorldGen : MonoBehaviour
         _positionsBuffer?.Release();
         _commandBuf = null;
         _positionsBuffer = null;
+    }
+
+    private void UpdateWind() {
+        _windPos += new Vector2(Time.deltaTime, Time.deltaTime);
+        float[] windData = NoiseMaps.GenerateWindMap(128, 128, _windPos.x, _windPos.y, 0.1f);
+        for (int i = 0; i < windData.Length; i++) {
+            _wind.SetPixel(i % 128, i / 128, new Color(windData[i], windData[i], windData[i], 1));
+        }
+        _wind.Apply();
     }
 
     private void GenerateTile(int x, int z, int index)
@@ -365,9 +374,6 @@ public class WorldGen : MonoBehaviour
 
     private void UpdateGrassBuffers() {
         _rp.worldBounds = new Bounds(new Vector3(_playerX, 0, _playerZ), _xTiles * _xSize * _xResolution * Vector3.one); // use tighter bounds for better FOV culling
-        _rp.matProps.SetMatrix("_ObjectToWorld", Matrix4x4.Translate(new Vector3(0, 0, 0)));
-        _rp.matProps.SetBuffer("_PositionsBuffer", _positionsBuffer);
-        _rp.matProps.SetTexture("_Wind", _wind);
         _commandData[0].indexCountPerInstance = _mesh.GetIndexCount(0);
         _commandData[0].instanceCount = (uint) _grassData.Count;
         _commandData[1].indexCountPerInstance = _mesh.GetIndexCount(0);
