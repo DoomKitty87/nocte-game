@@ -229,8 +229,6 @@ public class WorldGen : MonoBehaviour
     }
 
     private void Update() {
-        UpdateWind();
-        _wind.Apply();
         for (int i = 0; i < _maxUpdatesPerFrame; i++) {
             if (_updateQueue.Count > 0 && _generateQueue.Count == 0) {
                 UpdateTile(_updateQueue[0]);
@@ -244,6 +242,8 @@ public class WorldGen : MonoBehaviour
             else break;
         }
         if (_generateQueue.Count != 0) return;
+        UpdateWind();
+        _wind.Apply();
         Graphics.RenderMeshIndirect(_rp, _mesh, _commandBuf, _commandCount);
     }
     
@@ -315,7 +315,7 @@ public class WorldGen : MonoBehaviour
         else CalculateColors(index);
         //ScatterObjects(msh, _scatterMesh, _scatterDensity, index);
         _tilePositions[index / _zTiles, index % _zTiles] = index;
-        if (Mathf.Max(Mathf.Abs(x), Mathf.Abs(z)) < _maxGrassDistChunks) {
+        if (Mathf.Max(Mathf.Abs(x), Mathf.Abs(z)) <= _maxGrassDistChunks) {
             Vector3[] normals = msh.normals;
             for (int i = 0; i < vertexData.Length; i += 3) {
                 if (normals[i].y < 0.6f) continue;

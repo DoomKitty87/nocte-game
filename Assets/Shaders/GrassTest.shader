@@ -1,4 +1,4 @@
-          Shader "ExampleShader"
+          Shader "GrassShader"
 {
     Properties
     {
