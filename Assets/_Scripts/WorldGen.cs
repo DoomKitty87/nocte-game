@@ -15,6 +15,15 @@ public class WorldGen : MonoBehaviour
         public int z;
 
     }
+
+    private struct GrassData
+    {
+
+        public Vector4 position;
+        public Vector2 uv;
+        public float displacement;
+
+    }
     
     public int _xSize = 64;
     public int _zSize = 64;
@@ -64,7 +73,7 @@ public class WorldGen : MonoBehaviour
     GraphicsBuffer.IndirectDrawIndexedArgs[] _commandData;
     private ComputeBuffer _positionsBuffer;
     const int _commandCount = 2;
-    private List<float> _positions;
+    private List<GrassData> _grassData;
     private RenderParams _rp;
 
     private float _playerX, _playerZ;
@@ -174,7 +183,7 @@ public class WorldGen : MonoBehaviour
         }
 
         if (deltaZ != 0 || deltaX != 0) {
-            _positions.Clear();
+            _grassData.Clear();
             for (int x = 0; x < _xTiles; x++) {
                 for (int z = 0; z < _zTiles; z++) {
                     float maxDist = Mathf.Max(Mathf.Abs(_tilePool[_tilePositions[x, z]].x - playerXChunkScale), Mathf.Abs(_tilePool[_tilePositions[x, z]].z - playerZChunkScale));
@@ -185,9 +194,9 @@ public class WorldGen : MonoBehaviour
                         Vector3[] vertexData = _tilePool[_tilePositions[x, z]].mesh.vertices;
                         for (int i = 0; i < vertexData.Length; i += 3) {
                             if (normals[i].y < 0.6f) continue;
-                            _positions.Add(vertexData[i].x + (_tilePool[_tilePositions[x, z]].x * _xSize * _xResolution));
-                            _positions.Add(vertexData[i].y);
-                            _positions.Add(vertexData[i].z + (_tilePool[_tilePositions[x, z]].z * _zSize * _zResolution));
+                            GrassData gd = new GrassData();
+                            gd.position = new Vector4(vertexData[i].x + (_tilePool[_tilePositions[x, z]].x * _xSize * _xResolution), vertexData[i].y, vertexData[i].z + (_tilePool[_tilePositions[x, z]].z * _zSize * _zResolution), 0);
+                            _grassData.Add(gd);
                         }
                     }
                 }
@@ -204,8 +213,8 @@ public class WorldGen : MonoBehaviour
         SetupPool();
         _commandBuf = new GraphicsBuffer(GraphicsBuffer.Target.IndirectArguments, _commandCount, GraphicsBuffer.IndirectDrawIndexedArgs.size);
         _commandData = new GraphicsBuffer.IndirectDrawIndexedArgs[_commandCount];
-        _positions = new List<float>();
-        _positionsBuffer = new ComputeBuffer((_xSize + 1) * (_zSize + 1) * _xTiles * _zTiles * 3, sizeof(float), ComputeBufferType.Default);
+        _grassData = new List<GrassData>();
+        _positionsBuffer = new ComputeBuffer((_xSize + 1) * (_zSize + 1) * _xTiles * _zTiles, sizeof(float) * 7, ComputeBufferType.Default);
     }
 
     private void Update() {
@@ -286,26 +295,16 @@ public class WorldGen : MonoBehaviour
         _tilePositions[index / _zTiles, index % _zTiles] = index;
         if (Mathf.Max(Mathf.Abs(x), Mathf.Abs(z)) < _maxGrassDistChunks) {
             Vector3[] normals = msh.normals;
-            for (int i = 0; i < vertexData.Length; i++) {
+            for (int i = 0; i < vertexData.Length; i += 3) {
                 if (normals[i].y < 0.6f) continue;
-                _positions.Add(vertexData[i].x + (x * _xSize * _xResolution));
-                _positions.Add(vertexData[i].y);
-                _positions.Add(vertexData[i].z + (z * _zSize * _zResolution));
+                GrassData gd = new GrassData();
+                gd.position = new Vector4(vertexData[i].x + (x * _xSize * _xResolution), vertexData[i].y, vertexData[i].z + (z * _zSize * _zResolution), 0);
+                _grassData.Add(gd);
             }
         }
 
         if (index == (_xTiles * _zTiles) - 1) {
-            _rp = new RenderParams(_material2);
-            _rp.worldBounds = new Bounds(new Vector3(_playerX, 0, _playerZ), _xTiles * _xSize * _xResolution * Vector3.one); // use tighter bounds for better FOV culling
-            _rp.matProps = new MaterialPropertyBlock();
-            _rp.matProps.SetMatrix("_ObjectToWorld", Matrix4x4.Translate(new Vector3(0, 0, 0)));
-            _rp.matProps.SetBuffer("_PositionsBuffer", _positionsBuffer);
-            _commandData[0].indexCountPerInstance = _mesh.GetIndexCount(0);
-            _commandData[0].instanceCount = (uint) _positions.Count / 3;
-            _commandData[1].indexCountPerInstance = _mesh.GetIndexCount(0);
-            _commandData[1].instanceCount = (uint) _positions.Count / 3;
-            _commandBuf.SetData(_commandData);
-            _positionsBuffer.SetData(_positions);
+            UpdateGrassBuffers();
         }
     }
 
@@ -339,24 +338,28 @@ public class WorldGen : MonoBehaviour
             Vector3[] vertexData = _tilePool[index].mesh.vertices;
             for (int i = 0; i < vertexData.Length; i += 3) {
                 if (normals[i].y < 0.6f) continue;
-                _positions.Add(vertexData[i].x + (_tilePool[index].x * _xSize * _xResolution));
-                _positions.Add(vertexData[i].y);
-                _positions.Add(vertexData[i].z + (_tilePool[index].z * _zSize * _zResolution));
+                GrassData gd = new GrassData();
+                gd.position = new Vector4(vertexData[i].x + (_tilePool[index].x * _xSize * _xResolution), vertexData[i].y, vertexData[i].z + (_tilePool[index].z * _zSize * _zResolution), 0);
+                _grassData.Add(gd);
             }
         }
 
         if (_updateQueue.Count > 1) return;
+        UpdateGrassBuffers();
+    }
+
+    private void UpdateGrassBuffers() {
         _rp = new RenderParams(_material2);
         _rp.worldBounds = new Bounds(new Vector3(_playerX, 0, _playerZ), _xTiles * _xSize * _xResolution * Vector3.one); // use tighter bounds for better FOV culling
         _rp.matProps = new MaterialPropertyBlock();
         _rp.matProps.SetMatrix("_ObjectToWorld", Matrix4x4.Translate(new Vector3(0, 0, 0)));
         _rp.matProps.SetBuffer("_PositionsBuffer", _positionsBuffer);
         _commandData[0].indexCountPerInstance = _mesh.GetIndexCount(0);
-        _commandData[0].instanceCount = (uint) _positions.Count / 3;
+        _commandData[0].instanceCount = (uint) _grassData.Count;
         _commandData[1].indexCountPerInstance = _mesh.GetIndexCount(0);
-        _commandData[1].instanceCount = (uint) _positions.Count / 3;
+        _commandData[1].instanceCount = (uint) _grassData.Count;
         _commandBuf.SetData(_commandData);
-        _positionsBuffer.SetData(_positions);
+        _positionsBuffer.SetData(_grassData);
     }
 
     private void WindTriangles(Mesh targetMesh) {
