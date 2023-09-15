@@ -82,6 +82,8 @@ public class WorldGen : MonoBehaviour
     private int _playerXChunkScale, _playerZChunkScale;
 
     private Vector2 _windPos;
+    
+    //TODO: Improve grass performance (frustum culling?)
 
     public void UpdatePlayerLoadedChunks(Vector3 playerPos)
     {
