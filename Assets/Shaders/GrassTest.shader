@@ -64,10 +64,9 @@
                 float2 displacement = (sin(posHash), cos(posHash)) * _DisplacementAmplitude;
                 //7 is height of tallest vertex (change if mesh changes)
                 float uvy = v.vertex.y / _Scale / 7;
-                bool trample = uvy > 0.1f && abs(_PlayerPosition.x - pos.x) < _TrampleRadius && abs(_PlayerPosition.z - pos.z) < _TrampleRadius;
-                float trampleValue = lerp(0.15f, 1, min(abs(_PlayerPosition.x - pos.x) + abs(_PlayerPosition.z - pos.z) / 2 / _TrampleRadius, 1));
+                float trampleValue = lerp(0.15f, 1, min((abs(_PlayerPosition.x - pos.x) + abs(_PlayerPosition.z - pos.z)) / 2 / _TrampleRadius, 1));
                 float movement = uvy * uvy * (sin(tex2Dlod(_Wind, float4(_PositionsBuffer[instanceID].uv, 0, 0)).r)) * lerp(0.5f, 1.0f, abs(posHash)) * _WindIntensity;
-                float4 lpos = RotateAroundYInDegrees(float4(v.vertex.x * _Scale + displacement.x, v.vertex.y * _Scale * trampleValue, v.vertex.z + displacement.y, v.vertex.w), posHash * 180.0f);
+                float4 lpos = RotateAroundYInDegrees(float4(v.vertex.x * _Scale + displacement.x, v.vertex.y * _Scale * lerp(trampleValue, 1, abs(_PlayerPosition.y - pos.y) / (7 * _Scale * 2)), v.vertex.z + displacement.y, v.vertex.w), posHash * 180.0f);
                 float4 wpos = mul(_ObjectToWorld, (float4(lpos.x + movement, lpos.y, lpos.z + movement, lpos.w)) + pos);
                 o.pos = mul(UNITY_MATRIX_VP, wpos);
                 o.color = (lerp(_Color1, _Color2, uvy) + lerp(0.0f, _TipColor, uvy * uvy * (1.0f * _Scale))) * lerp(_AOColor, 1.0f, uvy);
