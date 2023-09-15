@@ -81,16 +81,16 @@ public class WorldGen : MonoBehaviour
     private float _playerX, _playerZ;
     private int _playerXChunkScale, _playerZChunkScale;
 
-    public void UpdatePlayerLoadedChunks(float playerX, float playerZ)
+    public void UpdatePlayerLoadedChunks(Vector3 playerPos)
     {
-        int playerXChunkScale = (int) (playerX / (_xSize * _xResolution));
-        int playerZChunkScale = (int) (playerZ / (_zSize * _zResolution));
+        int playerXChunkScale = (int) (playerPos.x / (_xSize * _xResolution));
+        int playerZChunkScale = (int) (playerPos.z / (_zSize * _zResolution));
 
         int deltaX = playerXChunkScale - _lastPlayerChunkX;
         int deltaZ = playerZChunkScale - _lastPlayerChunkZ;
 
-        _playerX = playerX;
-        _playerZ = playerZ;
+        _playerX = playerPos.x;
+        _playerZ = playerPos.z;
         _playerXChunkScale = playerXChunkScale;
         _playerZChunkScale = playerZChunkScale;
         
@@ -208,10 +208,12 @@ public class WorldGen : MonoBehaviour
         
         _lastPlayerChunkX = playerXChunkScale;
         _lastPlayerChunkZ = playerZChunkScale;
+        _rp.matProps.SetVector("_PlayerPosition", playerPos);
     }
     
-    private void Start()
-    {
+    private void Start() {
+        _rp = new RenderParams(_material2);
+        _rp.matProps = new MaterialPropertyBlock();
         _scale = 1 / _scale;
         SetupPool();
         _commandBuf = new GraphicsBuffer(GraphicsBuffer.Target.IndirectArguments, _commandCount, GraphicsBuffer.IndirectDrawIndexedArgs.size);
@@ -362,9 +364,7 @@ public class WorldGen : MonoBehaviour
     }
 
     private void UpdateGrassBuffers() {
-        _rp = new RenderParams(_material2);
         _rp.worldBounds = new Bounds(new Vector3(_playerX, 0, _playerZ), _xTiles * _xSize * _xResolution * Vector3.one); // use tighter bounds for better FOV culling
-        _rp.matProps = new MaterialPropertyBlock();
         _rp.matProps.SetMatrix("_ObjectToWorld", Matrix4x4.Translate(new Vector3(0, 0, 0)));
         _rp.matProps.SetBuffer("_PositionsBuffer", _positionsBuffer);
         _rp.matProps.SetTexture("_Wind", _wind);

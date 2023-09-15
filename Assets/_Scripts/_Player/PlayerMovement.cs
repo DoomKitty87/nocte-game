@@ -98,7 +98,7 @@ public class PlayerMovement : MonoBehaviour
       _timeSinceLastSlide += Time.deltaTime;
     }
 
-    if (_procGen != null) _procGen.UpdatePlayerLoadedChunks(transform.position.x, transform.position.z);
+    if (_procGen != null) _procGen.UpdatePlayerLoadedChunks(transform.position - new Vector3(0, GetComponent<Collider>().bounds.extents.y / 2, 0));
   }
   private void FixedUpdate() {
     if (_moveState == MovementState.Walking) { // ------------

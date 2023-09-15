@@ -9,6 +9,7 @@
         _Scale("Scale", Range(0.0, 2.0)) = 0.0
         _DisplacementAmplitude("Displacement Amplitude", Range(0.0, 1.0)) = 0.0
         _WindIntensity("Wind Intensity", Range(0.0, 0.1)) = 0.02
+        _TrampleRadius("Trample Radius", Float) = 0.6
     }
     SubShader
     {
@@ -38,9 +39,10 @@
 
             uniform float4x4 _ObjectToWorld;
             uniform StructuredBuffer <GrassData> _PositionsBuffer;
+            uniform float4 _PlayerPosition;
 
             float4 _Color1, _Color2, _AOColor, _TipColor;
-            float _Scale, _DisplacementAmplitude, _WindIntensity;
+            float _Scale, _DisplacementAmplitude, _WindIntensity, _TrampleRadius;
             sampler2D _Wind;
 
             float4 RotateAroundYInDegrees (float4 vertex, float degrees) {
@@ -62,8 +64,10 @@
                 float2 displacement = (sin(posHash), cos(posHash)) * _DisplacementAmplitude;
                 //7 is height of tallest vertex (change if mesh changes)
                 float uvy = v.vertex.y / _Scale / 7;
+                bool trample = uvy > 0.1f && abs(_PlayerPosition.x - pos.x) < _TrampleRadius && abs(_PlayerPosition.z - pos.z) < _TrampleRadius;
+                float trampleValue = lerp(0.15f, 1, min(abs(_PlayerPosition.x - pos.x) + abs(_PlayerPosition.z - pos.z) / 2 / _TrampleRadius, 1));
                 float movement = uvy * uvy * (sin(tex2Dlod(_Wind, float4(_PositionsBuffer[instanceID].uv, 0, 0)).r * _Time.y)) * abs(posHash) * _WindIntensity;
-                float4 lpos = RotateAroundYInDegrees(float4(v.vertex.x * _Scale + displacement.x, v.vertex.y * _Scale, v.vertex.z + displacement.y, v.vertex.w), posHash * 180.0f);
+                float4 lpos = RotateAroundYInDegrees(float4(v.vertex.x * _Scale + displacement.x, v.vertex.y * _Scale * trampleValue, v.vertex.z + displacement.y, v.vertex.w), posHash * 180.0f);
                 float4 wpos = mul(_ObjectToWorld, (float4(lpos.x + movement, lpos.y, lpos.z + movement, lpos.w)) + pos);
                 o.pos = mul(UNITY_MATRIX_VP, wpos);
                 o.color = (lerp(_Color1, _Color2, uvy) + lerp(0.0f, _TipColor, uvy * uvy * (1.0f * _Scale))) * lerp(_AOColor, 1.0f, uvy);
