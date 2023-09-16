@@ -13,6 +13,8 @@ public class WorldGen : MonoBehaviour
         public float[] humidityMap;
         public int x;
         public int z;
+        public int grassIndexStart;
+        public int grassCount;
 
     }
 
@@ -189,15 +191,16 @@ public class WorldGen : MonoBehaviour
         }
 
         if (deltaZ != 0 || deltaX != 0) {
-            _grassData.Clear();
             for (int x = 0; x < _xTiles; x++) {
                 for (int z = 0; z < _zTiles; z++) {
                     float maxDist = Mathf.Max(Mathf.Abs(_tilePool[_tilePositions[x, z]].x - playerXChunkScale), Mathf.Abs(_tilePool[_tilePositions[x, z]].z - playerZChunkScale));
                     if (_hasColliders && maxDist < 2) UpdateCollider(_tilePositions[x, z]);
                     else if (_hasColliders) _tilePool[_tilePositions[x, z]].meshCollider.enabled = false;
                     if (maxDist <= _maxGrassDistChunks && !(x == _xTiles - 1 && deltaX == 1) && !(x == 0 && deltaX == -1) && !(z == _zTiles - 1 && deltaZ == 1) && !(z == 0 && deltaZ == -1)) {
+                        if (_tilePool[_tilePositions[x, z]].grassCount > 0) continue;
                         Vector3[] normals = _tilePool[_tilePositions[x, z]].mesh.normals;
                         Vector3[] vertexData = _tilePool[_tilePositions[x, z]].mesh.vertices;
+                        _tilePool[_tilePositions[x, z]].grassIndexStart = _grassData.Count;
                         for (int i = 0; i < vertexData.Length; i += 3) {
                             if (normals[i].y < 0.6f) continue;
                             GrassData gd = new GrassData();
@@ -205,6 +208,15 @@ public class WorldGen : MonoBehaviour
                             gd.uv = new Vector2(gd.position.x / (_xSize * _xResolution * _xTiles), gd.position.z / (_zSize * _zResolution * _zTiles));
                             _grassData.Add(gd);
                         }
+                        _tilePool[_tilePositions[x, z]].grassCount = _grassData.Count - _tilePool[_tilePositions[x, z]].grassIndexStart;
+                    }
+                    else if (_tilePool[_tilePositions[x, z]].grassCount > 0) {
+                        _grassData.RemoveRange(_tilePool[_tilePositions[x, z]].grassIndexStart, _tilePool[_tilePositions[x, z]].grassCount);
+                        for (int i = 0; i < _xTiles * _zTiles; i++) {
+                            if (_tilePool[i].grassIndexStart > _tilePool[_tilePositions[x, z]].grassIndexStart) _tilePool[i].grassIndexStart -= _tilePool[_tilePositions[x, z]].grassCount;
+                        }
+                        _tilePool[_tilePositions[x, z]].grassCount = 0;
+                        _tilePool[_tilePositions[x, z]].grassIndexStart = 0;
                     }
                 }
             }
@@ -319,6 +331,7 @@ public class WorldGen : MonoBehaviour
         _tilePositions[index / _zTiles, index % _zTiles] = index;
         if (Mathf.Max(Mathf.Abs(x), Mathf.Abs(z)) <= _maxGrassDistChunks) {
             Vector3[] normals = msh.normals;
+            _tilePool[index].grassIndexStart = _grassData.Count;
             for (int i = 0; i < vertexData.Length; i += 3) {
                 if (normals[i].y < 0.6f) continue;
                 GrassData gd = new GrassData();
@@ -326,6 +339,7 @@ public class WorldGen : MonoBehaviour
                 gd.uv = new Vector2(Mathf.Abs(gd.position.x / (_xSize * _xResolution * _xTiles)), Mathf.Abs(gd.position.z / (_zSize * _zResolution * _zTiles)));
                 _grassData.Add(gd);
             }
+            _tilePool[index].grassCount = _grassData.Count - _tilePool[index].grassIndexStart;
         }
 
         if (index == (_xTiles * _zTiles) - 1) {
@@ -361,6 +375,7 @@ public class WorldGen : MonoBehaviour
         if (maxDist <= _maxGrassDistChunks) {
             Vector3[] normals = _tilePool[index].mesh.normals;
             Vector3[] vertexData = _tilePool[index].mesh.vertices;
+            _tilePool[index].grassIndexStart = _grassData.Count;
             for (int i = 0; i < vertexData.Length; i += 3) {
                 if (normals[i].y < 0.6f) continue;
                 GrassData gd = new GrassData();
@@ -368,6 +383,7 @@ public class WorldGen : MonoBehaviour
                 gd.uv = new Vector2(gd.position.x / (_xSize * _xResolution * _xTiles), gd.position.z / (_zSize * _zResolution * _zTiles));
                 _grassData.Add(gd);
             }
+            _tilePool[index].grassCount = _grassData.Count - _tilePool[index].grassIndexStart;
         }
 
         if (_updateQueue.Count > 1) return;
