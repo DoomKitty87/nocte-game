@@ -1,0 +1,27 @@
+﻿#pragma kernel GenerateNoise
+
+#include <UnityShaderVariables.cginc>
+
+#include "FastNoiseLite.hlsl"
+#include "MetricsCompute.compute"
+
+float _NoiseScale;
+float _Amplitude;
+float _Frequency;
+int _Octaves;
+float _GroundPercent;
+RWStructuredBuffer<float> _Weights;
+
+[numthreads(numThreads, numThreads, numThreads)]
+void GenerateNoise(uint3 id : SV_DispatchThreadID)
+{
+    fnl_state noise = fnlCreateState();
+    noise.noise_type = FNL_NOISE_OPENSIMPLEX2;
+    noise.fractal_type = FNL_FRACTAL_RIDGED;
+    noise.frequency = _Frequency * _Time.x;
+    noise.octaves = _Octaves;
+    float3 pos = id * _NoiseScale;
+    float ground = -pos.y + (_GroundPercent * _ChunkSize);
+    float n = ground + fnlGetNoise3D(noise, pos.x, pos.y, pos.z) * _Amplitude;
+    _Weights[indexFromCoord(id.x, id.y, id.z)] = n;
+}    
