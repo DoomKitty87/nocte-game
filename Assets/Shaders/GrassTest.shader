@@ -10,6 +10,7 @@
         _DisplacementAmplitude("Displacement Amplitude", Range(0.0, 1.0)) = 0.0
         _WindIntensity("Wind Intensity", Range(0.0, 0.1)) = 0.02
         _TrampleRadius("Trample Radius", Float) = 0.6
+        _ScaleRandomization("Scale Randomization", Float) = 0.5
     }
     SubShader
     {
@@ -43,7 +44,7 @@
             uniform float4 _PlayerPosition;
 
             float4 _Color1, _Color2, _AOColor, _TipColor;
-            float _Scale, _DisplacementAmplitude, _WindIntensity, _TrampleRadius;
+            float _Scale, _DisplacementAmplitude, _WindIntensity, _TrampleRadius, _ScaleRandomization;
             sampler2D _Wind;
 
             float4 RotateAroundYInDegrees (float4 vertex, float degrees) {
@@ -62,15 +63,16 @@
                 InitIndirectDrawArgs(0);
                 v2f o;
                 float posHash = sin(pos.x * 257.0f) * cos(pos.y * 257.0f * 2.0f) * sin(pos.z * 257.0f * 3.0f);
+                float scale = _Scale * (1 + posHash * _ScaleRandomization);
                 float2 displacement = (sin(posHash), cos(posHash)) * _DisplacementAmplitude;
                 //7 is height of tallest vertex (change if mesh changes)
-                float uvy = v.vertex.y / _Scale / 7;
+                float uvy = v.vertex.y / scale / 7;
                 float trampleValue = lerp(0.15f, 1, min((abs(_PlayerPosition.x - pos.x) + abs(_PlayerPosition.z - pos.z)) / 2 / _TrampleRadius, 1));
                 float movement = uvy * uvy * (sin(tex2Dlod(_Wind, float4(_PositionsBuffer[instanceID].uv, 0, 0)).r)) * lerp(0.5f, 1.0f, abs(posHash)) * _WindIntensity;
-                float4 lpos = RotateAroundYInDegrees(float4(v.vertex.x * _Scale + displacement.x, v.vertex.y * _Scale * lerp(trampleValue, 1, abs(_PlayerPosition.y - pos.y) / (7 * _Scale * 2)), v.vertex.z + displacement.y, v.vertex.w), posHash * 180.0f);
+                float4 lpos = RotateAroundYInDegrees(float4(v.vertex.x * scale + displacement.x, v.vertex.y * scale * lerp(trampleValue, 1, abs(_PlayerPosition.y - pos.y) / (7 * scale * 2)), v.vertex.z + displacement.y, v.vertex.w), posHash * 180.0f);
                 float4 wpos = mul(_ObjectToWorld, (float4(lpos.x + movement, lpos.y, lpos.z + movement, lpos.w)) + pos);
                 o.pos = mul(UNITY_MATRIX_VP, wpos);
-                o.color = (lerp(_Color1, _Color2, uvy) + lerp(0.0f, _TipColor, uvy * uvy * (1.0f * _Scale))) * lerp(_AOColor, 1.0f, uvy);
+                o.color = (lerp(_Color1, _Color2, uvy) + lerp(0.0f, _TipColor, uvy * uvy * (1.0f * scale))) * lerp(_AOColor, 1.0f, uvy);
                 return o;
             }
 
