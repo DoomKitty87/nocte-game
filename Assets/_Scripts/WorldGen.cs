@@ -195,7 +195,9 @@ public class WorldGen : MonoBehaviour
                 for (int z = 0; z < _zTiles; z++) {
                     float maxDist = Mathf.Max(Mathf.Abs(_tilePool[_tilePositions[x, z]].x - playerXChunkScale), Mathf.Abs(_tilePool[_tilePositions[x, z]].z - playerZChunkScale));
                     if (_hasColliders && maxDist < 2) UpdateCollider(_tilePositions[x, z]);
-                    else if (_hasColliders) _tilePool[_tilePositions[x, z]].meshCollider.enabled = false;
+                    else if (_hasColliders) {
+                        if (_tilePool[_tilePositions[x, z]].meshCollider) _tilePool[_tilePositions[x, z]].meshCollider.enabled = false;
+                    }
                     if (maxDist <= _maxGrassDistChunks && !(x == _xTiles - 1 && deltaX == 1) && !(x == 0 && deltaX == -1) && !(z == _zTiles - 1 && deltaZ == 1) && !(z == 0 && deltaZ == -1)) {
                         if (_tilePool[_tilePositions[x, z]].grassCount > 0) continue;
                         Vector3[] normals = _tilePool[_tilePositions[x, z]].mesh.normals;
@@ -313,10 +315,9 @@ public class WorldGen : MonoBehaviour
         go.tag = "Ground";
         
         WorldTile tile = new WorldTile();
-        if (_hasColliders) {
+        if (_hasColliders && Math.Abs(x) < 2 && Math.Abs(z) < 2) {
             tile.meshCollider = go.AddComponent<MeshCollider>();
-            if (Math.Abs(x) < 2 && Math.Abs(z) < 2) tile.meshCollider.sharedMesh = msh;
-            else tile.meshCollider.enabled = false;
+            tile.meshCollider.sharedMesh = msh;
         }
         tile.obj = go;
         tile.mesh = msh;
@@ -457,7 +458,8 @@ public class WorldGen : MonoBehaviour
     }
 
     private void UpdateCollider(int index) {
-        if (_tilePool[index].meshCollider.enabled) return;
+        if (!_tilePool[index].meshCollider) _tilePool[index].meshCollider = _tilePool[index].obj.AddComponent<MeshCollider>();
+        else if (_tilePool[index].meshCollider.enabled) return;
         _tilePool[index].meshCollider.enabled = true;
         _tilePool[index].meshCollider.sharedMesh = _tilePool[index].mesh;
     }
