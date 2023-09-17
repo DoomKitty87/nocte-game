@@ -13,6 +13,7 @@
     }
     SubShader
     {
+        Tags { "RenderType" = "Opaque" }
         Pass
         {
             Cull Off
