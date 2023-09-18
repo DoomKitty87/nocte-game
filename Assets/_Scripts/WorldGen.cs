@@ -11,6 +11,7 @@ public class WorldGen : MonoBehaviour
         public MeshCollider meshCollider;
         public float[] temperatureMap;
         public float[] humidityMap;
+        public float[] largeScaleHeight;
         public int x;
         public int z;
         public int grassIndexStart;
@@ -304,10 +305,11 @@ public class WorldGen : MonoBehaviour
         Vector3[] vertexData = NoiseMaps.GenerateTerrain(x * _xSize * _xResolution + _seed, z * _zSize * _zResolution + _seed, _xSize, _zSize, _scale, _amplitude, _octaves, _easeCurve, _xResolution, _zResolution);
         msh.vertices = vertexData;
         WindTriangles(msh);
-        UpdateMesh(msh);
+
         
         float[] temperatureMap = NoiseMaps.GenerateTemperatureMap(vertexData, x * _xSize * _xResolution + (_seed * 2), z * _zSize * _zResolution + (_seed * 2), _xSize, _zSize, _scale / _temperatureScale, _easeCurve, _xResolution, _zResolution);
         float[] humidityMap = NoiseMaps.GenerateHumidityMap(vertexData, temperatureMap, x * _xSize * _xResolution + (_seed * 0.5f), z * _zSize * _zResolution + (_seed * 0.5f), _xSize, _zSize, _scale / _humidityScale, _easeCurve, _xResolution, _zResolution);
+        float[] largeScaleHeight = NoiseMaps.GenerateLargeScaleHeight(x * _xSize * _xResolution + _seed, z * _zSize * _zResolution + _seed, _xSize, _zSize, _scale, _amplitude,  _easeCurve, _xResolution, _zResolution);
         go.transform.position = new Vector3(x * _xSize * _xResolution, 0, z * _zSize * _zResolution);
         go.isStatic = true;
         
@@ -323,9 +325,11 @@ public class WorldGen : MonoBehaviour
         tile.mesh = msh;
         tile.temperatureMap = temperatureMap;
         tile.humidityMap = humidityMap;
+        tile.largeScaleHeight = largeScaleHeight;
         tile.x = x;
         tile.z = z;
         _tilePool[index] = tile;
+        UpdateMesh(msh);
         if (!_useColorGradient) CalculateUVs(msh);
         else CalculateColors(index);
         //ScatterObjects(msh, _scatterMesh, _scatterDensity, index);
@@ -366,6 +370,8 @@ public class WorldGen : MonoBehaviour
         _tilePool[index].mesh.vertices = NoiseMaps.GenerateTerrain(x * _xSize * _xResolution + _seed, z * _zSize * _zResolution + _seed, _xSize, _zSize, _scale, _amplitude, _octaves, _easeCurve, _xResolution, _zResolution);
         _tilePool[index].temperatureMap = NoiseMaps.GenerateTemperatureMap(_tilePool[index].mesh.vertices, x * _xSize * _xResolution + (_seed * 2), z * _zSize * _zResolution + (_seed * 2), _xSize, _zSize, _scale / _temperatureScale, _easeCurve, _xResolution, _zResolution);
         _tilePool[index].humidityMap = NoiseMaps.GenerateHumidityMap(_tilePool[index].mesh.vertices, _tilePool[index].temperatureMap, x * _xSize * _xResolution + (_seed * 0.5f), z * _zSize * _zResolution + (_seed * 0.5f), _xSize, _zSize, _scale / _humidityScale, _easeCurve, _xResolution, _zResolution);
+        _tilePool[index].largeScaleHeight = NoiseMaps.GenerateLargeScaleHeight(x * _xSize * _xResolution + _seed, z * _zSize * _zResolution + _seed, _xSize, _zSize, _scale, _amplitude,  _easeCurve, _xResolution, _zResolution);
+
         WindTriangles(_tilePool[index].mesh);
         UpdateMesh(_tilePool[index].mesh);
         if (!_useColorGradient) CalculateUVs(_tilePool[index].mesh);
@@ -464,8 +470,7 @@ public class WorldGen : MonoBehaviour
         _tilePool[index].meshCollider.sharedMesh = _tilePool[index].mesh;
     }
 
-    private static void UpdateMesh(Mesh targetMesh)
-    {
+    private static void UpdateMesh(Mesh targetMesh) {
         targetMesh.RecalculateNormals();
         targetMesh.RecalculateBounds();
     }

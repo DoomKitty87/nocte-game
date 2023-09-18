@@ -102,6 +102,41 @@ public static class NoiseMaps
         jobResult.Dispose();
         return vertices;
     }
+    
+    public static float[] GenerateLargeScaleHeight(float xOffset, float zOffset, int xSize, int zSize, float scale, float amplitude, AnimationCurve easeCurve, float xResolution=1, float zResolution=1)
+    {
+        var jobResult = new NativeArray<float>((xSize + 1) * (xSize + 1), Allocator.TempJob);
+
+        var job = new SimplexNoiseJob()
+        {
+            xSize = xSize + 1,
+            xOffset = xOffset,
+            zOffset = zOffset,
+            scale = scale,
+            amplitude = amplitude,
+            octaves = 1,
+            output = jobResult,
+            xResolution = xResolution,
+            zResolution = zResolution
+        };
+
+        var handle = job.Schedule(jobResult.Length, 32);
+        handle.Complete();
+        float[] vertices = new float[(xSize + 1) * (zSize + 1)];
+        float maxHeight = amplitude * 2;
+        for (int z = 0, i = 0; z <= zSize; z++)
+        {
+            for (int x = 0; x <= xSize; x++)
+            {   
+                float y = jobResult[i] / maxHeight;
+                vertices[i] = easeCurve.Evaluate(((6 * Mathf.Pow(y, 5)) - (15 * Mathf.Pow(y, 4)) + (10 * Mathf.Pow(y, 3)))) * maxHeight;
+                i++;
+            }
+        }
+
+        jobResult.Dispose();
+        return vertices;
+    }
 
     public static float[] GenerateTemperatureMap(Vector3[] heightMap, float xOffset, float zOffset, int xSize, int zSize, float scale, AnimationCurve easeCurve, float xResolution=1, float zResolution=1)
     {
