@@ -302,7 +302,7 @@ public class WorldGen : MonoBehaviour
         mr.material = _material;
         mf.mesh = new Mesh();
         Mesh msh = mf.mesh;
-        float seed = int.Parse(Hash128.Compute(_seed).ToString(), System.Globalization.NumberStyles.HexNumber);
+        float seed = int.Parse(Hash128.Compute(_seed).ToString().Substring(0, 6), System.Globalization.NumberStyles.HexNumber);
         Vector3[] vertexData = NoiseMaps.GenerateTerrain(x * _xSize * _xResolution + seed, z * _zSize * _zResolution + seed, _xSize, _zSize, _scale, _amplitude, _octaves, _easeCurve, _xResolution, _zResolution);
         msh.vertices = vertexData;
         WindTriangles(msh);
@@ -368,7 +368,7 @@ public class WorldGen : MonoBehaviour
         int x = _tilePool[index].x;
         int z = _tilePool[index].z;
         _tilePool[index].mesh.Clear();
-        float seed = int.Parse(Hash128.Compute(_seed).ToString(), System.Globalization.NumberStyles.HexNumber);
+        float seed = int.Parse(Hash128.Compute(_seed).ToString().Substring(0, 6), System.Globalization.NumberStyles.HexNumber);
         _tilePool[index].mesh.vertices = NoiseMaps.GenerateTerrain(x * _xSize * _xResolution + seed, z * _zSize * _zResolution + seed, _xSize, _zSize, _scale, _amplitude, _octaves, _easeCurve, _xResolution, _zResolution);
         _tilePool[index].temperatureMap = NoiseMaps.GenerateTemperatureMap(_tilePool[index].mesh.vertices, x * _xSize * _xResolution + (seed * 2), z * _zSize * _zResolution + (seed * 2), _xSize, _zSize, _scale / _temperatureScale, _easeCurve, _xResolution, _zResolution);
         _tilePool[index].humidityMap = NoiseMaps.GenerateHumidityMap(_tilePool[index].mesh.vertices, _tilePool[index].temperatureMap, x * _xSize * _xResolution + (seed * 0.5f), z * _zSize * _zResolution + (seed * 0.5f), _xSize, _zSize, _scale / _humidityScale, _easeCurve, _xResolution, _zResolution);
