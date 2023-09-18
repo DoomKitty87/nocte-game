@@ -29,13 +29,15 @@ public static class NoiseMaps
             float sampleX = index % xSize;
             float sampleZ = index / xSize;
             float noise = 0;
+            float normalization = 0;
             for (int i = 0; i < octaves; i++)
             {
                 float octaveNoise = snoise(new float2((sampleX * xResolution + xOffset) * (scale * Mathf.Pow(2, i)), (sampleZ * zResolution + zOffset) * (scale * Mathf.Pow(2, i)))) * amplitude * (1 / Mathf.Pow(2, i));
                 noise += octaveNoise;
+                normalization += 1 / Mathf.Pow(2, i);
             }
 
-            noise = Math.Abs(noise);
+            noise = Math.Abs(noise) / normalization;
             output[index] = noise;
         }
 
@@ -82,19 +84,18 @@ public static class NoiseMaps
         var handle = job.Schedule(jobResult.Length, 32);
         handle.Complete();
         Vector3[] vertices = new Vector3[(xSize + 1) * (zSize + 1)];
-        float maxHeight = amplitude * 2;
         for (int z = 0, i = 0; z <= zSize; z++)
         {
             for (int x = 0; x <= xSize; x++)
             {   
-                float y = jobResult[i] / maxHeight;
+                float y = jobResult[i] / amplitude;
                 //Using animationCurve
                 //vertices[i] = new Vector3(x, easeCurve.Evaluate(jobResult[i] / maxHeight) * maxHeight, z);
                 
                 //Using custom falloff function
                 //vertices[i] = new Vector3(x, Mathf.Pow(1 - y * y, 3) * maxHeight, z);
                 //vertices[i] = new Vector3(x, ((25 * Mathf.Pow(y, 4)) - (48 * Mathf.Pow(y, 5)) + (25 * Mathf.Pow(y, 6)) - Mathf.Pow(y, 10)) * maxHeight, z);
-                vertices[i] = new Vector3(x * xResolution, easeCurve.Evaluate(((6 * Mathf.Pow(y, 5)) - (15 * Mathf.Pow(y, 4)) + (10 * Mathf.Pow(y, 3)))) * maxHeight, z * zResolution);
+                vertices[i] = new Vector3(x * xResolution, easeCurve.Evaluate(((6 * Mathf.Pow(y, 5)) - (15 * Mathf.Pow(y, 4)) + (10 * Mathf.Pow(y, 3)))) * amplitude, z * zResolution);
                 i++;
             }
         }
@@ -123,13 +124,12 @@ public static class NoiseMaps
         var handle = job.Schedule(jobResult.Length, 32);
         handle.Complete();
         float[] vertices = new float[(xSize + 1) * (zSize + 1)];
-        float maxHeight = amplitude * 2;
         for (int z = 0, i = 0; z <= zSize; z++)
         {
             for (int x = 0; x <= xSize; x++)
             {   
-                float y = jobResult[i] / maxHeight;
-                vertices[i] = easeCurve.Evaluate(((6 * Mathf.Pow(y, 5)) - (15 * Mathf.Pow(y, 4)) + (10 * Mathf.Pow(y, 3)))) * maxHeight;
+                float y = jobResult[i] / amplitude;
+                vertices[i] = easeCurve.Evaluate(((6 * Mathf.Pow(y, 5)) - (15 * Mathf.Pow(y, 4)) + (10 * Mathf.Pow(y, 3)))) * amplitude;
                 i++;
             }
         }
