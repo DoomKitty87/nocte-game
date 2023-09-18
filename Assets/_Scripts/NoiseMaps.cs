@@ -37,11 +37,46 @@ public static class NoiseMaps
                 normalization += 1 / Mathf.Pow(2, i);
             }
 
-            noise = Math.Abs(noise) / normalization;
+            noise = Mathf.Abs(noise / normalization);
             output[index] = noise;
         }
 
     }
+    
+    [BurstCompile]
+    private struct CellularNoiseJob : IJobParallelFor
+    {
+
+        public int xSize;
+        public float xOffset;
+        public float zOffset;
+        public float scale;
+        public float amplitude;
+        public int octaves;
+        public float xResolution;
+        public float zResolution;
+
+        [WriteOnly] public NativeArray<float> output;
+
+        public void Execute(int index)
+        {
+            float sampleX = index % xSize;
+            float sampleZ = index / xSize;
+            float noise = 0;
+            float normalization = 0;
+            for (int i = 0; i < octaves; i++)
+            {
+                float octaveNoise = cnoise(new float2((sampleX * xResolution + xOffset) * (scale * Mathf.Pow(2, i)), (sampleZ * zResolution + zOffset) * (scale * Mathf.Pow(2, i)))) * amplitude * (1 / Mathf.Pow(2, i));
+                noise += octaveNoise;
+                normalization += 1 / Mathf.Pow(2, i);
+            }
+
+            noise = Mathf.Abs(noise / normalization);
+            output[index] = noise;
+        }
+
+    }
+
 
     [BurstCompile]
     private struct WindSimplexJob : IJobParallelFor
@@ -98,6 +133,63 @@ public static class NoiseMaps
                 vertices[i] = new Vector3(x * xResolution, easeCurve.Evaluate(((6 * Mathf.Pow(y, 5)) - (15 * Mathf.Pow(y, 4)) + (10 * Mathf.Pow(y, 3)))) * amplitude, z * zResolution);
                 i++;
             }
+        }
+
+        jobResult.Dispose();
+        return vertices;
+    }
+    
+    public static Vector3[] GenerateTerrainLayers(float xOffset, float zOffset, int xSize, int zSize, NoiseTesting.NoiseLayer[] noiseLayers, float xResolution=1, float zResolution=1) {
+        Vector3[] vertices = new Vector3[(xSize + 1) * (zSize + 1)];
+        for (int z = 0, i = 0; z <= zSize; z++)
+        {
+            for (int x = 0; x <= xSize; x++) {
+                vertices[i] = new Vector3(x * xResolution, 0, z * zResolution);
+                i++;
+            }
+        }
+
+        float normalization = 0;
+        var jobResult = new NativeArray<float>(vertices.Length, Allocator.TempJob);
+        for (int i = 0; i < noiseLayers.Length; i++) {
+
+            if (noiseLayers[i].noiseType == "simplex") {
+                var job = new SimplexNoiseJob() {
+                    xSize = xSize + 1,
+                    xOffset = xOffset,
+                    zOffset = zOffset,
+                    scale = 1 / noiseLayers[i].scale,
+                    amplitude = noiseLayers[i].amplitude,
+                    octaves = noiseLayers[i].octaves,
+                    output = jobResult,
+                    xResolution = xResolution,
+                    zResolution = zResolution
+                };
+                var handle = job.Schedule(jobResult.Length, 32);
+                handle.Complete();
+            }
+
+            else if (noiseLayers[i].noiseType == "cellular") {
+                var job = new CellularNoiseJob() {
+                    xSize = xSize + 1,
+                    xOffset = xOffset,
+                    zOffset = zOffset,
+                    scale = 1 / noiseLayers[i].scale,
+                    amplitude = noiseLayers[i].amplitude,
+                    octaves = noiseLayers[i].octaves,
+                    output = jobResult,
+                    xResolution = xResolution,
+                    zResolution = zResolution
+                };
+                var handle = job.Schedule(jobResult.Length, 32);
+                handle.Complete();
+            }
+
+            for (int j = 0; j < vertices.Length; j++) {
+                vertices[j].y += (i > 0 ? noiseLayers[i].primaryEase.Evaluate(vertices[j].y / normalization) : 1) * noiseLayers[i].easeCurve.Evaluate(jobResult[j] / Mathf.Abs(noiseLayers[i].amplitude)) * noiseLayers[i].amplitude;
+            }
+
+            normalization += noiseLayers[i].amplitude;
         }
 
         jobResult.Dispose();
