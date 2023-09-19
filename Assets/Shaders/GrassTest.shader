@@ -62,7 +62,7 @@
                 float4 pos = _PositionsBuffer[instanceID].position;
                 InitIndirectDrawArgs(0);
                 v2f o;
-                float posHash = sin(pos.x * 257.0f) * cos(pos.y * 257.0f * 2.0f) * sin(pos.z * 257.0f * 3.0f);
+                float posHash = (sin(pos.x * 162.0f) + cos(pos.y * 82.0f) + sin(pos.z * 31.0f)) / 3.0f;
                 float scale = _Scale * (1 + posHash * _ScaleRandomization);
                 float2 displacement = (sin(posHash), cos(posHash)) * _DisplacementAmplitude;
                 //7 is height of tallest vertex (change if mesh changes)

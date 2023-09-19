@@ -204,8 +204,8 @@ public class WorldGen : MonoBehaviour
                         Vector3[] normals = _tilePool[_tilePositions[x, z]].mesh.normals;
                         Vector3[] vertexData = _tilePool[_tilePositions[x, z]].mesh.vertices;
                         _tilePool[_tilePositions[x, z]].grassIndexStart = _grassData.Count;
-                        for (int i = 0; i < vertexData.Length; i += 3) {
-                            if (normals[i].y < 0.6f) continue;
+                        for (int i = 0; i < vertexData.Length; i++) {
+                            if (normals[i].y < 0.6f || _tilePool[_tilePositions[x, z]].humidityMap[i] > 0.5f) continue;
                             GrassData gd = new GrassData();
                             gd.position = new Vector4(vertexData[i].x + (_tilePool[_tilePositions[x, z]].x * _xSize * _xResolution), vertexData[i].y, vertexData[i].z + (_tilePool[_tilePositions[x, z]].z * _zSize * _zResolution), 0);
                             gd.uv = new Vector2(gd.position.x / (_xSize * _xResolution * _xTiles), gd.position.z / (_zSize * _zResolution * _zTiles));
@@ -337,8 +337,8 @@ public class WorldGen : MonoBehaviour
         if (Mathf.Max(Mathf.Abs(x), Mathf.Abs(z)) <= _maxGrassDistChunks) {
             Vector3[] normals = msh.normals;
             _tilePool[index].grassIndexStart = _grassData.Count;
-            for (int i = 0; i < vertexData.Length; i += 3) {
-                if (normals[i].y < 0.6f) continue;
+            for (int i = 0; i < vertexData.Length; i++) {
+                if (normals[i].y < 0.6f || humidityMap[i] > 0.5f) continue;
                 GrassData gd = new GrassData();
                 gd.position = new Vector4(vertexData[i].x + (x * _xSize * _xResolution), vertexData[i].y, vertexData[i].z + (z * _zSize * _zResolution), 0);
                 gd.uv = new Vector2(Mathf.Abs(gd.position.x / (_xSize * _xResolution * _xTiles)), Mathf.Abs(gd.position.z / (_zSize * _zResolution * _zTiles)));
@@ -383,8 +383,8 @@ public class WorldGen : MonoBehaviour
             Vector3[] normals = _tilePool[index].mesh.normals;
             Vector3[] vertexData = _tilePool[index].mesh.vertices;
             _tilePool[index].grassIndexStart = _grassData.Count;
-            for (int i = 0; i < vertexData.Length; i += 3) {
-                if (normals[i].y < 0.6f) continue;
+            for (int i = 0; i < vertexData.Length; i++) {
+                if (normals[i].y < 0.6f || _tilePool[index].humidityMap[i] > 0.5f) continue;
                 GrassData gd = new GrassData();
                 gd.position = new Vector4(vertexData[i].x + (_tilePool[index].x * _xSize * _xResolution), vertexData[i].y, vertexData[i].z + (_tilePool[index].z * _zSize * _zResolution), 0);
                 gd.uv = new Vector2(gd.position.x / (_xSize * _xResolution * _xTiles), gd.position.z / (_zSize * _zResolution * _zTiles));
