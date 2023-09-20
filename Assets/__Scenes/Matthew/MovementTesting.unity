@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 261.80057, g: 324.3278, b: 429.24698, a: 1}
+  m_IndirectSpecularColor: {r: 262.30203, g: 324.99054, b: 430.14313, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -140,6 +140,8 @@ GameObject:
   - component: {fileID: 70028131}
   - component: {fileID: 70028139}
   - component: {fileID: 70028138}
+  - component: {fileID: 70028141}
+  - component: {fileID: 70028140}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -333,6 +335,45 @@ MonoBehaviour:
   _xMouseMovementTransform: {fileID: 70028135}
   _yMouseMovementTransform: {fileID: 227975683}
   _mouseSensitivity: 30
+--- !u!114 &70028140
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 70028130}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f09fbaefd150a48a9b6bfd28edaabda2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _raycastLength: 5
+  _damage: 5
+  _range: 5
+  _cooldown: 1
+--- !u!114 &70028141
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 70028130}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 91e9c5a72272c4bf79d6e5a9357dbb36, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _currentHealth: 100
+  _maxHealth: 100
+  _onHealthInitialize:
+    m_PersistentCalls:
+      m_Calls: []
+  _onHealthZero:
+    m_PersistentCalls:
+      m_Calls: []
+  _onHealthChanged:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &208800702
 GameObject:
   m_ObjectHideFlags: 0
