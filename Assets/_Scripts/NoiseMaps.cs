@@ -139,7 +139,7 @@ public static class NoiseMaps
         return vertices;
     }
     
-    public static Vector3[] GenerateTerrainLayers(float xOffset, float zOffset, int xSize, int zSize, NoiseTesting.NoiseLayer[] noiseLayers, float xResolution=1, float zResolution=1) {
+    public static Vector3[] GenerateTerrainLayers(float xOffset, float zOffset, int xSize, int zSize, WorldGenerator.NoiseLayer[] noiseLayers, float xResolution=1, float zResolution=1) {
         Vector3[] vertices = new Vector3[(xSize + 1) * (zSize + 1)];
         for (int z = 0, i = 0; z <= zSize; z++)
         {
