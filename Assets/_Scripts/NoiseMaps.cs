@@ -151,6 +151,7 @@ public static class NoiseMaps
 
         float normalization = 0;
         var jobResult = new NativeArray<float>(vertices.Length, Allocator.TempJob);
+        float lowestAmp = 0;
         for (int i = 0; i < noiseLayers.Length; i++) {
 
             if (noiseLayers[i].noiseType == "simplex") {
@@ -190,6 +191,11 @@ public static class NoiseMaps
             }
 
             normalization += noiseLayers[i].amplitude;
+            if (noiseLayers[i].amplitude < lowestAmp) lowestAmp = noiseLayers[i].amplitude;
+        }
+
+        for (int j = 0; j < vertices.Length; j++) {
+            vertices[j].y -= lowestAmp;
         }
 
         jobResult.Dispose();

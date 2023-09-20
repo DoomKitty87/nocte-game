@@ -338,6 +338,7 @@ public class WorldGenerator : MonoBehaviour
         if (!_useColorGradient) CalculateUVs(msh);
         else CalculateColors(index);
         _tilePositions[index / _zTiles, index % _zTiles] = index;
+        if (Mathf.Max(Mathf.Abs(x), Mathf.Abs(z)) <= _maxGrassDistChunks) GenerateGrass(index);
         if (index == (_xTiles * _zTiles) - 1) {
             UpdateGrassBuffers();
         }
@@ -369,12 +370,25 @@ public class WorldGenerator : MonoBehaviour
         if (!_useColorGradient) CalculateUVs(_tilePool[index].mesh);
         else CalculateColors(index);
         _tilePool[index].obj.transform.position = new Vector3(x * _xSize * _xResolution, 0, z * _zSize * _zResolution);
+        int maxDist = Mathf.Max(Mathf.Abs(x - _playerXChunkScale), Mathf.Abs(z - _playerZChunkScale));
+        if (maxDist <= _maxGrassDistChunks) GenerateGrass(index);
         if (_updateQueue.Count > 1) return;
         UpdateGrassBuffers();
     }
 
     private void GenerateGrass(int index) {
-        
+        if (_tilePool[index].grassCount > 0) return;
+        Vector3[] normals = _tilePool[index].mesh.normals;
+        Vector3[] vertexData = _tilePool[index].mesh.vertices;
+        _tilePool[index].grassIndexStart = _grassData.Count;
+        for (int i = 0; i < vertexData.Length; i++) {
+            if (normals[i].y < 0.6f) continue;
+            GrassData gd = new GrassData();
+            gd.position = new Vector4(vertexData[i].x + (_tilePool[index].x * _xSize * _xResolution), vertexData[i].y, vertexData[i].z + (_tilePool[index].z * _zSize * _zResolution), 0);
+            gd.uv = new Vector2(gd.position.x / (_xSize * _xResolution * _xTiles), gd.position.z / (_zSize * _zResolution * _zTiles));
+            _grassData.Add(gd);
+        }
+        _tilePool[index].grassCount = _grassData.Count - _tilePool[index].grassIndexStart;
     }
     
     private void UpdateGrassBuffers() {
