@@ -2,7 +2,7 @@ using System;
 using UnityEngine;
 using System.Collections.Generic;
 
-public class NoiseTesting : MonoBehaviour
+public class WorldGenerator : MonoBehaviour
 {
     private struct WorldTile
     {
@@ -14,6 +14,8 @@ public class NoiseTesting : MonoBehaviour
         public float[] largeScaleHeight;
         public int x;
         public int z;
+        public int grassIndexStart;
+        public int grassCount;
 
     }
     
@@ -27,6 +29,15 @@ public class NoiseTesting : MonoBehaviour
         public AnimationCurve easeCurve;
         public AnimationCurve primaryEase;
         public float scale;
+
+    }
+    
+    private struct GrassData
+    {
+
+        public Vector4 position;
+        public Vector2 uv;
+        public float displacement;
 
     }
     
@@ -56,6 +67,13 @@ public class NoiseTesting : MonoBehaviour
     public int _maxUpdatesPerFrame = 5;
 
     public bool _hasColliders;
+    
+    public Material _material2;
+    public Mesh _mesh;
+
+    public int _maxGrassDistChunks = 10;
+
+    [SerializeField] private NoiseLayer[] _noiseLayers;
 
     private WorldTile[] _tilePool;
     private int[,] _tilePositions;
@@ -68,13 +86,17 @@ public class NoiseTesting : MonoBehaviour
 
     private Texture2D _wind;
     
-    public Material _material2;
-    public Mesh _mesh;
+    GraphicsBuffer _commandBuf;
+    GraphicsBuffer.IndirectDrawIndexedArgs[] _commandData;
+    private ComputeBuffer _positionsBuffer;
+    const int _commandCount = 2;
+    private List<GrassData> _grassData;
+    private RenderParams _rp;
 
-    public int _maxGrassDistChunks = 10;
+    private float _playerX, _playerZ;
+    private int _playerXChunkScale, _playerZChunkScale;
 
-    [SerializeField] private NoiseLayer[] _noiseLayers;
-
+    private Vector2 _windPos;
 
     //TODO: Improve grass performance (frustum culling?)
 
@@ -85,6 +107,11 @@ public class NoiseTesting : MonoBehaviour
 
         int deltaX = playerXChunkScale - _lastPlayerChunkX;
         int deltaZ = playerZChunkScale - _lastPlayerChunkZ;
+        
+        _playerX = playerPos.x;
+        _playerZ = playerPos.z;
+        _playerXChunkScale = playerXChunkScale;
+        _playerZChunkScale = playerZChunkScale;
         
         if (deltaX < 0) {
             int[] tempValues = new int[_zTiles];
@@ -184,16 +211,31 @@ public class NoiseTesting : MonoBehaviour
                     else if (_hasColliders) {
                         if (_tilePool[_tilePositions[x, z]].meshCollider) _tilePool[_tilePositions[x, z]].meshCollider.enabled = false;
                     }
+
+                    if (maxDist <= _maxGrassDistChunks && !(x == _xTiles - 1 && deltaX == 1) &&
+                        !(x == 0 && deltaX == -1) && !(z == _zTiles - 1 && deltaZ == 1) && !(z == 0 && deltaZ == -1)) {
+                        GenerateGrass(_tilePositions[x, z]);
+                    }
+                    else if (_tilePool[_tilePositions[x, z]].grassCount > 0) {
+                        _grassData.RemoveRange(_tilePool[_tilePositions[x, z]].grassIndexStart, _tilePool[_tilePositions[x, z]].grassCount);
+                        for (int i = 0; i < _xTiles * _zTiles; i++) {
+                            if (_tilePool[i].grassIndexStart > _tilePool[_tilePositions[x, z]].grassIndexStart) _tilePool[i].grassIndexStart -= _tilePool[_tilePositions[x, z]].grassCount;
+                        }
+                        _tilePool[_tilePositions[x, z]].grassCount = 0;
+                        _tilePool[_tilePositions[x, z]].grassIndexStart = 0;
+                    }
                 }
             }
         }
         
         _lastPlayerChunkX = playerXChunkScale;
         _lastPlayerChunkZ = playerZChunkScale;
+        _rp.matProps.SetVector("_PlayerPosition", playerPos);
     }
     
     private void Start() {
         _scale = 1 / _scale;
+        SetupGrass();
         SetupPool();
     }
 
@@ -210,6 +252,24 @@ public class NoiseTesting : MonoBehaviour
             }
             else break;
         }
+        UpdateWind();
+        Graphics.RenderMeshIndirect(_rp, _mesh, _commandBuf, _commandCount);
+    }
+    
+    private void UpdateWind() {
+        _windPos += new Vector2(Time.deltaTime, Time.deltaTime);
+        float[] windData = NoiseMaps.GenerateWindMap(128, 128, _windPos.x, _windPos.y, 0.1f);
+        for (int i = 0; i < windData.Length; i++) {
+            _wind.SetPixel(i % 128, i / 128, new Color(windData[i], windData[i], windData[i], 1));
+        }
+        _wind.Apply();
+    }
+    
+    private void OnDestroy() {
+        _commandBuf?.Release();
+        _positionsBuffer?.Release();
+        _commandBuf = null;
+        _positionsBuffer = null;
     }
     
     private void SetupPool() {
@@ -225,6 +285,19 @@ public class NoiseTesting : MonoBehaviour
         }
     }
 
+    private void SetupGrass() {
+        _commandBuf = new GraphicsBuffer(GraphicsBuffer.Target.IndirectArguments, _commandCount, GraphicsBuffer.IndirectDrawIndexedArgs.size);
+        _commandData = new GraphicsBuffer.IndirectDrawIndexedArgs[_commandCount];
+        _grassData = new List<GrassData>();
+        _positionsBuffer = new ComputeBuffer((_xSize + 1) * (_zSize + 1) * _xTiles * _zTiles, sizeof(float) * 7, ComputeBufferType.Default);
+        _rp = new RenderParams(_material2);
+        _rp.matProps = new MaterialPropertyBlock();
+        _wind = new Texture2D(128, 128);
+        _rp.matProps.SetTexture("_Wind", _wind);
+        _rp.matProps.SetMatrix("_ObjectToWorld", Matrix4x4.Translate(new Vector3(0, 0, 0)));
+        _rp.matProps.SetBuffer("_PositionsBuffer", _positionsBuffer);
+    }
+
     private void GenerateTile(int x, int z, int index)
     {
         GameObject go = new GameObject("Tile");
@@ -235,7 +308,7 @@ public class NoiseTesting : MonoBehaviour
         mf.mesh = new Mesh();
         Mesh msh = mf.mesh;
         int seed = _seed;
-        Vector3[] vertexData = new Vector3[0];//NoiseMaps.GenerateTerrainLayers(x * _xSize * _xResolution + seed, z * _zSize * _zResolution + seed, _xSize, _zSize, _noiseLayers, _xResolution, _zResolution);
+        Vector3[] vertexData = NoiseMaps.GenerateTerrainLayers(x * _xSize * _xResolution + seed, z * _zSize * _zResolution + seed, _xSize, _zSize, _noiseLayers, _xResolution, _zResolution);
         msh.vertices = vertexData;
         WindTriangles(msh);
         
@@ -265,6 +338,10 @@ public class NoiseTesting : MonoBehaviour
         if (!_useColorGradient) CalculateUVs(msh);
         else CalculateColors(index);
         _tilePositions[index / _zTiles, index % _zTiles] = index;
+        if (Mathf.Max(Mathf.Abs(x), Mathf.Abs(z)) <= _maxGrassDistChunks) GenerateGrass(index);
+        if (index == (_xTiles * _zTiles) - 1) {
+            UpdateGrassBuffers();
+        }
     }
 
     private void QueueTileUpdate(int index) {
@@ -283,7 +360,7 @@ public class NoiseTesting : MonoBehaviour
         int z = _tilePool[index].z;
         _tilePool[index].mesh.Clear();
         int seed = _seed;
-        //_tilePool[index].mesh.vertices = NoiseMaps.GenerateTerrainLayers(x * _xSize * _xResolution + seed, z * _zSize * _zResolution + seed, _xSize, _zSize, _noiseLayers, _xResolution, _zResolution);
+        _tilePool[index].mesh.vertices = NoiseMaps.GenerateTerrainLayers(x * _xSize * _xResolution + seed, z * _zSize * _zResolution + seed, _xSize, _zSize, _noiseLayers, _xResolution, _zResolution);
         _tilePool[index].temperatureMap = NoiseMaps.GenerateTemperatureMap(_tilePool[index].mesh.vertices, x * _xSize * _xResolution + (seed * 2), z * _zSize * _zResolution + (seed * 2), _xSize, _zSize, _scale / _temperatureScale, _easeCurve, _xResolution, _zResolution);
         _tilePool[index].humidityMap = NoiseMaps.GenerateHumidityMap(_tilePool[index].mesh.vertices, _tilePool[index].temperatureMap, x * _xSize * _xResolution + (seed * 0.5f), z * _zSize * _zResolution + (seed * 0.5f), _xSize, _zSize, _scale / _humidityScale, _easeCurve, _xResolution, _zResolution);
         _tilePool[index].largeScaleHeight = NoiseMaps.GenerateLargeScaleHeight(x * _xSize * _xResolution + seed, z * _zSize * _zResolution + seed, _xSize, _zSize, _scale, _amplitude,  _easeCurve, _xResolution, _zResolution);
@@ -293,8 +370,36 @@ public class NoiseTesting : MonoBehaviour
         if (!_useColorGradient) CalculateUVs(_tilePool[index].mesh);
         else CalculateColors(index);
         _tilePool[index].obj.transform.position = new Vector3(x * _xSize * _xResolution, 0, z * _zSize * _zResolution);
+        int maxDist = Mathf.Max(Mathf.Abs(x - _playerXChunkScale), Mathf.Abs(z - _playerZChunkScale));
+        if (maxDist <= _maxGrassDistChunks) GenerateGrass(index);
+        if (_updateQueue.Count > 1) return;
+        UpdateGrassBuffers();
+    }
+
+    private void GenerateGrass(int index) {
+        if (_tilePool[index].grassCount > 0) return;
+        Vector3[] normals = _tilePool[index].mesh.normals;
+        Vector3[] vertexData = _tilePool[index].mesh.vertices;
+        _tilePool[index].grassIndexStart = _grassData.Count;
+        for (int i = 0; i < vertexData.Length; i++) {
+            if (normals[i].y < 0.6f) continue;
+            GrassData gd = new GrassData();
+            gd.position = new Vector4(vertexData[i].x + (_tilePool[index].x * _xSize * _xResolution), vertexData[i].y, vertexData[i].z + (_tilePool[index].z * _zSize * _zResolution), 0);
+            gd.uv = new Vector2(gd.position.x / (_xSize * _xResolution * _xTiles), gd.position.z / (_zSize * _zResolution * _zTiles));
+            _grassData.Add(gd);
+        }
+        _tilePool[index].grassCount = _grassData.Count - _tilePool[index].grassIndexStart;
     }
     
+    private void UpdateGrassBuffers() {
+        _rp.worldBounds = new Bounds(new Vector3(_playerX, 0, _playerZ), _xTiles * _xSize * _xResolution * Vector3.one); // use tighter bounds for better FOV culling
+        _commandData[0].indexCountPerInstance = _mesh.GetIndexCount(0);
+        _commandData[0].instanceCount = (uint) _grassData.Count;
+        _commandData[1].indexCountPerInstance = _mesh.GetIndexCount(0);
+        _commandData[1].instanceCount = (uint) _grassData.Count;
+        _commandBuf.SetData(_commandData);
+        _positionsBuffer.SetData(_grassData);
+    }
 
     private void WindTriangles(Mesh targetMesh) {
         int[] triangles = new int[_xSize * _zSize * 6];

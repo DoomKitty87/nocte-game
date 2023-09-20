@@ -139,7 +139,7 @@ public static class NoiseMaps
         return vertices;
     }
     
-    public static Vector3[] GenerateTerrainLayers(float xOffset, float zOffset, int xSize, int zSize, NoiseTesting.NoiseLayer[] noiseLayers, float xResolution=1, float zResolution=1) {
+    public static Vector3[] GenerateTerrainLayers(float xOffset, float zOffset, int xSize, int zSize, WorldGenerator.NoiseLayer[] noiseLayers, float xResolution=1, float zResolution=1) {
         Vector3[] vertices = new Vector3[(xSize + 1) * (zSize + 1)];
         for (int z = 0, i = 0; z <= zSize; z++)
         {
@@ -151,6 +151,7 @@ public static class NoiseMaps
 
         float normalization = 0;
         var jobResult = new NativeArray<float>(vertices.Length, Allocator.TempJob);
+        float lowestAmp = 0;
         for (int i = 0; i < noiseLayers.Length; i++) {
 
             if (noiseLayers[i].noiseType == "simplex") {
@@ -190,6 +191,11 @@ public static class NoiseMaps
             }
 
             normalization += noiseLayers[i].amplitude;
+            if (noiseLayers[i].amplitude < lowestAmp) lowestAmp = noiseLayers[i].amplitude;
+        }
+
+        for (int j = 0; j < vertices.Length; j++) {
+            vertices[j].y -= lowestAmp;
         }
 
         jobResult.Dispose();
