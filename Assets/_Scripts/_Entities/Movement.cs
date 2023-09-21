@@ -67,6 +67,9 @@ public class Movement : MonoBehaviour
   private int _groundCheckDelay;
   private Vector3 _lastInputVector;
   [SerializeField] private float _timeSinceLastDirectionChange;
+
+  // For gizmos testing of jump accel only
+  private Vector3 _accel;
   
   private void SetColliderFriction(float dynamicValue, float staticValue) {
     _colliderMaterial.dynamicFriction = dynamicValue;
@@ -214,17 +217,24 @@ public class Movement : MonoBehaviour
         // ---- straight from link above
         Vector3 projectedVelocity = Vector3.Project(GetVelocityXZ(), inputVector);
         bool isAway = Vector3.Dot(inputVector, projectedVelocity) <= 0f;
+        _accel = inputVector * _jumpMoveAccel;
         if (projectedVelocity.magnitude < _jumpMaxMoveSpeed || isAway) {
-          Vector3 accel = inputVector * _jumpMoveAccel;
           if (!isAway) {
-            accel = Vector3.ClampMagnitude(accel, _jumpMaxMoveSpeed - projectedVelocity.magnitude);
+            _accel = Vector3.ClampMagnitude(_accel, _jumpMaxMoveSpeed - projectedVelocity.magnitude);
           }
           else {
-            accel = Vector3.ClampMagnitude(accel, _jumpMaxMoveSpeed + projectedVelocity.magnitude);
+            _accel = Vector3.ClampMagnitude(_accel, _jumpMaxMoveSpeed + projectedVelocity.magnitude);
           }
-          _rigidbody.AddForce(accel, ForceMode.VelocityChange);
         }
         // ----
+        else {
+          _accel = Vector3.zero;
+        }
+        Physics.Raycast(transform.position, inputVector, out RaycastHit hit, inputVector.magnitude);
+        if (hit.collider != null) {
+          _accel = Vector3.zero;
+        }
+        _rigidbody.AddForce(_accel, ForceMode.VelocityChange);
       }
       
     }
