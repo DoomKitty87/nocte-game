@@ -307,6 +307,7 @@ MonoBehaviour:
   _maxDownwardsSlopeAngle: 45
   _slideStartSpeed: 20
   _slideFriction: 0.1
+  _slideExitSpeed: 9
   _slideForceExitSpeed: 0
   _slideMinSpeed: 9.8
   _slideDrag: 0.2
@@ -350,7 +351,9 @@ MonoBehaviour:
   _raycastLength: 5
   _damage: 5
   _range: 5
+  _knockbackAmount: 10
   _cooldown: 1
+  _secondsSinceLastAttack: 0
 --- !u!114 &70028141
 MonoBehaviour:
   m_ObjectHideFlags: 0
