@@ -33,13 +33,6 @@ public class CombatCore : MonoBehaviour
   private void OnDrawGizmos() {
     Physics.Raycast(transform.position, transform.forward, out RaycastHit hit, _range);
     Gizmos.color = Color.magenta;
-    Vector3 lineEnd;
-    if (hit.point == null) {
-      lineEnd = transform.forward * _range;
-    }
-    else {
-      lineEnd = hit.point;
-    }
-    Gizmos.DrawLine(transform.position, lineEnd + transform.position);
+    Gizmos.DrawLine(transform.position, transform.position + transform.forward * _range);
   }
 }
