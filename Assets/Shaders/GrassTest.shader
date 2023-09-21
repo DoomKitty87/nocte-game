@@ -64,12 +64,18 @@
                 v2f o;
                 float posHash = (pos.x * 219.87) % 1 * (pos.z * 2140.21 % 1) * (dot(pos, pos + 23.6f) % 1);
                 float scale = _Scale * (1 + posHash * _ScaleRandomization);
+
+                // Randomizes location of each blade of grass
                 float2 displacement = (sin(posHash), cos(posHash)) * _DisplacementAmplitude;
                 //7 is height of tallest vertex (change if mesh changes)
                 float uvy = v.vertex.y / scale / 7;
                 float trampleValue = lerp(0.15f, 1, min((abs(_PlayerPosition.x - pos.x) + abs(_PlayerPosition.z - pos.z)) / 2 / _TrampleRadius, 1));
                 float movement = uvy * uvy * (sin(tex2Dlod(_Wind, float4(_PositionsBuffer[instanceID].uv, 0, 0)).r)) * lerp(0.5f, 1.0f, abs(posHash)) * _WindIntensity;
-                float4 lpos = RotateAroundYInDegrees(float4(v.vertex.x * scale + displacement.x, v.vertex.y * scale * lerp(trampleValue, 1, abs(_PlayerPosition.y - pos.y) / (7 * scale * 2)), v.vertex.z + displacement.y, v.vertex.w), posHash * 180.0f);
+                float4 lpos = RotateAroundYInDegrees(float4(
+                v.vertex.x * scale + displacement.x,
+                v.vertex.y * scale * lerp(trampleValue, 1, abs(_PlayerPosition.y - pos.y) / (7 * scale * 2)), 
+                v.vertex.z * scale + displacement.y, 
+                v.vertex.w), posHash * 180.0f);
                 float4 wpos = mul(_ObjectToWorld, (float4(lpos.x + movement, lpos.y, lpos.z + movement, lpos.w)) + pos);
                 o.pos = mul(UNITY_MATRIX_VP, wpos);
                 o.color = (lerp(_Color1, _Color2, uvy) + lerp(0.0f, _TipColor, uvy * uvy * (1.0f * scale))) * lerp(_AOColor, 1.0f, uvy);
@@ -84,3 +90,5 @@
         }
     }
 }
+
+//                 float3 posHash = (((pos.x * 976.36 / .825) % 1), ((pos.y * 395.43 / .729) % 1), ((pos.z * 234.73 / .27) % 1));//(pos.x * 219.87) % 1 * (pos.z * 2140.21 % 1) * (dot(pos, pos + 23.6f) % 1);
