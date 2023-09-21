@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using UnityEditor.Build;
 using UnityEngine;
 using UnityEngine.Serialization;
 // ===============================================================
@@ -38,14 +39,15 @@ public class Movement : MonoBehaviour
   [SerializeField] private float _moveFriction = 0.5f;
   [SerializeField] private float _moveDrag = 5;
   [SerializeField][Range(0, 180)] private float _maxDownwardsSlopeAngle = 45;
-  [SerializeField] private float _slideStartSpeed = 15;
-  [SerializeField] private float _slideFriction = 0;
-  [SerializeField] private float _slideForceExitSpeed = 0.1f;
-  [SerializeField] private float _slideMinSpeed = 0.5f;
-  [SerializeField] private float _slideDrag = 0.1f;
+  [SerializeField] private float _slideStartSpeed = 20;
+  [SerializeField] private float _slideFriction = 0.1f;
+  [SerializeField] private float _slideExitSpeed = 9;
+  [SerializeField] private float _slideForceExitSpeed = 0;
+  [SerializeField] private float _slideMinSpeed = 9.8f;
+  [SerializeField] private float _slideDrag = 0.2f;
   [SerializeField] private float _jumpForce = 8;
-  [SerializeField] private float _jumpMaxMoveSpeed = 8;
-  [SerializeField] private float _jumpMoveAccel = 1;
+  [SerializeField] private float _jumpMaxMoveSpeed = 4;
+  [SerializeField] private float _jumpMoveAccel = 0.5f;
   [SerializeField] private float _airDrag = 0;
   [SerializeField] private float _groundCheckSphereSize = 0.1f;
   
@@ -65,6 +67,9 @@ public class Movement : MonoBehaviour
   private int _groundCheckDelay;
   private Vector3 _lastInputVector;
   [SerializeField] private float _timeSinceLastDirectionChange;
+
+  // For gizmos testing of jump accel only
+  private Vector3 _accel;
   
   private void SetColliderFriction(float dynamicValue, float staticValue) {
     _colliderMaterial.dynamicFriction = dynamicValue;
@@ -176,6 +181,8 @@ public class Movement : MonoBehaviour
       
       else {
         if (!_slideInput) {
+          _rigidbody.velocity = _rigidbody.velocity.normalized * _slideExitSpeed;
+          _timeSinceLastDirectionChange = 0;
           _moveState = MovementState.Walking;
         }
         if (_rigidbody.velocity.magnitude < _slideForceExitSpeed) {
@@ -200,21 +207,37 @@ public class Movement : MonoBehaviour
           _moveState = MovementState.Walking;
         }
       }
-      
+      // https://www.reddit.com/r/Unity3D/comments/dcmvf5/i_replicated_the_source_engines_air_strafing/ <-- this is a great resource to fix this
       else {
         _groundCheckDelay--;
         _rigidbody.drag = _airDrag;
         SetColliderFriction(_moveFriction, _colliderMaterial.staticFriction);
         Vector3 velocityXZ = GetVelocityXZ();
-        _rigidbody.AddForce(transform.TransformDirection(_inputVector) * _jumpMoveAccel, ForceMode.VelocityChange);
-        if (velocityXZ.magnitude >= _jumpMaxMoveSpeed) {
-          velocityXZ = velocityXZ.normalized * _jumpMaxMoveSpeed;
-          _rigidbody.velocity = new Vector3(velocityXZ.x, _rigidbody.velocity.y, velocityXZ.z);
+        Vector3 inputVector = transform.TransformDirection(_inputVector);
+        // ---- straight from link above
+        Vector3 projectedVelocity = Vector3.Project(GetVelocityXZ(), inputVector);
+        bool isAway = Vector3.Dot(inputVector, projectedVelocity) <= 0f;
+        _accel = inputVector * _jumpMoveAccel;
+        if (projectedVelocity.magnitude < _jumpMaxMoveSpeed || isAway) {
+          if (!isAway) {
+            _accel = Vector3.ClampMagnitude(_accel, _jumpMaxMoveSpeed - projectedVelocity.magnitude);
+          }
+          else {
+            _accel = Vector3.ClampMagnitude(_accel, _jumpMaxMoveSpeed + projectedVelocity.magnitude);
+          }
         }
+        // ----
+        else {
+          _accel = Vector3.zero;
+        }
+        Physics.Raycast(transform.position, inputVector, out RaycastHit hit, inputVector.magnitude);
+        if (hit.collider != null) {
+          _accel = Vector3.zero;
+        }
+        _rigidbody.AddForce(_accel, ForceMode.VelocityChange);
       }
       
     }
-    
   }
   private void OnDrawGizmos() {
     Gizmos.color = Color.green;
