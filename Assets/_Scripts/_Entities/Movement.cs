@@ -140,7 +140,6 @@ public class Movement : MonoBehaviour
       else if (Grounded() && _slideInput && _rigidbody.velocity.magnitude > _slideMinSpeed) {
         _rigidbody.drag = _slideDrag;
         SetColliderFriction(_slideFriction, _colliderMaterial.staticFriction);
-        // TODO: When landing from a jump, sliding causes stupid movement speed, still an issue
         Vector3 velocity = _rigidbody.velocity;
         _rigidbody.velocity = _rigidbody.velocity.normalized * _slideStartSpeed;
         _moveState = MovementState.Sliding;
@@ -195,15 +194,17 @@ public class Movement : MonoBehaviour
       
       if (Grounded() && _groundCheckDelay <= 0) {
         if (_slideInput) {
+          // TODO: When landing from a jump, sliding causes stupid movement speed, still an issue
           _rigidbody.drag = _slideDrag;
           SetColliderFriction(_slideFriction, _colliderMaterial.staticFriction);
           _rigidbody.velocity = GetVelocityXZ() .normalized * _slideStartSpeed;
           _moveState = MovementState.Sliding;
         }
-        else {
+        else { 
           _rigidbody.drag = _moveDrag;
           SetColliderFriction(0, 0);
           _rigidbody.velocity /= 2;
+          _timeSinceLastDirectionChange = 0;
           _moveState = MovementState.Walking;
         }
       }
