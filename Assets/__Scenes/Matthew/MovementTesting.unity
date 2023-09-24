@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 262.30203, g: 324.99054, b: 430.14313, a: 1}
+  m_IndirectSpecularColor: {r: 261.80057, g: 324.3278, b: 429.24698, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -296,10 +296,14 @@ MonoBehaviour:
   _groundCheckOffset: {x: 0, y: -0.98, z: 0}
   _groundTag: Ground
   _inputVector: {x: 0, y: 0, z: 0}
-  _jumpInput: 0
-  _slideInput: 0
+  _rawJumpInput: 0
+  _rawSlideInput: 0
+  _rawJumpInputLastFrame: 0
+  _rawSlideInputLastFrame: 0
+  _jumpFirstDown: 0
+  _slideFirstDown: 0
   _maxMoveSpeed: 10
-  _maxMoveSpeedInit: 5
+  _maxMoveSpeedInit: 8
   _moveTimeInitToMax: 1
   _moveAccel: 2
   _moveFriction: 0.5
@@ -311,9 +315,10 @@ MonoBehaviour:
   _slideForceExitSpeed: 0
   _slideMinSpeed: 9.8
   _slideDrag: 0.2
-  _jumpForce: 8
-  _jumpMaxMoveSpeed: 4
-  _jumpMoveAccel: 0.5
+  _jumpForce: 15
+  _jumpForceDown: 40
+  _jumpMaxStrafeSpeed: 6
+  _jumpStrafeAccel: 0.5
   _airDrag: 0
   _groundCheckSphereSize: 0.1
   _moveState: 0
@@ -335,7 +340,7 @@ MonoBehaviour:
   _movementScript: {fileID: 70028138}
   _xMouseMovementTransform: {fileID: 70028135}
   _yMouseMovementTransform: {fileID: 227975683}
-  _mouseSensitivity: 30
+  _mouseSensitivity: 40
 --- !u!114 &70028140
 MonoBehaviour:
   m_ObjectHideFlags: 0

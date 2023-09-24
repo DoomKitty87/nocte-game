@@ -23,12 +23,17 @@ public class Movement : MonoBehaviour
   public void SetInputVector(Vector3 inputVector) {
     _inputVector = inputVector.normalized;
   }
-  [SerializeField] private bool _jumpInput;
-  [SerializeField] private bool _slideInput;
+  [SerializeField] private bool _rawJumpInput;
+  [SerializeField] private bool _rawSlideInput;
+  [SerializeField] private bool _rawJumpInputLastFrame;
+  [SerializeField] private bool _rawSlideInputLastFrame;
+  [SerializeField] private bool _jumpFirstDown;
+  [SerializeField] private bool _slideFirstDown;
+  
   // Emulates Crouch / Jump RawAxis
   public void SetBoolInputs(bool jumpInput, bool slideInput) {
-    _jumpInput = jumpInput;
-    _slideInput = slideInput;
+    _rawJumpInput = jumpInput;
+    _rawSlideInput = slideInput;
   }
   
   [Header("Settings")]
@@ -46,8 +51,9 @@ public class Movement : MonoBehaviour
   [SerializeField] private float _slideMinSpeed = 9.8f;
   [SerializeField] private float _slideDrag = 0.2f;
   [SerializeField] private float _jumpForce = 8;
-  [SerializeField] private float _jumpMaxMoveSpeed = 4;
-  [SerializeField] private float _jumpMoveAccel = 0.5f;
+  [SerializeField] private float _jumpForceDown = -0.1f;
+  [SerializeField] private float _jumpMaxStrafeSpeed = 6;
+  [SerializeField] private float _jumpStrafeAccel = 0.5f;
   [SerializeField] private float _airDrag = 0;
   [SerializeField] private float _groundCheckSphereSize = 0.1f;
   
@@ -67,7 +73,7 @@ public class Movement : MonoBehaviour
   private int _groundCheckDelay;
   private Vector3 _lastInputVector;
   [SerializeField] private float _timeSinceLastDirectionChange;
-
+  
   // For gizmos testing of jump accel only
   private Vector3 _accel;
   
@@ -104,6 +110,17 @@ public class Movement : MonoBehaviour
     }
   }
 
+  private void UpdateInputs() {
+    if (_rawJumpInput && !_rawJumpInputLastFrame) {
+      _jumpFirstDown = true;
+    }
+    if (_rawSlideInput && !_rawSlideInputLastFrame) {
+      _slideFirstDown = true;
+    }
+    _rawJumpInputLastFrame = _rawJumpInput;
+    _rawSlideInputLastFrame = _rawSlideInput;
+  }
+
   private void OnValidate() {
     _rigidbody = gameObject.GetComponent<Rigidbody>();
   }
@@ -112,8 +129,8 @@ public class Movement : MonoBehaviour
     _groundCheckDelay = _delayGroundCheckAfterJumpUpdates;
     _lastInputVector = Vector3.zero;
     _inputVector = Vector3.zero;
-    _jumpInput = false;
-    _slideInput = false;
+    _rawJumpInput = false;
+    _rawSlideInput = false;
   }
   private void Update() {
     if (_inputVector != _lastInputVector) {
@@ -123,7 +140,7 @@ public class Movement : MonoBehaviour
       _timeSinceLastDirectionChange += Time.deltaTime;
     }
     _lastInputVector = _inputVector;
-    
+    UpdateInputs();
     if (_procGen != null) _procGen.UpdatePlayerLoadedChunks(transform.position - new Vector3(0, GetComponent<Collider>().bounds.extents.y / 2, 0));
   }
   private void FixedUpdate() {
@@ -132,16 +149,17 @@ public class Movement : MonoBehaviour
       if (!Grounded()) {
         _moveState = MovementState.Falling;
       }
-      else if (Grounded() && _jumpInput) {
+      else if (Grounded() && _jumpFirstDown) {
+        _jumpFirstDown = false;
         _rigidbody.AddForce(Vector3.up * _jumpForce, ForceMode.VelocityChange);
         _groundCheckDelay = _delayGroundCheckAfterJumpUpdates;
         _moveState = MovementState.Falling;
       }
-      else if (Grounded() && _slideInput && _rigidbody.velocity.magnitude > _slideMinSpeed) {
+      else if (Grounded() && _slideFirstDown && _rigidbody.velocity.magnitude > _slideMinSpeed) {
+        _slideFirstDown = false;
         _rigidbody.drag = _slideDrag;
         SetColliderFriction(_slideFriction, _colliderMaterial.staticFriction);
-        Vector3 velocity = _rigidbody.velocity;
-        _rigidbody.velocity = _rigidbody.velocity.normalized * _slideStartSpeed;
+        _rigidbody.velocity = GetVelocityXZ() .normalized * _slideStartSpeed;
         _moveState = MovementState.Sliding;
       }
       
@@ -169,17 +187,18 @@ public class Movement : MonoBehaviour
     }
     if (_moveState == MovementState.Sliding) { // ----------
       
-      if (!Grounded() && !_slideInput) {
+      if (!Grounded() && !_rawSlideInput) {
         _moveState = MovementState.Falling;
       }
-      else if (Grounded() && _jumpInput) {
+      else if (Grounded() && _jumpFirstDown) {
+        _jumpFirstDown = false;
         _rigidbody.AddForce(Vector3.up * _jumpForce, ForceMode.VelocityChange);
         _groundCheckDelay = _delayGroundCheckAfterJumpUpdates;
         _moveState = MovementState.Falling;
       }
       
       else {
-        if (!_slideInput) {
+        if (!_rawSlideInput) {
           _rigidbody.velocity = _rigidbody.velocity.normalized * _slideExitSpeed;
           _timeSinceLastDirectionChange = 0;
           _moveState = MovementState.Walking;
@@ -193,20 +212,11 @@ public class Movement : MonoBehaviour
     if (_moveState == MovementState.Falling) { // -----------
       
       if (Grounded() && _groundCheckDelay <= 0) {
-        if (_slideInput) {
-          // TODO: When landing from a jump, sliding causes stupid movement speed, still an issue
-          _rigidbody.drag = _slideDrag;
-          SetColliderFriction(_slideFriction, _colliderMaterial.staticFriction);
-          _rigidbody.velocity = GetVelocityXZ() .normalized * _slideStartSpeed;
-          _moveState = MovementState.Sliding;
-        }
-        else { 
-          _rigidbody.drag = _moveDrag;
-          SetColliderFriction(0, 0);
-          _rigidbody.velocity /= 2;
-          _timeSinceLastDirectionChange = 0;
-          _moveState = MovementState.Walking;
-        }
+        _rigidbody.drag = _moveDrag;
+        SetColliderFriction(0, 0);
+        _rigidbody.velocity /= 2;
+        _timeSinceLastDirectionChange = 0;
+        _moveState = MovementState.Walking;
       }
       // https://www.reddit.com/r/Unity3D/comments/dcmvf5/i_replicated_the_source_engines_air_strafing/ <-- this is a great resource to fix this
       else {
@@ -218,13 +228,13 @@ public class Movement : MonoBehaviour
         // ---- straight from link above
         Vector3 projectedVelocity = Vector3.Project(GetVelocityXZ(), inputVector);
         bool isAway = Vector3.Dot(inputVector, projectedVelocity) <= 0f;
-        _accel = inputVector * _jumpMoveAccel;
-        if (projectedVelocity.magnitude < _jumpMaxMoveSpeed || isAway) {
+        _accel = inputVector * _jumpStrafeAccel;
+        if (projectedVelocity.magnitude < _jumpMaxStrafeSpeed || isAway) {
           if (!isAway) {
-            _accel = Vector3.ClampMagnitude(_accel, _jumpMaxMoveSpeed - projectedVelocity.magnitude);
+            _accel = Vector3.ClampMagnitude(_accel, _jumpMaxStrafeSpeed - projectedVelocity.magnitude);
           }
           else {
-            _accel = Vector3.ClampMagnitude(_accel, _jumpMaxMoveSpeed + projectedVelocity.magnitude);
+            _accel = Vector3.ClampMagnitude(_accel, _jumpMaxStrafeSpeed + projectedVelocity.magnitude);
           }
         }
         // ----
@@ -236,6 +246,9 @@ public class Movement : MonoBehaviour
           _accel = Vector3.zero;
         }
         _rigidbody.AddForce(_accel, ForceMode.VelocityChange);
+        if (_rawSlideInput) {
+          _rigidbody.AddForce(0, -_jumpForceDown, 0);
+        }
       }
       
     }
