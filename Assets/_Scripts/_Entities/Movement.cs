@@ -68,7 +68,7 @@ public class Movement : MonoBehaviour
   public MovementState _moveState;
   
   [Header("Other")]
-  [SerializeField] private WorldGen _procGen;
+  [SerializeField] private WorldGenerator _procGen;
   [SerializeField] private int _delayGroundCheckAfterJumpUpdates = 8;
   private int _groundCheckDelay;
   private Vector3 _lastInputVector;
