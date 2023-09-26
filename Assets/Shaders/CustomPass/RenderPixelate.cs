@@ -23,7 +23,7 @@ class FancyPass : CustomPass {
 		Debug.Assert(fullscreenMaterial != null, "Failed to create fullscreen pass material");
 		fullscreenMaterial.SetColor(0, Color.red);
 
-		// pixelationLayer = LayerMask.GetMask("Pixelate");
+		pixelationLayer = LayerMask.GetMask("Pixelate");
 
 		// Create render target for pre-pass
 		intermediateRenderTarget = RTHandles.Alloc(
