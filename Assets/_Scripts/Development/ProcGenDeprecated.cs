@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-public class ProcGen : MonoBehaviour
+public class ProcGenDeprecated : MonoBehaviour
 {
     
     public int xSize = 32;
