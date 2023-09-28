@@ -5,17 +5,10 @@ using UnityEngine;
 public class WeaponItem : ScriptableObject
 {
   public int _id;
+  public Vector3 _weaponContainerOffset;
   [Header("UI & Info")]
   public string _weaponName;
   public string _weaponDescription;
-  public enum WeaponType 
-  {
-    Melee,
-    Ranged,
-    Charge,
-    Area,
-  }
-  public WeaponType _weaponType;
-  // Abstract class reference, contains abstract functions for FireDown, FireHeld, FireUp 
-  public WeaponScript _weaponScript;
+  // Should contain weaponScript class reference
+  public GameObject _weaponPrefab;
 }
