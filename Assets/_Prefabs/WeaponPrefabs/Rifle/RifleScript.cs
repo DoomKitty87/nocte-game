@@ -16,15 +16,15 @@ public class RifleScript : WeaponScript
         
     }
 
-    public void FireDown() {
+    public override void FireDown() {
         
     }
 
-    public void FireUp() {
+    public override void FireUp() {
         
     }
 
-    public void FireHold() {
+    public override void FireHold() {
         
     }
 }
