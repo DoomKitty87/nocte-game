@@ -15,7 +15,6 @@ class FancyPass : CustomPass {
 		// Create pre pass shader/material
 		prePassShader = Shader.Find("Custom/PrePass");
 		prePassMaterial = CoreUtils.CreateEngineMaterial(prePassShader);
-		Debug.Assert(fullscreenMaterial != null, "Failed to create fullscreen pass material");
 
 		// Create fullscreen shader/material
 		fullscreenShader = Shader.Find("Custom/FancyPass");
