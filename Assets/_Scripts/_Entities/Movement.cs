@@ -252,6 +252,9 @@ public class Movement : MonoBehaviour
       }
       
     }
+
+    _jumpFirstDown = false;
+    _slideFirstDown = false;
   }
   private void OnDrawGizmos() {
     Gizmos.color = Color.green;
