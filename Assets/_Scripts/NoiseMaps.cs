@@ -138,6 +138,77 @@ public static class NoiseMaps
         jobResult.Dispose();
         return vertices;
     }
+
+    public static Vector3[] GenerateTerrainBiomes(float xOffset, float zOffset, int xSize, int zSize, WorldGenerator.NoiseLayer[][] noiseLayers, float biomeScale, float xResolution = 1, float zResolution = 1) {
+        Vector3[] vertices = new Vector3[(xSize + 1) * (zSize + 1)];
+        for (int z = 0, i = 0; z <= zSize; z++)
+        {
+            for (int x = 0; x <= xSize; x++) {
+                vertices[i] = new Vector3(x * xResolution, 0, z * zResolution);
+                i++;
+            }
+        }
+
+        Vector3[][] verticesBiomes = new Vector3[noiseLayers.Length][vertices.Length];
+
+        for (int b = 0; b < noiseLayers.Length; b++) {
+            verticesBiomes[b] = vertices;
+            float normalization = 0;
+            var jobResult = new NativeArray<float>(vertices.Length, Allocator.TempJob);
+            float lowestAmp = 0;
+            for (int i = 0; i < noiseLayers.Length; i++) {
+
+                if (noiseLayers[b][i].noiseType == "simplex") {
+                    var job = new SimplexNoiseJob() {
+                        xSize = xSize + 1,
+                        xOffset = xOffset,
+                        zOffset = zOffset,
+                        scale = 1 / noiseLayers[b][i].scale,
+                        amplitude = noiseLayers[b][i].amplitude,
+                        octaves = noiseLayers[b][i].octaves,
+                        output = jobResult,
+                        xResolution = xResolution,
+                        zResolution = zResolution
+                    };
+                    var handle = job.Schedule(jobResult.Length, 32);
+                    handle.Complete();
+                }
+
+                else if (noiseLayers[b][i].noiseType == "cellular") {
+                    var job = new CellularNoiseJob() {
+                        xSize = xSize + 1,
+                        xOffset = xOffset,
+                        zOffset = zOffset,
+                        scale = 1 / noiseLayers[b][i].scale,
+                        amplitude = noiseLayers[b][i].amplitude,
+                        octaves = noiseLayers[b][i].octaves,
+                        output = jobResult,
+                        xResolution = xResolution,
+                        zResolution = zResolution
+                    };
+                    var handle = job.Schedule(jobResult.Length, 32);
+                    handle.Complete();
+                }
+
+                for (int j = 0; j < vertices.Length; j++) {
+                    verticesBiomes[b][j].y += (i > 0 ? noiseLayers[b][i].primaryEase.Evaluate(verticesBiomes[b][j].y / normalization) : 1) * noiseLayers[b][i].easeCurve.Evaluate(jobResult[j] / Mathf.Abs(noiseLayers[b][i].amplitude)) * noiseLayers[b][i].amplitude;
+                }
+
+                normalization += noiseLayers[b][i].amplitude;
+                if (noiseLayers[b][i].amplitude < lowestAmp) lowestAmp = noiseLayers[b][i].amplitude;
+            }
+
+            for (int j = 0; j < vertices.Length; j++) {
+                verticesBiomes[b][j].y -= lowestAmp;
+            }
+        }
+
+        for (int i = 0; i < vertices.Length; i++) {
+            vertices[i].y = verticesBiomes[cnoise(vertices[i].x * biomeScale, vertices[i].z * biomeScale))];
+        }
+
+        return vertices;
+    }
     
     public static Vector3[] GenerateTerrainLayers(float xOffset, float zOffset, int xSize, int zSize, WorldGenerator.NoiseLayer[] noiseLayers, float xResolution=1, float zResolution=1) {
         Vector3[] vertices = new Vector3[(xSize + 1) * (zSize + 1)];
