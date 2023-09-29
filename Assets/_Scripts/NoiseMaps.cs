@@ -149,10 +149,9 @@ public static class NoiseMaps
             }
         }
 
-        Vector3[][] verticesBiomes = new Vector3[noiseLayers.Length][vertices.Length];
+        float[][] verticesBiomes = new float[noiseLayers.Length][vertices.Length];
 
         for (int b = 0; b < noiseLayers.Length; b++) {
-            verticesBiomes[b] = vertices;
             float normalization = 0;
             var jobResult = new NativeArray<float>(vertices.Length, Allocator.TempJob);
             float lowestAmp = 0;
@@ -191,7 +190,7 @@ public static class NoiseMaps
                 }
 
                 for (int j = 0; j < vertices.Length; j++) {
-                    verticesBiomes[b][j].y += (i > 0 ? noiseLayers[b][i].primaryEase.Evaluate(verticesBiomes[b][j].y / normalization) : 1) * noiseLayers[b][i].easeCurve.Evaluate(jobResult[j] / Mathf.Abs(noiseLayers[b][i].amplitude)) * noiseLayers[b][i].amplitude;
+                    verticesBiomes[b][j] += (i > 0 ? noiseLayers[b][i].primaryEase.Evaluate(verticesBiomes[b][j].y / normalization) : 1) * noiseLayers[b][i].easeCurve.Evaluate(jobResult[j] / Mathf.Abs(noiseLayers[b][i].amplitude)) * noiseLayers[b][i].amplitude;
                 }
 
                 normalization += noiseLayers[b][i].amplitude;
@@ -199,12 +198,12 @@ public static class NoiseMaps
             }
 
             for (int j = 0; j < vertices.Length; j++) {
-                verticesBiomes[b][j].y -= lowestAmp;
+                verticesBiomes[b][j] -= lowestAmp;
             }
         }
 
         for (int i = 0; i < vertices.Length; i++) {
-            vertices[i].y = verticesBiomes[cnoise(vertices[i].x * biomeScale, vertices[i].z * biomeScale))];
+            vertices[i].y = verticesBiomes[Math.Floor(cnoise(vertices[i].x * biomeScale, vertices[i].z * biomeScale) * verticesBiomes.Length)][i];
         }
 
         return vertices;
