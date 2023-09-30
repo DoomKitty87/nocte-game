@@ -139,7 +139,7 @@ public static class NoiseMaps
         return vertices;
     }
 
-    public static Vector3[] GenerateTerrainBiomes(float xOffset, float zOffset, int xSize, int zSize, WorldGenerator.NoiseLayer[][] noiseLayers, float biomeScale, float xResolution = 1, float zResolution = 1) {
+    public static Vector3[] GenerateTerrainBiomes(float xOffset, float zOffset, int xSize, int zSize, WorldGenerator.Biome[] biomes, float biomeScale, float xResolution = 1, float zResolution = 1) {
         Vector3[] vertices = new Vector3[(xSize + 1) * (zSize + 1)];
         for (int z = 0, i = 0; z <= zSize; z++)
         {
@@ -149,22 +149,21 @@ public static class NoiseMaps
             }
         }
 
-        float[][] verticesBiomes = new float[noiseLayers.Length][vertices.Length];
-
-        for (int b = 0; b < noiseLayers.Length; b++) {
+        float[] verticesBiomes = new float[biomes.Length * vertices.Length];
+        var jobResult = new NativeArray<float>(vertices.Length, Allocator.TempJob);
+        for (int b = 0; b < biomes.Length; b++) {
             float normalization = 0;
-            var jobResult = new NativeArray<float>(vertices.Length, Allocator.TempJob);
             float lowestAmp = 0;
-            for (int i = 0; i < noiseLayers.Length; i++) {
+            for (int i = 0; i < biomes[b].noiseLayers.Length; i++) {
 
-                if (noiseLayers[b][i].noiseType == "simplex") {
+                if (biomes[b].noiseLayers[i].noiseType == "simplex") {
                     var job = new SimplexNoiseJob() {
                         xSize = xSize + 1,
                         xOffset = xOffset,
                         zOffset = zOffset,
-                        scale = 1 / noiseLayers[b][i].scale,
-                        amplitude = noiseLayers[b][i].amplitude,
-                        octaves = noiseLayers[b][i].octaves,
+                        scale = 1 / biomes[b].noiseLayers[i].scale,
+                        amplitude = biomes[b].noiseLayers[i].amplitude,
+                        octaves = biomes[b].noiseLayers[i].octaves,
                         output = jobResult,
                         xResolution = xResolution,
                         zResolution = zResolution
@@ -173,14 +172,14 @@ public static class NoiseMaps
                     handle.Complete();
                 }
 
-                else if (noiseLayers[b][i].noiseType == "cellular") {
+                else if (biomes[b].noiseLayers[i].noiseType == "cellular") {
                     var job = new CellularNoiseJob() {
                         xSize = xSize + 1,
                         xOffset = xOffset,
                         zOffset = zOffset,
-                        scale = 1 / noiseLayers[b][i].scale,
-                        amplitude = noiseLayers[b][i].amplitude,
-                        octaves = noiseLayers[b][i].octaves,
+                        scale = 1 / biomes[b].noiseLayers[i].scale,
+                        amplitude = biomes[b].noiseLayers[i].amplitude,
+                        octaves = biomes[b].noiseLayers[i].octaves,
                         output = jobResult,
                         xResolution = xResolution,
                         zResolution = zResolution
@@ -190,22 +189,22 @@ public static class NoiseMaps
                 }
 
                 for (int j = 0; j < vertices.Length; j++) {
-                    verticesBiomes[b][j] += (i > 0 ? noiseLayers[b][i].primaryEase.Evaluate(verticesBiomes[b][j].y / normalization) : 1) * noiseLayers[b][i].easeCurve.Evaluate(jobResult[j] / Mathf.Abs(noiseLayers[b][i].amplitude)) * noiseLayers[b][i].amplitude;
+                    verticesBiomes[b * vertices.Length + j] += (i > 0 ? biomes[b].noiseLayers[i].primaryEase.Evaluate(verticesBiomes[b * vertices.Length + j] / normalization) : 1) * biomes[b].noiseLayers[i].easeCurve.Evaluate(jobResult[j] / Mathf.Abs(biomes[b].noiseLayers[i].amplitude)) * biomes[b].noiseLayers[i].amplitude;
                 }
 
-                normalization += noiseLayers[b][i].amplitude;
-                if (noiseLayers[b][i].amplitude < lowestAmp) lowestAmp = noiseLayers[b][i].amplitude;
+                normalization += biomes[b].noiseLayers[i].amplitude;
+                if (biomes[b].noiseLayers[i].amplitude < lowestAmp) lowestAmp = biomes[b].noiseLayers[i].amplitude;
             }
 
             for (int j = 0; j < vertices.Length; j++) {
-                verticesBiomes[b][j] -= lowestAmp;
+                verticesBiomes[b * vertices.Length + j] -= lowestAmp;
             }
         }
 
         for (int i = 0; i < vertices.Length; i++) {
-            vertices[i].y = verticesBiomes[Math.Floor(cnoise(vertices[i].x * biomeScale, vertices[i].z * biomeScale) * verticesBiomes.Length)][i];
+            vertices[i].y = verticesBiomes[(int)(Math.Abs(cnoise(new float2(vertices[i].x * biomeScale, vertices[i].z * biomeScale))) * biomes.Length) * vertices.Length + i];
         }
-
+        jobResult.Dispose();
         return vertices;
     }
     

@@ -6,7 +6,7 @@ public class RifleScript : WeaponScript
 {
     [SerializeField] private float _maxAmmo;
     [SerializeField] private float _ammo;
-    [SerializeField] private float 
+    //[SerializeField] private float 
     // Start is called before the first frame update
     void Start()
     {
