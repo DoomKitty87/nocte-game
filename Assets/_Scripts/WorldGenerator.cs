@@ -317,7 +317,7 @@ public class WorldGenerator : MonoBehaviour
         mf.mesh = new Mesh();
         Mesh msh = mf.mesh;
         int seed = _seed;
-        Vector3[] vertexData = NoiseMaps.GenerateTerrainLayers(x * _xSize * _xResolution + seed, z * _zSize * _zResolution + seed, _xSize, _zSize, _biomes[0].noiseLayers, _xResolution, _zResolution);
+        Vector3[] vertexData = NoiseMaps.GenerateTerrainBiomes(x * _xSize * _xResolution + seed, z * _zSize * _zResolution + seed, _xSize, _zSize, _biomes, _biomeScale, _xResolution, _zResolution);
         msh.vertices = vertexData;
         WindTriangles(msh);
         
@@ -369,7 +369,7 @@ public class WorldGenerator : MonoBehaviour
         int z = _tilePool[index].z;
         _tilePool[index].mesh.Clear();
         int seed = _seed;
-        _tilePool[index].mesh.vertices = NoiseMaps.GenerateTerrainLayers(x * _xSize * _xResolution + seed, z * _zSize * _zResolution + seed, _xSize, _zSize, _biomes[0].noiseLayers, _xResolution, _zResolution);
+        _tilePool[index].mesh.vertices = NoiseMaps.GenerateTerrainBiomes(x * _xSize * _xResolution + seed, z * _zSize * _zResolution + seed, _xSize, _zSize, _biomes, _biomeScale, _xResolution, _zResolution);
         _tilePool[index].temperatureMap = NoiseMaps.GenerateTemperatureMap(_tilePool[index].mesh.vertices, x * _xSize * _xResolution + (seed * 2), z * _zSize * _zResolution + (seed * 2), _xSize, _zSize, _scale / _temperatureScale, _easeCurve, _xResolution, _zResolution);
         _tilePool[index].humidityMap = NoiseMaps.GenerateHumidityMap(_tilePool[index].mesh.vertices, _tilePool[index].temperatureMap, x * _xSize * _xResolution + (seed * 0.5f), z * _zSize * _zResolution + (seed * 0.5f), _xSize, _zSize, _scale / _humidityScale, _easeCurve, _xResolution, _zResolution);
         _tilePool[index].largeScaleHeight = NoiseMaps.GenerateLargeScaleHeight(x * _xSize * _xResolution + seed, z * _zSize * _zResolution + seed, _xSize, _zSize, _scale, _amplitude,  _easeCurve, _xResolution, _zResolution);

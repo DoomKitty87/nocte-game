@@ -200,9 +200,22 @@ public static class NoiseMaps
                 verticesBiomes[b * vertices.Length + j] -= lowestAmp;
             }
         }
-
+        var biomeJob = new SimplexNoiseJob() {
+            xSize = xSize + 1,
+            xOffset = xOffset,
+            zOffset = zOffset,
+            scale = biomeScale,
+            amplitude = 1,
+            octaves = 1,
+            output = jobResult,
+            xResolution = xResolution,
+            zResolution = zResolution
+        };
+        var biomeHandle = biomeJob.Schedule(jobResult.Length, 32);
+        biomeHandle.Complete();
         for (int i = 0; i < vertices.Length; i++) {
-            vertices[i].y = verticesBiomes[(int)(Math.Abs(snoise(new float2((vertices[i].x + xOffset) * biomeScale, (vertices[i].z + zOffset) * biomeScale))) * biomes.Length) * vertices.Length + i];
+            float biomeNoise = jobResult[i] * (biomes.Length - 1);
+            vertices[i].y = Mathf.Lerp(verticesBiomes[Mathf.FloorToInt(biomeNoise) * vertices.Length + i], verticesBiomes[Mathf.CeilToInt(biomeNoise) * vertices.Length + i], biomeNoise - Mathf.FloorToInt(biomeNoise));
         }
         jobResult.Dispose();
         return vertices;
