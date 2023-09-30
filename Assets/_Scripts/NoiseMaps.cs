@@ -44,6 +44,42 @@ public static class NoiseMaps
     }
     
     [BurstCompile]
+    private struct SimplexNoiseJobScale : IJobParallelFor
+    {
+
+        public int xSize;
+        public float xOffset;
+        public float zOffset;
+        public float scaleX;
+        public float scaleZ;
+        public int octaves;
+        public float xResolution;
+        public float zResolution;
+        public bool turbulent;
+
+        [WriteOnly] public NativeArray<float> output;
+
+        public void Execute(int index)
+        {
+            float sampleX = index % xSize;
+            float sampleZ = index / xSize;
+            float noise = 0;
+            float normalization = 0;
+            for (int i = 0; i < octaves; i++)
+            {
+                float octaveNoise = snoise(new float2((sampleX * xResolution + xOffset) * (scaleX * Mathf.Pow(2, i)), (sampleZ * zResolution + zOffset) * (scaleZ * Mathf.Pow(2, i)))) * (1 / Mathf.Pow(2, i));
+                noise += octaveNoise;
+                normalization += 1 / Mathf.Pow(2, i);
+            }
+
+            if (turbulent) noise = Mathf.Abs(noise / normalization);
+            else noise = (noise / normalization + 1) / 2;
+            output[index] = noise;
+        }
+
+    }
+    
+    [BurstCompile]
     private struct CellularNoiseJob : IJobParallelFor
     {
 
@@ -66,12 +102,48 @@ public static class NoiseMaps
             float normalization = 0;
             for (int i = 0; i < octaves; i++)
             {
-                float octaveNoise = (cellular(new float2((sampleX * xResolution + xOffset) * (scale * Mathf.Pow(2, i)), (sampleZ * zResolution + zOffset) * (scale * Mathf.Pow(2, i)))) * amplitude * (1 / Mathf.Pow(2, i))).x;
+                float octaveNoise = (cellular(new float2((sampleX * xResolution + xOffset) * (scale * Mathf.Pow(2, i)), (sampleZ * zResolution + zOffset) * (scale * Mathf.Pow(2, i)))).x * amplitude * (1 / Mathf.Pow(2, i)));
                 noise += octaveNoise;
                 normalization += 1 / Mathf.Pow(2, i);
             }
 
             noise = Mathf.Abs(noise / normalization);
+            output[index] = noise;
+        }
+
+    }
+    
+    [BurstCompile]
+    private struct CellularNoiseJobScale : IJobParallelFor
+    {
+
+        public int xSize;
+        public float xOffset;
+        public float zOffset;
+        public float scaleX;
+        public float scaleZ;
+        public int octaves;
+        public float xResolution;
+        public float zResolution;
+        public bool turbulent;
+
+        [WriteOnly] public NativeArray<float> output;
+
+        public void Execute(int index)
+        {
+            float sampleX = index % xSize;
+            float sampleZ = index / xSize;
+            float noise = 0;
+            float normalization = 0;
+            for (int i = 0; i < octaves; i++)
+            {
+                float octaveNoise = (cellular(new float2((sampleX * xResolution + xOffset) * (scaleX * Mathf.Pow(2, i)), (sampleZ * zResolution + zOffset) * (scaleZ * Mathf.Pow(2, i)))).x * (1 / Mathf.Pow(2, i)));
+                noise += octaveNoise;
+                normalization += 1 / Mathf.Pow(2, i);
+            }
+
+            if (turbulent) noise = Mathf.Abs(noise / normalization);
+            else noise = (noise / normalization + 1) / 2;
             output[index] = noise;
         }
 
@@ -157,39 +229,41 @@ public static class NoiseMaps
             for (int i = 0; i < biomes[b].noiseLayers.Length; i++) {
 
                 if (biomes[b].noiseLayers[i].noiseType == "simplex") {
-                    var job = new SimplexNoiseJob() {
+                    var job = new SimplexNoiseJobScale() {
                         xSize = xSize + 1,
                         xOffset = xOffset,
                         zOffset = zOffset,
-                        scale = 1 / biomes[b].noiseLayers[i].scale,
-                        amplitude = biomes[b].noiseLayers[i].amplitude,
+                        scaleX = 1 / biomes[b].noiseLayers[i].scaleX,
+                        scaleZ = 1 / biomes[b].noiseLayers[i].scaleZ,
                         octaves = biomes[b].noiseLayers[i].octaves,
                         output = jobResult,
                         xResolution = xResolution,
-                        zResolution = zResolution
+                        zResolution = zResolution,
+                        turbulent = biomes[b].noiseLayers[i].turbulent
                     };
                     var handle = job.Schedule(jobResult.Length, 32);
                     handle.Complete();
                 }
 
                 else if (biomes[b].noiseLayers[i].noiseType == "cellular") {
-                    var job = new CellularNoiseJob() {
+                    var job = new CellularNoiseJobScale() {
                         xSize = xSize + 1,
                         xOffset = xOffset,
                         zOffset = zOffset,
-                        scale = 1 / biomes[b].noiseLayers[i].scale,
-                        amplitude = biomes[b].noiseLayers[i].amplitude,
+                        scaleX = 1 / biomes[b].noiseLayers[i].scaleX,
+                        scaleZ = 1 / biomes[b].noiseLayers[i].scaleZ,
                         octaves = biomes[b].noiseLayers[i].octaves,
                         output = jobResult,
                         xResolution = xResolution,
-                        zResolution = zResolution
+                        zResolution = zResolution,
+                        turbulent = biomes[b].noiseLayers[i].turbulent
                     };
                     var handle = job.Schedule(jobResult.Length, 32);
                     handle.Complete();
                 }
 
                 for (int j = 0; j < vertices.Length; j++) {
-                    verticesBiomes[b * vertices.Length + j] += (i > 0 ? biomes[b].noiseLayers[i].primaryEase.Evaluate(verticesBiomes[b * vertices.Length + j] / normalization) : 1) * biomes[b].noiseLayers[i].easeCurve.Evaluate(jobResult[j] / Mathf.Abs(biomes[b].noiseLayers[i].amplitude)) * biomes[b].noiseLayers[i].amplitude;
+                    verticesBiomes[b * vertices.Length + j] += (i > 0 ? biomes[b].noiseLayers[i].primaryEase.Evaluate(verticesBiomes[b * vertices.Length + j] / normalization) : 1) * biomes[b].noiseLayers[i].easeCurve.Evaluate(jobResult[j]) * biomes[b].noiseLayers[i].amplitude;
                 }
 
                 normalization += biomes[b].noiseLayers[i].amplitude;
@@ -200,16 +274,17 @@ public static class NoiseMaps
                 verticesBiomes[b * vertices.Length + j] -= lowestAmp;
             }
         }
-        var biomeJob = new SimplexNoiseJob() {
+        var biomeJob = new SimplexNoiseJobScale() {
             xSize = xSize + 1,
             xOffset = xOffset,
             zOffset = zOffset,
-            scale = biomeScale,
-            amplitude = 1,
+            scaleX = biomeScale,
+            scaleZ = biomeScale,
             octaves = 1,
             output = jobResult,
             xResolution = xResolution,
-            zResolution = zResolution
+            zResolution = zResolution,
+            turbulent = false
         };
         var biomeHandle = biomeJob.Schedule(jobResult.Length, 32);
         biomeHandle.Complete();
@@ -241,7 +316,7 @@ public static class NoiseMaps
                     xSize = xSize + 1,
                     xOffset = xOffset,
                     zOffset = zOffset,
-                    scale = 1 / noiseLayers[i].scale,
+                    scale = 1 / noiseLayers[i].scaleX,
                     amplitude = noiseLayers[i].amplitude,
                     octaves = noiseLayers[i].octaves,
                     output = jobResult,
@@ -257,7 +332,7 @@ public static class NoiseMaps
                     xSize = xSize + 1,
                     xOffset = xOffset,
                     zOffset = zOffset,
-                    scale = 1 / noiseLayers[i].scale,
+                    scale = 1 / noiseLayers[i].scaleX,
                     amplitude = noiseLayers[i].amplitude,
                     octaves = noiseLayers[i].octaves,
                     output = jobResult,

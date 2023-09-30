@@ -22,13 +22,16 @@ public class WorldGenerator : MonoBehaviour
     [System.Serializable]
     public struct NoiseLayer
     {
-        
+
+        public string name;
         public string noiseType;
         public float amplitude;
         public int octaves;
         public AnimationCurve easeCurve;
         public AnimationCurve primaryEase;
-        public float scale;
+        public float scaleX;
+        public float scaleZ;
+        public bool turbulent;
 
     }
 

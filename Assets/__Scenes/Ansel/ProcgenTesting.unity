@@ -243,12 +243,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f09fbaefd150a48a9b6bfd28edaabda2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _raycastLength: 5
-  _damage: 5
-  _range: 5
-  _knockbackAmount: 10
-  _cooldown: 1
-  _secondsSinceLastAttack: 0
+  _mainCamera: {fileID: 0}
+  _weaponContainer: {fileID: 0}
+  _currentWeaponItem: {fileID: 0}
+  _weaponInstance: {fileID: 0}
+  _instanceScript: {fileID: 0}
 --- !u!114 &1262162414
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -457,7 +456,7 @@ Transform:
   m_GameObject: {fileID: 1262162412}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 10, z: 0}
+  m_LocalPosition: {x: 0, y: 500, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -536,7 +535,7 @@ Transform:
   m_GameObject: {fileID: 1345916089}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 11.99, z: -10.73}
+  m_LocalPosition: {x: 0, y: 501.99, z: -10.73}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -825,7 +824,7 @@ Transform:
   m_GameObject: {fileID: 1625776406}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 11.99, z: -10.73}
+  m_LocalPosition: {x: 0, y: 501.99, z: -10.73}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -884,7 +883,12 @@ PrefabInstance:
     - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
         type: 3}
       propertyPath: _biomes.Array.size
-      value: 2
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
+        type: 3}
+      propertyPath: _maxUpdatesPerFrame
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
         type: 3}
@@ -919,12 +923,12 @@ PrefabInstance:
     - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
         type: 3}
       propertyPath: _biomes.Array.data[0].noiseLayers.Array.size
-      value: 1
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
         type: 3}
       propertyPath: _biomes.Array.data[1].noiseLayers.Array.size
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
         type: 3}
@@ -935,6 +939,31 @@ PrefabInstance:
         type: 3}
       propertyPath: _noiseLayers.Array.data[3].easeCurve.m_PostInfinity
       value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
+        type: 3}
+      propertyPath: _biomes.Array.data[0].noiseLayers.Array.data[0].name
+      value: Mountains
+      objectReference: {fileID: 0}
+    - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
+        type: 3}
+      propertyPath: _biomes.Array.data[0].noiseLayers.Array.data[1].name
+      value: Ridges
+      objectReference: {fileID: 0}
+    - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
+        type: 3}
+      propertyPath: _biomes.Array.data[0].noiseLayers.Array.data[2].name
+      value: World Shape
+      objectReference: {fileID: 0}
+    - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
+        type: 3}
+      propertyPath: _biomes.Array.data[0].noiseLayers.Array.data[3].name
+      value: Hills/Bumps
+      objectReference: {fileID: 0}
+    - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
+        type: 3}
+      propertyPath: _biomes.Array.data[0].noiseLayers.Array.data[4].name
+      value: Ground Detail
       objectReference: {fileID: 0}
     - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
         type: 3}
@@ -983,28 +1012,83 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
         type: 3}
+      propertyPath: _biomes.Array.data[0].noiseLayers.Array.data[0].scaleX
+      value: 10000
+      objectReference: {fileID: 0}
+    - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
+        type: 3}
+      propertyPath: _biomes.Array.data[0].noiseLayers.Array.data[0].scaleZ
+      value: 10000
+      objectReference: {fileID: 0}
+    - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
+        type: 3}
+      propertyPath: _biomes.Array.data[0].noiseLayers.Array.data[1].scaleX
+      value: 1200
+      objectReference: {fileID: 0}
+    - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
+        type: 3}
+      propertyPath: _biomes.Array.data[0].noiseLayers.Array.data[1].scaleZ
+      value: 1200
+      objectReference: {fileID: 0}
+    - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
+        type: 3}
+      propertyPath: _biomes.Array.data[0].noiseLayers.Array.data[2].scaleX
+      value: 30000
+      objectReference: {fileID: 0}
+    - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
+        type: 3}
+      propertyPath: _biomes.Array.data[0].noiseLayers.Array.data[2].scaleZ
+      value: 30000
+      objectReference: {fileID: 0}
+    - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
+        type: 3}
+      propertyPath: _biomes.Array.data[0].noiseLayers.Array.data[3].scaleX
+      value: 1500
+      objectReference: {fileID: 0}
+    - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
+        type: 3}
+      propertyPath: _biomes.Array.data[0].noiseLayers.Array.data[3].scaleZ
+      value: 1500
+      objectReference: {fileID: 0}
+    - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
+        type: 3}
+      propertyPath: _biomes.Array.data[0].noiseLayers.Array.data[4].scaleX
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
+        type: 3}
+      propertyPath: _biomes.Array.data[0].noiseLayers.Array.data[4].scaleZ
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
+        type: 3}
       propertyPath: _noiseLayers.Array.data[3].primaryEase.m_RotationOrder
       value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
         type: 3}
       propertyPath: _biomes.Array.data[0].noiseLayers.Array.data[0].octaves
-      value: 3
-      objectReference: {fileID: 0}
-    - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
-        type: 3}
-      propertyPath: _biomes.Array.data[0].noiseLayers.Array.data[1].octaves
       value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
         type: 3}
+      propertyPath: _biomes.Array.data[0].noiseLayers.Array.data[1].octaves
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
+        type: 3}
       propertyPath: _biomes.Array.data[0].noiseLayers.Array.data[2].octaves
-      value: 2
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
         type: 3}
       propertyPath: _biomes.Array.data[0].noiseLayers.Array.data[3].octaves
-      value: 6
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
+        type: 3}
+      propertyPath: _biomes.Array.data[0].noiseLayers.Array.data[4].octaves
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
         type: 3}
@@ -1024,7 +1108,7 @@ PrefabInstance:
     - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
         type: 3}
       propertyPath: _biomes.Array.data[0].noiseLayers.Array.data[0].amplitude
-      value: 500
+      value: 1600
       objectReference: {fileID: 0}
     - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
         type: 3}
@@ -1033,8 +1117,13 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
         type: 3}
+      propertyPath: _biomes.Array.data[0].noiseLayers.Array.data[0].turbulent
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
+        type: 3}
       propertyPath: _biomes.Array.data[0].noiseLayers.Array.data[1].amplitude
-      value: 300
+      value: 450
       objectReference: {fileID: 0}
     - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
         type: 3}
@@ -1043,22 +1132,37 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
         type: 3}
+      propertyPath: _biomes.Array.data[0].noiseLayers.Array.data[1].turbulent
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
+        type: 3}
       propertyPath: _biomes.Array.data[0].noiseLayers.Array.data[2].amplitude
-      value: 120
+      value: 700
       objectReference: {fileID: 0}
     - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
         type: 3}
       propertyPath: _biomes.Array.data[0].noiseLayers.Array.data[2].noiseType
-      value: cellular
+      value: simplex
       objectReference: {fileID: 0}
     - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
         type: 3}
       propertyPath: _biomes.Array.data[0].noiseLayers.Array.data[3].amplitude
-      value: 50
+      value: 200
       objectReference: {fileID: 0}
     - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
         type: 3}
       propertyPath: _biomes.Array.data[0].noiseLayers.Array.data[3].noiseType
+      value: simplex
+      objectReference: {fileID: 0}
+    - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
+        type: 3}
+      propertyPath: _biomes.Array.data[0].noiseLayers.Array.data[4].amplitude
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
+        type: 3}
+      propertyPath: _biomes.Array.data[0].noiseLayers.Array.data[4].noiseType
       value: simplex
       objectReference: {fileID: 0}
     - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
@@ -1158,6 +1262,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
         type: 3}
+      propertyPath: _biomes.Array.data[0].noiseLayers.Array.data[4].easeCurve.m_PreInfinity
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
+        type: 3}
       propertyPath: _biomes.Array.data[1].noiseLayers.Array.data[0].easeCurve.m_PreInfinity
       value: 2
       objectReference: {fileID: 0}
@@ -1184,6 +1293,11 @@ PrefabInstance:
     - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
         type: 3}
       propertyPath: _biomes.Array.data[0].noiseLayers.Array.data[3].easeCurve.m_PostInfinity
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
+        type: 3}
+      propertyPath: _biomes.Array.data[0].noiseLayers.Array.data[4].easeCurve.m_PostInfinity
       value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
@@ -1238,6 +1352,16 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
         type: 3}
+      propertyPath: _biomes.Array.data[0].noiseLayers.Array.data[4].easeCurve.m_RotationOrder
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
+        type: 3}
+      propertyPath: _biomes.Array.data[0].noiseLayers.Array.data[4].primaryEase.m_PreInfinity
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
+        type: 3}
       propertyPath: _biomes.Array.data[1].noiseLayers.Array.data[0].easeCurve.m_RotationOrder
       value: 4
       objectReference: {fileID: 0}
@@ -1278,6 +1402,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
         type: 3}
+      propertyPath: _biomes.Array.data[0].noiseLayers.Array.data[4].primaryEase.m_PostInfinity
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
+        type: 3}
       propertyPath: _biomes.Array.data[1].noiseLayers.Array.data[0].primaryEase.m_PostInfinity
       value: 2
       objectReference: {fileID: 0}
@@ -1308,6 +1437,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
         type: 3}
+      propertyPath: _biomes.Array.data[0].noiseLayers.Array.data[4].primaryEase.m_RotationOrder
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
+        type: 3}
       propertyPath: _biomes.Array.data[1].noiseLayers.Array.data[0].primaryEase.m_RotationOrder
       value: 4
       objectReference: {fileID: 0}
@@ -1329,11 +1463,16 @@ PrefabInstance:
     - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
         type: 3}
       propertyPath: _biomes.Array.data[0].noiseLayers.Array.data[2].easeCurve.m_Curve.Array.size
-      value: 3
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
         type: 3}
       propertyPath: _biomes.Array.data[0].noiseLayers.Array.data[3].easeCurve.m_Curve.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
+        type: 3}
+      propertyPath: _biomes.Array.data[0].noiseLayers.Array.data[4].easeCurve.m_Curve.Array.size
       value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
@@ -1368,6 +1507,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
         type: 3}
+      propertyPath: _biomes.Array.data[0].noiseLayers.Array.data[4].primaryEase.m_Curve.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
+        type: 3}
       propertyPath: _biomes.Array.data[1].noiseLayers.Array.data[0].primaryEase.m_Curve.Array.size
       value: 2
       objectReference: {fileID: 0}
@@ -1379,7 +1523,7 @@ PrefabInstance:
     - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
         type: 3}
       propertyPath: _biomes.Array.data[0].noiseLayers.Array.data[0].easeCurve.m_Curve.Array.data[0].time
-      value: 0
+      value: 0.45
       objectReference: {fileID: 0}
     - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
         type: 3}
@@ -1388,13 +1532,43 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
         type: 3}
+      propertyPath: _biomes.Array.data[0].noiseLayers.Array.data[0].easeCurve.m_Curve.Array.data[2].time
+      value: 0.9559793
+      objectReference: {fileID: 0}
+    - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
+        type: 3}
+      propertyPath: _biomes.Array.data[0].noiseLayers.Array.data[0].easeCurve.m_Curve.Array.data[3].time
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
+        type: 3}
+      propertyPath: _biomes.Array.data[0].noiseLayers.Array.data[0].easeCurve.m_Curve.Array.data[4].time
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
+        type: 3}
+      propertyPath: _biomes.Array.data[0].noiseLayers.Array.data[1].easeCurve.m_Curve.Array.data[0].time
+      value: 0.6
+      objectReference: {fileID: 0}
+    - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
+        type: 3}
       propertyPath: _biomes.Array.data[0].noiseLayers.Array.data[1].easeCurve.m_Curve.Array.data[1].time
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
         type: 3}
+      propertyPath: _biomes.Array.data[0].noiseLayers.Array.data[1].easeCurve.m_Curve.Array.data[2].time
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
+        type: 3}
+      propertyPath: _biomes.Array.data[0].noiseLayers.Array.data[2].easeCurve.m_Curve.Array.data[0].time
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
+        type: 3}
       propertyPath: _biomes.Array.data[0].noiseLayers.Array.data[2].easeCurve.m_Curve.Array.data[1].time
-      value: 0.27827623
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
         type: 3}
@@ -1404,6 +1578,11 @@ PrefabInstance:
     - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
         type: 3}
       propertyPath: _biomes.Array.data[0].noiseLayers.Array.data[3].easeCurve.m_Curve.Array.data[1].time
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
+        type: 3}
+      propertyPath: _biomes.Array.data[0].noiseLayers.Array.data[4].easeCurve.m_Curve.Array.data[1].time
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
@@ -1428,6 +1607,21 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
         type: 3}
+      propertyPath: _biomes.Array.data[0].noiseLayers.Array.data[0].easeCurve.m_Curve.Array.data[2].value
+      value: 0.22284436
+      objectReference: {fileID: 0}
+    - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
+        type: 3}
+      propertyPath: _biomes.Array.data[0].noiseLayers.Array.data[0].easeCurve.m_Curve.Array.data[3].value
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
+        type: 3}
+      propertyPath: _biomes.Array.data[0].noiseLayers.Array.data[0].easeCurve.m_Curve.Array.data[4].value
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
+        type: 3}
       propertyPath: _biomes.Array.data[0].noiseLayers.Array.data[1].easeCurve.m_Curve.Array.data[0].value
       value: 0
       objectReference: {fileID: 0}
@@ -1438,17 +1632,27 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
         type: 3}
-      propertyPath: _biomes.Array.data[0].noiseLayers.Array.data[2].easeCurve.m_Curve.Array.data[0].value
+      propertyPath: _biomes.Array.data[0].noiseLayers.Array.data[1].easeCurve.m_Curve.Array.data[2].value
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
         type: 3}
+      propertyPath: _biomes.Array.data[0].noiseLayers.Array.data[2].easeCurve.m_Curve.Array.data[0].value
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
+        type: 3}
       propertyPath: _biomes.Array.data[0].noiseLayers.Array.data[2].easeCurve.m_Curve.Array.data[1].value
-      value: 0.39133626
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
         type: 3}
       propertyPath: _biomes.Array.data[0].noiseLayers.Array.data[3].easeCurve.m_Curve.Array.data[1].value
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
+        type: 3}
+      propertyPath: _biomes.Array.data[0].noiseLayers.Array.data[4].easeCurve.m_Curve.Array.data[1].value
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
@@ -1473,6 +1677,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
         type: 3}
+      propertyPath: _biomes.Array.data[0].noiseLayers.Array.data[1].primaryEase.m_Curve.Array.data[0].time
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
+        type: 3}
       propertyPath: _biomes.Array.data[0].noiseLayers.Array.data[1].primaryEase.m_Curve.Array.data[1].time
       value: 1
       objectReference: {fileID: 0}
@@ -1484,6 +1693,11 @@ PrefabInstance:
     - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
         type: 3}
       propertyPath: _biomes.Array.data[0].noiseLayers.Array.data[3].primaryEase.m_Curve.Array.data[1].time
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
+        type: 3}
+      propertyPath: _biomes.Array.data[0].noiseLayers.Array.data[4].primaryEase.m_Curve.Array.data[1].time
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
@@ -1508,6 +1722,21 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
         type: 3}
+      propertyPath: _biomes.Array.data[0].noiseLayers.Array.data[0].easeCurve.m_Curve.Array.data[2].inSlope
+      value: 1.0970507
+      objectReference: {fileID: 0}
+    - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
+        type: 3}
+      propertyPath: _biomes.Array.data[0].noiseLayers.Array.data[0].easeCurve.m_Curve.Array.data[3].inSlope
+      value: 17.654318
+      objectReference: {fileID: 0}
+    - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
+        type: 3}
+      propertyPath: _biomes.Array.data[0].noiseLayers.Array.data[0].easeCurve.m_Curve.Array.data[4].inSlope
+      value: 6.0182014
+      objectReference: {fileID: 0}
+    - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
+        type: 3}
       propertyPath: _biomes.Array.data[0].noiseLayers.Array.data[0].primaryEase.m_Curve.Array.data[0].value
       value: 1
       objectReference: {fileID: 0}
@@ -1528,8 +1757,13 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
         type: 3}
+      propertyPath: _biomes.Array.data[0].noiseLayers.Array.data[1].easeCurve.m_Curve.Array.data[2].inSlope
+      value: 1.5384616
+      objectReference: {fileID: 0}
+    - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
+        type: 3}
       propertyPath: _biomes.Array.data[0].noiseLayers.Array.data[1].primaryEase.m_Curve.Array.data[0].value
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
         type: 3}
@@ -1539,17 +1773,17 @@ PrefabInstance:
     - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
         type: 3}
       propertyPath: _biomes.Array.data[0].noiseLayers.Array.data[2].easeCurve.m_Curve.Array.data[0].inSlope
-      value: -2.1872644
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
         type: 3}
       propertyPath: _biomes.Array.data[0].noiseLayers.Array.data[2].easeCurve.m_Curve.Array.data[1].inSlope
-      value: -1.3203537
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
         type: 3}
       propertyPath: _biomes.Array.data[0].noiseLayers.Array.data[2].primaryEase.m_Curve.Array.data[0].value
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
         type: 3}
@@ -1558,7 +1792,27 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
         type: 3}
+      propertyPath: _biomes.Array.data[0].noiseLayers.Array.data[3].easeCurve.m_Curve.Array.data[1].inSlope
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
+        type: 3}
+      propertyPath: _biomes.Array.data[0].noiseLayers.Array.data[3].primaryEase.m_Curve.Array.data[0].value
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
+        type: 3}
       propertyPath: _biomes.Array.data[0].noiseLayers.Array.data[3].primaryEase.m_Curve.Array.data[1].value
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
+        type: 3}
+      propertyPath: _biomes.Array.data[0].noiseLayers.Array.data[4].primaryEase.m_Curve.Array.data[0].value
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
+        type: 3}
+      propertyPath: _biomes.Array.data[0].noiseLayers.Array.data[4].primaryEase.m_Curve.Array.data[1].value
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
@@ -1613,6 +1867,36 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
         type: 3}
+      propertyPath: _biomes.Array.data[0].noiseLayers.Array.data[0].easeCurve.m_Curve.Array.data[2].inWeight
+      value: 0.33333334
+      objectReference: {fileID: 0}
+    - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
+        type: 3}
+      propertyPath: _biomes.Array.data[0].noiseLayers.Array.data[0].easeCurve.m_Curve.Array.data[2].outSlope
+      value: 1.0970507
+      objectReference: {fileID: 0}
+    - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
+        type: 3}
+      propertyPath: _biomes.Array.data[0].noiseLayers.Array.data[0].easeCurve.m_Curve.Array.data[3].inWeight
+      value: 0.33333334
+      objectReference: {fileID: 0}
+    - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
+        type: 3}
+      propertyPath: _biomes.Array.data[0].noiseLayers.Array.data[0].easeCurve.m_Curve.Array.data[3].outSlope
+      value: 17.654318
+      objectReference: {fileID: 0}
+    - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
+        type: 3}
+      propertyPath: _biomes.Array.data[0].noiseLayers.Array.data[0].easeCurve.m_Curve.Array.data[4].inWeight
+      value: 0.33333334
+      objectReference: {fileID: 0}
+    - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
+        type: 3}
+      propertyPath: _biomes.Array.data[0].noiseLayers.Array.data[0].easeCurve.m_Curve.Array.data[4].outSlope
+      value: 6.0182014
+      objectReference: {fileID: 0}
+    - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
+        type: 3}
       propertyPath: _biomes.Array.data[0].noiseLayers.Array.data[1].easeCurve.m_Curve.Array.data[0].inWeight
       value: 0
       objectReference: {fileID: 0}
@@ -1633,23 +1917,38 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
         type: 3}
+      propertyPath: _biomes.Array.data[0].noiseLayers.Array.data[1].easeCurve.m_Curve.Array.data[2].inWeight
+      value: 0.33333334
+      objectReference: {fileID: 0}
+    - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
+        type: 3}
+      propertyPath: _biomes.Array.data[0].noiseLayers.Array.data[1].easeCurve.m_Curve.Array.data[2].outSlope
+      value: 1.5384616
+      objectReference: {fileID: 0}
+    - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
+        type: 3}
       propertyPath: _biomes.Array.data[0].noiseLayers.Array.data[2].easeCurve.m_Curve.Array.data[0].inWeight
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
         type: 3}
       propertyPath: _biomes.Array.data[0].noiseLayers.Array.data[2].easeCurve.m_Curve.Array.data[0].outSlope
-      value: -2.1872644
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
         type: 3}
       propertyPath: _biomes.Array.data[0].noiseLayers.Array.data[2].easeCurve.m_Curve.Array.data[1].inWeight
-      value: 0.33333334
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
         type: 3}
       propertyPath: _biomes.Array.data[0].noiseLayers.Array.data[2].easeCurve.m_Curve.Array.data[1].outSlope
-      value: -1.3203537
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
+        type: 3}
+      propertyPath: _biomes.Array.data[0].noiseLayers.Array.data[3].easeCurve.m_Curve.Array.data[1].outSlope
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
         type: 3}
@@ -1673,6 +1972,21 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
         type: 3}
+      propertyPath: _biomes.Array.data[0].noiseLayers.Array.data[0].easeCurve.m_Curve.Array.data[1].outWeight
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
+        type: 3}
+      propertyPath: _biomes.Array.data[0].noiseLayers.Array.data[0].easeCurve.m_Curve.Array.data[2].outWeight
+      value: 0.33333334
+      objectReference: {fileID: 0}
+    - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
+        type: 3}
+      propertyPath: _biomes.Array.data[0].noiseLayers.Array.data[0].easeCurve.m_Curve.Array.data[3].outWeight
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
+        type: 3}
       propertyPath: _biomes.Array.data[0].noiseLayers.Array.data[1].easeCurve.m_Curve.Array.data[0].outWeight
       value: 0
       objectReference: {fileID: 0}
@@ -1689,17 +2003,17 @@ PrefabInstance:
     - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
         type: 3}
       propertyPath: _biomes.Array.data[0].noiseLayers.Array.data[1].primaryEase.m_Curve.Array.data[1].inSlope
-      value: 0
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
         type: 3}
       propertyPath: _biomes.Array.data[0].noiseLayers.Array.data[2].easeCurve.m_Curve.Array.data[0].outWeight
-      value: 0.33333334
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
         type: 3}
       propertyPath: _biomes.Array.data[0].noiseLayers.Array.data[2].easeCurve.m_Curve.Array.data[1].outWeight
-      value: 0.33333334
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
         type: 3}
@@ -1713,13 +2027,18 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
         type: 3}
+      propertyPath: _biomes.Array.data[0].noiseLayers.Array.data[3].primaryEase.m_Curve.Array.data[0].inSlope
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
+        type: 3}
       propertyPath: _biomes.Array.data[0].noiseLayers.Array.data[1].primaryEase.m_Curve.Array.data[0].outSlope
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
         type: 3}
       propertyPath: _biomes.Array.data[0].noiseLayers.Array.data[1].primaryEase.m_Curve.Array.data[1].outSlope
-      value: 0
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
         type: 3}
@@ -1729,6 +2048,11 @@ PrefabInstance:
     - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
         type: 3}
       propertyPath: _biomes.Array.data[0].noiseLayers.Array.data[2].primaryEase.m_Curve.Array.data[1].outSlope
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
+        type: 3}
+      propertyPath: _biomes.Array.data[0].noiseLayers.Array.data[3].primaryEase.m_Curve.Array.data[0].outSlope
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
@@ -1743,6 +2067,21 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
         type: 3}
+      propertyPath: _biomes.Array.data[0].noiseLayers.Array.data[0].easeCurve.m_Curve.Array.data[2].tangentMode
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
+        type: 3}
+      propertyPath: _biomes.Array.data[0].noiseLayers.Array.data[0].easeCurve.m_Curve.Array.data[3].tangentMode
+      value: 34
+      objectReference: {fileID: 0}
+    - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
+        type: 3}
+      propertyPath: _biomes.Array.data[0].noiseLayers.Array.data[0].easeCurve.m_Curve.Array.data[4].tangentMode
+      value: 34
+      objectReference: {fileID: 0}
+    - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
+        type: 3}
       propertyPath: _biomes.Array.data[0].noiseLayers.Array.data[1].easeCurve.m_Curve.Array.data[0].tangentMode
       value: 0
       objectReference: {fileID: 0}
@@ -1753,8 +2092,13 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
         type: 3}
-      propertyPath: _biomes.Array.data[0].noiseLayers.Array.data[2].easeCurve.m_Curve.Array.data[0].tangentMode
+      propertyPath: _biomes.Array.data[0].noiseLayers.Array.data[1].easeCurve.m_Curve.Array.data[2].tangentMode
       value: 34
+      objectReference: {fileID: 0}
+    - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
+        type: 3}
+      propertyPath: _biomes.Array.data[0].noiseLayers.Array.data[2].easeCurve.m_Curve.Array.data[0].tangentMode
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
         type: 3}
@@ -1779,22 +2123,42 @@ PrefabInstance:
     - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
         type: 3}
       propertyPath: _biomes.Array.data[0].noiseLayers.Array.data[1].primaryEase.m_Curve.Array.data[0].tangentMode
-      value: 34
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
         type: 3}
       propertyPath: _biomes.Array.data[0].noiseLayers.Array.data[1].primaryEase.m_Curve.Array.data[1].tangentMode
-      value: 34
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
         type: 3}
       propertyPath: _biomes.Array.data[0].noiseLayers.Array.data[2].primaryEase.m_Curve.Array.data[0].tangentMode
-      value: 0
+      value: 34
       objectReference: {fileID: 0}
     - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
         type: 3}
       propertyPath: _biomes.Array.data[0].noiseLayers.Array.data[2].primaryEase.m_Curve.Array.data[1].tangentMode
+      value: 34
+      objectReference: {fileID: 0}
+    - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
+        type: 3}
+      propertyPath: _biomes.Array.data[0].noiseLayers.Array.data[3].primaryEase.m_Curve.Array.data[0].tangentMode
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
+        type: 3}
+      propertyPath: _biomes.Array.data[0].noiseLayers.Array.data[3].primaryEase.m_Curve.Array.data[1].tangentMode
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
+        type: 3}
+      propertyPath: _biomes.Array.data[0].noiseLayers.Array.data[4].primaryEase.m_Curve.Array.data[0].tangentMode
+      value: 34
+      objectReference: {fileID: 0}
+    - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
+        type: 3}
+      propertyPath: _biomes.Array.data[0].noiseLayers.Array.data[4].primaryEase.m_Curve.Array.data[1].tangentMode
+      value: 34
       objectReference: {fileID: 0}
     - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
         type: 3}

@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 2.3058398, g: 1.9901626, b: 2.0750005, a: 1}
+  m_IndirectSpecularColor: {r: 2.2996054, g: 1.9921594, b: 2.111065, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -311,15 +311,15 @@ MonoBehaviour:
   _zSize: 128
   _xResolution: 1
   _zResolution: 1
-  _xTiles: 25
-  _zTiles: 25
+  _xTiles: 11
+  _zTiles: 11
   _scale: 1000
   _amplitude: 50
   _octaves: 10
   _temperatureScale: 0.5
   _humidityScale: 1.5
   _seed: 0
-  _material: {fileID: 2100000, guid: a7c32a0ac34abb6468aa79eb35c12775, type: 2}
+  _material: {fileID: 2100000, guid: ddf8d3ab70e6f8e43ac7621e42ffb451, type: 2}
   _colorGradient:
     serializedVersion: 2
     key0: {r: 1, g: 0, b: 0, a: 1}
@@ -350,7 +350,7 @@ MonoBehaviour:
     m_ColorSpace: -1
     m_NumColorKeys: 2
     m_NumAlphaKeys: 2
-  _useColorGradient: 1
+  _useColorGradient: 0
   _easeCurve:
     serializedVersion: 2
     m_Curve:
@@ -381,7 +381,7 @@ MonoBehaviour:
     type: 3}
   _scatterDensity: 0.025
   _material2: {fileID: 2100000, guid: 4acb093d21f9f424db5b95a56fbed982, type: 2}
-  _mesh: {fileID: -462981019419857548, guid: 71ecff4ba9093444fa01dd2b55b6e59c, type: 3}
+  _mesh: {fileID: 4579454407841743219, guid: 71ecff4ba9093444fa01dd2b55b6e59c, type: 3}
   _maxGrassDistChunks: 5
 --- !u!4 &219717981
 Transform:
@@ -800,8 +800,12 @@ MonoBehaviour:
   _groundCheckOffset: {x: 0, y: -0.98, z: 0}
   _groundTag: Ground
   _inputVector: {x: 0, y: 0, z: 0}
-  _jumpInput: 0
-  _slideInput: 0
+  _rawJumpInput: 0
+  _rawSlideInput: 0
+  _rawJumpInputLastFrame: 0
+  _rawSlideInputLastFrame: 0
+  _jumpFirstDown: 0
+  _slideFirstDown: 0
   _maxMoveSpeed: 10
   _maxMoveSpeedInit: 5
   _moveTimeInitToMax: 2
@@ -811,16 +815,18 @@ MonoBehaviour:
   _maxDownwardsSlopeAngle: 45
   _slideStartSpeed: 15
   _slideFriction: 0.1
+  _slideExitSpeed: 9
   _slideForceExitSpeed: 0
   _slideMinSpeed: 0.5
   _slideDrag: 0.2
   _jumpForce: 8
-  _jumpMaxMoveSpeed: 8
-  _jumpMoveAccel: 0
+  _jumpForceDown: -0.1
+  _jumpMaxStrafeSpeed: 6
+  _jumpStrafeAccel: 0.5
   _airDrag: 0
   _groundCheckSphereSize: 0.1
   _moveState: 0
-  _procGen: {fileID: 219717980}
+  _procGen: {fileID: 0}
   _delayGroundCheckAfterJumpUpdates: 8
   _timeSinceLastDirectionChange: 0
 --- !u!114 &527486866
