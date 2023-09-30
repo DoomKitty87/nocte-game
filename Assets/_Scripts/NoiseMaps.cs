@@ -66,7 +66,7 @@ public static class NoiseMaps
             float normalization = 0;
             for (int i = 0; i < octaves; i++)
             {
-                float octaveNoise = cnoise(new float2((sampleX * xResolution + xOffset) * (scale * Mathf.Pow(2, i)), (sampleZ * zResolution + zOffset) * (scale * Mathf.Pow(2, i)))) * amplitude * (1 / Mathf.Pow(2, i));
+                float octaveNoise = (cellular(new float2((sampleX * xResolution + xOffset) * (scale * Mathf.Pow(2, i)), (sampleZ * zResolution + zOffset) * (scale * Mathf.Pow(2, i)))) * amplitude * (1 / Mathf.Pow(2, i))).x;
                 noise += octaveNoise;
                 normalization += 1 / Mathf.Pow(2, i);
             }
@@ -202,7 +202,7 @@ public static class NoiseMaps
         }
 
         for (int i = 0; i < vertices.Length; i++) {
-            vertices[i].y = verticesBiomes[(int)(Math.Abs(cnoise(new float2(vertices[i].x * biomeScale, vertices[i].z * biomeScale))) * biomes.Length) * vertices.Length + i];
+            vertices[i].y = verticesBiomes[(int)(Math.Abs(snoise(new float2((vertices[i].x + xOffset) * biomeScale, (vertices[i].z + zOffset) * biomeScale))) * biomes.Length) * vertices.Length + i];
         }
         jobResult.Dispose();
         return vertices;
