@@ -1,14 +1,12 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.Timeline;
 
 [RequireComponent(typeof(HealthInterface))]
 public class CombatCore : MonoBehaviour
 {
   [Header("Dependencies")]
+  public Camera _mainCamera;
   [SerializeField] private GameObject _weaponContainer;
   [Header("Info")]
   [SerializeField] private WeaponItem _currentWeaponItem;
@@ -18,14 +16,6 @@ public class CombatCore : MonoBehaviour
   private bool _fire1LastFrame;
   private bool _fire2LastFrame;
 
-  public Vector3 GetCenterScreenWorldPosition() {
-    if (Camera.main != null)
-      return Camera.main.ScreenToWorldPoint(new Vector3(Camera.main.pixelWidth / 2, Camera.main.pixelHeight / 2));
-    else {
-      return Vector3.zero;
-    }
-  }
-  
   private void InstanceWeaponItem() {
     GameObject instance = Instantiate(_currentWeaponItem._weaponPrefab, _weaponContainer.transform);
     _weaponInstance = instance;

@@ -1,8 +1,7 @@
-using System.Collections;
+using System;
 using System.Collections.Generic;
-using Palmmedia.ReportGenerator.Core.Reporting.Builders;
 using UnityEngine;
-using UnityEngine.Serialization;
+
 
 public class RifleScript : WeaponScript
 {
@@ -11,24 +10,40 @@ public class RifleScript : WeaponScript
   [SerializeField] private float _secBetweenShots;
   [SerializeField] private float _maxAmmo;
   [SerializeField] private float _ammo;
-
-  private Vector3 _barrelPosition;
+  [SerializeField] private float _maxRaycastDistance = 5000f;
+  [SerializeField] private LayerMask _raycastLayerMask;
+  
   private float _timeSinceLastShot;
+  
+  public Vector3 GetCenterScreenWorldPosition() {
+    Camera mainCamera = _instancingCombatCoreScript._mainCamera;
+    if (mainCamera != null) {
+      // Maybe make a variable for max distance here later?
+      Physics.Raycast(mainCamera.ScreenToWorldPoint(new Vector3(mainCamera.pixelWidth / 2, mainCamera.pixelHeight / 2)), mainCamera.transform.forward, out RaycastHit hit, _maxRaycastDistance, _raycastLayerMask);
+      return hit.point;
+    }
+    Debug.LogError($"{gameObject.name} RifleScript: Could not find mainCamera!");
+    return Vector3.zero;
+  }
   
   private void RaycastBullet() {
     _timeSinceLastShot = 0;
-    Physics.Linecast(_barrelPosition, _instancingCombatCoreScript.GetCenterScreenWorldPosition(), out RaycastHit hit);
-    Debug.DrawLine(_barrelPosition, _instancingCombatCoreScript.GetCenterScreenWorldPosition(), Color.red, Time.deltaTime);
+    Vector3 barrelPosition = _barrelPositionMarker.transform.position;
+    Physics.Linecast(barrelPosition, GetCenterScreenWorldPosition(), out RaycastHit hit);
+    Debug.DrawLine(barrelPosition, GetCenterScreenWorldPosition(), Color.red, 1f);
     if (hit.collider == null) return;
     if (hit.collider.GetComponent<HealthInterface>() != null) {
       hit.collider.GetComponent<HealthInterface>().Damage(_damage);
     }
   }
 
+  private void OnValidate() {
+    _ammo = _maxAmmo;
+  }
+
   // Start is called before the first frame update
   private void Start() {
     _ammo = _maxAmmo;
-    _barrelPosition = _barrelPositionMarker.transform.position;
   }
 
   // Update is called once per frame
