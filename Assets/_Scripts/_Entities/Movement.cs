@@ -76,6 +76,8 @@ public class Movement : MonoBehaviour
   
   // For gizmos testing of jump accel only
   private Vector3 _accel;
+
+  private bool _hasInitialized = false;
   
   private void SetColliderFriction(float dynamicValue, float staticValue) {
     _colliderMaterial.dynamicFriction = dynamicValue;
@@ -142,6 +144,12 @@ public class Movement : MonoBehaviour
     _lastInputVector = _inputVector;
     UpdateInputs();
     if (_procGen != null) _procGen.UpdatePlayerLoadedChunks(transform.position - new Vector3(0, GetComponent<Collider>().bounds.extents.y / 2, 0));
+    if (!_hasInitialized && Time.time > 0.1 && Time.timeScale > 0) {
+      RaycastHit hit;
+      Physics.Raycast(Vector3.up * 2500, Vector3.down, out hit);
+      transform.position = hit.point + Vector3.up * 5;
+      _hasInitialized = true;
+    }
   }
   private void FixedUpdate() {
     if (_moveState == MovementState.Walking) { // ------------
