@@ -2,7 +2,7 @@ using System;
 using UnityEngine;
 using System.Collections.Generic;
 
-public class WorldGen : MonoBehaviour
+public class WorldGeDeprecated : MonoBehaviour
 {
     private struct WorldTile
     {
