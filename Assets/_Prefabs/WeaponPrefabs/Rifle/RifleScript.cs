@@ -1,11 +1,13 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.VFX;
 
 
 public class RifleScript : WeaponScript
 {
   [SerializeField] private GameObject _barrelPositionMarker;
+  [SerializeField] private VisualEffect _bulletEffect;
   [SerializeField] private float _damage;
   [SerializeField] private float _secBetweenShots;
   [SerializeField] private float _maxAmmo;
@@ -28,6 +30,7 @@ public class RifleScript : WeaponScript
   
   private void RaycastBullet() {
     _timeSinceLastShot = 0;
+    _bulletEffect.Play();
     Vector3 barrelPosition = _barrelPositionMarker.transform.position;
     Physics.Linecast(barrelPosition, GetCenterScreenWorldPosition(), out RaycastHit hit);
     Debug.DrawLine(barrelPosition, GetCenterScreenWorldPosition(), Color.red, 1f);
