@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 262.30203, g: 324.99054, b: 430.14313, a: 1}
+  m_IndirectSpecularColor: {r: 0, g: 0, b: 0, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -172,12 +172,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f09fbaefd150a48a9b6bfd28edaabda2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _raycastLength: 5
-  _damage: 5
-  _range: 5
-  _knockbackAmount: 10
-  _cooldown: 1
-  _secondsSinceLastAttack: 0
+  _mainCamera: {fileID: 0}
+  _weaponContainer: {fileID: 0}
+  _currentWeaponItem: {fileID: 0}
+  _weaponInstance: {fileID: 0}
+  _instanceScript: {fileID: 0}
 --- !u!114 &330907458
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -500,8 +499,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eba9e1e9b464497b9babe4fcf1da2af6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _material: {fileID: 2100000, guid: 4acb093d21f9f424db5b95a56fbed982, type: 2}
-  _mesh: {fileID: 10208, guid: 0000000000000000e000000000000000, type: 0}
+  _material: {fileID: 0}
+  _mesh: {fileID: 0}
 --- !u!4 &1044391714
 Transform:
   m_ObjectHideFlags: 0
@@ -1184,71 +1183,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 50, y: -30, z: 0}
---- !u!1 &1756094253
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1756094255}
-  - component: {fileID: 1756094254}
-  m_Layer: 0
-  m_Name: Custom Pass
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &1756094254
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1756094253}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 26d6499a6bd256e47b859377446493a1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_IsGlobal: 1
-  fadeRadius: 0
-  priority: 0
-  customPasses:
-  - rid: 1383697527027269632
-  injectionPoint: 1
-  m_TargetCamera: {fileID: 0}
-  useTargetCamera: 0
-  references:
-    version: 2
-    RefIds:
-    - rid: 1383697527027269632
-      type: {class: GrassPass, ns: , asm: Assembly-CSharp}
-      data:
-        m_Name: Custom Pass
-        enabled: 1
-        targetColorBuffer: 0
-        targetDepthBuffer: 0
-        clearFlags: 0
-        passFoldout: 0
-        m_Version: 0
---- !u!4 &1756094255
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1756094253}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 57.917313, y: 166.39645, z: 41.955803}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
@@ -1257,6 +1191,5 @@ SceneRoots:
   - {fileID: 1607633033}
   - {fileID: 330907466}
   - {fileID: 1044391714}
-  - {fileID: 1756094255}
   - {fileID: 750949222}
   - {fileID: 1742006858}
