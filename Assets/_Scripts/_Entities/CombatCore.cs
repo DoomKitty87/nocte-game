@@ -8,40 +8,78 @@ using UnityEngine.Timeline;
 [RequireComponent(typeof(HealthInterface))]
 public class CombatCore : MonoBehaviour
 {
-  [SerializeField] private float _raycastLength;
-  [SerializeField] private float _damage;
-  [SerializeField] private float _range;
-  [SerializeField] private float _knockbackAmount;
-  [SerializeField] private float _cooldown;
-  [SerializeField] private float _secondsSinceLastAttack;
+  [Header("Dependencies")]
+  [SerializeField] private GameObject _weaponContainer;
+  [Header("Info")]
+  [SerializeField] private WeaponItem _currentWeaponItem;
+  [SerializeField] private GameObject _weaponInstance;
+  [SerializeField] private WeaponScript _instanceScript;
+  
+  private bool _fire1LastFrame;
+  private bool _fire2LastFrame;
 
-  private void Attack() {
-    Physics.Raycast(transform.position, transform.forward, out RaycastHit hit, _range);
-    if (hit.collider == null) return;
-    if (hit.collider.GetComponent<HealthInterface>() == null) return;
-    hit.collider.GetComponent<HealthInterface>().Damage(_damage);
-    if (hit.collider.GetComponent<Rigidbody>() == null) return;
-    hit.collider.GetComponent<Rigidbody>().AddExplosionForce(_knockbackAmount, hit.point, 1, 2);
+  public Vector3 GetCenterScreenWorldPosition() {
+    if (Camera.main != null)
+      return Camera.main.ScreenToWorldPoint(new Vector3(Camera.main.pixelWidth / 2, Camera.main.pixelHeight / 2));
+    else {
+      return Vector3.zero;
+    }
+  }
+  
+  private void InstanceWeaponItem() {
+    GameObject instance = Instantiate(_currentWeaponItem._weaponPrefab, _weaponContainer.transform);
+    _weaponInstance = instance;
+    _instanceScript = instance.GetComponent<WeaponScript>();
+    if (_instanceScript == null) {
+      Debug.LogWarning($"{gameObject.name} CombatCore: Could not find WeaponScript or subclass on weaponInstance!");
+    }
+    _instanceScript._instancingCombatCoreScript = this;
+  }
+  
+  private void UpdateControls() {
+    if (Input.GetAxisRaw("Fire1") > 0) {
+      if (_fire1LastFrame == false) {
+        _instanceScript.FireDown();
+      }
+      else {
+        _instanceScript.FireHold();
+      }
+      _fire1LastFrame = true;
+    }
+    else {
+      if (_fire1LastFrame) {
+        _instanceScript.FireUp();
+      }
+      _fire1LastFrame = false;
+    }
+    if (Input.GetAxisRaw("Fire2") > 0) {
+      if (_fire2LastFrame == false) {
+        _instanceScript.Fire2Down();
+      }
+      else {
+        _instanceScript.Fire2Hold();
+      }
+      _fire2LastFrame = true;
+    }
+    else {
+      if (_fire2LastFrame) {
+        _instanceScript.Fire2Up();
+      }
+      _fire2LastFrame = false;
+    }
   }
   
   // Start is called before the first frame update
   private void Start() {
-    _secondsSinceLastAttack = 0;
+    _fire1LastFrame = false;
+    _fire2LastFrame = false;
+    if (_currentWeaponItem != null) InstanceWeaponItem();
   }
-
+  
   // Update is called once per frame
   private void Update() {
-    if (Input.GetAxisRaw("Fire1") > 0 && _secondsSinceLastAttack > _cooldown) {
-      Attack();
-      _secondsSinceLastAttack = 0;
+    if (_instanceScript != null) {
+      UpdateControls();
     }
-    _secondsSinceLastAttack += Time.deltaTime;
-  }
-
-  private void OnDrawGizmos() {
-    if (Input.GetAxisRaw("Fire1") == 0) return; 
-    Physics.Raycast(transform.position, transform.forward, out RaycastHit hit, _range);
-    Gizmos.color = Color.magenta;
-    Gizmos.DrawLine(transform.position, transform.position + transform.forward * _range);
   }
 }
