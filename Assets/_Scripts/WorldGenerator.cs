@@ -398,8 +398,7 @@ public class WorldGenerator : MonoBehaviour
 
 		triangles[^1] = 0; // Fix bug with last triangle vertex
 
-
-		// Calculates normals of triangles
+		// Calculate normals of triangles
 		for (int i = 0; i < normals.Length; i++) {
 			normals[i] = Vector3.Cross(vertexData[triangles[i * 3 + 1]] - vertexData[triangles[i * 3]], vertexData[triangles[i * 3 + 2]] - vertexData[triangles[i * 3]]).normalized;
 		}
@@ -413,7 +412,6 @@ public class WorldGenerator : MonoBehaviour
                 double r2 = UnityEngine.Random.Range(0f, 1f);
                 GrassData gd = new GrassData();
                 // Randomly pick points between the vertices of the triangle
-                // https://math.stackexchange.com/questions/538458/how-to-sample-points-on-a-triangle-surface-in-3d
                 Vector3 randomPosition = 
                     (((float)(1 - Math.Sqrt(r1))) * vertexData[triangles[i * 3]]) 
                     + (((float)(Math.Sqrt(r1) * (1 - r2))) * vertexData[triangles[i * 3 + 1]])
