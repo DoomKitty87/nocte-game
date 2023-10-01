@@ -220,10 +220,32 @@ public static class NoiseMaps
                 i++;
             }
         }
+        var biomeResult = new NativeArray<float>(vertices.Length, Allocator.TempJob);
+        bool[] usedBiomes = new bool[biomes.Length];
+        var biomeJob = new SimplexNoiseJobScale() {
+            xSize = xSize + 1,
+            xOffset = xOffset,
+            zOffset = zOffset,
+            scaleX = biomeScale,
+            scaleZ = biomeScale,
+            octaves = 1,
+            output = biomeResult,
+            xResolution = xResolution,
+            zResolution = zResolution,
+            turbulent = false
+        };
+        var biomeHandle = biomeJob.Schedule(jobResult.Length, 32);
+        biomeHandle.Complete();
+        for (int i = 0; i < vertices.Length; i++) {
+            float biomeNoise = biomeResult[i] * (biomes.Length - 1);
+            if (usedBiomes[Mathf.FloorToInt(biomeNoise)] == false) usedBiomes[Mathf.FloorToInt(biomeNoise)] = true;
+            if (usedBiomes[Mathf.CeilToInt(biomeNoise)] == false) usedBiomes[Mathf.CeilToInt(biomeNoise)] = true;
+        }
 
         float[] verticesBiomes = new float[biomes.Length * vertices.Length];
         var jobResult = new NativeArray<float>(vertices.Length, Allocator.TempJob);
         for (int b = 0; b < biomes.Length; b++) {
+            if (!biomesUsed[b]) continue;
             float normalization = 0;
             float lowestAmp = 0;
             for (int i = 0; i < biomes[b].noiseLayers.Length; i++) {
@@ -274,25 +296,13 @@ public static class NoiseMaps
                 verticesBiomes[b * vertices.Length + j] -= lowestAmp;
             }
         }
-        var biomeJob = new SimplexNoiseJobScale() {
-            xSize = xSize + 1,
-            xOffset = xOffset,
-            zOffset = zOffset,
-            scaleX = biomeScale,
-            scaleZ = biomeScale,
-            octaves = 1,
-            output = jobResult,
-            xResolution = xResolution,
-            zResolution = zResolution,
-            turbulent = false
-        };
-        var biomeHandle = biomeJob.Schedule(jobResult.Length, 32);
-        biomeHandle.Complete();
+        
         for (int i = 0; i < vertices.Length; i++) {
-            float biomeNoise = jobResult[i] * (biomes.Length - 1);
+            float biomeNoise = biomeResult[i] * (biomes.Length - 1);
             vertices[i].y = Mathf.Lerp(verticesBiomes[Mathf.FloorToInt(biomeNoise) * vertices.Length + i], verticesBiomes[Mathf.CeilToInt(biomeNoise) * vertices.Length + i], biomeNoise - Mathf.FloorToInt(biomeNoise));
         }
         jobResult.Dispose();
+        biomeResult.Dispose();
         return vertices;
     }
     
