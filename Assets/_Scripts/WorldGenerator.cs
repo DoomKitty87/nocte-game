@@ -84,6 +84,7 @@ public class WorldGenerator : MonoBehaviour
     public Mesh _mesh;
 
     public int _maxGrassDistChunks = 10;
+    public int _grassDensity = 5;
 
     [SerializeField] private Biome[] _biomes;
 
@@ -390,16 +391,42 @@ public class WorldGenerator : MonoBehaviour
 
     private void GenerateGrass(int index) {
         if (_tilePool[index].grassCount > 0) return;
-        Vector3[] normals = _tilePool[index].mesh.normals;
         Vector3[] vertexData = _tilePool[index].mesh.vertices;
-        _tilePool[index].grassIndexStart = _grassData.Count;
-        for (int i = 0; i < vertexData.Length; i++) {
+		int[] triangles = _tilePool[index].mesh.triangles;
+		Vector3[] normals = new Vector3[triangles.Length / 3];
+
+		triangles[^1] = 0; // Fix bug with last triangle vertex
+
+
+		// Calculates normals of triangles
+		for (int i = 0; i < normals.Length; i++) {
+			normals[i] = Vector3.Cross(vertexData[triangles[i * 3 + 1]] - vertexData[triangles[i * 3]], vertexData[triangles[i * 3 + 2]] - vertexData[triangles[i * 3]]).normalized;
+		}
+
+		_tilePool[index].grassIndexStart = _grassData.Count;
+        
+        for (int i = 0; i < triangles.Length / 3; i++) {
             if (normals[i].y < 0.6f) continue;
-            GrassData gd = new GrassData();
-            gd.position = new Vector4(vertexData[i].x + (_tilePool[index].x * _xSize * _xResolution), vertexData[i].y, vertexData[i].z + (_tilePool[index].z * _zSize * _zResolution), 0);
-            gd.uv = new Vector2(gd.position.x / (_xSize * _xResolution * _xTiles), gd.position.z / (_zSize * _zResolution * _zTiles));
-            _grassData.Add(gd);
+            for (int j = 0; j < _grassDensity; j++) {
+                double r1 = UnityEngine.Random.Range(0f, 1f);
+                double r2 = UnityEngine.Random.Range(0f, 1f);
+                GrassData gd = new GrassData();
+                // Randomly pick points between the vertices of the triangle
+                // https://math.stackexchange.com/questions/538458/how-to-sample-points-on-a-triangle-surface-in-3d
+                Vector3 randomPosition = 
+                    (((float)(1 - Math.Sqrt(r1))) * vertexData[triangles[i * 3]]) 
+                    + (((float)(Math.Sqrt(r1) * (1 - r2))) * vertexData[triangles[i * 3 + 1]])
+                    + (((float)(r2 * Math.Sqrt(r1))) * vertexData[triangles[i * 3 + 2]]);
+                gd.position = new Vector4(
+					randomPosition.x + (_tilePool[index].x * _xSize * _xResolution),
+				    randomPosition.y, 
+                    randomPosition.z + (_tilePool[index].z * _zSize * _zResolution), 
+                    0);
+                gd.uv = new Vector2(gd.position.x / (_xSize * _xResolution * _xTiles), gd.position.z / (_zSize * _zResolution * _zTiles));
+                _grassData.Add(gd);
+            }
         }
+        
         _tilePool[index].grassCount = _grassData.Count - _tilePool[index].grassIndexStart;
     }
     
