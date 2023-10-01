@@ -46,7 +46,6 @@ Shader "GrassShader"
             float4 _Color1, _Color2, _AOColor, _TipColor;
             float _Scale, _DisplacementAmplitude, _WindIntensity, _TrampleRadius, _ScaleRandomization;
             sampler2D _Wind;
-
             float4 RotateAroundYInDegrees (float4 vertex, float degrees) {
                 float alpha = degrees * UNITY_PI / 180.0;
                 float sina, cosa;
@@ -64,21 +63,24 @@ Shader "GrassShader"
                 float posHash = (pos.x * 219.87) % 1 * (pos.z * 2140.21 % 1) * (dot(pos, pos + 23.6f) % 1);
                 float scale = _Scale * (1 + posHash * _ScaleRandomization);
 
-                //7 is height of tallest vertex (change if mesh changes)
+                // 7 is height of tallest vertex (change if mesh changes)
                 float uvy = v.vertex.y / scale / 7;
-                float2 trampleVector = normalize(pos.xz - _PlayerPosition.xz);
-                float trampleScaler = 1 / (pow(length(trampleVector), 2));
-                //float trampleValue = lerp(0.15f, 1, min((abs(_PlayerPosition.x - pos.x) + abs(_PlayerPosition.z - pos.z)) / 2 / _TrampleRadius, 1));
+                float2 trampleVector = float2((pos.x - _PlayerPosition.x), (pos.z - _PlayerPosition.z));
+                float trampleVectorScaler = 1 / sqrt(trampleVector.x * trampleVector.x + trampleVector.y * trampleVector.y);
+                float2 trampleVectorNormalized = float2((trampleVector.x / trampleVectorScaler), (trampleVector.y / trampleVectorScaler));
+                float trampleScaler = 1 / (length(pos.xz - _PlayerPosition.xz) * length(pos.xz - _PlayerPosition.xz));
+                // float trampleValue = lerp(0.15f, 1, min((abs(_PlayerPosition.x - pos.x) + abs(_PlayerPosition.z - pos.z)) / 2 / _TrampleRadius, 1));
                 float movement = uvy * uvy * (sin(tex2Dlod(_Wind, float4(_PositionsBuffer[instanceID].uv, 0, 0)).r)) * lerp(0.5f, 1.0f, abs(posHash)) * _WindIntensity;
                 // float2 trampleMovement = uvy * uvy * float4(_PositionsBuffer[instanceID].uv, 0, 0) * trampleVector * trampleScaler * _TrampleIntensity;
 
                 float4 lpos = RotateAroundYInDegrees(float4(
-                v.vertex.x * scale, // + trampleVector.x * trampleScaler,
-                v.vertex.y * scale, // * lerp(trampleValue, 1, abs(_PlayerPosition.y - pos.y) / (7 * scale * 2)), 
-                v.vertex.z * scale, // + trampleVector.y * trampleScaler,
-                v.vertex.w), posHash * 180.0f);
-
-                float4 wpos = mul(_ObjectToWorld, (float4(lpos.x + movement, lpos.y, lpos.z + movement, lpos.w)) + pos);
+                    v.vertex.x * scale, // + (trampleVector.x), * trampleScaler.x),
+                    v.vertex.y * scale, // * lerp(trampleValue, 1, abs(_PlayerPosition.y - pos.y) / (7 * scale * 2)), 
+                    v.vertex.z * scale, // + (trampleVector.y * trampleScaler),
+                    v.vertex.w), posHash * 180.0f);
+                
+                float2 trample = (uvy * trampleVectorNormalized.x * trampleScaler, uvy * trampleVectorNormalized.y * trampleScaler);
+                float4 wpos = mul(_ObjectToWorld, (float4(lpos.x + movement + trample.x, lpos.y, lpos.z + movement + trample.y, lpos.w)) + pos);
 
                 o.pos = mul(UNITY_MATRIX_VP, wpos);
                 o.color = (lerp(_Color1, _Color2, uvy) + lerp(0.0f, _TipColor, uvy * uvy * (1.0f * scale))) * lerp(_AOColor, 1.0f, uvy);
