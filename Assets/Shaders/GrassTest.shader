@@ -53,21 +53,7 @@ Shader "GrassShader"
                 sincos(alpha, sina, cosa);
                 float2x2 m = float2x2(cosa, -sina, sina, cosa);
                 return float4(mul(m, vertex.xz), vertex.yw).xzyw;
-            }
-
-            // Hashing
-            float Hash11(float p) {
-				p = frac(p * 6.10311235);
-				p *= p + 33.33;
-				p *= 10000000;
-				return frac(p);
-            }
-            float Hash31(float3 p) {
-                // p = fract(p * (234.34, 523.423, 623.234));
-
-                // return fract(p.x * p.y * p.z);
-            }
-
+            };
             v2f vert(appdata_base v, uint svInstanceID : SV_InstanceID)
             {
                 uint instanceID = GetIndirectInstanceID(svInstanceID);
@@ -78,23 +64,18 @@ Shader "GrassShader"
                 float posHash = (pos.x * 219.87) % 1 * (pos.z * 2140.21 % 1) * (dot(pos, pos + 23.6f) % 1);
                 float scale = _Scale * (1 + posHash * _ScaleRandomization);
 
-                // Randomizes location of each blade of grass
-                float2 displacement = (sin(Hash11(pos.x)) * _DisplacementAmplitude, cos(Hash11(pos.x)) * _DisplacementAmplitude);
                 //7 is height of tallest vertex (change if mesh changes)
                 float uvy = v.vertex.y / scale / 7;
                 float trampleValue = lerp(0.15f, 1, min((abs(_PlayerPosition.x - pos.x) + abs(_PlayerPosition.z - pos.z)) / 2 / _TrampleRadius, 1));
                 float movement = uvy * uvy * (sin(tex2Dlod(_Wind, float4(_PositionsBuffer[instanceID].uv, 0, 0)).r)) * lerp(0.5f, 1.0f, abs(posHash)) * _WindIntensity;
 
                 float4 lpos = RotateAroundYInDegrees(float4(
-                v.vertex.x * scale + displacement.x,
+                v.vertex.x * scale,
                 v.vertex.y * scale * lerp(trampleValue, 1, abs(_PlayerPosition.y - pos.y) / (7 * scale * 2)), 
-                v.vertex.z * scale + displacement.y, 
+                v.vertex.z * scale, 
                 v.vertex.w), posHash * 180.0f);
 
-                float2 offset = (Hash11(pos.x), Hash11(pos.y));
-
                 float4 wpos = mul(_ObjectToWorld, (float4(lpos.x + movement, lpos.y, lpos.z + movement, lpos.w)) + pos);
-                wpos += (offset.x, 0, offset.y, 0);
 
                 o.pos = mul(UNITY_MATRIX_VP, wpos);
                 o.color = (lerp(_Color1, _Color2, uvy) + lerp(0.0f, _TipColor, uvy * uvy * (1.0f * scale))) * lerp(_AOColor, 1.0f, uvy);
