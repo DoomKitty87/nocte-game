@@ -234,7 +234,7 @@ public static class NoiseMaps
             zResolution = zResolution,
             turbulent = false
         };
-        var biomeHandle = biomeJob.Schedule(jobResult.Length, 32);
+        var biomeHandle = biomeJob.Schedule(biomeResult.Length, 32);
         biomeHandle.Complete();
         for (int i = 0; i < vertices.Length; i++) {
             float biomeNoise = biomeResult[i] * (biomes.Length - 1);
@@ -245,7 +245,7 @@ public static class NoiseMaps
         float[] verticesBiomes = new float[biomes.Length * vertices.Length];
         var jobResult = new NativeArray<float>(vertices.Length, Allocator.TempJob);
         for (int b = 0; b < biomes.Length; b++) {
-            if (!biomesUsed[b]) continue;
+            if (!usedBiomes[b]) continue;
             float normalization = 0;
             float lowestAmp = 0;
             for (int i = 0; i < biomes[b].noiseLayers.Length; i++) {
