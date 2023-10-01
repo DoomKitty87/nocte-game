@@ -9,7 +9,7 @@ Shader "GrassShader"
         _Scale("Scale", Range(0.0, 2.0)) = 0.0
         _DisplacementAmplitude("Displacement Amplitude", Range(0.0, 1.0)) = 0.0
         _WindIntensity("Wind Intensity", Range(0.0, 0.1)) = 0.02
-        _TrampleRadius("Trample Radius", Float) = 0.6
+        _TrampleIntensity("Trample Intensity", Float) = 1
         _ScaleRandomization("Scale Randomization", Float) = 0.5
     }
     SubShader
@@ -66,13 +66,16 @@ Shader "GrassShader"
 
                 //7 is height of tallest vertex (change if mesh changes)
                 float uvy = v.vertex.y / scale / 7;
-                float trampleValue = lerp(0.15f, 1, min((abs(_PlayerPosition.x - pos.x) + abs(_PlayerPosition.z - pos.z)) / 2 / _TrampleRadius, 1));
+                float2 trampleVector = normalize(pos.xz - _PlayerPosition.xz);
+                float trampleScaler = 1 / (pow(length(trampleVector), 2));
+                //float trampleValue = lerp(0.15f, 1, min((abs(_PlayerPosition.x - pos.x) + abs(_PlayerPosition.z - pos.z)) / 2 / _TrampleRadius, 1));
                 float movement = uvy * uvy * (sin(tex2Dlod(_Wind, float4(_PositionsBuffer[instanceID].uv, 0, 0)).r)) * lerp(0.5f, 1.0f, abs(posHash)) * _WindIntensity;
+                // float2 trampleMovement = uvy * uvy * float4(_PositionsBuffer[instanceID].uv, 0, 0) * trampleVector * trampleScaler * _TrampleIntensity;
 
                 float4 lpos = RotateAroundYInDegrees(float4(
-                v.vertex.x * scale,
-                v.vertex.y * scale * lerp(trampleValue, 1, abs(_PlayerPosition.y - pos.y) / (7 * scale * 2)), 
-                v.vertex.z * scale, 
+                v.vertex.x * scale, // + trampleVector.x * trampleScaler,
+                v.vertex.y * scale, // * lerp(trampleValue, 1, abs(_PlayerPosition.y - pos.y) / (7 * scale * 2)), 
+                v.vertex.z * scale, // + trampleVector.y * trampleScaler,
                 v.vertex.w), posHash * 180.0f);
 
                 float4 wpos = mul(_ObjectToWorld, (float4(lpos.x + movement, lpos.y, lpos.z + movement, lpos.w)) + pos);

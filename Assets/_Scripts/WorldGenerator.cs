@@ -406,7 +406,7 @@ public class WorldGenerator : MonoBehaviour
 		_tilePool[index].grassIndexStart = _grassData.Count;
         
         for (int i = 0; i < triangles.Length / 3; i++) {
-            if (normals[i].y < 0.6f) continue;
+            if (normals[i].y < 0.7f) continue;
             for (int j = 0; j < _grassDensity; j++) {
                 double r1 = UnityEngine.Random.Range(0f, 1f);
                 double r2 = UnityEngine.Random.Range(0f, 1f);
@@ -423,6 +423,7 @@ public class WorldGenerator : MonoBehaviour
                     randomPosition.z + (_tilePool[index].z * _zSize * _zResolution), 
                     0);
                 gd.uv = new Vector2(gd.position.x / (_xSize * _xResolution * _xTiles), gd.position.z / (_zSize * _zResolution * _zTiles));
+
                 _grassData.Add(gd);
             }
         }
