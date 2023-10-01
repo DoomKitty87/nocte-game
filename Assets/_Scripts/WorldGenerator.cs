@@ -39,6 +39,7 @@ public class WorldGenerator : MonoBehaviour
     public struct Biome
     {
 
+        public string name;
         public NoiseLayer[] noiseLayers;
 
     }
