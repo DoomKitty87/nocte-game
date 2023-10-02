@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 261.80057, g: 324.3278, b: 429.24698, a: 1}
+  m_IndirectSpecularColor: {r: 262.30203, g: 324.99054, b: 430.14313, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -144,7 +144,7 @@ GameObject:
   - component: {fileID: 70028140}
   m_Layer: 3
   m_Name: Player
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -303,6 +303,7 @@ MonoBehaviour:
   _rawSlideInputLastFrame: 0
   _jumpFirstDown: 0
   _slideFirstDown: 0
+  _allowHeldInputs: 0
   _maxMoveSpeed: 10
   _maxMoveSpeedInit: 8
   _moveTimeInitToMax: 1
@@ -342,6 +343,7 @@ MonoBehaviour:
   _xMouseMovementTransform: {fileID: 70028135}
   _yMouseMovementTransform: {fileID: 227975683}
   _mouseSensitivity: 40
+  _smoothingFactor: 20
 --- !u!114 &70028140
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -349,7 +351,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 70028130}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f09fbaefd150a48a9b6bfd28edaabda2, type: 3}
   m_Name: 
@@ -1015,7 +1017,7 @@ CapsuleCollider:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 305148098}
-  m_Material: {fileID: 13400000, guid: 4b480f95db2b72f4c927c8b3921ad40e, type: 2}
+  m_Material: {fileID: 13400000, guid: 211008a8d74ef496280746c887bfe194, type: 2}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -1103,13 +1105,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 305148098}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 1.81, y: 3.29, z: 13.237453}
+  m_LocalRotation: {x: 0, y: 0.7071068, z: 0, w: 0.7071068}
+  m_LocalPosition: {x: 1.81, y: 3.29, z: 3.08}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 90, z: 0}
 --- !u!114 &305148105
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1159,7 +1161,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _rigidbody: {fileID: 305148099}
   _colliderMaterial: {fileID: 13400000, guid: 211008a8d74ef496280746c887bfe194, type: 2}
-  _groundCheckOffset: {x: 0, y: 0, z: 0}
+  _groundCheckOffset: {x: 0, y: -0.98, z: 0}
   _groundTag: Ground
   _inputVector: {x: 0, y: 0, z: 0}
   _rawJumpInput: 0
@@ -1168,10 +1170,11 @@ MonoBehaviour:
   _rawSlideInputLastFrame: 0
   _jumpFirstDown: 0
   _slideFirstDown: 0
+  _allowHeldInputs: 1
   _maxMoveSpeed: 10
   _maxMoveSpeedInit: 5
   _moveTimeInitToMax: 2
-  _moveAccel: 2
+  _moveAccel: 10
   _moveFriction: 0.5
   _moveDrag: 5
   _maxDownwardsSlopeAngle: 45
@@ -1998,7 +2001,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bd6043bde05a7fc4cba197d06915c1e3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Damping: {x: 0.2, y: 0.2, z: 0.3}
+  Damping: {x: 0, y: 0, z: 0}
   ShoulderOffset: {x: 0, y: 0.44, z: 0}
   VerticalArmLength: 1.55
   CameraSide: 0
