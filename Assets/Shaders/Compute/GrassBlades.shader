@@ -19,7 +19,7 @@ Shader "Grass/GrassBlades"
             
             HLSLPROGRAM
 
-            // #pragma exclude_renderers d3d11_9x
+            #pragma exclude_renderers d3d11_9x
 
             #pragma target 5.0
              
