@@ -41,7 +41,7 @@ float4 CalculateShadowCoord(float3 positionWS, float4 positionCS) {
     // Calculate the shadow coordinate depending on the type of shadows currently in use
 #if SHADOWS_SCREEN
     return ComputeScreenPos(positionCS);
-#else
+#else   
     return TransformWorldToShadowCoord(positionWS);
 #endif
 }
@@ -56,7 +56,6 @@ VertexOutput Vertex(uint vertexID: SV_VertexID) {
   output.normalWS = tri.lightingNormalWS;
   output.uv = input.height;
   output.positionCS = TransformWorldToHClip(input.positionWS);
-
   return output;
 }
 
@@ -69,6 +68,7 @@ half4 Fragment(VertexOutput input) : SV_Target{
 
   float colorLerp = input.uv;
   flo3 albedo = lerp(_BaseColor.rgb, albedo, 1, 0, 0, 1);
+  return UniversalFragmentBlinnPhong(lightingInput, albedo, 1, 0, 0, 1);
 }
 
 #endif
