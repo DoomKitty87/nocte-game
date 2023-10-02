@@ -68,7 +68,8 @@ Shader "GrassShader"
                 float2 trampleVector = float2((pos.x - _PlayerPosition.x), (pos.z - _PlayerPosition.z));
                 float trampleVectorScaler = 1 / sqrt(trampleVector.x * trampleVector.x + trampleVector.y * trampleVector.y);
                 float2 trampleVectorNormalized = float2((trampleVector.x / trampleVectorScaler), (trampleVector.y / trampleVectorScaler));
-                float trampleScaler = 1 / (length(pos.xz - _PlayerPosition.xz) * length(pos.xz - _PlayerPosition.xz));
+                float trampleScaler = 1 / (pow(distance(pos.xz, _PlayerPosition.xz), 5));
+                if (trampleScaler > .1) trampleScaler = .1;
                 // float trampleValue = lerp(0.15f, 1, min((abs(_PlayerPosition.x - pos.x) + abs(_PlayerPosition.z - pos.z)) / 2 / _TrampleRadius, 1));
                 float movement = uvy * uvy * (sin(tex2Dlod(_Wind, float4(_PositionsBuffer[instanceID].uv, 0, 0)).r)) * lerp(0.5f, 1.0f, abs(posHash)) * _WindIntensity;
                 // float2 trampleMovement = uvy * uvy * float4(_PositionsBuffer[instanceID].uv, 0, 0) * trampleVector * trampleScaler * _TrampleIntensity;
