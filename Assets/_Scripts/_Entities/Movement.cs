@@ -29,13 +29,15 @@ public class Movement : MonoBehaviour
   [SerializeField] private bool _rawSlideInputLastFrame;
   [SerializeField] private bool _jumpFirstDown;
   [SerializeField] private bool _slideFirstDown;
-  
   // Emulates Crouch / Jump RawAxis
   public void SetBoolInputs(bool jumpInput, bool slideInput) {
     _rawJumpInput = jumpInput;
     _rawSlideInput = slideInput;
   }
-  
+  [SerializeField] private bool _allowHeldInputs;
+  public void SetSettings(bool allowHeldInputs) {
+    _allowHeldInputs = allowHeldInputs;
+  }
   [Header("Settings")]
   [SerializeField] private float _maxMoveSpeed = 10;
   [SerializeField] private float _maxMoveSpeedInit = 5;
@@ -76,7 +78,6 @@ public class Movement : MonoBehaviour
   
   // For gizmos testing of jump accel only
   private Vector3 _accel;
-
   private bool _hasInitialized = false;
   
   private void SetColliderFriction(float dynamicValue, float staticValue) {
@@ -121,6 +122,10 @@ public class Movement : MonoBehaviour
     }
     _rawJumpInputLastFrame = _rawJumpInput;
     _rawSlideInputLastFrame = _rawSlideInput;
+    if (_allowHeldInputs) {
+      _jumpFirstDown = _rawJumpInput;
+      _slideFirstDown = _rawSlideInput;
+    }
   }
 
   private void OnValidate() {
@@ -143,6 +148,7 @@ public class Movement : MonoBehaviour
     }
     _lastInputVector = _inputVector;
     UpdateInputs();
+    // Ansel badness
     if (_procGen != null) _procGen.UpdatePlayerLoadedChunks(transform.position - new Vector3(0, GetComponent<Collider>().bounds.extents.y / 2, 0));
     if (!_hasInitialized && Time.time > 0.1 && Time.timeScale > 0) {
       RaycastHit hit;
