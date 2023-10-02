@@ -1,3 +1,4 @@
+/*
 #ifdef GRASSBLADES_INCLUDE
 #define GRASSBLADES_INCLUDE
 
@@ -72,3 +73,4 @@ half4 Fragment(VertexOutput input) : SV_Target{
 }
 
 #endif
+*/

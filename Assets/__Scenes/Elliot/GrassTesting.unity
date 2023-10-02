@@ -223,6 +223,7 @@ MonoBehaviour:
   _rawSlideInputLastFrame: 0
   _jumpFirstDown: 0
   _slideFirstDown: 0
+  _allowHeldInputs: 0
   _maxMoveSpeed: 10
   _maxMoveSpeedInit: 8
   _moveTimeInitToMax: 1
@@ -435,12 +436,12 @@ PrefabInstance:
     - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
         type: 3}
       propertyPath: _seed
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
         type: 3}
       propertyPath: _grassDensity
-      value: 10
+      value: 15
       objectReference: {fileID: 0}
     - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
         type: 3}
@@ -450,7 +451,7 @@ PrefabInstance:
     - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
         type: 3}
       propertyPath: _maxGrassDistChunks
-      value: 2
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
         type: 3}
