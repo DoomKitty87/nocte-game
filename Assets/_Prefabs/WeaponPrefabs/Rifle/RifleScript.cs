@@ -7,7 +7,7 @@ using UnityEngine.VFX;
 public class RifleScript : WeaponScript
 {
   [SerializeField] private GameObject _barrelPositionMarker;
-  [SerializeField] private VisualEffect _bulletEffect;
+  [SerializeField] private ParticleSystem _bulletEffect;
   [SerializeField] private float _damage;
   [SerializeField] private float _secBetweenShots;
   [SerializeField] private float _maxAmmo;
