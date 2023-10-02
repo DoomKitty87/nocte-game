@@ -46,10 +46,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _xSize: 128
   _zSize: 128
-  _xResolution: 1
-  _zResolution: 1
-  _xTiles: 25
-  _zTiles: 25
+  _xResolution: 2
+  _zResolution: 2
+  _xTiles: 35
+  _zTiles: 35
   _scale: 1000
   _biomeScale: 0.0002
   _amplitude: 50
@@ -118,8 +118,10 @@ MonoBehaviour:
   _material2: {fileID: 2100000, guid: 4acb093d21f9f424db5b95a56fbed982, type: 2}
   _mesh: {fileID: 4579454407841743219, guid: 71ecff4ba9093444fa01dd2b55b6e59c, type: 3}
   _maxGrassDistChunks: 0
+  _grassDensity: 5
   _biomes:
-  - noiseLayers:
+  - name: Base
+    noiseLayers:
     - name: Mountains
       noiseType: simplex
       amplitude: 1600
@@ -342,13 +344,13 @@ MonoBehaviour:
       turbulent: 0
     - name: Ground Detail
       noiseType: simplex
-      amplitude: 5
+      amplitude: 20
       octaves: 4
       easeCurve:
         serializedVersion: 2
         m_Curve:
         - serializedVersion: 3
-          time: 0
+          time: 0.5
           value: 0
           inSlope: 0
           outSlope: 0
@@ -357,10 +359,19 @@ MonoBehaviour:
           inWeight: 0
           outWeight: 0
         - serializedVersion: 3
+          time: 0.8642292
+          value: 0.24602608
+          inSlope: 2.065304
+          outSlope: 2.065304
+          tangentMode: 0
+          weightedMode: 0
+          inWeight: 0.33333334
+          outWeight: 0.33333334
+        - serializedVersion: 3
           time: 1
           value: 1
-          inSlope: 0
-          outSlope: 0
+          inSlope: 2
+          outSlope: 2
           tangentMode: 0
           weightedMode: 0
           inWeight: 0
@@ -392,6 +403,61 @@ MonoBehaviour:
         m_PreInfinity: 2
         m_PostInfinity: 2
         m_RotationOrder: 4
-      scaleX: 100
-      scaleZ: 100
+      scaleX: 150
+      scaleZ: 150
       turbulent: 0
+    - name: Rivers
+      noiseType: simplex
+      amplitude: 25
+      octaves: 4
+      easeCurve:
+        serializedVersion: 2
+        m_Curve:
+        - serializedVersion: 3
+          time: 0
+          value: -1
+          inSlope: 0
+          outSlope: 0
+          tangentMode: 0
+          weightedMode: 0
+          inWeight: 0
+          outWeight: 0.33333334
+        - serializedVersion: 3
+          time: 0.1
+          value: 0
+          inSlope: 0
+          outSlope: 0
+          tangentMode: 0
+          weightedMode: 0
+          inWeight: 0.33333334
+          outWeight: 0
+        m_PreInfinity: 2
+        m_PostInfinity: 2
+        m_RotationOrder: 4
+      primaryEase:
+        serializedVersion: 2
+        m_Curve:
+        - serializedVersion: 3
+          time: 0
+          value: 1
+          inSlope: 0
+          outSlope: 0
+          tangentMode: 136
+          weightedMode: 0
+          inWeight: 0.33333334
+          outWeight: 0.33333334
+        - serializedVersion: 3
+          time: 1
+          value: 0
+          inSlope: 0
+          outSlope: 0
+          tangentMode: 136
+          weightedMode: 0
+          inWeight: 0.33333334
+          outWeight: 0.33333334
+        m_PreInfinity: 2
+        m_PostInfinity: 2
+        m_RotationOrder: 4
+      scaleX: 2500
+      scaleZ: 2500
+      turbulent: 1
