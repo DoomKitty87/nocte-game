@@ -211,6 +211,7 @@ public static class NoiseMaps
         return vertices;
     }
 
+    [BurstCompile]
     public static Vector3[] GenerateTerrainBiomes(float xOffset, float zOffset, int xSize, int zSize, WorldGenerator.Biome[] biomes, float biomeScale, float xResolution = 1, float zResolution = 1) {
         Vector3[] vertices = new Vector3[(xSize + 1) * (zSize + 1)];
         for (int z = 0, i = 0; z <= zSize; z++)
@@ -402,7 +403,8 @@ public static class NoiseMaps
         jobResult.Dispose();
         return vertices;
     }
-
+    
+    [BurstCompile]
     public static float[] GenerateTemperatureMap(Vector3[] heightMap, float xOffset, float zOffset, int xSize, int zSize, float scale, AnimationCurve easeCurve, float xResolution=1, float zResolution=1)
     {
         
@@ -436,6 +438,7 @@ public static class NoiseMaps
         return temperatureMap;
     }
 
+    [BurstCompile]
     public static float[] GenerateHumidityMap(Vector3[] heightMap, float[] temperatureMap, float xOffset, float zOffset, int xSize, int zSize, float scale, AnimationCurve easeCurve, float xResolution=1, float zResolution=1)
     {
         float[] humidityMap = new float[heightMap.Length];
@@ -467,7 +470,8 @@ public static class NoiseMaps
 
         return humidityMap;
     }
-
+    
+    [BurstCompile]
     public static float[] GenerateWindMap(int width, int depth, float xOffset, float zOffset, float scale) {
         float[] windMap;
         var jobResult = new NativeArray<float>(width * depth, Allocator.TempJob);
