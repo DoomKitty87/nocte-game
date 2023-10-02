@@ -226,14 +226,12 @@ public class Movement : MonoBehaviour
         _timeSinceLastDirectionChange = 0;
         _moveState = MovementState.Walking;
       }
-      // https://www.reddit.com/r/Unity3D/comments/dcmvf5/i_replicated_the_source_engines_air_strafing/ <-- this is a great resource to fix this
       else {
         _groundCheckDelay--;
         _rigidbody.drag = _airDrag;
         SetColliderFriction(_moveFriction, _colliderMaterial.staticFriction);
         Vector3 velocityXZ = GetVelocityXZ();
         Vector3 inputVector = transform.TransformDirection(_inputVector);
-        // ---- straight from link above
         Vector3 projectedVelocity = Vector3.Project(GetVelocityXZ(), inputVector);
         bool isAway = Vector3.Dot(inputVector, projectedVelocity) <= 0f;
         _accel = inputVector * _jumpStrafeAccel;
@@ -245,7 +243,6 @@ public class Movement : MonoBehaviour
             _accel = Vector3.ClampMagnitude(_accel, _jumpMaxStrafeSpeed + projectedVelocity.magnitude);
           }
         }
-        // ----
         else {
           _accel = Vector3.zero;
         }
