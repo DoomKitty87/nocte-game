@@ -115,6 +115,7 @@ public class WorldGenerator : MonoBehaviour
 
     public void UpdatePlayerLoadedChunks(Vector3 playerPos)
     {
+        _material.SetVector("_PlayerPosition", playerPos);
         int playerXChunkScale = (int) (playerPos.x / (_xSize * _xResolution));
         int playerZChunkScale = (int) (playerPos.z / (_zSize * _zResolution));
 
