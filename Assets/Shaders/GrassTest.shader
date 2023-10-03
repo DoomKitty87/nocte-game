@@ -14,7 +14,7 @@ Shader "GrassShader"
     }
     SubShader
     {
-        Tags { "RenderType" = "TransparentCutout" }
+        Tags { "RenderType" = "ForwardPass" }
         Pass
         {
             Cull Off
