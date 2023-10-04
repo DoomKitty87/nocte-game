@@ -294,6 +294,7 @@ MonoBehaviour:
   _rawSlideInputLastFrame: 0
   _jumpFirstDown: 0
   _slideFirstDown: 0
+  _allowHeldInputs: 0
   _maxMoveSpeed: 10
   _maxMoveSpeedInit: 8
   _moveTimeInitToMax: 1
@@ -883,6 +884,16 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
+        type: 3}
+      propertyPath: _xTiles
+      value: 11
+      objectReference: {fileID: 0}
+    - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
+        type: 3}
+      propertyPath: _zTiles
+      value: 11
+      objectReference: {fileID: 0}
     - target: {fileID: 7828621975473438852, guid: 862d92a67177d4c7b84ab88d6b6e0257,
         type: 3}
       propertyPath: m_Name
