@@ -173,7 +173,7 @@ public class Movement : MonoBehaviour
         _slideFirstDown = false;
         _rigidbody.drag = _slideDrag;
         SetColliderFriction(_slideFriction, _colliderMaterial.staticFriction);
-        _rigidbody.velocity = GetVelocityXZ() .normalized * _slideStartSpeed;
+        _rigidbody.velocity = ModifyVectorBySlope(GetVelocityXZ().normalized * _slideStartSpeed);
         _moveState = MovementState.Sliding;
       }
       
@@ -257,9 +257,6 @@ public class Movement : MonoBehaviour
           _accel = Vector3.zero;
         }
         _rigidbody.AddForce(_accel, ForceMode.VelocityChange);
-        if (_rawSlideInput) {
-          _rigidbody.AddForce(0, -_jumpForceDown, 0);
-        }
       }
       
     }

@@ -1144,6 +1144,18 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+      - m_Target: {fileID: 305148106}
+        m_TargetAssemblyTypeName: UnityEngine.Behaviour, UnityEngine
+        m_MethodName: set_enabled
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   _onHealthChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -1206,6 +1218,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 618da368b45fc944ea39317e018c3fa1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _species: 
+  _flocking: 0
+  _infighter: 0
+  _leader: 0
+  _follower: 0
+  _priority: 0
 --- !u!1 &382653254
 GameObject:
   m_ObjectHideFlags: 0
