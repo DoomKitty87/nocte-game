@@ -111,7 +111,7 @@ public class WorldGenerator : MonoBehaviour
 
     private Vector2 _windPos;
 
-    //TODO: Improve grass performance (frustum culling?)
+    // TODO: Improve grass performance (frustum culling?)
 
     public void UpdatePlayerLoadedChunks(Vector3 playerPos)
     {
@@ -219,22 +219,25 @@ public class WorldGenerator : MonoBehaviour
 
         if (deltaZ != 0 || deltaX != 0) {
             for (int x = 0; x < _xTiles; x++) {
-                for (int z = 0; z < _zTiles; z++) {
+                for (int z = 0; z < _zTiles; z++) { 
                     float maxDist = Mathf.Max(Mathf.Abs(_tilePool[_tilePositions[x, z]].x - playerXChunkScale), Mathf.Abs(_tilePool[_tilePositions[x, z]].z - playerZChunkScale));
-                    if (_hasColliders && maxDist < 2) UpdateCollider(_tilePositions[x, z]);
-                    else if (_hasColliders) {
+                    if (_hasColliders && maxDist < 1) { 
+                        UpdateCollider(_tilePositions[x, z]);
+                    } else if (_hasColliders) {
                         if (_tilePool[_tilePositions[x, z]].meshCollider) _tilePool[_tilePositions[x, z]].meshCollider.enabled = false;
                     }
-
-                    if (maxDist <= _maxGrassDistChunks && !(x == _xTiles - 1 && deltaX == 1) &&
+                    if (maxDist < _maxGrassDistChunks && !(x == _xTiles - 1 && deltaX == 1) &&
                         !(x == 0 && deltaX == -1) && !(z == _zTiles - 1 && deltaZ == 1) && !(z == 0 && deltaZ == -1)) {
                         GenerateGrass(_tilePositions[x, z]);
-                    }
-                    else if (_tilePool[_tilePositions[x, z]].grassCount > 0) {
-                        _grassData.RemoveRange(_tilePool[_tilePositions[x, z]].grassIndexStart, _tilePool[_tilePositions[x, z]].grassCount);
+                    } else if (_tilePool[_tilePositions[x, z]].grassCount > 0) {
+                        Debug.Log("Remove Grass");
+                        _grassData.RemoveRange(_tilePool[_tilePositions[x, z]].grassIndexStart,
+                            _tilePool[_tilePositions[x, z]].grassCount);
                         for (int i = 0; i < _xTiles * _zTiles; i++) {
-                            if (_tilePool[i].grassIndexStart > _tilePool[_tilePositions[x, z]].grassIndexStart) _tilePool[i].grassIndexStart -= _tilePool[_tilePositions[x, z]].grassCount;
+                            if (_tilePool[i].grassIndexStart > _tilePool[_tilePositions[x, z]].grassIndexStart)
+                                _tilePool[i].grassIndexStart -= _tilePool[_tilePositions[x, z]].grassCount;
                         }
+
                         _tilePool[_tilePositions[x, z]].grassCount = 0;
                         _tilePool[_tilePositions[x, z]].grassIndexStart = 0;
                     }
@@ -331,7 +334,7 @@ public class WorldGenerator : MonoBehaviour
         go.transform.position = new Vector3(x * _xSize * _xResolution, 0, z * _zSize * _zResolution);
         go.isStatic = true;
         
-        //If you need to put anything else (tag, components, etc) on the tile, do it here. If it needs to change every time the LOD is changed, do it in the UpdateTile function.
+        // If you need to put anything else (tag, components, etc) on the tile, do it here. If it needs to change every time the LOD is changed, do it in the UpdateTile function.
         go.tag = "Ground";
         
         WorldTile tile = new WorldTile();
@@ -350,7 +353,10 @@ public class WorldGenerator : MonoBehaviour
         if (!_useColorGradient) CalculateUVs(msh);
         else CalculateColors(index);
         _tilePositions[index / _zTiles, index % _zTiles] = index;
-        if (Mathf.Max(Mathf.Abs(x), Mathf.Abs(z)) <= _maxGrassDistChunks) GenerateGrass(index);
+        int maxDist = Mathf.Max(Mathf.Abs(x - _playerXChunkScale), Mathf.Abs(z - _playerZChunkScale));
+        if (maxDist <= _maxGrassDistChunks) {
+            GenerateGrass(index);
+        }
         if (index == (_xTiles * _zTiles) - 1) {
             UpdateGrassBuffers();
         }
@@ -382,7 +388,10 @@ public class WorldGenerator : MonoBehaviour
         else CalculateColors(index);
         _tilePool[index].obj.transform.position = new Vector3(x * _xSize * _xResolution, 0, z * _zSize * _zResolution);
         int maxDist = Mathf.Max(Mathf.Abs(x - _playerXChunkScale), Mathf.Abs(z - _playerZChunkScale));
-        if (maxDist <= _maxGrassDistChunks) GenerateGrass(index);
+        if (maxDist <= _maxGrassDistChunks) {
+            GenerateGrass(index);
+            Debug.Log("More GrassZ");
+        }
         if (_updateQueue.Count > 1) return;
         UpdateGrassBuffers();
     }
