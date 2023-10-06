@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 [RequireComponent(typeof(Movement))]
@@ -7,10 +8,12 @@ using UnityEngine;
 public class TestAI : MonoBehaviour
 {
     public string _species;
-    public bool _flocking;
+    public bool _flockable;
+    public bool _inflock;
     public bool _infighter;
-    public bool _leader;
-    public bool _follower;
+    public bool _leading;
+    public bool _following;
+    public GameObject _leader;
     public int _priority;
     private Movement _movement;
     private GameObject _player;
@@ -28,7 +31,18 @@ public class TestAI : MonoBehaviour
 
     private void Update()
     {
-        CheckDistancePlayer();
+        List<GameObject> sameAnimals = CheckDistanceSameSpecies();
+        if (sameAnimals.Count() > 0 && _flockable)
+        {
+            JoinFlock(sameAnimals);
+        }
+        if (_following)
+        {
+            FollowLeader();
+        } else
+        {
+            CheckDistancePlayer();
+        }
     }
 
     // deals with encounters (plcl, plnr, plfr, sacl, sanr) 
@@ -47,11 +61,16 @@ public class TestAI : MonoBehaviour
 
     private List<GameObject> CheckDistanceSameSpecies()
     {
-        Collider[] sameAnimalOverlap = Physics.OverlapSphere(transform.position, 5f);
+        Collider[] sameAnimalOverlap = Physics.OverlapSphere(transform.position, 30f);
         List<GameObject> sameAnimalsInRange = new List<GameObject>();
         foreach (Collider entity in sameAnimalOverlap)
         {
-            if (entity.gameObject.GetComponent<TestAI>()._species == _species)
+            TestAI entityAI = entity.gameObject.GetComponent<TestAI>();
+            if (entityAI == null)
+            {
+                continue;
+            }
+            if (entity.gameObject.GetComponent<TestAI>()._species == this._species)
             {
                 sameAnimalsInRange.Add(entity.gameObject);
             }
@@ -59,8 +78,25 @@ public class TestAI : MonoBehaviour
         return sameAnimalsInRange;
     }
 
-    private void CreateFlock()
+    private void JoinFlock(List<GameObject> animals)
     {
+        animals = animals.OrderByDescending(an => an.GetComponent<TestAI>()._priority).ToList();
+        if (animals[0].GetComponent<TestAI>()._priority > this._priority && animals[0] != this)
+        {
+            _leading = false;
+            _following = true;
+            _leader = animals[0];
+        } else
+        {
+            _leading = true;
+            _following = false;
+            _leader = null;
+        }
+    }
 
+    private void FollowLeader()
+    {
+        transform.LookAt(_leader.transform);
+        _movement.SetInputVector(_leader.transform.forward);
     }
 }
