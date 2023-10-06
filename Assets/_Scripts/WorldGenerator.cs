@@ -116,8 +116,8 @@ public class WorldGenerator : MonoBehaviour
     public void UpdatePlayerLoadedChunks(Vector3 playerPos)
     {
         _material.SetVector("_PlayerPosition", playerPos);
-        int playerXChunkScale = (int) (playerPos.x / (_xSize * _xResolution));
-        int playerZChunkScale = (int) (playerPos.z / (_zSize * _zResolution));
+        int playerXChunkScale = (int) ((playerPos.x + _xSize / 2) / (_xSize * _xResolution));
+        int playerZChunkScale = (int) ((playerPos.z + _zSize / 2) / (_zSize * _zResolution));
 
         int deltaX = playerXChunkScale - _lastPlayerChunkX;
         int deltaZ = playerZChunkScale - _lastPlayerChunkZ;
@@ -126,7 +126,7 @@ public class WorldGenerator : MonoBehaviour
         _playerZ = playerPos.z;
         _playerXChunkScale = playerXChunkScale;
         _playerZChunkScale = playerZChunkScale;
-        
+          // Debug.Log(_lastPlayerChunkX);
         if (deltaX < 0) {
             int[] tempValues = new int[_zTiles];
             for (int i = 0; i < _zTiles; i++) {
@@ -221,7 +221,7 @@ public class WorldGenerator : MonoBehaviour
             for (int x = 0; x < _xTiles; x++) {
                 for (int z = 0; z < _zTiles; z++) { 
                     float maxDist = Mathf.Max(Mathf.Abs(_tilePool[_tilePositions[x, z]].x - playerXChunkScale), Mathf.Abs(_tilePool[_tilePositions[x, z]].z - playerZChunkScale));
-                    if (_hasColliders && maxDist < 1) { 
+                    if (_hasColliders && maxDist < 2) { 
                         UpdateCollider(_tilePositions[x, z]);
                     } else if (_hasColliders) {
                         if (_tilePool[_tilePositions[x, z]].meshCollider) _tilePool[_tilePositions[x, z]].meshCollider.enabled = false;
