@@ -492,6 +492,56 @@ public class WorldGenerator : MonoBehaviour
         _tilePool[index].mesh.colors = colors;
     }
 
+    private static Vector3[] CalculateNormals(Mesh targetMesh) {
+        Vector3[] vertices = targetMesh.vertices;
+        int[] triangles = targetMesh.triangles;
+        Vector3[] normals = new Vector3[vertices.Length];
+        int triangleCount = triangles.Length / 3;
+        int sideLength = (int) Mathf.Sqrt(vertices.Length);
+
+        for (int i = 0; i < triangleCount; i++) {
+            int normalTriangleIndex = i * 3;
+            int vertexIndexA = triangles[normalTriangleIndex];
+            int vertexIndexB = triangles[normalTriangleIndex + 1];
+            int vertexIndexC = triangles[normalTriangleIndex + 2];
+
+            Vector3 pointA = vertices[vertexIndexA];
+            Vector3 pointB = vertices[vertexIndexB];
+            Vector3 pointC = vertices[vertexIndexC];
+            Vector3 sideAB = pointB - pointA;
+            Vector3 sideAC = pointC - pointA;
+            Vector3 normal = Vector3.Cross(sideAB, sideAC).normalized;
+            normals[vertexIndexA] += normal;
+            normals[vertexIndexB] += normal;
+            normals[vertexIndexC] += normal;
+        }
+
+        for (int i = 0; i < vertices.Length; i++) {
+            if (i < sideLength) {
+                normals[i] = Vector3.up;
+                //Bottom Edge
+            }
+            else if (i > vertices.Length - sideLength) {
+                normals[i] = Vector3.up;
+                //Top Edge
+            }
+            else if (i % sideLength == 0) {
+                normals[i] = Vector3.up;
+                //Left Edge
+            }
+            else if (i % sideLength == sideLength - 1) {
+                normals[i] = Vector3.up;
+                //Right Edge
+            }
+        }
+
+        for (int i = 0; i < normals.Length; i++) {
+            normals[i].Normalize();
+        }
+
+        return normals;
+    }
+
     private void UpdateCollider(int index) {
         if (!_tilePool[index].meshCollider) _tilePool[index].meshCollider = _tilePool[index].obj.AddComponent<MeshCollider>();
         else if (_tilePool[index].meshCollider.enabled) return;
@@ -500,7 +550,7 @@ public class WorldGenerator : MonoBehaviour
     }
 
     private static void UpdateMesh(Mesh targetMesh) {
-        targetMesh.RecalculateNormals();
+        targetMesh.normals = CalculateNormals(targetMesh);
         targetMesh.RecalculateBounds();
     }
 
