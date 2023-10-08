@@ -492,7 +492,7 @@ public class WorldGenerator : MonoBehaviour
         _tilePool[index].mesh.colors = colors;
     }
 
-    private static Vector3[] CalculateNormals(Mesh targetMesh) {
+    private Vector3[] CalculateNormals(Mesh targetMesh) {
         Vector3[] vertices = targetMesh.vertices;
         int[] triangles = targetMesh.triangles;
         Vector3[] normals = new Vector3[vertices.Length];
@@ -516,25 +516,6 @@ public class WorldGenerator : MonoBehaviour
             normals[vertexIndexC] += normal;
         }
 
-        for (int i = 0; i < vertices.Length; i++) {
-            if (i < sideLength) {
-                normals[i] = Vector3.up;
-                //Bottom Edge
-            }
-            else if (i > vertices.Length - sideLength) {
-                normals[i] = Vector3.up;
-                //Top Edge
-            }
-            else if (i % sideLength == 0) {
-                normals[i] = Vector3.up;
-                //Left Edge
-            }
-            else if (i % sideLength == sideLength - 1) {
-                normals[i] = Vector3.up;
-                //Right Edge
-            }
-        }
-
         for (int i = 0; i < normals.Length; i++) {
             normals[i].Normalize();
         }
@@ -549,7 +530,7 @@ public class WorldGenerator : MonoBehaviour
         _tilePool[index].meshCollider.sharedMesh = _tilePool[index].mesh;
     }
 
-    private static void UpdateMesh(Mesh targetMesh) {
+    private void UpdateMesh(Mesh targetMesh) {
         targetMesh.normals = CalculateNormals(targetMesh);
         targetMesh.RecalculateBounds();
     }
