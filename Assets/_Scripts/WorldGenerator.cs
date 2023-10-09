@@ -251,6 +251,7 @@ public class WorldGenerator : MonoBehaviour
     }
     
     private void Start() {
+        _seed = int.Parse(Hash128.Compute(_seed).ToString().Substring(0, 6), System.Globalization.NumberStyles.HexNumber);
         _scale = 1 / _scale;
         SetupGrass();
         SetupPool();
