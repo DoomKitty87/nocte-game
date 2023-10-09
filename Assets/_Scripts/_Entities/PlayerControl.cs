@@ -40,7 +40,7 @@ public class PlayerControl : MonoBehaviour
   }
 
   private void AlignToMovement() {
-    _transformAlignToMovement.transform.rotation = Quaternion.LookRotation(GetInputVector(), Vector3.up);
+    // _transformAlignToMovement.transform.rotation = Quaternion.LookRotation(GetInputVector(), Vector3.up);
   }
   
   private void OnValidate() {

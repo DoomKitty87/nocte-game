@@ -116,17 +116,12 @@ public class WorldGenerator : MonoBehaviour
     public void UpdatePlayerLoadedChunks(Vector3 playerPos)
     {
         _material.SetVector("_PlayerPosition", playerPos);
-        int playerXChunkScale = (int) ((playerPos.x + _xSize / 2) / (_xSize * _xResolution));
-        int playerZChunkScale = (int) ((playerPos.z + _zSize / 2) / (_zSize * _zResolution));
+        int playerXChunkScale = (int) Mathf.Floor(playerPos.x / (_xSize * _xResolution));
+        int playerZChunkScale = (int) Mathf.Floor(playerPos.z / (_zSize * _zResolution));
 
         int deltaX = playerXChunkScale - _lastPlayerChunkX;
         int deltaZ = playerZChunkScale - _lastPlayerChunkZ;
         
-        _playerX = playerPos.x;
-        _playerZ = playerPos.z;
-        _playerXChunkScale = playerXChunkScale;
-        _playerZChunkScale = playerZChunkScale;
-          // Debug.Log(_lastPlayerChunkX);
         if (deltaX < 0) {
             int[] tempValues = new int[_zTiles];
             for (int i = 0; i < _zTiles; i++) {
@@ -218,17 +213,22 @@ public class WorldGenerator : MonoBehaviour
         }
 
         if (deltaZ != 0 || deltaX != 0) {
+            Debug.Log("Update Chunk");
+            /*
+            Debug.Log("Player Position: " + playerXChunkScale + ", " + playerZChunkScale);
             for (int x = 0; x < _xTiles; x++) {
                 for (int z = 0; z < _zTiles; z++) { 
                     float maxDist = Mathf.Max(Mathf.Abs(_tilePool[_tilePositions[x, z]].x - playerXChunkScale), Mathf.Abs(_tilePool[_tilePositions[x, z]].z - playerZChunkScale));
                     if (_hasColliders && maxDist < 2) { 
                         UpdateCollider(_tilePositions[x, z]);
+                        Debug.Log(x + ", " + z);
                     } else if (_hasColliders) {
                         if (_tilePool[_tilePositions[x, z]].meshCollider) _tilePool[_tilePositions[x, z]].meshCollider.enabled = false;
                     }
                     if (maxDist < _maxGrassDistChunks && !(x == _xTiles - 1 && deltaX == 1) &&
                         !(x == 0 && deltaX == -1) && !(z == _zTiles - 1 && deltaZ == 1) && !(z == 0 && deltaZ == -1)) {
                         GenerateGrass(_tilePositions[x, z]);
+                        Debug.Log("Generate Grass");
                     } else if (_tilePool[_tilePositions[x, z]].grassCount > 0) {
                         Debug.Log("Remove Grass");
                         _grassData.RemoveRange(_tilePool[_tilePositions[x, z]].grassIndexStart,
@@ -243,6 +243,7 @@ public class WorldGenerator : MonoBehaviour
                     }
                 }
             }
+            */
         }
         
         _lastPlayerChunkX = playerXChunkScale;
@@ -403,7 +404,7 @@ public class WorldGenerator : MonoBehaviour
 		int[] triangles = _tilePool[index].mesh.triangles;
 		Vector3[] normals = new Vector3[triangles.Length / 3];
 
-		triangles[^1] = 0; // Fix bug with last triangle vertex
+		triangles[^1] = 0; // Fixes bug with last triangle vertex being incorrect
 
 		// Calculate normals of triangles
 		for (int i = 0; i < normals.Length; i++) {
@@ -412,6 +413,9 @@ public class WorldGenerator : MonoBehaviour
 
 		_tilePool[index].grassIndexStart = _grassData.Count;
         
+        // TODO:
+        // Increase performance by converting to compute shader
+        // Make random position pseudo random based off seed to generate consistent grass
         for (int i = 0; i < triangles.Length / 3; i++) {
             if (normals[i].y < 0.7f) continue;
             for (int j = 0; j < _grassDensity; j++) {
