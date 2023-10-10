@@ -218,24 +218,18 @@ public class WorldGenerator : MonoBehaviour
         }
 
         if (deltaZ != 0 || deltaX != 0) {
-            Debug.Log("Update Chunk");
-            /*
-            Debug.Log("Player Position: " + playerXChunkScale + ", " + playerZChunkScale);
             for (int x = 0; x < _xTiles; x++) {
                 for (int z = 0; z < _zTiles; z++) { 
                     float maxDist = Mathf.Max(Mathf.Abs(_tilePool[_tilePositions[x, z]].x - playerXChunkScale), Mathf.Abs(_tilePool[_tilePositions[x, z]].z - playerZChunkScale));
                     if (_hasColliders && maxDist < 2) { 
                         UpdateCollider(_tilePositions[x, z]);
-                        Debug.Log(x + ", " + z);
                     } else if (_hasColliders) {
                         if (_tilePool[_tilePositions[x, z]].meshCollider) _tilePool[_tilePositions[x, z]].meshCollider.enabled = false;
                     }
                     if (maxDist < _maxGrassDistChunks && !(x == _xTiles - 1 && deltaX == 1) &&
                         !(x == 0 && deltaX == -1) && !(z == _zTiles - 1 && deltaZ == 1) && !(z == 0 && deltaZ == -1)) {
                         GenerateGrass(_tilePositions[x, z]);
-                        Debug.Log("Generate Grass");
                     } else if (_tilePool[_tilePositions[x, z]].grassCount > 0) {
-                        Debug.Log("Remove Grass");
                         _grassData.RemoveRange(_tilePool[_tilePositions[x, z]].grassIndexStart,
                             _tilePool[_tilePositions[x, z]].grassCount);
                         for (int i = 0; i < _xTiles * _zTiles; i++) {
@@ -248,7 +242,6 @@ public class WorldGenerator : MonoBehaviour
                     }
                 }
             }
-            */
         }
         
         _lastPlayerChunkX = playerXChunkScale;
@@ -360,10 +353,6 @@ public class WorldGenerator : MonoBehaviour
         if (!_useColorGradient) CalculateUVs(msh);
         else CalculateColors(index);
         _tilePositions[index / _zTiles, index % _zTiles] = index;
-        int maxDist = Mathf.Max(Mathf.Abs(x - _playerXChunkScale), Mathf.Abs(z - _playerZChunkScale));
-        if (maxDist <= _maxGrassDistChunks) {
-            GenerateGrass(index);
-        }
         if (index == (_xTiles * _zTiles) - 1) {
             UpdateGrassBuffers();
         }
@@ -397,7 +386,6 @@ public class WorldGenerator : MonoBehaviour
         int maxDist = Mathf.Max(Mathf.Abs(x - _playerXChunkScale), Mathf.Abs(z - _playerZChunkScale));
         if (maxDist <= _maxGrassDistChunks) {
             GenerateGrass(index);
-            Debug.Log("More GrassZ");
         }
         if (_updateQueue.Count > 1) return;
         UpdateGrassBuffers();
