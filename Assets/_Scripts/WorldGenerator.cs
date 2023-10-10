@@ -105,6 +105,8 @@ public class WorldGenerator : MonoBehaviour
 
     [SerializeField] private Biome[] _biomes;
     [SerializeField] private float[] _scatterDensities;
+
+    public int _scatterRange = 2;
     // sThese are separated because density is used in calculations before biome is calculated
 
     private WorldTile[] _tilePool;
@@ -370,6 +372,10 @@ public class WorldGenerator : MonoBehaviour
         if (index == (_xTiles * _zTiles) - 1) {
             UpdateGrassBuffers();
         }
+
+        if (Math.Abs(x) < _scatterRange && Math.Abs(z) < _scatterRange) {
+            ScatterTile(index);
+        }
     }
 
     private void QueueTileUpdate(int index) {
@@ -402,6 +408,10 @@ public class WorldGenerator : MonoBehaviour
         int maxDist = Mathf.Max(Mathf.Abs(x - _playerXChunkScale), Mathf.Abs(z - _playerZChunkScale));
         if (maxDist <= _maxGrassDistChunks) {
             GenerateGrass(index);
+        }
+
+        if (maxDist < _scatterRange) {
+            ScatterTile(index);
         }
         if (_updateQueue.Count > 1) return;
         UpdateGrassBuffers();
@@ -573,9 +583,15 @@ public class WorldGenerator : MonoBehaviour
         Vector3 vertexAbs = new Vector3(vertex.x * _xResolution + _tilePool[index].x * _xSize * _xResolution, vertex.y, vertex.z * _zResolution + _tilePool[index].z * _zSize * _zResolution);
         return vertexAbs;
     }
+
+    private void ScatterTile(int index) {
+        for (int i = _tilePool[index].obj.transform.childCount - 1; i >= 0; i++) Destroy(_tilePool[index].obj.transform.GetChild(i).gameObject);
+        for (int i = 0; i < _scatterDensities.Length; i++) {
+            ScatterObjects(index, i);
+        }
+    }
     
     private void ScatterObjects(int index, int layer) {
-        for (int i = _tilePool[index].obj.transform.childCount - 1; i >= 0; i++) Destroy(_tilePool[index].obj.transform.GetChild(i).gameObject);
         Mesh targetMesh = _tilePool[index].mesh;
         Vector3[] vertices = targetMesh.vertices;
         List<Vector2> points = PoissonDisk.GeneratePoints(1 / _scatterDensities[layer], new Vector2(_xSize, _zSize));
