@@ -1,6 +1,11 @@
 using System;
 using UnityEngine;
 using System.Collections.Generic;
+using System.Numerics;
+using Matrix4x4 = UnityEngine.Matrix4x4;
+using Vector2 = UnityEngine.Vector2;
+using Vector3 = UnityEngine.Vector3;
+using Vector4 = UnityEngine.Vector4;
 
 public class WorldGenerator : MonoBehaviour
 {
@@ -351,7 +356,7 @@ public class WorldGenerator : MonoBehaviour
         tile.x = x;
         tile.z = z;
         _tilePool[index] = tile;
-        UpdateMesh(msh);
+        UpdateMesh(msh, index);
         if (!_useColorGradient) CalculateUVs(msh);
         else CalculateColors(index);
         _tilePositions[index / _zTiles, index % _zTiles] = index;
@@ -385,7 +390,7 @@ public class WorldGenerator : MonoBehaviour
         _tilePool[index].humidityMap = NoiseMaps.GenerateHumidityMap(_tilePool[index].mesh.vertices, _tilePool[index].temperatureMap, x * _xSize * _xResolution + (seed * 0.5f), z * _zSize * _zResolution + (seed * 0.5f), _xSize, _zSize, _scale / _humidityScale, _easeCurve, _xResolution, _zResolution);
 
         WindTriangles(_tilePool[index].mesh);
-        UpdateMesh(_tilePool[index].mesh);
+        UpdateMesh(_tilePool[index].mesh, index);
         if (!_useColorGradient) CalculateUVs(_tilePool[index].mesh);
         else CalculateColors(index);
         _tilePool[index].obj.transform.position = new Vector3(x * _xSize * _xResolution, 0, z * _zSize * _zResolution);
@@ -452,19 +457,19 @@ public class WorldGenerator : MonoBehaviour
     }
 
     private void WindTriangles(Mesh targetMesh) {
-        int[] triangles = new int[_xSize * _zSize * 6];
+        int[] triangles = new int[(_xSize + 1) * (_zSize + 1) * 6];
         int vert = 0;
         int tris = 0;
-        for (int z = 0; z < _zSize; z++)
+        for (int z = 0; z < _zSize + 1; z++)
         {
-            for (int x = 0; x < _xSize; x++)
+            for (int x = 0; x < _xSize + 1; x++)
             {
                 triangles[tris] = vert + 0;
-                triangles[tris + 1] = vert + _xSize + 1;
+                triangles[tris + 1] = vert + _xSize + 2;
                 triangles[tris + 2] = vert + 1;
                 triangles[tris + 3] = vert + 1;
-                triangles[tris + 4] = vert + _xSize + 1;
-                triangles[tris + 5] = vert + _xSize + 2;
+                triangles[tris + 4] = vert + _xSize + 2;
+                triangles[tris + 5] = vert + _xSize + 3;
                 vert++;
                 tris += 6;
             }
@@ -475,8 +480,8 @@ public class WorldGenerator : MonoBehaviour
     }
 
     private void CalculateUVs(Mesh targetMesh) {
-        int xSize = _xSize + 1;
-        int zSize = _zSize + 1;
+        int xSize = _xSize + 2;
+        int zSize = _zSize + 2;
 
         Vector2[] uvs = new Vector2[xSize * zSize];
 
@@ -497,7 +502,7 @@ public class WorldGenerator : MonoBehaviour
         _tilePool[index].mesh.colors = colors;
     }
 
-    private Vector3[] CalculateNormals(Mesh targetMesh) {
+    private Vector3[] CalculateNormals(Mesh targetMesh, int index) {
         Vector3[] vertices = targetMesh.vertices;
         int[] triangles = targetMesh.triangles;
         Vector3[] normals = new Vector3[vertices.Length];
@@ -520,12 +525,34 @@ public class WorldGenerator : MonoBehaviour
             normals[vertexIndexB] += normal;
             normals[vertexIndexC] += normal;
         }
+        
 
         for (int i = 0; i < normals.Length; i++) {
             normals[i].Normalize();
         }
 
         return normals;
+    }
+
+    private int[] CullTriangles(Mesh targetMesh) {
+        int[] triangles = targetMesh.triangles;
+        int sideLength = (int) Mathf.Sqrt(triangles.Length / 6) - 1;
+        int[] culled = new int[(int) Mathf.Pow(sideLength, 2) * 6];
+
+        for (int i = 0, j = 0; i < triangles.Length; i += 6) {
+            int triangleIndex = i / 6;
+            if (triangleIndex / (sideLength + 1) == sideLength) continue;
+            if (triangleIndex % (sideLength + 1) == sideLength) continue;
+            culled[j] = triangles[i];
+            culled[j + 1] = triangles[i + 1];
+            culled[j + 2] = triangles[i + 2];
+            culled[j + 3] = triangles[i + 3];
+            culled[j + 4] = triangles[i + 4];
+            culled[j + 5] = triangles[i + 5];
+            j += 6;
+        }
+
+        return culled;
     }
 
     private void UpdateCollider(int index) {
@@ -535,8 +562,14 @@ public class WorldGenerator : MonoBehaviour
         _tilePool[index].meshCollider.sharedMesh = _tilePool[index].mesh;
     }
 
-    private void UpdateMesh(Mesh targetMesh) {
-        targetMesh.normals = CalculateNormals(targetMesh);
+    private Vector3 CalculateAbsVertex(Vector3 vertex, int index) {
+        Vector3 vertexAbs = new Vector3(vertex.x * _xResolution + _tilePool[index].x * _xSize * _xResolution, vertex.y, vertex.z * _zResolution + _tilePool[index].z * _zSize * _zResolution);
+        return vertexAbs;
+    }
+
+    private void UpdateMesh(Mesh targetMesh, int index) {
+        targetMesh.normals = CalculateNormals(targetMesh, index);
+        targetMesh.triangles = CullTriangles(targetMesh);
         targetMesh.RecalculateBounds();
     }
 
