@@ -212,8 +212,9 @@ public static class NoiseMaps
     }
 
     [BurstCompile]
-    public static Vector3[] GenerateTerrainBiomes(float xOffset, float zOffset, int xSize, int zSize, WorldGenerator.Biome[] biomes, float biomeScale, float xResolution = 1, float zResolution = 1) {
+    public static (Vector3[], int[]) GenerateTerrainBiomes(float xOffset, float zOffset, int xSize, int zSize, WorldGenerator.Biome[] biomes, float biomeScale, float xResolution = 1, float zResolution = 1) {
         Vector3[] vertices = new Vector3[(xSize + 3) * (zSize + 3)];
+        int[] biomeData = new int[(xSize + 3) * (zSize + 3)];
         for (int z = 0, i = 0; z <= zSize + 2; z++)
         {
             for (int x = 0; x <= xSize + 2; x++) {
@@ -239,6 +240,7 @@ public static class NoiseMaps
         biomeHandle.Complete();
         for (int i = 0; i < vertices.Length; i++) {
             float biomeNoise = biomeResult[i] * (biomes.Length - 1);
+            biomeData[i] = Mathf.RoundToInt(biomeNoise);
             if (usedBiomes[Mathf.FloorToInt(biomeNoise)] == false) usedBiomes[Mathf.FloorToInt(biomeNoise)] = true;
             if (usedBiomes[Mathf.CeilToInt(biomeNoise)] == false) usedBiomes[Mathf.CeilToInt(biomeNoise)] = true;
         }
@@ -304,7 +306,7 @@ public static class NoiseMaps
         }
         jobResult.Dispose();
         biomeResult.Dispose();
-        return vertices;
+        return (vertices, biomeData);
     }
     
     public static Vector3[] GenerateTerrainLayers(float xOffset, float zOffset, int xSize, int zSize, WorldGenerator.NoiseLayer[] noiseLayers, float xResolution=1, float zResolution=1) {

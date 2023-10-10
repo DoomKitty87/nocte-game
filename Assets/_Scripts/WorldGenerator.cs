@@ -20,6 +20,7 @@ public class WorldGenerator : MonoBehaviour
         public int z;
         public int grassIndexStart;
         public int grassCount;
+        public int[] biomeData;
 
     }
     
@@ -40,11 +41,22 @@ public class WorldGenerator : MonoBehaviour
     }
 
     [System.Serializable]
+    public struct ScatterLayer
+    {
+
+        public string name;
+        public GameObject prefab;
+        public float density;
+
+    }
+
+    [System.Serializable]
     public struct Biome
     {
 
         public string name;
         public NoiseLayer[] noiseLayers;
+        public ScatterLayer[] scatterLayers;
 
     }
     
@@ -92,6 +104,8 @@ public class WorldGenerator : MonoBehaviour
     public int _grassDensity = 5;
 
     [SerializeField] private Biome[] _biomes;
+    [SerializeField] private float[] _scatterDensities;
+    // sThese are separated because density is used in calculations before biome is calculated
 
     private WorldTile[] _tilePool;
     private int[,] _tilePositions;
@@ -323,7 +337,8 @@ public class WorldGenerator : MonoBehaviour
         mf.mesh = new Mesh();
         Mesh msh = mf.mesh;
         int seed = _seed;
-        Vector3[] vertexData = NoiseMaps.GenerateTerrainBiomes(x * _xSize * _xResolution + seed, z * _zSize * _zResolution + seed, _xSize, _zSize, _biomes, _biomeScale, _xResolution, _zResolution);
+        var result = NoiseMaps.GenerateTerrainBiomes(x * _xSize * _xResolution + seed, z * _zSize * _zResolution + seed, _xSize, _zSize, _biomes, _biomeScale, _xResolution, _zResolution);
+        Vector3[] vertexData = result.Item1;
         msh.vertices = vertexData;
         WindTriangles(msh);
         
@@ -346,6 +361,7 @@ public class WorldGenerator : MonoBehaviour
         tile.humidityMap = humidityMap;
         tile.x = x;
         tile.z = z;
+        tile.biomeData = result.Item2;
         _tilePool[index] = tile;
         UpdateMesh(msh, index);
         if (!_useColorGradient) CalculateUVs(msh);
@@ -372,7 +388,9 @@ public class WorldGenerator : MonoBehaviour
         int z = _tilePool[index].z;
         _tilePool[index].mesh.Clear();
         int seed = _seed;
-        _tilePool[index].mesh.vertices = NoiseMaps.GenerateTerrainBiomes(x * _xSize * _xResolution + seed, z * _zSize * _zResolution + seed, _xSize, _zSize, _biomes, _biomeScale, _xResolution, _zResolution);
+        var result = NoiseMaps.GenerateTerrainBiomes(x * _xSize * _xResolution + seed, z * _zSize * _zResolution + seed, _xSize, _zSize, _biomes, _biomeScale, _xResolution, _zResolution);
+        _tilePool[index].mesh.vertices = result.Item1;
+        _tilePool[index].biomeData = result.Item2;
         _tilePool[index].temperatureMap = NoiseMaps.GenerateTemperatureMap(_tilePool[index].mesh.vertices, x * _xSize * _xResolution + (seed * 2), z * _zSize * _zResolution + (seed * 2), _xSize, _zSize, _scale / _temperatureScale, _easeCurve, _xResolution, _zResolution);
         _tilePool[index].humidityMap = NoiseMaps.GenerateHumidityMap(_tilePool[index].mesh.vertices, _tilePool[index].temperatureMap, x * _xSize * _xResolution + (seed * 0.5f), z * _zSize * _zResolution + (seed * 0.5f), _xSize, _zSize, _scale / _humidityScale, _easeCurve, _xResolution, _zResolution);
 
@@ -556,13 +574,14 @@ public class WorldGenerator : MonoBehaviour
         return vertexAbs;
     }
     
-    private void ScatterObjects(Mesh targetMesh, GameObject toScatter, float density, int index) {
+    private void ScatterObjects(int index, int layer) {
         for (int i = _tilePool[index].obj.transform.childCount - 1; i >= 0; i++) Destroy(_tilePool[index].obj.transform.GetChild(i).gameObject);
+        Mesh targetMesh = _tilePool[index].mesh;
         Vector3[] vertices = targetMesh.vertices;
-        List<Vector2> points = PoissonDisk.GeneratePoints(1 / density, new Vector2(_xSize, _zSize));
+        List<Vector2> points = PoissonDisk.GeneratePoints(1 / _scatterDensities[layer], new Vector2(_xSize, _zSize));
         for (int i = 0; i < points.Count; i++) {
             Vector3 vertex = vertices[(int)points[i].x + (int)points[i].y * _xSize];
-            GameObject go = Instantiate(toScatter, new Vector3(vertex.x + (_tilePool[index].x * _xSize * _xResolution), vertex.y, vertex.z + (_tilePool[index].z * _zSize * _zResolution)), UnityEngine.Quaternion.identity);
+            GameObject go = Instantiate(_biomes[_tilePool[index].biomeData[(int)points[i].x + (int)points[i].y * _xSize]].scatterLayers[layer].prefab, new Vector3(vertex.x + (_tilePool[index].x * _xSize * _xResolution), vertex.y, vertex.z + (_tilePool[index].z * _zSize * _zResolution)), UnityEngine.Quaternion.identity);
             go.transform.parent = _tilePool[index].obj.transform;
         }
     }
