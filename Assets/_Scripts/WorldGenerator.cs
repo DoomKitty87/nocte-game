@@ -313,7 +313,7 @@ public class WorldGenerator : MonoBehaviour
         _commandBuf = new GraphicsBuffer(GraphicsBuffer.Target.IndirectArguments, _commandCount, GraphicsBuffer.IndirectDrawIndexedArgs.size);
         _commandData = new GraphicsBuffer.IndirectDrawIndexedArgs[_commandCount];
         _grassData = new List<GrassData>();
-        _positionsBuffer = new ComputeBuffer((_xSize + 1) * (_zSize + 1) * _xTiles * _zTiles, sizeof(float) * 7, ComputeBufferType.Default);
+        _positionsBuffer = new ComputeBuffer((_xSize + 2) * (_zSize + 2) * _xTiles * _zTiles, sizeof(float) * 7, ComputeBufferType.Default);
         _rp = new RenderParams(_material2);
         _rp.matProps = new MaterialPropertyBlock();
         _wind = new Texture2D(128, 128);
@@ -457,19 +457,19 @@ public class WorldGenerator : MonoBehaviour
     }
 
     private void WindTriangles(Mesh targetMesh) {
-        int[] triangles = new int[(_xSize + 1) * (_zSize + 1) * 6];
+        int[] triangles = new int[(_xSize + 2) * (_zSize + 2) * 6];
         int vert = 0;
         int tris = 0;
-        for (int z = 0; z < _zSize + 1; z++)
+        for (int z = 0; z < _zSize + 2; z++)
         {
-            for (int x = 0; x < _xSize + 1; x++)
+            for (int x = 0; x < _xSize + 2; x++)
             {
                 triangles[tris] = vert + 0;
-                triangles[tris + 1] = vert + _xSize + 2;
+                triangles[tris + 1] = vert + _xSize + 3;
                 triangles[tris + 2] = vert + 1;
                 triangles[tris + 3] = vert + 1;
-                triangles[tris + 4] = vert + _xSize + 2;
-                triangles[tris + 5] = vert + _xSize + 3;
+                triangles[tris + 4] = vert + _xSize + 3;
+                triangles[tris + 5] = vert + _xSize + 4;
                 vert++;
                 tris += 6;
             }
@@ -480,8 +480,8 @@ public class WorldGenerator : MonoBehaviour
     }
 
     private void CalculateUVs(Mesh targetMesh) {
-        int xSize = _xSize + 2;
-        int zSize = _zSize + 2;
+        int xSize = _xSize + 3;
+        int zSize = _zSize + 3;
 
         Vector2[] uvs = new Vector2[xSize * zSize];
 
@@ -536,13 +536,15 @@ public class WorldGenerator : MonoBehaviour
 
     private int[] CullTriangles(Mesh targetMesh) {
         int[] triangles = targetMesh.triangles;
-        int sideLength = (int) Mathf.Sqrt(triangles.Length / 6) - 1;
+        int sideLength = (int) Mathf.Sqrt(triangles.Length / 6) - 2;
         int[] culled = new int[(int) Mathf.Pow(sideLength, 2) * 6];
 
         for (int i = 0, j = 0; i < triangles.Length; i += 6) {
             int triangleIndex = i / 6;
-            if (triangleIndex / (sideLength + 1) == sideLength) continue;
-            if (triangleIndex % (sideLength + 1) == sideLength) continue;
+            if (triangleIndex / (sideLength + 2) == sideLength + 1) continue;
+            if (triangleIndex % (sideLength + 2) == sideLength + 1) continue;
+            if (triangleIndex < sideLength + 2) continue;
+            if (triangleIndex % (sideLength + 2) == 0) continue;
             culled[j] = triangles[i];
             culled[j + 1] = triangles[i + 1];
             culled[j + 2] = triangles[i + 2];

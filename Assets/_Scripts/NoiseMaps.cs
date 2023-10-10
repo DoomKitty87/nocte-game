@@ -213,10 +213,10 @@ public static class NoiseMaps
 
     [BurstCompile]
     public static Vector3[] GenerateTerrainBiomes(float xOffset, float zOffset, int xSize, int zSize, WorldGenerator.Biome[] biomes, float biomeScale, float xResolution = 1, float zResolution = 1) {
-        Vector3[] vertices = new Vector3[(xSize + 2) * (zSize + 2)];
-        for (int z = 0, i = 0; z <= zSize + 1; z++)
+        Vector3[] vertices = new Vector3[(xSize + 3) * (zSize + 3)];
+        for (int z = 0, i = 0; z <= zSize + 2; z++)
         {
-            for (int x = 0; x <= xSize + 1; x++) {
+            for (int x = 0; x <= xSize + 2; x++) {
                 vertices[i] = new Vector3(x * xResolution, 0, z * zResolution);
                 i++;
             }
@@ -224,7 +224,7 @@ public static class NoiseMaps
         var biomeResult = new NativeArray<float>(vertices.Length, Allocator.TempJob);
         bool[] usedBiomes = new bool[biomes.Length];
         var biomeJob = new SimplexNoiseJobScale() {
-            xSize = xSize + 2,
+            xSize = xSize + 3,
             xOffset = xOffset,
             zOffset = zOffset,
             scaleX = biomeScale,
@@ -253,7 +253,7 @@ public static class NoiseMaps
 
                 if (biomes[b].noiseLayers[i].noiseType == "simplex") {
                     var job = new SimplexNoiseJobScale() {
-                        xSize = xSize + 2,
+                        xSize = xSize + 3,
                         xOffset = xOffset,
                         zOffset = zOffset,
                         scaleX = 1 / biomes[b].noiseLayers[i].scaleX,
@@ -270,7 +270,7 @@ public static class NoiseMaps
 
                 else if (biomes[b].noiseLayers[i].noiseType == "cellular") {
                     var job = new CellularNoiseJobScale() {
-                        xSize = xSize + 2,
+                        xSize = xSize + 3,
                         xOffset = xOffset,
                         zOffset = zOffset,
                         scaleX = 1 / biomes[b].noiseLayers[i].scaleX,
@@ -410,11 +410,11 @@ public static class NoiseMaps
         
         float[] temperatureMap = new float[heightMap.Length];
         
-        var jobResult = new NativeArray<float>((xSize + 2) * (zSize + 2), Allocator.TempJob);
+        var jobResult = new NativeArray<float>((xSize + 3) * (zSize + 3), Allocator.TempJob);
 
         var job = new SimplexNoiseJob()
         {
-            xSize = xSize + 2,
+            xSize = xSize + 3,
             xOffset = xOffset,
             zOffset = zOffset,
             scale = scale,
@@ -443,11 +443,11 @@ public static class NoiseMaps
     {
         float[] humidityMap = new float[heightMap.Length];
         
-        var jobResult = new NativeArray<float>((xSize + 2) * (xSize + 2), Allocator.TempJob);
+        var jobResult = new NativeArray<float>((xSize + 3) * (xSize + 3), Allocator.TempJob);
 
         var job = new SimplexNoiseJob()
         {
-            xSize = xSize + 2,
+            xSize = xSize + 3,
             xOffset = xOffset,
             zOffset = zOffset,
             scale = scale,
