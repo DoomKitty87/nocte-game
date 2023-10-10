@@ -46,8 +46,15 @@ public class WorldGenerator : MonoBehaviour
 
         public string name;
         public GameObject prefab;
-        public float density;
 
+    }
+
+    [System.Serializable]
+    public struct ScatterSettings
+    {
+
+        public float density;
+        
     }
 
     [System.Serializable]
@@ -104,7 +111,7 @@ public class WorldGenerator : MonoBehaviour
     public int _grassDensity = 5;
 
     [SerializeField] private Biome[] _biomes;
-    [SerializeField] private float[] _scatterDensities;
+    [SerializeField] private ScatterSettings[] _scatterSettings;
 
     public int _scatterRange = 2;
     // sThese are separated because density is used in calculations before biome is calculated
@@ -586,7 +593,7 @@ public class WorldGenerator : MonoBehaviour
 
     private void ScatterTile(int index) {
         for (int i = _tilePool[index].obj.transform.childCount - 1; i >= 0; i++) Destroy(_tilePool[index].obj.transform.GetChild(i).gameObject);
-        for (int i = 0; i < _scatterDensities.Length; i++) {
+        for (int i = 0; i < _scatterSettings.Length; i++) {
             ScatterObjects(index, i);
         }
     }
@@ -594,7 +601,7 @@ public class WorldGenerator : MonoBehaviour
     private void ScatterObjects(int index, int layer) {
         Mesh targetMesh = _tilePool[index].mesh;
         Vector3[] vertices = targetMesh.vertices;
-        List<Vector2> points = PoissonDisk.GeneratePoints(1 / _scatterDensities[layer], new Vector2(_xSize, _zSize));
+        List<Vector2> points = PoissonDisk.GeneratePoints(1 / _scatterSettings[layer].density, new Vector2(_xSize, _zSize));
         for (int i = 0; i < points.Count; i++) {
             Vector3 vertex = vertices[(int)points[i].x + (int)points[i].y * _xSize];
             GameObject go = Instantiate(_biomes[_tilePool[index].biomeData[(int)points[i].x + (int)points[i].y * _xSize]].scatterLayers[layer].prefab, new Vector3(vertex.x + (_tilePool[index].x * _xSize * _xResolution), vertex.y, vertex.z + (_tilePool[index].z * _zSize * _zResolution)), UnityEngine.Quaternion.identity);
