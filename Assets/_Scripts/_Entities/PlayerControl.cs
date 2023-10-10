@@ -10,6 +10,7 @@ public class PlayerControl : MonoBehaviour
   [Header("References")] 
   [SerializeField] private Transform _transformAlignToMovement;
   [SerializeField] private float _alignSpeed = 12;
+  [Range(0, 180)][SerializeField] private float _snapInsteadAngle = 5;
   [SerializeField] private Movement _movementScript;
   [SerializeField] private Transform _xMouseMovementTransform;
   [SerializeField] private Transform _yMouseMovementTransform;
@@ -40,8 +41,28 @@ public class PlayerControl : MonoBehaviour
     return _xMouseMovementTransform.TransformDirection(rawDirection);
   }
 
+  private float ConvertTo360(float angle) {
+    if (angle < 0) {
+      return angle + 360;
+    }
+    else {
+      return angle;
+    }
+  }
+  
   private void AlignToMovement() {
-    _transformAlignToMovement.transform.rotation = Quaternion.Slerp(_transformAlignToMovement.transform.rotation, Quaternion.LookRotation(GetInputVector(), Vector3.up), Time.deltaTime * _alignSpeed);
+    Quaternion target = Quaternion.LookRotation(GetInputVector(), Vector3.up);
+    Quaternion current = _transformAlignToMovement.transform.rotation;
+    float targetY = ConvertTo360(target.eulerAngles.y);
+    float currentY = ConvertTo360(current.eulerAngles.y);
+    if (targetY - currentY > _snapInsteadAngle) {
+      Debug.Log($"Lerped: {currentY}, {targetY}");
+      _transformAlignToMovement.transform.rotation = Quaternion.Slerp(current, target, _alignSpeed);
+    }
+    else {
+      Debug.Log($"Snapped: {currentY}, {targetY}");
+      _transformAlignToMovement.transform.rotation = target;
+    }
   }
   
   private void OnValidate() {
@@ -51,6 +72,7 @@ public class PlayerControl : MonoBehaviour
   private void Update() {
     RotateMouseTransforms();
     _movementScript.SetInputVector(GetInputVector());
+    
     if (GetInputVector() != Vector3.zero) AlignToMovement();
     _movementScript.SetBoolInputs(Input.GetAxisRaw("Jump") > 0, Input.GetAxisRaw("Crouch") > 0);
   }
