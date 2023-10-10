@@ -211,7 +211,6 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1037996415}
-  - {fileID: 1069515276}
   - {fileID: 759724845}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -289,6 +288,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _transformAlignToMovement: {fileID: 1037996415}
+  _alignSpeed: 12
   _movementScript: {fileID: 70028138}
   _xMouseMovementTransform: {fileID: 759724845}
   _yMouseMovementTransform: {fileID: 227975683}
@@ -1334,10 +1334,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _species: 
-  _flocking: 0
+  _flockable: 0
+  _inflock: 0
   _infighter: 0
-  _leader: 0
-  _follower: 0
+  _leading: 0
+  _following: 0
+  _leader: {fileID: 0}
   _priority: 0
 --- !u!1 &382653254
 GameObject:
@@ -2060,7 +2062,8 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 1069515276}
   m_Father: {fileID: 70028135}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1037996416
@@ -14834,12 +14837,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1069515275}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.7, y: 0, z: 0.075}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0.70000076, y: 0, z: 0.07499981}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 70028135}
+  m_Father: {fileID: 1037996415}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1087242014
 GameObject:

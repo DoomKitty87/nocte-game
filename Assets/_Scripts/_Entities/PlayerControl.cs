@@ -9,6 +9,7 @@ public class PlayerControl : MonoBehaviour
 
   [Header("References")] 
   [SerializeField] private Transform _transformAlignToMovement;
+  [SerializeField] private float _alignSpeed = 12;
   [SerializeField] private Movement _movementScript;
   [SerializeField] private Transform _xMouseMovementTransform;
   [SerializeField] private Transform _yMouseMovementTransform;
@@ -40,7 +41,7 @@ public class PlayerControl : MonoBehaviour
   }
 
   private void AlignToMovement() {
-    // _transformAlignToMovement.transform.rotation = Quaternion.LookRotation(GetInputVector(), Vector3.up);
+    _transformAlignToMovement.transform.rotation = Quaternion.Slerp(_transformAlignToMovement.transform.rotation, Quaternion.LookRotation(GetInputVector(), Vector3.up), Time.deltaTime * _alignSpeed);
   }
   
   private void OnValidate() {
@@ -49,8 +50,8 @@ public class PlayerControl : MonoBehaviour
 
   private void Update() {
     RotateMouseTransforms();
-    AlignToMovement();
     _movementScript.SetInputVector(GetInputVector());
+    if (GetInputVector() != Vector3.zero) AlignToMovement();
     _movementScript.SetBoolInputs(Input.GetAxisRaw("Jump") > 0, Input.GetAxisRaw("Crouch") > 0);
   }
 }
