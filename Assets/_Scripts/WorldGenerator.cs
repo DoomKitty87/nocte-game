@@ -555,6 +555,17 @@ public class WorldGenerator : MonoBehaviour
         Vector3 vertexAbs = new Vector3(vertex.x * _xResolution + _tilePool[index].x * _xSize * _xResolution, vertex.y, vertex.z * _zResolution + _tilePool[index].z * _zSize * _zResolution);
         return vertexAbs;
     }
+    
+    private void ScatterObjects(Mesh targetMesh, GameObject toScatter, float density, int index) {
+        for (int i = _tilePool[index].obj.transform.childCount - 1; i >= 0; i++) Destroy(_tilePool[index].obj.transform.GetChild(i).gameObject);
+        Vector3[] vertices = targetMesh.vertices;
+        List<Vector2> points = PoissonDisk.GeneratePoints(1 / density, new Vector2(_xSize, _zSize));
+        for (int i = 0; i < points.Count; i++) {
+            Vector3 vertex = vertices[(int)points[i].x + (int)points[i].y * _xSize];
+            GameObject go = Instantiate(toScatter, new Vector3(vertex.x + (_tilePool[index].x * _xSize * _xResolution), vertex.y, vertex.z + (_tilePool[index].z * _zSize * _zResolution)), UnityEngine.Quaternion.identity);
+            go.transform.parent = _tilePool[index].obj.transform;
+        }
+    }
 
     private void UpdateMesh(Mesh targetMesh, int index) {
         targetMesh.normals = CalculateNormals(targetMesh, index);
