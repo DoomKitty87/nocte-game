@@ -11,12 +11,19 @@ public class TestAI : MonoBehaviour
     public bool _flockable;
     public bool _inflock;
     public bool _infighter;
-    public bool _leading;
-    public bool _following;
     public GameObject _leader;
     public int _priority;
     private Movement _movement;
     private GameObject _player;
+
+    public enum AIState
+    {
+        Leading,
+        Following,
+        Wandering,
+        Inactive
+    }
+    public AIState _state;
 
     private void OnValidate()
     {
@@ -36,7 +43,7 @@ public class TestAI : MonoBehaviour
         {
             JoinFlock(sameAnimals);
         }
-        if (_following)
+        if (_state == AIState.Following)
         {
             FollowLeader();
         } else
@@ -45,7 +52,6 @@ public class TestAI : MonoBehaviour
         }
     }
 
-    // deals with encounters (plcl, plnr, plfr, sacl, sanr) 
     private void CheckDistancePlayer()
     {
         float distancePlayer = Vector3.Distance(this.transform.position, _player.transform.position);
@@ -83,20 +89,25 @@ public class TestAI : MonoBehaviour
         animals = animals.OrderByDescending(an => an.GetComponent<TestAI>()._priority).ToList();
         if (animals[0].GetComponent<TestAI>()._priority > this._priority && animals[0] != this)
         {
-            _leading = false;
-            _following = true;
+            _state = AIState.Following;
             _leader = animals[0];
         } else
         {
-            _leading = true;
-            _following = false;
+            _state = AIState.Leading;
             _leader = null;
         }
     }
 
     private void FollowLeader()
     {
-        transform.LookAt(_leader.transform);
-        _movement.SetInputVector(_leader.transform.forward);
+        if (Vector3.Distance(_leader.transform.position, transform.position) > 5)
+        {
+            transform.LookAt(_leader.transform);
+            _movement.SetInputVector(this.transform.forward);
+        } else
+        {
+            transform.LookAt(_leader.transform);
+            _movement.SetInputVector(this.transform.forward);
+        }
     }
 }
