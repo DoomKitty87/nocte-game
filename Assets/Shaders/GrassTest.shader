@@ -53,6 +53,8 @@ Shader "GrassShader"
                 float2x2 m = float2x2(cosa, -sina, sina, cosa);
                 return float4(mul(m, vertex.xz), vertex.yw).xzyw;
             };
+
+            
             v2f vert(appdata_base v, uint svInstanceID : SV_InstanceID)
             {
                 uint instanceID = GetIndirectInstanceID(svInstanceID);
@@ -62,6 +64,7 @@ Shader "GrassShader"
                 v2f o;
                 float posHash = (pos.x * 219.87) % 1 * (pos.z * 2140.21 % 1) * (dot(pos, pos + 23.6f) % 1);
                 float scale = _Scale * (1 + posHash * _ScaleRandomization);
+
 
                 // Mesh dependant high correction
                 float uvy = v.vertex.y / 1.442;
