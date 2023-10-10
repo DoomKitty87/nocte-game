@@ -116,8 +116,6 @@ public class WorldGenerator : MonoBehaviour
 
     private Vector2 _windPos;
 
-    // TODO: Improve grass performance (frustum culling?)
-
     public void UpdatePlayerLoadedChunks(Vector3 playerPos)
     {
         _material.SetVector("_PlayerPosition", playerPos);
@@ -409,6 +407,7 @@ public class WorldGenerator : MonoBehaviour
         // TODO:
         // Increase performance by converting to compute shader
         // Make random position pseudo random based off seed to generate consistent grass
+        // Make grass generate based off a noise map
         for (int i = 0; i < triangles.Length / 3; i++) {
             if (normals[i].y < 0.7f) continue;
             for (int j = 0; j < _grassDensity; j++) {

@@ -63,8 +63,8 @@ Shader "GrassShader"
                 float posHash = (pos.x * 219.87) % 1 * (pos.z * 2140.21 % 1) * (dot(pos, pos + 23.6f) % 1);
                 float scale = _Scale * (1 + posHash * _ScaleRandomization);
 
-                // 7 is height of tallest vertex (change if mesh changes)
-                float uvy = v.vertex.y / scale / 7;
+                // Mesh dependant high correction
+                float uvy = v.vertex.y / 1.442;
 
                 float2 trample = (0, 0);
                 float yTrample = 1;
@@ -74,27 +74,22 @@ Shader "GrassShader"
                         yTrample = pow(trampleDistance, 1);
                     }
                     float2 trampleVector = (pos.xz - _PlayerPosition.xz);
-                    if (1 / (pow(trampleDistance, 50)) > .2) trampleDistance = .2;
+                    if (1 / (pow(trampleDistance, 50)) > .05) trampleDistance = .05;
                     else trampleDistance = 1 / (pow(trampleDistance, 50));
                     trample = uvy * (trampleVector * trampleDistance);
-                    // yTrample = uvy * trampleDistance;
-                    // TODO: Make scale work
-                    // scale = _Scale * (1 / (trampleDistance * 2)); 
                 }
-                // float trampleValue = lerp(0.15f, 1, min((abs(_PlayerPosition.x - pos.x) + abs(_PlayerPosition.z - pos.z)) / 2 / _TrampleRadius, 1));
                 float movement = uvy * uvy * (sin(tex2Dlod(_Wind, float4(_PositionsBuffer[instanceID].uv, 0, 0)).r)) * lerp(0.5f, 1.0f, abs(posHash)) * _WindIntensity;
-                // float2 trampleMovement = uvy * uvy * float4(_PositionsBuffer[instanceID].uv, 0, 0) * trampleVector * trampleScaler * _TrampleIntensity;
 
                 float4 lpos = RotateAroundYInDegrees(float4(
-                    v.vertex.x * scale, // + (trampleVector.x), * trampleScaler.x),
-                    v.vertex.y * scale, // * lerp(trampleValue, 1, abs(_PlayerPosition.y - pos.y) / (7 * scale * 2)), 
-                    v.vertex.z * scale, // + (trampleVector.y * trampleScaler),
+                    v.vertex.x * scale,
+                    v.vertex.y * scale,
+                    v.vertex.z * scale,
                     v.vertex.w), posHash * 180.0f);
                 
                 float4 wpos = mul(_ObjectToWorld, (float4(lpos.x + movement + trample.x, lpos.y * yTrample, lpos.z + movement + trample.y, lpos.w)) + pos);
 
                 o.pos = mul(UNITY_MATRIX_VP, wpos);
-                o.color = (lerp(_Color1, _Color2, uvy) + lerp(0.0f, _TipColor, uvy * uvy * (1.0f * scale))) * lerp(_AOColor, 1.0f, uvy);
+                o.color = (lerp(_Color1, _Color2, uvy) + lerp(0.0f, _TipColor, uvy * uvy * (scale))) * lerp(_AOColor, 1.0f, uvy);
                 return o;
             }
 
