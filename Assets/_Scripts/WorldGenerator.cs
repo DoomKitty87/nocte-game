@@ -282,13 +282,14 @@ public class WorldGenerator : MonoBehaviour
             if (_updateQueue.Count > 0 && _generateQueue.Count == 0) {
                 UpdateTile(_updateQueue[0]);
                 _updateQueue.RemoveAt(0);
-            }
-            else if (_generateQueue.Count > 0) {
+            } else break;
+        }
+        for (int i = 0; i < _maxUpdatesPerFrame * 10; i++) {
+            if (_generateQueue.Count > 0) {
                 GenerateTile(_generateQueue[0][0], _generateQueue[0][1], _generateQueue[0][2]);
                 _generateQueue.RemoveAt(0);
                 if (_generateQueue.Count == 0) Time.timeScale = 1f;
-            }
-            else break;
+            } else break;
         }
         UpdateWind();
         Graphics.RenderMeshIndirect(_rp, _mesh, _commandBuf, _commandCount);
