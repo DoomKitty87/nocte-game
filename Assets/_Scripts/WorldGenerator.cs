@@ -728,7 +728,8 @@ public class WorldGenerator : MonoBehaviour
 
     private void CavePass(Mesh targetMesh, int index) {
         //Decide which faces to subdivide
-        Vector3[] triangleSamples = Vector3[(_xSize - 1) * (_xSize - 1) * 6];
+        Vector3[] triangleSamples = Vector3[(_xSize - 1) * (_xSize - 1) * 2];
+        int[] sampledTris = int[(_xSize - 1) * (_xSize - 1) * 2];
         int[] triangles = targetMesh.triangles;
         Vector3[] vertices = targetMesh.vertices;
         for (int i = 0, j = 0; i < triangles.Length / 6; i++) {
@@ -740,15 +741,24 @@ public class WorldGenerator : MonoBehaviour
             Vector3 pointB = vertices[triangles[i * 6 + 1]];
             Vector3 pointC = vertices[triangles[i * 6 + 2]];
             triangleSamples[j] = (pointA + pointB + pointC) / 3;
+            sampledTris[j] = triangles[i * 6];
             j++;
             pointA = vertices[triangles[i * 6 + 3]];
             pointB = vertices[triangles[i * 6 + 4]];
             pointC = vertices[triangles[i * 6 + 5]];
             triangleSamples[j] = (pointA + pointB + pointC) / 3;
+            sampledTris[j] = i * 6 + 3;
             j++;
         }
         float[] caveMap = NoiseMaps.GenerateCavePass(triangleSamples, _tilePool[index].x * _xResolution * _xSize, _tilePool[index].z * _zResolution * _zSize, _cavePassScale);
-        
+
+        List<int> toSubdivide = new List<int>();
+        for (int i = 0; i < caveMap.Length; i++) {
+            if (caveMap[i] > 0.5f) {
+                toSubdivide += sampledTris[i];
+            }
+        }
+        SubdivideFaces(targetMesh, toSubdivide);
     }
 
     private void UpdateMesh(Mesh targetMesh, int index) {
