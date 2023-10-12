@@ -150,6 +150,7 @@ public class Movement : MonoBehaviour
     _lastInputVector = _inputVector;
     UpdateInputs();
     // Ansel badness
+    if (_procGen != null) _procGen.UpdatePlayerLoadedChunks(transform.position - new Vector3(0, GetComponent<Collider>().bounds.extents.y / 2, 0));
     if (!_hasInitialized && Time.time > 0.1 && Time.timeScale > 0) {
       RaycastHit hit;
       Physics.Raycast(Vector3.up * 2500, Vector3.down, out hit);
@@ -158,7 +159,6 @@ public class Movement : MonoBehaviour
     }
   }
   private void FixedUpdate() {
-    if (_procGen != null) _procGen.UpdatePlayerLoadedChunks(transform.position - new Vector3(0, GetComponent<Collider>().bounds.extents.y / 2, 0));
 
     if (_moveState == MovementState.Walking) { // ------------
       

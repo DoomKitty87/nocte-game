@@ -178,8 +178,8 @@ public class WorldGenerator : MonoBehaviour
         }
     }
     
-    public void UpdatePlayerLoadedChunks(Vector3 playerPos)
-    {
+    public void UpdatePlayerLoadedChunks(Vector3 playerPos) {
+        if (_generateQueue.Count > 0) return;
         _material.SetVector("_PlayerPosition", playerPos);
         int playerXChunkScale = Mathf.FloorToInt(playerPos.x / (_xSize * _xResolution));
         int playerZChunkScale = Mathf.FloorToInt(playerPos.z / (_zSize * _zResolution));
@@ -347,7 +347,7 @@ public class WorldGenerator : MonoBehaviour
             if (_generateQueue.Count > 0) {
                 GenerateTile(_generateQueue[0][0], _generateQueue[0][1], _generateQueue[0][2]);
                 _generateQueue.RemoveAt(0);
-                if (_generateQueue.Count == 0) Time.timeScale = 1f;
+                Time.timeScale = 1f;
             } else break;
         }
         UpdateWind();
