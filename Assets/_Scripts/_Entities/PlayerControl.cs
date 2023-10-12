@@ -56,11 +56,11 @@ public class PlayerControl : MonoBehaviour
     float targetY = ConvertTo360(target.eulerAngles.y);
     float currentY = ConvertTo360(current.eulerAngles.y);
     if (targetY - currentY > _snapInsteadAngle) {
-      Debug.Log($"Lerped: {currentY}, {targetY}");
+      // Debug.Log($"Lerped: {currentY}, {targetY}");
       _transformAlignToMovement.transform.rotation = Quaternion.Slerp(current, target, _alignSpeed);
     }
     else {
-      Debug.Log($"Snapped: {currentY}, {targetY}");
+      // Debug.Log($"Snapped: {currentY}, {targetY}");
       _transformAlignToMovement.transform.rotation = target;
     }
   }
