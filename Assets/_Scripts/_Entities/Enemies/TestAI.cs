@@ -34,6 +34,7 @@ public class TestAI : MonoBehaviour
     {
         _player = GameObject.FindWithTag("Player");
         _priority = Random.Range(0, 1000000);
+        _state = AIState.Wandering;
     }
 
     private void Update()
@@ -58,10 +59,14 @@ public class TestAI : MonoBehaviour
         if (distancePlayer < 5)
         {
             _movement.SetBoolInputs(true, false);
-        } else
+        } else if (distancePlayer < 20)
         {
             _movement.SetBoolInputs(false, false);
             _movement.SetInputVector(_player.transform.position - this.transform.position);
+        } else
+        {
+            _movement.SetBoolInputs(false, false);
+            _movement.SetInputVector(new Vector3(0, 0, 0));
         }
     }
 
@@ -100,14 +105,16 @@ public class TestAI : MonoBehaviour
 
     private void FollowLeader()
     {
-        if (Vector3.Distance(_leader.transform.position, transform.position) > 5)
+        if (Vector3.Distance(_leader.transform.position, this.transform.position) > 2f)
         {
             transform.LookAt(_leader.transform);
             _movement.SetInputVector(this.transform.forward);
+        } else if (Vector3.Distance(_leader.transform.position, this.transform.position) > 15f)
+        {
+            _movement.SetInputVector(_leader.transform.forward);
         } else
         {
-            transform.LookAt(_leader.transform);
-            _movement.SetInputVector(this.transform.forward);
+            _state = AIState.Wandering;
         }
     }
 }
