@@ -122,7 +122,9 @@ public class WorldGenerator : MonoBehaviour
     public int _grassDensity = 5;
 
     public AnimationCurve _rockPassCurve;
+    public AnimationCurve _rockPassNoiseCurve;
     public float _rockPassAmplitude = 1;
+    public float _rockPassScale = 2;
 
     [SerializeField] private GrassLOD[] _grassLODLevels;
     [SerializeField] private Biome[] _biomes;
@@ -665,10 +667,10 @@ public class WorldGenerator : MonoBehaviour
       Vector3[] vertices = targetMesh.vertices;
       Vector3[] normals = targetMesh.normals;
 
-      float[] rockVal = NoiseMaps.GenerateRockNoise((int) Mathf.Sqrt(vertices.Length), _tilePool[index].x * _xSize * _xResolution, _tilePool[index].z * _zSize * _zResolution, 5, 5, 1, _xResolution, _zResolution, true);
+      float[] rockVal = NoiseMaps.GenerateRockNoise((int) Mathf.Sqrt(vertices.Length), _tilePool[index].x * _xSize * _xResolution, _tilePool[index].z * _zSize * _zResolution, _rockPassScale, _rockPassScale, 1, _xResolution, _zResolution, true);
 
       for (int i = 0; i < vertices.Length; i++) {
-        vertices[i] += normals[i] * _rockPassCurve.Evaluate(Mathf.Abs(normals[i].y)) * rockVal[i] * _rockPassAmplitude;
+        vertices[i] += normals[i] * _rockPassCurve.Evaluate(Mathf.Abs(normals[i].y)) *_rockPassNoiseCurve.Evaluate(rockVal[i]) * _rockPassAmplitude;
       }
 
       targetMesh.vertices = vertices;
