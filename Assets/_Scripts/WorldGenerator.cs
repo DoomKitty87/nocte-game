@@ -127,6 +127,10 @@ public class WorldGenerator : MonoBehaviour
     public float _rockPassAmplitude = 1;
     public float _rockPassScale = 2;
 
+    public float _cavePassScale = 100;
+    public float _cavePassAmplitude = 10;
+    public AnimationCurve _cavePassCurve;
+
     [SerializeField] private GrassLOD[] _grassLODLevels;
     [SerializeField] private Biome[] _biomes;
     [SerializeField] private ScatterSettings[] _scatterSettings;
@@ -689,7 +693,7 @@ public class WorldGenerator : MonoBehaviour
       targetMesh.vertices = vertices;
     }
 
-    private void SubdivideFaces(Mesh targetMesh, int[] toSubdivide) {
+    private int[] SubdivideFaces(Mesh targetMesh, int[] toSubdivide) {
         Vector3[] vertices = targetMesh.vertices;
         Vector3[] triangles = targetMesh.triangles;
 
@@ -698,6 +702,8 @@ public class WorldGenerator : MonoBehaviour
 
         vertices = new Vector3[vertices.Length + toSubdivide.Length];
         triangles = new int[triangles.Length + 6 * toSubdivide.Length];
+
+        int[] newVertices = new int[toSubdivide.Length];
 
         for (int i = 0; i < toSubdivide.Length; i++) {
             // An entry in the array is a triangle in triangles, so needs to be fetched with triangles[toSubdivide[i] * 3]
@@ -711,6 +717,7 @@ public class WorldGenerator : MonoBehaviour
             Vector3[] newVertex = (pointA + pointB + pointC) / 3;
 
             vertices[originalVertLength + i - 1] = newVertex;
+            newVertices[i] = originalVertLength + i - 1;
             triangles[toSubdivide[i] * 3] = pointAIndx;
             triangles[toSubdivide[i] * 3 + 1] = pointBIndx;
             triangles[toSubdivide[i] * 3 + 2] = originalVertLength + i - 1;
@@ -724,13 +731,15 @@ public class WorldGenerator : MonoBehaviour
 
         targetMesh.vertices = vertices;
         targetMesh.triangles = triangles;
+        return newVertices;
     }
 
     private void CavePass(Mesh targetMesh, int index) {
         //Decide which faces to subdivide
-        Vector3[] triangleSamples = Vector3[(_xSize - 1) * (_xSize - 1) * 2];
-        int[] sampledTris = int[(_xSize - 1) * (_xSize - 1) * 2];
         int[] triangles = targetMesh.triangles;
+        Vector3[] triangleSamples = new Vector3[triangles.Length / 3];
+        int[] sampledTris = new int[triangles.Length / 3];
+        Vector3[] faceNormals = new Vector3[sampledTris.Length];
         Vector3[] vertices = targetMesh.vertices;
         for (int i = 0, j = 0; i < triangles.Length / 6; i++) {
             if (i < (_xSize + 1) continue;
@@ -741,12 +750,14 @@ public class WorldGenerator : MonoBehaviour
             Vector3 pointB = vertices[triangles[i * 6 + 1]];
             Vector3 pointC = vertices[triangles[i * 6 + 2]];
             triangleSamples[j] = (pointA + pointB + pointC) / 3;
+            faceNormals[j] = Vector3.Cross(pointB - pointA, pointC - pointA);
             sampledTris[j] = triangles[i * 6];
             j++;
             pointA = vertices[triangles[i * 6 + 3]];
             pointB = vertices[triangles[i * 6 + 4]];
             pointC = vertices[triangles[i * 6 + 5]];
             triangleSamples[j] = (pointA + pointB + pointC) / 3;
+            faceNormals[j] = Vector3.Cross(pointB - pointA, pointC - pointA);
             sampledTris[j] = i * 6 + 3;
             j++;
         }
@@ -755,10 +766,13 @@ public class WorldGenerator : MonoBehaviour
         List<int> toSubdivide = new List<int>();
         for (int i = 0; i < caveMap.Length; i++) {
             if (caveMap[i] > 0.5f) {
-                toSubdivide += sampledTris[i];
+                toSubdivide.Add(sampledTris[i]);
             }
         }
-        SubdivideFaces(targetMesh, toSubdivide);
+        int[] subdVerts = SubdivideFaces(targetMesh, toSubdivide.ToArray());
+        for (int i = 0; i < subdVerts.Length; i++) {
+            vertices[subdVerts[i]] -= faceNormals[i] * _cavePassCurve.Evaluate(caveMap[toSubdivide[i]]) * _cavePassAmplitude;
+        }
     }
 
     private void UpdateMesh(Mesh targetMesh, int index) {
