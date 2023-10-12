@@ -492,10 +492,10 @@ public class WorldGenerator : MonoBehaviour
         //     GenerateGrass(index);
         // }
 
-        if (maxDist < 2) UpdateCollider(index);
+        if (maxDistance < 2) UpdateCollider(index);
         else if (_tilePool[index].meshCollider) _tilePool[index].obj.GetComponent<MeshCollider>().enabled = false;
 
-        if (maxDist < _scatterRange) {
+        if (maxDistance < _scatterRange) {
             ScatterTile(index);
         }
         if (_updateQueue.Count > 1) return;
