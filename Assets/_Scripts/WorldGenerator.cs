@@ -689,6 +689,45 @@ public class WorldGenerator : MonoBehaviour
       targetMesh.vertices = vertices;
     }
 
+    private void subdivideFaces(Mesh targetMesh, int[] toSubdivide) {
+        Vector3[] vertices = targetMesh.vertices;
+        Vector3[] triangles = targetMesh.triangles;
+
+        for (int i = 0; i < toSubdivide.Length; i++) {
+            // An entry in the array is a triangle in triangles, so needs to be fetched with triangles[toSubdivide[i] * 3]
+            int pointAIndx = triangles[toSubdivide[i] * 3];
+            int pointBIndx = triangles[toSubdivide[i] * 3 + 1];
+            int pointCIndx = triangles[toSubdivide[i] * 3 + 2];
+            Vector3[] pointA = vertices[pointAIndx];
+            Vector3[] pointB = vertices[pointBIndx];
+            Vector3[] pointC = vertices[pointCIndx];
+           
+            Vector3[] newVertex = (pointA + pointB + pointC) / 3;
+            vertices = new Vector3[vertices.Length + 1];
+            vertices[vertices.Length - 1] = newVertex;
+            triangles = new Vector3[triangles.Length + 6];
+            triangles[toSubdivide[i] * 3] = pointAIndx;
+            triangles[toSubdivide[i] * 3 + 1] = pointBIndx;
+            triangles[toSubdivide[i] * 3 + 2] = vertices.Length - 1;
+            triangles[triangles.Length - 6] = pointBIndx;
+            triangles[triangles.Length - 5] = pointCIndx;
+            triangles[triangles.Length - 4] = vertices.Length - 1;
+            triangles[triangles.Length - 3] = pointCIndx;
+            triangles[triangles.Length - 2] = pointAIndx;
+            triangles[triangles.Length - 1] = vertices.Length - 1;
+        }
+
+        targetMesh.vertices = vertices;
+        targetMesh.triangles = triangles;
+    }
+
+    private void CavePass(Mesh targetMesh, int index) {
+        Vector3[] vertices = targetMesh.vertices;
+        Vector3[] triangles = targetMesh.triangles;
+
+
+    }
+
     private void UpdateMesh(Mesh targetMesh, int index) {
         targetMesh.normals = CalculateNormals(targetMesh, index);
         targetMesh.triangles = CullTriangles(targetMesh);
