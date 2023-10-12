@@ -299,7 +299,6 @@ public class WorldGenerator : MonoBehaviour
         if (maxDistance >= _grassLODLevels[^1].distance) currentChunkSetting = -1;
         else currentChunkSetting = _grassLODLookupArray[maxDistance];
         
-        Debug.Log($"CurrentChunk: {index}, max distance: {maxDistance}");
         if (currentChunkSetting != _grassLODChunkCache[index]) {
             
             _grassData.RemoveRange(_tilePool[_tilePositions[x, z]].grassIndexStart,
