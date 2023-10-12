@@ -143,8 +143,8 @@ public class WorldGenerator : MonoBehaviour
     private List<GrassData> _grassData;
     private RenderParams _rp;
 
-    private int[] _grassLODArray;
-    private int[] _grassLODChunkArrays;
+    private int[] _grassLODLookupArray;
+    private int[] _grassLODChunkCache;
     
     private float _playerX, _playerZ;
     private int _playerXChunkScale, _playerZChunkScale;
@@ -156,14 +156,14 @@ public class WorldGenerator : MonoBehaviour
     }
 
     private void FillGrassArray() {
-        int numberOfChunks = _xSize * _zSize;
-        _grassLODChunkArrays = new int[numberOfChunks];
+        int numberOfChunks = _xTiles * _zTiles;
+        _grassLODChunkCache = new int[numberOfChunks];
         
         int numberOfElements = _grassLODLevels[^1].distance;
-        _grassLODArray = new int[numberOfElements];
+        _grassLODLookupArray = new int[numberOfElements];
         for (int i = _grassLODLevels.Length - 1; i >= 0; i--) {
             for (int j = 0; j < _grassLODLevels[i].distance; j++) {
-                _grassLODArray[j] = _grassLODLevels[i].density;
+                _grassLODLookupArray[j] = _grassLODLevels[i].density;
             }
         }
     }
@@ -270,14 +270,14 @@ public class WorldGenerator : MonoBehaviour
         if (deltaZ != 0 || deltaX != 0) {
             for (int x = 0; x < _xTiles; x++) {
                 for (int z = 0; z < _zTiles; z++) { 
-                    float maxDist = Mathf.Max(Mathf.Abs(_tilePool[_tilePositions[x, z]].x - playerXChunkScale), Mathf.Abs(_tilePool[_tilePositions[x, z]].z - playerZChunkScale));
-                    if (_hasColliders && maxDist < 2) { 
+                    float maxDistance = Mathf.Max(Mathf.Abs(_tilePool[_tilePositions[x, z]].x - playerXChunkScale), Mathf.Abs(_tilePool[_tilePositions[x, z]].z - playerZChunkScale));
+                    if (_hasColliders && maxDistance < 2) { 
                         UpdateCollider(_tilePositions[x, z]);
                     } else if (_hasColliders) {
                         if (_tilePool[_tilePositions[x, z]].meshCollider) _tilePool[_tilePositions[x, z]].meshCollider.enabled = false;
                     }
 
-                    GenerateGrassBasedOffLODs(x, z, maxDist);
+                    GenerateGrassBasedOffLODs(x, z, Mathf.CeilToInt(maxDistance));
                 }
             }
         }
@@ -287,10 +287,14 @@ public class WorldGenerator : MonoBehaviour
         _rp.matProps.SetVector("_PlayerPosition", playerPos);
     }
 
-    private void GenerateGrassBasedOffLODs(int x, int z, float maxDist) {
-        int index = x * _zSize + z;
-        /*
-        if (maxDist != _grassLODChunkArrays[index]) {
+    private void GenerateGrassBasedOffLODs(int x, int z, int maxDistance) {
+        int index = x * _xTiles + z;
+        int currentChunkSetting;
+        if (maxDistance >= _grassLODLevels[^1].distance) currentChunkSetting = -1;
+        else currentChunkSetting = _grassLODLookupArray[maxDistance];
+        
+        Debug.Log($"CurrentChunk: {index}, max distance: {maxDistance}");
+        if (currentChunkSetting != _grassLODChunkCache[index]) {
             
             _grassData.RemoveRange(_tilePool[_tilePositions[x, z]].grassIndexStart,
                 _tilePool[_tilePositions[x, z]].grassCount);
@@ -300,21 +304,25 @@ public class WorldGenerator : MonoBehaviour
             }
             _tilePool[_tilePositions[x, z]].grassCount = 0;
             _tilePool[_tilePositions[x, z]].grassIndexStart = 0;
-            
-            
+
+            if (currentChunkSetting != -1) {
+                GenerateGrass(_tilePositions[x, z], _grassLODLookupArray[maxDistance]);
+            }
+
+            _grassLODChunkCache[index] = currentChunkSetting;
         }
-        */
+        
         /*
         int nextDistance;
         for (int i = _grassLODLevels.Length - 1; i >= 0; i--) {
             if (i > 0) nextDistance = _grassLODLevels[i - 1].distance;
             else nextDistance = -1;
             // Makes grass where it should be
-            if (maxDist <= _grassLODLevels[i].distance && maxDist > nextDistance) {
+            if (maxDistance <= _grassLODLevels[i].distance && maxDistance > nextDistance) {
                 GenerateGrass(_tilePositions[x, z], _grassLODLevels[i].density);
             }
             // Deletes grass where it shouldn't be
-            if (maxDist < nextDistance) {
+            if (maxDistance < nextDistance) {
                 Debug.Log("Deleted shit");
                 _grassData.RemoveRange(_tilePool[_tilePositions[x, z]].grassIndexStart,
                     _tilePool[_tilePositions[x, z]].grassCount);
@@ -472,12 +480,12 @@ public class WorldGenerator : MonoBehaviour
         if (!_useColorGradient) CalculateUVs(_tilePool[index].mesh);
         else CalculateColors(index);
         _tilePool[index].obj.transform.position = new Vector3(x * _xSize * _xResolution, 0, z * _zSize * _zResolution);
-        int maxDist = Mathf.Max(Mathf.Abs(x - _playerXChunkScale), Mathf.Abs(z - _playerZChunkScale));
-        // if (maxDist <= _maxGrassDistChunks) {
+        int maxDistance = Mathf.Max(Mathf.Abs(x - _playerXChunkScale), Mathf.Abs(z - _playerZChunkScale));
+        // if (maxDistance <= _maxGrassDistChunks) {
         //     GenerateGrass(index);
         // }
 
-        if (maxDist < _scatterRange) {
+        if (maxDistance < _scatterRange) {
             ScatterTile(index);
         }
         if (_updateQueue.Count > 1) return;
