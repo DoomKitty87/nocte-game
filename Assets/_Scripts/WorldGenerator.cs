@@ -294,12 +294,11 @@ public class WorldGenerator : MonoBehaviour
     }
 
     private void GenerateGrassBasedOffLODs(int x, int z, int maxDistance) {
-        int index = x * _xTiles + z;
         int currentChunkSetting;
         if (maxDistance >= _grassLODLevels[^1].distance) currentChunkSetting = -1;
         else currentChunkSetting = _grassLODLookupArray[maxDistance];
         
-        if (currentChunkSetting != _grassLODChunkCache[index]) {
+        if (currentChunkSetting != _grassLODChunkCache[_tilePositions[x, z]]) {
             
             _grassData.RemoveRange(_tilePool[_tilePositions[x, z]].grassIndexStart,
                 _tilePool[_tilePositions[x, z]].grassCount);
@@ -314,32 +313,8 @@ public class WorldGenerator : MonoBehaviour
                 GenerateGrass(_tilePositions[x, z], _grassLODLookupArray[maxDistance]);
             }
 
-            _grassLODChunkCache[index] = currentChunkSetting;
+            _grassLODChunkCache[_tilePositions[x, z]] = currentChunkSetting;
         }
-        
-        /*
-        int nextDistance;
-        for (int i = _grassLODLevels.Length - 1; i >= 0; i--) {
-            if (i > 0) nextDistance = _grassLODLevels[i - 1].distance;
-            else nextDistance = -1;
-            // Makes grass where it should be
-            if (maxDistance <= _grassLODLevels[i].distance && maxDistance > nextDistance) {
-                GenerateGrass(_tilePositions[x, z], _grassLODLevels[i].density);
-            }
-            // Deletes grass where it shouldn't be
-            if (maxDistance < nextDistance) {
-                Debug.Log("Deleted shit");
-                _grassData.RemoveRange(_tilePool[_tilePositions[x, z]].grassIndexStart,
-                    _tilePool[_tilePositions[x, z]].grassCount);
-                for (int j = 0; j < _xTiles * _zTiles; j++) {
-                    if (_tilePool[j].grassIndexStart > _tilePool[_tilePositions[x, z]].grassIndexStart)
-                        _tilePool[j].grassIndexStart -= _tilePool[_tilePositions[x, z]].grassCount;
-                }
-                _tilePool[_tilePositions[x, z]].grassCount = 0;
-                _tilePool[_tilePositions[x, z]].grassIndexStart = 0;
-            }
-        }
-        */
     }
     
     private void Start() {
