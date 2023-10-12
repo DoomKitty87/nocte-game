@@ -7,7 +7,7 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: MultiLayerGround
+  m_Name: TexturedGround
   m_Shader: {fileID: -6465566751694194690, guid: 6eec4be5693190d44ac2ec7c4da2bd28,
     type: 3}
   m_Parent: {fileID: 0}
@@ -37,15 +37,15 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _AORock:
-        m_Texture: {fileID: 2800000, guid: e0d5448bbda2245419cff5b4c7faa475, type: 3}
+        m_Texture: {fileID: 2800000, guid: d9c290c677f0722479e31564a2b41bd9, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _Albedo_Grass:
-        m_Texture: {fileID: 2800000, guid: d0e15a4df71ecdf4f8a46563b3d2bf9e, type: 3}
+        m_Texture: {fileID: 2800000, guid: 453276d4616a67a48bd0b9c0acf7120e, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _Albedo_Rock:
-        m_Texture: {fileID: 2800000, guid: e317e7f8b4c768f4990c9aed7d56e1d1, type: 3}
+        m_Texture: {fileID: 2800000, guid: 21c4d882dd2913c4ba02556222337ef0, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _AnisotropyMap:
@@ -80,14 +80,6 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
-    - _Height_Grass:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _Height_Rock:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
     - _IridescenceMaskMap:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
@@ -113,19 +105,15 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _Normal_Grass:
-        m_Texture: {fileID: 2800000, guid: 960533c3abce19c448b0a0d26aab6e4a, type: 3}
+        m_Texture: {fileID: 2800000, guid: 0479b8e017ad32c41af6870db55eb8bf, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _Normal_Rock:
         m_Texture: {fileID: 2800000, guid: c7137034b80af9a4693d0915878033a4, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
-    - _SampleTexture2DLOD_df70a3a9957345cf9d804af4559fb3af_Texture_1_Texture2D:
-        m_Texture: {fileID: 2800000, guid: d9c290c677f0722479e31564a2b41bd9, type: 3}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
     - _Smooth_Grass:
-        m_Texture: {fileID: 2800000, guid: 1a5fd964807d5584c876ce5189fd0aa7, type: 3}
+        m_Texture: {fileID: 2800000, guid: 2f0e1d70c83366b43a4d14bc1e3dca6b, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _Smooth_Rock:
@@ -207,7 +195,6 @@ Material:
     - _DisplacementLockObjectScale: 1
     - _DisplacementLockTilingScale: 1
     - _DisplacementMode: 0
-    - _DisplacementScale: 5
     - _DoubleSidedEnable: 0
     - _DoubleSidedGIMode: 0
     - _DoubleSidedNormalMode: 1
@@ -274,13 +261,6 @@ Material:
     - _SubsurfaceMask: 1
     - _SupportDecals: 1
     - _SurfaceType: 0
-    - _TessellationBackFaceCullEpsilon: -0.25
-    - _TessellationFactorMaxDistance: 50
-    - _TessellationFactorMinDistance: 20
-    - _TessellationFactorTriangleSize: 100
-    - _TessellationMaxDisplacement: 0.01
-    - _TessellationMode: 0
-    - _TessellationShapeFactor: 0.75
     - _TexWorldScale: 1
     - _TexWorldScaleEmissive: 1
     - _Texture_Scale: 0.1
@@ -314,11 +294,7 @@ Material:
     - _EmissiveColorLDR: {r: 0, g: 0, b: 0, a: 1}
     - _InvPrimScale: {r: 1, g: 1, b: 0, a: 0}
     - _IridescenceThicknessRemap: {r: 0, g: 1, b: 0, a: 0}
-<<<<<<< Updated upstream
-    - _PlayerPosition: {r: 197.5897, g: 449.27487, b: 89.66389, a: 0}
-=======
-    - _PlayerPosition: {r: -0.0004941784, g: 434.155, b: 0.005366141, a: 0}
->>>>>>> Stashed changes
+    - _PlayerPosition: {r: 4.293649, g: 434.31955, b: -1.2856127, a: 0}
     - _SpecularColor: {r: 1, g: 1, b: 1, a: 1}
     - _ThicknessRemap: {r: 0, g: 1, b: 0, a: 0}
     - _TransmittanceColor: {r: 1, g: 1, b: 1, a: 1}
@@ -326,7 +302,7 @@ Material:
     - _UVMappingMask: {r: 1, g: 0, b: 0, a: 0}
     - _UVMappingMaskEmissive: {r: 1, g: 0, b: 0, a: 0}
   m_BuildTextureStacks: []
---- !u!114 &6749990890521638976
+--- !u!114 &1338281847494419202
 MonoBehaviour:
   m_ObjectHideFlags: 11
   m_CorrespondingSourceObject: {fileID: 0}

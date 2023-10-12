@@ -179,8 +179,8 @@ public class WorldGenerator : MonoBehaviour
     public void UpdatePlayerLoadedChunks(Vector3 playerPos)
     {
         _material.SetVector("_PlayerPosition", playerPos);
-        int playerXChunkScale = (int) Mathf.Floor(playerPos.x / (_xSize * _xResolution));
-        int playerZChunkScale = (int) Mathf.Floor(playerPos.z / (_zSize * _zResolution));
+        int playerXChunkScale = Mathf.FloorToInt(playerPos.x / (_xSize * _xResolution));
+        int playerZChunkScale = Mathf.FloorToInt(playerPos.z / (_zSize * _zResolution));
 
         int deltaX = playerXChunkScale - _lastPlayerChunkX;
         int deltaZ = playerZChunkScale - _lastPlayerChunkZ;
@@ -563,7 +563,7 @@ public class WorldGenerator : MonoBehaviour
 
         Vector3[] vertices = targetMesh.vertices;
         for (int i = 0; i < vertices.Length; i++) {
-            uvs[i] = new Vector2(vertices[i].x / xSize, vertices[i].z / xSize);
+            uvs[i] = new Vector2(vertices[i].x / (xSize * _xResolution), vertices[i].z / (zSize * _zResolution));
         }
 
         targetMesh.uv = uvs;
