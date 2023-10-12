@@ -138,6 +138,8 @@ public class WorldGenerator : MonoBehaviour
 
     private int _lastPlayerChunkX;
     private int _lastPlayerChunkZ;
+    private int _playerChunkXWorld;
+    private int _playerChunkZWorld;
     
     private List<int> _updateQueue = new List<int>();
     private List<int[]> _generateQueue = new List<int[]>();
@@ -181,6 +183,14 @@ public class WorldGenerator : MonoBehaviour
         _material.SetVector("_PlayerPosition", playerPos);
         int playerXChunkScale = Mathf.FloorToInt(playerPos.x / (_xSize * _xResolution));
         int playerZChunkScale = Mathf.FloorToInt(playerPos.z / (_zSize * _zResolution));
+
+        _playerChunkXWorld = playerXChunkScale;
+        _playerChunkZWorld = playerZChunkScale;
+
+        if (playerXChunkScale - _lastPlayerChunkX > 1) playerXChunkScale -= playerXChunkScale - _lastPlayerChunkX - 1;
+        if (playerZChunkScale - _lastPlayerChunkZ > 1) playerZChunkScale -= playerZChunkScale - _lastPlayerChunkZ - 1;
+        if (playerXChunkScale - _lastPlayerChunkX < -1) playerXChunkScale -= playerXChunkScale - _lastPlayerChunkX + 1;
+        if (playerZChunkScale - _lastPlayerChunkZ < -1) playerZChunkScale -= playerZChunkScale - _lastPlayerChunkZ + 1;
 
         int deltaX = playerXChunkScale - _lastPlayerChunkX;
         int deltaZ = playerZChunkScale - _lastPlayerChunkZ;
@@ -438,12 +448,14 @@ public class WorldGenerator : MonoBehaviour
 
     private void QueueTileUpdate(int index) {
         _updateQueue.Add(index);
+        _updateQueue.Sort((c1, c2) => (Mathf.Abs(_tilePool[c1].x - _playerChunkXWorld) + Mathf.Abs(_tilePool[c1].z - _playerChunkZWorld)).CompareTo(Mathf.Abs(_tilePool[c2].x - _playerChunkXWorld) + Mathf.Abs(_tilePool[c2].z - _playerChunkZWorld)));
     }
 
     private void QueueTileGen(int x, int z, int index) {
         _generateQueue.Add(new int[] {
             x, z, index
         }); 
+        _generateQueue.Sort((c1, c2) => (Mathf.Abs(c1[0]) + Mathf.Abs(c1[1])).CompareTo(Mathf.Abs(c2[0]) + Mathf.Abs(c2[1])));
     }
     
     //Regenerate given tile based on an LOD parameter.
