@@ -13,14 +13,14 @@ public static class NoiseMaps
     private struct SimplexNoiseJob : IJobParallelFor
     {
 
-        public int xSize;
-        public float xOffset;
-        public float zOffset;
-        public float scale;
-        public float amplitude;
-        public int octaves;
-        public float xResolution;
-        public float zResolution;
+        [ReadOnly] public int xSize;
+        [ReadOnly] public float xOffset;
+        [ReadOnly] public float zOffset;
+        [ReadOnly] public float scale;
+        [ReadOnly] public float amplitude;
+        [ReadOnly] public int octaves;
+        [ReadOnly] public float xResolution;
+        [ReadOnly] public float zResolution;
 
         [WriteOnly] public NativeArray<float> output;
 
@@ -47,15 +47,15 @@ public static class NoiseMaps
     private struct SimplexNoiseJobScale : IJobParallelFor
     {
 
-        public int xSize;
-        public float xOffset;
-        public float zOffset;
-        public float scaleX;
-        public float scaleZ;
-        public int octaves;
-        public float xResolution;
-        public float zResolution;
-        public bool turbulent;
+        [ReadOnly] public int xSize;
+        [ReadOnly] public float xOffset;
+        [ReadOnly] public float zOffset;
+        [ReadOnly] public float scaleX;
+        [ReadOnly] public float scaleZ;
+        [ReadOnly] public int octaves;
+        [ReadOnly] public float xResolution;
+        [ReadOnly] public float zResolution;
+        [ReadOnly] public bool turbulent;
 
         [WriteOnly] public NativeArray<float> output;
 
@@ -83,14 +83,14 @@ public static class NoiseMaps
     private struct CellularNoiseJob : IJobParallelFor
     {
 
-        public int xSize;
-        public float xOffset;
-        public float zOffset;
-        public float scale;
-        public float amplitude;
-        public int octaves;
-        public float xResolution;
-        public float zResolution;
+        [ReadOnly] public int xSize;
+        [ReadOnly] public float xOffset;
+        [ReadOnly] public float zOffset;
+        [ReadOnly] public float scale;
+        [ReadOnly] public float amplitude;
+        [ReadOnly] public int octaves;
+        [ReadOnly] public float xResolution;
+        [ReadOnly] public float zResolution;
 
         [WriteOnly] public NativeArray<float> output;
 
@@ -117,15 +117,15 @@ public static class NoiseMaps
     private struct CellularNoiseJobScale : IJobParallelFor
     {
 
-        public int xSize;
-        public float xOffset;
-        public float zOffset;
-        public float scaleX;
-        public float scaleZ;
-        public int octaves;
-        public float xResolution;
-        public float zResolution;
-        public bool turbulent;
+        [ReadOnly] public int xSize;
+        [ReadOnly] public float xOffset;
+        [ReadOnly] public float zOffset;
+        [ReadOnly] public float scaleX;
+        [ReadOnly] public float scaleZ;
+        [ReadOnly] public int octaves;
+        [ReadOnly] public float xResolution;
+        [ReadOnly] public float zResolution;
+        [ReadOnly] public bool turbulent;
 
         [WriteOnly] public NativeArray<float> output;
 
@@ -154,10 +154,10 @@ public static class NoiseMaps
     private struct WindSimplexJob : IJobParallelFor
     {
 
-        public int width;
-        public float xOffset;
-        public float zOffset;
-        public float scale;
+        [ReadOnly] public int width;
+        [ReadOnly] public float xOffset;
+        [ReadOnly] public float zOffset;
+        [ReadOnly] public float scale;
 
         [WriteOnly] public NativeArray<float> output;
         
@@ -167,6 +167,24 @@ public static class NoiseMaps
             float sampleZ = index / width;
             float noise = snoise(new float2((sampleX + xOffset) * scale, (sampleZ + zOffset) * scale));
             output[index] = noise;
+        }
+
+    }
+
+    [BurstCompile]
+    private struct SamplePointSimplexJob : IJobParallelFor
+    {
+
+        [ReadOnly] public Vector3[] samples;
+        [ReadOnly] public float xOffset;
+        [ReadOnly] public float zOffset;
+        [ReadOnly] public float scale;
+
+        [WriteOnly] public NativeArray<float> output;
+
+        public void Execute(int index) 
+        {
+            output[index] = snoise(new float2((samples[index].x + xOffset) * scale, (samples[index].z + zOffset) * scale));
         }
 
     }
@@ -309,6 +327,7 @@ public static class NoiseMaps
         return (vertices, biomeData);
     }
 
+    [BurstCompile]
     public static float[] GenerateRockNoise(int sideLength, float xOffset, float zOffset, float xScale, float zScale, int octaves, float xResolution, float zResolution, bool turbulent) {
 
       float[] heightMap = new float[sideLength * sideLength];
@@ -516,6 +535,26 @@ public static class NoiseMaps
         windMap = jobResult.ToArray();
         jobResult.Dispose();
         return windMap;
+    }
+
+    [BurstCompile]
+    public static float[] GenerateCavePass(Vector3[] samplePoints, float xOffset, float zOffset, float scale) {
+        float[] weightMap = new float[samplePoints.Length];
+
+        var jobResult = new NativeArray<float>(samplePoints.Length, Allocator.TempJob);
+        var job = new SamplePointSimplexJob() {
+            samples = samplePoints,
+            xOffset = xOffset,
+            zOffset = zOffset,
+            scale = 1 / scale,
+            output = jobResult
+        };
+        var handle = job.Schedule(jobResult.Length, 32);
+        handle.Complete();
+        for (int i = 0; i < weightMap.Length; i++) weightMap[i] = jobResult[i];
+        jobResult.Dispose();
+
+        return weightMap;
     }
 
 }
