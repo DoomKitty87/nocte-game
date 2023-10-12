@@ -689,10 +689,15 @@ public class WorldGenerator : MonoBehaviour
       targetMesh.vertices = vertices;
     }
 
-    private void subdivideFaces(Mesh targetMesh, int[] toSubdivide) {
+    private void SubdivideFaces(Mesh targetMesh, int[] toSubdivide) {
         Vector3[] vertices = targetMesh.vertices;
         Vector3[] triangles = targetMesh.triangles;
 
+        int originalVertLength = vertices.Length;
+        int originalTriangleLength = triangles.Length;
+
+        vertices = new Vector3[vertices.Length + toSubdivide.Length];
+        triangles = new int[triangles.Length + 6 * toSubdivide.Length];
         for (int i = 0; i < toSubdivide.Length; i++) {
             // An entry in the array is a triangle in triangles, so needs to be fetched with triangles[toSubdivide[i] * 3]
             int pointAIndx = triangles[toSubdivide[i] * 3];
@@ -703,18 +708,17 @@ public class WorldGenerator : MonoBehaviour
             Vector3[] pointC = vertices[pointCIndx];
            
             Vector3[] newVertex = (pointA + pointB + pointC) / 3;
-            vertices = new Vector3[vertices.Length + 1];
-            vertices[vertices.Length - 1] = newVertex;
-            triangles = new Vector3[triangles.Length + 6];
+
+            vertices[originalVertLength + i - 1] = newVertex;
             triangles[toSubdivide[i] * 3] = pointAIndx;
             triangles[toSubdivide[i] * 3 + 1] = pointBIndx;
-            triangles[toSubdivide[i] * 3 + 2] = vertices.Length - 1;
-            triangles[triangles.Length - 6] = pointBIndx;
-            triangles[triangles.Length - 5] = pointCIndx;
-            triangles[triangles.Length - 4] = vertices.Length - 1;
-            triangles[triangles.Length - 3] = pointCIndx;
-            triangles[triangles.Length - 2] = pointAIndx;
-            triangles[triangles.Length - 1] = vertices.Length - 1;
+            triangles[toSubdivide[i] * 3 + 2] = originalVertLength + i - 1;
+            triangles[originalTriangleLength + i * 6 - 1] = pointBIndx;
+            triangles[originalTriangleLength + i * 6] = pointCIndx;
+            triangles[originalTriangleLength + i * 6 + 1] = originalVertLength + i - 1;
+            triangles[originalTriangleLength + i * 6 + 2] = pointCIndx;
+            triangles[originalTriangleLength + i * 6 + 3] = pointAIndx;
+            triangles[originalTriangleLength + i * 6 + 4] = originalVertLength + i - 1;
         }
 
         targetMesh.vertices = vertices;
