@@ -105,6 +105,7 @@ public class WorldGenerator : MonoBehaviour
     public float _humidityScale = 1.5f;
 
     public int _seed;
+    public int _colliderRange;
     
     public Material _material;
     public Gradient _colorGradient;
@@ -289,7 +290,7 @@ public class WorldGenerator : MonoBehaviour
             for (int x = 0; x < _xTiles; x++) {
                 for (int z = 0; z < _zTiles; z++) { 
                     float maxDistance = Mathf.Max(Mathf.Abs(_tilePool[_tilePositions[x, z]].x - playerXChunkScale), Mathf.Abs(_tilePool[_tilePositions[x, z]].z - playerZChunkScale));
-                    if (_hasColliders && maxDistance < 2) { 
+                    if (_hasColliders && maxDistance < _colliderRange) { 
                         UpdateCollider(_tilePositions[x, z]);
                     } else if (_hasColliders) {
                         if (_tilePool[_tilePositions[x, z]].meshCollider) _tilePool[_tilePositions[x, z]].meshCollider.enabled = false;
@@ -430,7 +431,7 @@ public class WorldGenerator : MonoBehaviour
         tile.biomeData = result.Item2;
         _tilePool[index] = tile;
         UpdateMesh(msh, index);
-        if (_hasColliders && Math.Abs(x) < 2 && Math.Abs(z) < 2) {
+        if (_hasColliders && Math.Abs(x) < _colliderRange && Math.Abs(z) < _colliderRange) {
             tile.meshCollider = go.AddComponent<MeshCollider>();
             tile.meshCollider.sharedMesh = msh;
         }
