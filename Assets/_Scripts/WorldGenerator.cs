@@ -110,6 +110,9 @@ public class WorldGenerator : MonoBehaviour
     public int _maxGrassDistChunks = 10;
     public int _grassDensity = 5;
 
+    public AnimationCurve _rockPassCurve;
+    public float _rockPassAmplitude = 1;
+
     [SerializeField] private Biome[] _biomes;
     [SerializeField] private ScatterSettings[] _scatterSettings;
 
@@ -361,10 +364,7 @@ public class WorldGenerator : MonoBehaviour
         go.tag = "Ground";
         
         WorldTile tile = new WorldTile();
-        if (_hasColliders && Math.Abs(x) < 2 && Math.Abs(z) < 2) {
-            tile.meshCollider = go.AddComponent<MeshCollider>();
-            tile.meshCollider.sharedMesh = msh;
-        }
+        
         tile.obj = go;
         tile.mesh = msh;
         tile.temperatureMap = temperatureMap;
@@ -374,6 +374,10 @@ public class WorldGenerator : MonoBehaviour
         tile.biomeData = result.Item2;
         _tilePool[index] = tile;
         UpdateMesh(msh, index);
+        if (_hasColliders && Math.Abs(x) < 2 && Math.Abs(z) < 2) {
+            tile.meshCollider = go.AddComponent<MeshCollider>();
+            tile.meshCollider.sharedMesh = msh;
+        }
         if (!_useColorGradient) CalculateUVs(msh);
         else CalculateColors(index);
         _tilePositions[index / _zTiles, index % _zTiles] = index;
@@ -417,6 +421,9 @@ public class WorldGenerator : MonoBehaviour
         if (maxDist <= _maxGrassDistChunks) {
             GenerateGrass(index);
         }
+
+        if (maxDist < 2) UpdateCollider(index);
+        else if (_tilePool[index].meshCollider) _tilePool[index].obj.GetComponent<MeshCollider>().enabled = false;
 
         if (maxDist < _scatterRange) {
             ScatterTile(index);
@@ -610,9 +617,23 @@ public class WorldGenerator : MonoBehaviour
         }
     }
 
+    private void RockPass(Mesh targetMesh, int index) {
+      Vector3[] vertices = targetMesh.vertices;
+      Vector3[] normals = targetMesh.normals;
+
+      float[] rockVal = NoiseMaps.GenerateRockNoise((int) Mathf.Sqrt(vertices.Length), _tilePool[index].x * _xSize * _xResolution, _tilePool[index].z * _zSize * _zResolution, 5, 5, 1, _xResolution, _zResolution, true);
+
+      for (int i = 0; i < vertices.Length; i++) {
+        vertices[i] += normals[i] * _rockPassCurve.Evaluate(Mathf.Abs(normals[i].y)) * rockVal[i] * _rockPassAmplitude;
+      }
+
+      targetMesh.vertices = vertices;
+    }
+
     private void UpdateMesh(Mesh targetMesh, int index) {
         targetMesh.normals = CalculateNormals(targetMesh, index);
         targetMesh.triangles = CullTriangles(targetMesh);
+        RockPass(targetMesh, index);
         targetMesh.RecalculateBounds();
     }
 

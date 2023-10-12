@@ -308,6 +308,32 @@ public static class NoiseMaps
         biomeResult.Dispose();
         return (vertices, biomeData);
     }
+
+    public static float[] GenerateRockNoise(int sideLength, float xOffset, float zOffset, float xScale, float zScale, int octaves, float xResolution, float zResolution, bool turbulent) {
+
+      float[] heightMap = new float[sideLength * sideLength];
+
+      var jobResult = new NativeArray<float>(heightMap.Length, Allocator.TempJob);
+      var job = new SimplexNoiseJobScale() {
+        xSize = sideLength,
+        xOffset = xOffset,
+        zOffset = zOffset,
+        scaleX = 1 / xScale,
+        scaleZ = 1 / zScale,
+        octaves = octaves,
+        output = jobResult,
+        xResolution = xResolution,
+        zResolution = zResolution,
+        turbulent = turbulent
+      };
+
+      var handle = job.Schedule(jobResult.Length, 32);
+      handle.Complete();
+      for (int i = 0; i < jobResult.Length; i++) heightMap[i] = jobResult[i];
+      jobResult.Dispose();
+
+      return heightMap;
+    }
     
     public static Vector3[] GenerateTerrainLayers(float xOffset, float zOffset, int xSize, int zSize, WorldGenerator.NoiseLayer[] noiseLayers, float xResolution=1, float zResolution=1) {
         Vector3[] vertices = new Vector3[(xSize + 1) * (zSize + 1)];
