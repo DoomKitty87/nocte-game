@@ -147,14 +147,15 @@ public class WorldGenerator : MonoBehaviour
 
     private Texture2D _wind;
     
-    GraphicsBuffer _commandBuf;
-    GraphicsBuffer.IndirectDrawIndexedArgs[] _commandData;
+    GraphicsBuffer[] _commandBuf;
+    GraphicsBuffer.IndirectDrawIndexedArgs[][] _commandData;
     private ComputeBuffer[] _positionsBuffer;
     const int _commandCount = 2;
     private List<GrassData>[] _grassData;
     private RenderParams[] _rp;
 
-    private int[] _grassLODLookupArray;
+    private int[] _grassLODLookupDensityArray;
+    private int[] _grassLODLookupBufferArray;
     private int[] _grassLODChunkCache;
     
     private float _playerX, _playerZ;
@@ -183,6 +184,8 @@ public class WorldGenerator : MonoBehaviour
         _grassData = new List<GrassData>[numberOfBuffers];
         _positionsBuffer = new ComputeBuffer[numberOfBuffers];
         _rp = new RenderParams[numberOfBuffers];
+        _commandBuf = new GraphicsBuffer[numberOfBuffers];
+        _commandData = new GraphicsBuffer.IndirectDrawIndexedArgs[numberOfBuffers][];
     }
     
     private void FillGrassArray() {
@@ -193,10 +196,12 @@ public class WorldGenerator : MonoBehaviour
         }
         
         int numberOfElements = _grassLODLevels[^1].distance;
-        _grassLODLookupArray = new int[numberOfElements];
+        _grassLODLookupDensityArray = new int[numberOfElements];
+        _grassLODLookupBufferArray = new int[numberOfElements];
         for (int i = _grassLODLevels.Length - 1; i >= 0; i--) {
             for (int j = 0; j < _grassLODLevels[i].distance; j++) {
-                _grassLODLookupArray[j] = _grassLODLevels.Length - i - 1;
+                _grassLODLookupDensityArray[j] = _grassLODLevels[i].density;
+                _grassLODLookupBufferArray[j] = i;
             }
         }
     }
@@ -328,29 +333,68 @@ public class WorldGenerator : MonoBehaviour
             _rp[i].matProps.SetVector("_PlayerPosition", playerPos);
         }
     }
+    
+    private void GenerateGrass(int index, int density, int bufferID) {
+        List<GrassData> buffer = _grassData[bufferID];
+        if (_tilePool[index].grassCount > 0) return;
+        Vector3[] vertexData = _tilePool[index].mesh.vertices;
+		int[] triangles = _tilePool[index].mesh.triangles;
+		Vector3[] normals = new Vector3[triangles.Length / 3];
 
+		triangles[^1] = 0; // Fixes bug with last triangle vertex being incorrect
+
+		// Calculate normals of triangles
+		for (int i = 0; i < normals.Length; i++) {
+			normals[i] = Vector3.Cross(vertexData[triangles[i * 3 + 1]] - vertexData[triangles[i * 3]], vertexData[triangles[i * 3 + 2]] - vertexData[triangles[i * 3]]).normalized;
+		}
+
+		_tilePool[index].grassIndexStart = buffer.Count;
+        
+        // TODO:
+        // Increase performance by converting to compute shader
+        for (int i = 0; i < triangles.Length / 3; i++) {
+            if (normals[i].y < 0.7f) continue;
+            for (int j = 0; j < density; j++) {
+                double r2 = HashVector3ToFloat(vertexData[triangles[i]], 2);
+                double r1 = HashVector3ToFloat(vertexData[triangles[i]], 1);
+                GrassData gd = new GrassData();
+                // Randomly pick points between the vertices of the triangle
+                Vector3 randomPosition = 
+                    (float)(1 - Math.Sqrt(r1)) * vertexData[triangles[i * 3]] 
+                    + (float)(Math.Sqrt(r1) * (1 - r2)) * vertexData[triangles[i * 3 + 1]]
+                    + (float)(r2 * Math.Sqrt(r1)) * vertexData[triangles[i * 3 + 2]];
+                gd.position = new Vector4(
+					randomPosition.x + (_tilePool[index].x * _xSize * _xResolution),
+				    randomPosition.y, 
+                    randomPosition.z + (_tilePool[index].z * _zSize * _zResolution), 
+                    0);
+                gd.uv = new Vector2(gd.position.x / (_xSize * _xResolution * _xTiles), gd.position.z / (_zSize * _zResolution * _zTiles));
+
+                buffer.Add(gd);
+            }
+        }
+        
+        _tilePool[index].grassCount = buffer.Count - _tilePool[index].grassIndexStart;
+    }
+    
     private void GenerateGrassBasedOffLODs(int x, int z, int maxDistance) {
         
         int currentChunkSetting;
         if (maxDistance >= _grassLODLevels[^1].distance) currentChunkSetting = -1;
-        else currentChunkSetting = _grassLODLookupArray[maxDistance];
-
+        else currentChunkSetting = _grassLODLookupDensityArray[maxDistance];
+        
         if (currentChunkSetting != _grassLODChunkCache[_tilePositions[x, z]]) {
+           _grassData[_grassLODLookupBufferArray[maxDistance]].RemoveRange(_tilePool[_tilePositions[x, z]].grassIndexStart,
+               _tilePool[_tilePositions[x, z]].grassCount);
+           for (int j = 0; j < _xTiles * _zTiles; j++) {
+               if (_tilePool[j].grassIndexStart > _tilePool[_tilePositions[x, z]].grassIndexStart)
+                   _tilePool[j].grassIndexStart -= _tilePool[_tilePositions[x, z]].grassCount;
+           }
+           _tilePool[_tilePositions[x, z]].grassCount = 0;
+           _tilePool[_tilePositions[x, z]].grassIndexStart = 0;
 
-            if (_grassLODChunkCache[_tilePositions[x, z]] >= 0) {
-                _grassData[_grassLODChunkCache[_tilePositions[x, z]]].RemoveRange(
-                    _tilePool[_tilePositions[x, z]].grassIndexStart,
-                    _tilePool[_tilePositions[x, z]].grassCount);
-                for (int j = 0; j < _xTiles * _zTiles; j++) {
-                    if (_tilePool[j].grassIndexStart > _tilePool[_tilePositions[x, z]].grassIndexStart)
-                        _tilePool[j].grassIndexStart -= _tilePool[_tilePositions[x, z]].grassCount;
-                }
-            
-                _tilePool[_tilePositions[x, z]].grassCount = 0;
-                _tilePool[_tilePositions[x, z]].grassIndexStart = 0;
-            }
             if (currentChunkSetting != -1) {
-                GenerateGrass(_tilePositions[x, z],  _grassLODLevels[_grassLODLookupArray[maxDistance]].density, currentChunkSetting);
+                GenerateGrass(_tilePositions[x, z], _grassLODLookupDensityArray[maxDistance], _grassLODLookupBufferArray[maxDistance]);
             }
 
             _grassLODChunkCache[_tilePositions[x, z]] = currentChunkSetting;
@@ -360,6 +404,7 @@ public class WorldGenerator : MonoBehaviour
     private void Start() {
         _seed = int.Parse(Hash128.Compute(_seed).ToString().Substring(0, 6), System.Globalization.NumberStyles.HexNumber);
         _scale = 1 / _scale;
+        
         SetupGrass();
         SetupPool();
     }
@@ -380,7 +425,7 @@ public class WorldGenerator : MonoBehaviour
         }
         UpdateWind();
         for (int i = 0; i < _positionsBuffer.Length; i++) {
-            Graphics.RenderMeshIndirect(_rp[i], _grassLODLevels[i].mesh, _commandBuf, _commandCount);
+            Graphics.RenderMeshIndirect(_rp[i], _grassLODLevels[i].mesh, _commandBuf[i], _commandCount);
         }
     }
     
@@ -394,8 +439,8 @@ public class WorldGenerator : MonoBehaviour
     }
     
     private void OnDestroy() {
-        _commandBuf?.Release();
         for (int i = 0; i < _positionsBuffer.Length; i++) {
+            _commandBuf[i]?.Release();
             _positionsBuffer[i]?.Release();
             _positionsBuffer[i] = null;
 
@@ -418,10 +463,9 @@ public class WorldGenerator : MonoBehaviour
     }
 
     private void SetupGrass() {
-        _commandBuf = new GraphicsBuffer(GraphicsBuffer.Target.IndirectArguments, _commandCount, GraphicsBuffer.IndirectDrawIndexedArgs.size);
-        _commandData = new GraphicsBuffer.IndirectDrawIndexedArgs[_commandCount];
-        // _rp = new RenderParams[_grassData.Length];
         for (int i = 0; i < _grassData.Length; i++) {
+            _commandBuf[i] = new GraphicsBuffer(GraphicsBuffer.Target.IndirectArguments, _commandCount, GraphicsBuffer.IndirectDrawIndexedArgs.size);
+            _commandData[i] = new GraphicsBuffer.IndirectDrawIndexedArgs[];
             _grassData[i] = new List<GrassData>();
             _positionsBuffer[i] = new ComputeBuffer((_xSize + 2) * (_zSize + 2) * _xTiles * _zTiles, sizeof(float) * 7, ComputeBufferType.Default);
             _rp[i] = new RenderParams(_material2);
@@ -524,58 +568,17 @@ public class WorldGenerator : MonoBehaviour
         UpdateGrassBuffers();
     }
 
-    private void GenerateGrass(int index, int density, int bufferID) {
-        List<GrassData> buffer = _grassData[bufferID];
-        if (_tilePool[index].grassCount > 0) return;
-        Vector3[] vertexData = _tilePool[index].mesh.vertices;
-		int[] triangles = _tilePool[index].mesh.triangles;
-		Vector3[] normals = new Vector3[triangles.Length / 3];
 
-		triangles[^1] = 0; // Fixes bug with last triangle vertex being incorrect
-
-		// Calculate normals of triangles
-		for (int i = 0; i < normals.Length; i++) {
-			normals[i] = Vector3.Cross(vertexData[triangles[i * 3 + 1]] - vertexData[triangles[i * 3]], vertexData[triangles[i * 3 + 2]] - vertexData[triangles[i * 3]]).normalized;
-		}
-
-		_tilePool[index].grassIndexStart = buffer.Count;
-        
-        // TODO:
-        // Increase performance by converting to compute shader
-        for (int i = 0; i < triangles.Length / 3; i++) {
-            if (normals[i].y < 0.7f) continue;
-            for (int j = 0; j < density; j++) {
-                double r1 = UnityEngine.Random.Range(0f, 1f); // HashVector3ToFloat(vertexData[i], 1);
-                double r2 = UnityEngine.Random.Range(0f, 1f); // HashVector3ToFloat(vertexData[i], 2);
-                GrassData gd = new GrassData();
-                // Randomly pick points between the vertices of the triangle
-                Vector3 randomPosition = 
-                    (((float)(1 - Math.Sqrt(r1))) * vertexData[triangles[i * 3]]) 
-                    + (((float)(Math.Sqrt(r1) * (1 - r2))) * vertexData[triangles[i * 3 + 1]])
-                    + (((float)(r2 * Math.Sqrt(r1))) * vertexData[triangles[i * 3 + 2]]);
-                gd.position = new Vector4(
-					randomPosition.x + (_tilePool[index].x * _xSize * _xResolution),
-				    randomPosition.y, 
-                    randomPosition.z + (_tilePool[index].z * _zSize * _zResolution), 
-                    0);
-                gd.uv = new Vector2(gd.position.x / (_xSize * _xResolution * _xTiles), gd.position.z / (_zSize * _zResolution * _zTiles));
-
-                buffer.Add(gd);
-            }
-        }
-        
-        _tilePool[index].grassCount = buffer.Count - _tilePool[index].grassIndexStart;
-    }
     
     private void UpdateGrassBuffers() {
         for (int i = 0; i < _grassData.Length; i++) {
             _rp[i].worldBounds = new Bounds(new Vector3(_playerX, 0, _playerZ),
                 _xTiles * _xSize * _xResolution * Vector3.one); // use tighter bounds for better FOV culling
-            _commandData[0].indexCountPerInstance = _mesh.GetIndexCount(0);
-            _commandData[0].instanceCount = (uint)_grassData[i].Count;
-            _commandData[1].indexCountPerInstance = _mesh.GetIndexCount(0);
-            _commandData[1].instanceCount = (uint)_grassData[i].Count;
-            _commandBuf.SetData(_commandData);
+            _commandData[i][0].indexCountPerInstance = _mesh.GetIndexCount(0);
+            _commandData[i][0].instanceCount = (uint)_grassData[i].Count;
+            _commandData[i][1].indexCountPerInstance = _mesh.GetIndexCount(0);
+            _commandData[i][1].instanceCount = (uint)_grassData[i].Count;
+            _commandBuf[i].SetData(_commandData[i]);
             _positionsBuffer[i].SetData(_grassData[i]);
         }
     }
@@ -718,7 +721,7 @@ public class WorldGenerator : MonoBehaviour
       float[] rockVal = NoiseMaps.GenerateRockNoise((int) Mathf.Sqrt(vertices.Length), _tilePool[index].x * _xSize * _xResolution, _tilePool[index].z * _zSize * _zResolution, _rockPassScale, _rockPassScale, 1, _xResolution, _zResolution, true);
 
       for (int i = 0; i < vertices.Length; i++) {
-        vertices[i] += normals[i] * _rockPassCurve.Evaluate(Mathf.Abs(normals[i].y)) *_rockPassNoiseCurve.Evaluate(rockVal[i]) * _rockPassAmplitude;
+        vertices[i] += _rockPassAmplitude * _rockPassCurve.Evaluate(Mathf.Abs(normals[i].y)) *_rockPassNoiseCurve.Evaluate(rockVal[i]) * normals[i];
       }
 
       targetMesh.vertices = vertices;
