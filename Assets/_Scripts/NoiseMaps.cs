@@ -175,7 +175,8 @@ public static class NoiseMaps
     private struct SamplePointSimplexJob : IJobParallelFor
     {
 
-        [ReadOnly] public Vector3[] samples;
+        [ReadOnly] public NativeArray<float> samplesX;
+        [ReadOnly] public NativeArray<float> samplesZ;
         [ReadOnly] public float xOffset;
         [ReadOnly] public float zOffset;
         [ReadOnly] public float scale;
@@ -184,7 +185,7 @@ public static class NoiseMaps
 
         public void Execute(int index) 
         {
-            output[index] = snoise(new float2((samples[index].x + xOffset) * scale, (samples[index].z + zOffset) * scale));
+            output[index] = snoise(new float2((samplesX[index] + xOffset) * scale, (samplesZ[index] + zOffset) * scale));
         }
 
     }
@@ -542,8 +543,15 @@ public static class NoiseMaps
         float[] weightMap = new float[samplePoints.Length];
 
         var jobResult = new NativeArray<float>(samplePoints.Length, Allocator.TempJob);
+        var samplePointsX = new NativeArray<float>(samplePoints.Length, Allocator.TempJob);
+        var samplePointsZ =  new NativeArray<float>(samplePoints.Length, Allocator.TempJob);
+        for (int i = 0; i < samplePoints.Length; i++) {
+            samplePointsX[i] = samplePoints[i].x;
+            samplePointsZ[i] = samplePoints[i].z;
+        }
         var job = new SamplePointSimplexJob() {
-            samples = samplePoints,
+            samplesX = samplePointsX,
+            samplesZ = samplePointsZ,
             xOffset = xOffset,
             zOffset = zOffset,
             scale = 1 / scale,
@@ -553,6 +561,8 @@ public static class NoiseMaps
         handle.Complete();
         for (int i = 0; i < weightMap.Length; i++) weightMap[i] = jobResult[i];
         jobResult.Dispose();
+        samplePointsX.Dispose();
+        samplePointsZ.Dispose();
 
         return weightMap;
     }

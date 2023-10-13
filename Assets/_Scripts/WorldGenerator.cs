@@ -6,6 +6,8 @@ using Matrix4x4 = UnityEngine.Matrix4x4;
 using Vector2 = UnityEngine.Vector2;
 using Vector3 = UnityEngine.Vector3;
 using Vector4 = UnityEngine.Vector4;
+using UnityEngine.ProBuilder;
+using Math = System.Math;
 
 public class WorldGenerator : MonoBehaviour
 {
@@ -439,8 +441,8 @@ public class WorldGenerator : MonoBehaviour
             tile.meshCollider = go.AddComponent<MeshCollider>();
             tile.meshCollider.sharedMesh = msh;
         }
-        if (!_useColorGradient) CalculateUVs(msh);
-        else CalculateColors(index);
+        //if (!_useColorGradient) CalculateUVs(msh);
+        //else CalculateColors(index);
         _tilePositions[index / _zTiles, index % _zTiles] = index;
         if (index == (_xTiles * _zTiles) - 1) {
             UpdateGrassBuffers();
@@ -477,8 +479,8 @@ public class WorldGenerator : MonoBehaviour
 
         WindTriangles(_tilePool[index].mesh);
         UpdateMesh(_tilePool[index].mesh, index);
-        if (!_useColorGradient) CalculateUVs(_tilePool[index].mesh);
-        else CalculateColors(index);
+        //if (!_useColorGradient) CalculateUVs(_tilePool[index].mesh);
+        //else CalculateColors(index);
         _tilePool[index].obj.transform.position = new Vector3(x * _xSize * _xResolution, 0, z * _zSize * _zResolution);
         int maxDistance = Mathf.Max(Mathf.Abs(x - _playerXChunkScale), Mathf.Abs(z - _playerZChunkScale));
         // if (maxDistance <= _maxGrassDistChunks) {
@@ -684,8 +686,8 @@ public class WorldGenerator : MonoBehaviour
       Vector3[] vertices = targetMesh.vertices;
       Vector3[] normals = targetMesh.normals;
 
-      float[] rockVal = NoiseMaps.GenerateRockNoise((int) Mathf.Sqrt(vertices.Length), _tilePool[index].x * _xSize * _xResolution, _tilePool[index].z * _zSize * _zResolution, _rockPassScale, _rockPassScale, 1, _xResolution, _zResolution, true);
-
+      float[] rockVal = NoiseMaps.GenerateRockNoise((int) Mathf.Sqrt(vertices.Length), _tilePool[index].x * _xSize * _xResolution + _seed, _tilePool[index].z * _zSize * _zResolution + _seed, _rockPassScale, _rockPassScale, 1, _xResolution, _zResolution, true);
+      //This doesn't work with caves right now. Just need to make it per vertex noise instead of grid generated.
       for (int i = 0; i < vertices.Length; i++) {
         vertices[i] += normals[i] * _rockPassCurve.Evaluate(Mathf.Abs(normals[i].y)) *_rockPassNoiseCurve.Evaluate(rockVal[i]) * _rockPassAmplitude;
       }
@@ -694,39 +696,47 @@ public class WorldGenerator : MonoBehaviour
     }
 
     private int[] SubdivideFaces(Mesh targetMesh, int[] toSubdivide) {
-        Vector3[] vertices = targetMesh.vertices;
-        Vector3[] triangles = targetMesh.triangles;
+        Vector3[] verticesOriginal = targetMesh.vertices;
+        int[] trianglesOriginal = targetMesh.triangles;
 
-        int originalVertLength = vertices.Length;
-        int originalTriangleLength = triangles.Length;
+        int originalVertLength = verticesOriginal.Length;
+        int originalTriangleLength = trianglesOriginal.Length;
 
-        vertices = new Vector3[vertices.Length + toSubdivide.Length];
-        triangles = new int[triangles.Length + 6 * toSubdivide.Length];
+        Vector3[] vertices = new Vector3[verticesOriginal.Length + toSubdivide.Length];
+        int[] triangles = new int[trianglesOriginal.Length + 6 * toSubdivide.Length];
+
+        for (int i = 0; i < trianglesOriginal.Length; i++) {
+            triangles[i] = trianglesOriginal[i];
+        }
+
+        for (int i = 0; i < verticesOriginal.Length; i++) {
+            vertices[i] = verticesOriginal[i];
+        }
 
         int[] newVertices = new int[toSubdivide.Length];
 
         for (int i = 0; i < toSubdivide.Length; i++) {
             // An entry in the array is a triangle in triangles, so needs to be fetched with triangles[toSubdivide[i] * 3]
-            int pointAIndx = triangles[toSubdivide[i] * 3];
-            int pointBIndx = triangles[toSubdivide[i] * 3 + 1];
-            int pointCIndx = triangles[toSubdivide[i] * 3 + 2];
-            Vector3[] pointA = vertices[pointAIndx];
-            Vector3[] pointB = vertices[pointBIndx];
-            Vector3[] pointC = vertices[pointCIndx];
+            int pointAIndx = triangles[toSubdivide[i]];
+            int pointBIndx = triangles[toSubdivide[i] + 1];
+            int pointCIndx = triangles[toSubdivide[i] + 2];
+            Vector3 pointA = vertices[pointAIndx];
+            Vector3 pointB = vertices[pointBIndx];
+            Vector3 pointC = vertices[pointCIndx];
            
-            Vector3[] newVertex = (pointA + pointB + pointC) / 3;
+            Vector3 newVertex = (pointA + pointB + pointC) / 3;
 
-            vertices[originalVertLength + i - 1] = newVertex;
-            newVertices[i] = originalVertLength + i - 1;
-            triangles[toSubdivide[i] * 3] = pointAIndx;
-            triangles[toSubdivide[i] * 3 + 1] = pointBIndx;
-            triangles[toSubdivide[i] * 3 + 2] = originalVertLength + i - 1;
-            triangles[originalTriangleLength + i * 6 - 1] = pointBIndx;
-            triangles[originalTriangleLength + i * 6] = pointCIndx;
-            triangles[originalTriangleLength + i * 6 + 1] = originalVertLength + i - 1;
-            triangles[originalTriangleLength + i * 6 + 2] = pointCIndx;
-            triangles[originalTriangleLength + i * 6 + 3] = pointAIndx;
-            triangles[originalTriangleLength + i * 6 + 4] = originalVertLength + i - 1;
+            vertices[originalVertLength + i] = newVertex;
+            newVertices[i] = originalVertLength + i;
+            triangles[toSubdivide[i] ] = pointAIndx;
+            triangles[toSubdivide[i] + 1] = pointBIndx;
+            triangles[toSubdivide[i] + 2] = originalVertLength + i;
+            triangles[originalTriangleLength + i * 6] = pointBIndx;
+            triangles[originalTriangleLength + i * 6 + 1] = pointCIndx;
+            triangles[originalTriangleLength + i * 6 + 2] = originalVertLength + i;
+            triangles[originalTriangleLength + i * 6 + 3] = pointCIndx;
+            triangles[originalTriangleLength + i * 6 + 4] = pointAIndx;
+            triangles[originalTriangleLength + i * 6 + 5] = originalVertLength + i;
         }
 
         targetMesh.vertices = vertices;
@@ -742,16 +752,12 @@ public class WorldGenerator : MonoBehaviour
         Vector3[] faceNormals = new Vector3[sampledTris.Length];
         Vector3[] vertices = targetMesh.vertices;
         for (int i = 0, j = 0; i < triangles.Length / 6; i++) {
-            if (i < (_xSize + 1) continue;
-            if (i > triangles.Length / 6 - (_xSize + 1)) continue;
-            if (i % (_xSize + 1) == 0) continue;
-            if (i % (_xSize + 1) == _xSize);
             Vector3 pointA = vertices[triangles[i * 6]];
             Vector3 pointB = vertices[triangles[i * 6 + 1]];
             Vector3 pointC = vertices[triangles[i * 6 + 2]];
             triangleSamples[j] = (pointA + pointB + pointC) / 3;
             faceNormals[j] = Vector3.Cross(pointB - pointA, pointC - pointA);
-            sampledTris[j] = triangles[i * 6];
+            sampledTris[j] = i * 6;
             j++;
             pointA = vertices[triangles[i * 6 + 3]];
             pointB = vertices[triangles[i * 6 + 4]];
@@ -761,7 +767,7 @@ public class WorldGenerator : MonoBehaviour
             sampledTris[j] = i * 6 + 3;
             j++;
         }
-        float[] caveMap = NoiseMaps.GenerateCavePass(triangleSamples, _tilePool[index].x * _xResolution * _xSize, _tilePool[index].z * _zResolution * _zSize, _cavePassScale);
+        float[] caveMap = NoiseMaps.GenerateCavePass(triangleSamples, _tilePool[index].x * _xResolution * _xSize + _seed, _tilePool[index].z * _zResolution * _zSize + _seed, _cavePassScale);
 
         List<int> toSubdivide = new List<int>();
         for (int i = 0; i < caveMap.Length; i++) {
@@ -770,15 +776,23 @@ public class WorldGenerator : MonoBehaviour
             }
         }
         int[] subdVerts = SubdivideFaces(targetMesh, toSubdivide.ToArray());
+        vertices = targetMesh.vertices;
+        Vector3[] normalsOriginal = targetMesh.normals;
+        Vector3[] normals = new Vector3[vertices.Length];
+        for (int i = 0; i < normalsOriginal.Length; i++) normals[i] = normalsOriginal[i];
         for (int i = 0; i < subdVerts.Length; i++) {
-            vertices[subdVerts[i]] -= faceNormals[i] * _cavePassCurve.Evaluate(caveMap[toSubdivide[i]]) * _cavePassAmplitude;
+            //vertices[subdVerts[i]] -= faceNormals[i] * _cavePassCurve.Evaluate(caveMap[toSubdivide[i] / 3]) * _cavePassAmplitude;
+            normals[subdVerts[i]] = faceNormals[i];
         }
+        targetMesh.vertices = vertices;
+        targetMesh.normals = normals;
     }
 
     private void UpdateMesh(Mesh targetMesh, int index) {
         targetMesh.normals = CalculateNormals(targetMesh, index);
         targetMesh.triangles = CullTriangles(targetMesh);
         RockPass(targetMesh, index);
+        CavePass(targetMesh, index);
         targetMesh.RecalculateBounds();
     }
 
