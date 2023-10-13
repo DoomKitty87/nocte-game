@@ -380,7 +380,7 @@ PrefabInstance:
     - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
         type: 3}
       propertyPath: _grassLODLevels.Array.size
-      value: 1
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
         type: 3}
@@ -408,32 +408,32 @@ PrefabInstance:
     - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
         type: 3}
       propertyPath: _grassLODLevels.Array.data[0].density
-      value: 0
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
         type: 3}
       propertyPath: _grassLODLevels.Array.data[1].density
-      value: 1
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
         type: 3}
       propertyPath: _grassLODLevels.Array.data[2].density
-      value: 5
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
         type: 3}
       propertyPath: _grassLODLevels.Array.data[0].distance
-      value: 0
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
         type: 3}
       propertyPath: _grassLODLevels.Array.data[1].distance
-      value: 5
+      value: 7
       objectReference: {fileID: 0}
     - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
         type: 3}
       propertyPath: _grassLODLevels.Array.data[2].distance
-      value: 1
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
         type: 3}
@@ -13673,12 +13673,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _transformAlignToMovement: {fileID: 910124814}
   _alignSpeed: 12
-  _snapInsteadAngle: 5
+  _snapInsteadLessThanAngle: 15
   _movementScript: {fileID: 923748930}
   _xMouseMovementTransform: {fileID: 2051371679}
   _yMouseMovementTransform: {fileID: 2051366261}
   _mouseSensitivity: 40
-  _smoothingFactor: 20
 --- !u!54 &923748932
 Rigidbody:
   m_ObjectHideFlags: 0
