@@ -695,7 +695,7 @@ public class WorldGenerator : MonoBehaviour
       targetMesh.vertices = vertices;
     }
 
-    private int[] SubdivideFaces(Mesh targetMesh, int[] toSubdivide) {
+    private int[,] SubdivideFaces(Mesh targetMesh, int[] toSubdivide) {
         Vector3[] verticesOriginal = targetMesh.vertices;
         int[] trianglesOriginal = targetMesh.triangles;
 
@@ -713,7 +713,7 @@ public class WorldGenerator : MonoBehaviour
             vertices[i] = verticesOriginal[i];
         }
 
-        int[] newVertices = new int[toSubdivide.Length];
+        int[,] newVertices = new int[toSubdivide.Length,4];
 
         for (int i = 0; i < toSubdivide.Length; i++) {
             // An entry in the array is a triangle in triangles, so needs to be fetched with triangles[toSubdivide[i] * 3]
@@ -727,7 +727,10 @@ public class WorldGenerator : MonoBehaviour
             Vector3 newVertex = (pointA + pointB + pointC) / 3;
 
             vertices[originalVertLength + i] = newVertex;
-            newVertices[i] = originalVertLength + i;
+            newVertices[i,0] = originalVertLength + i;
+            newVertices[i,1] = pointAIndx;
+            newVertices[i,2] = pointBIndx;
+            newVertices[i,3] = pointCIndx;
             triangles[toSubdivide[i] ] = pointAIndx;
             triangles[toSubdivide[i] + 1] = pointBIndx;
             triangles[toSubdivide[i] + 2] = originalVertLength + i;
@@ -763,7 +766,7 @@ public class WorldGenerator : MonoBehaviour
             pointB = vertices[triangles[i * 6 + 4]];
             pointC = vertices[triangles[i * 6 + 5]];
             triangleSamples[j] = (pointA + pointB + pointC) / 3;
-            faceNormals[j] = Vector3.Cross(pointB - pointA, pointC - pointA);
+            faceNormals[j] = Vector3.Cross(pointB - pointA, pointC - pointA).normalized;
             sampledTris[j] = i * 6 + 3;
             j++;
         }
@@ -775,24 +778,66 @@ public class WorldGenerator : MonoBehaviour
                 toSubdivide.Add(sampledTris[i]);
             }
         }
-        int[] subdVerts = SubdivideFaces(targetMesh, toSubdivide.ToArray());
+        int[,] subdVerts = SubdivideFaces(targetMesh, toSubdivide.ToArray());
         vertices = targetMesh.vertices;
         Vector3[] normalsOriginal = targetMesh.normals;
         Vector3[] normals = new Vector3[vertices.Length];
         for (int i = 0; i < normalsOriginal.Length; i++) normals[i] = normalsOriginal[i];
-        for (int i = 0; i < subdVerts.Length; i++) {
-            //vertices[subdVerts[i]] -= faceNormals[i] * _cavePassCurve.Evaluate(caveMap[toSubdivide[i] / 3]) * _cavePassAmplitude;
-            normals[subdVerts[i]] = faceNormals[i];
+        Vector3[] effectValues = new Vector3[vertices.Length];
+        int[] normalizations = new int[vertices.Length];
+        for (int i = 0; i < subdVerts.GetLength(0); i++) {
+            if (vertices[subdVerts[i,0]].x <= _xResolution * 2 || vertices[subdVerts[i,0]].x >= _xResolution * (_xSize - 1) || vertices[subdVerts[i,0]].z <= _zResolution * 2 || vertices[subdVerts[i,0]].z >= _zResolution * (_zSize - 1)) continue;
+            //if (faceNormals[i].y > 0.6f) continue;
+            Vector3 subValue = new Vector3(0, _cavePassCurve.Evaluate(caveMap[toSubdivide[i] / 3]) * _cavePassAmplitude, 0);
+            effectValues[subdVerts[i,0]] += subValue;
+            effectValues[subdVerts[i,1]] += subValue;
+            effectValues[subdVerts[i,2]] += subValue;
+            effectValues[subdVerts[i,3]] += subValue;
+            normalizations[subdVerts[i,1]]++;
+            normalizations[subdVerts[i,2]]++;
+            normalizations[subdVerts[i,3]]++;
+            normals[subdVerts[i,0]] = faceNormals[i];
+            normals[subdVerts[i,1]] += faceNormals[i];
+            normals[subdVerts[i,2]] += faceNormals[i];
+            normals[subdVerts[i,3]] += faceNormals[i];
         }
+        for (int i = 0; i < vertices.Length; i++) {
+            if (normalizations[i] > 0) {
+                effectValues[i] /= normalizations[i];
+                normals[i].Normalize();
+            }                
+            vertices[i] -= effectValues[i];
+        }
+        /* This did not work
+        for (int i = 0; i < vertices.Length; i++) {
+            List<int> newTriangles = new List<int>();
+            int triangleCount = 0;
+            for (int j = 0; j < triangles.Length; j++) {
+              if (triangles[j] == i) triangleCount++;
+            }
+            //Debug.Log(triangleCount);
+            if (triangleCount == 6) {
+              for (int j = 0; j < triangles.Length / 3; j++) {
+                if (triangles[j * 3] != i && triangles[j * 3 + 1] != i && triangles[j * 3 + 2] != i) {
+                  newTriangles.Add(triangles[j * 3]);
+                  newTriangles.Add(triangles[j * 3 + 1]);
+                  newTriangles.Add(triangles[j * 3 + 2]);
+                }
+              }
+            }
+            else newTriangles.AddRange(triangles);
+            triangles = newTriangles.ToArray();
+        } */
         targetMesh.vertices = vertices;
         targetMesh.normals = normals;
+        targetMesh.RecalculateNormals();
     }
 
     private void UpdateMesh(Mesh targetMesh, int index) {
         targetMesh.normals = CalculateNormals(targetMesh, index);
         targetMesh.triangles = CullTriangles(targetMesh);
         RockPass(targetMesh, index);
-        CavePass(targetMesh, index);
+        // CavePass(targetMesh, index); Cave pass not the best really
         targetMesh.RecalculateBounds();
     }
 
