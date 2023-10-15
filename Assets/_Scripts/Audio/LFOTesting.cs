@@ -1,4 +1,5 @@
 using System;
+using Unity.Mathematics;
 using UnityEngine;
 
 public class LFOTesting : MonoBehaviour
@@ -21,12 +22,14 @@ public class LFOTesting : MonoBehaviour
   private int _sampleRate;
   private bool[] _beat = new bool[7];
   private bool[] _subBeat = new bool[2];
-  private int _nextNote;
+  private int _currentNote = 0;
 
   private float[] _majorScale = {261.63f, 293.66f, 329.63f, 349.23f, 392f, 440f, 493.88f, 523.25f};
+  private int[] _changeOptions = {0, 3, 5, 7, -3, -5, -7};
   [SerializeField] private Instrument[] _instruments;
 
   [SerializeField] private float _tempo = 120f;
+  [SerializeField] private float _chorusVariance = 4f;
 
   private void Awake() {
     _sampleRate = AudioSettings.outputSampleRate;
@@ -39,38 +42,47 @@ public class LFOTesting : MonoBehaviour
     for (int sample = 0; sample < data.Length; sample += channels) {
       float value = 0;
       if (_beat[0]) {
-        _tempo += 4;
-        _instruments[1].frequency = _majorScale[_nextNote];
-        _nextNote++;
-        _nextNote %= _majorScale.Length;
         _beat[0] = false;
+      }
+      if (_subBeat[0]) {
+        Debug.Log(_currentNote);
+        _instruments[1].frequency = _majorScale[_currentNote];
+        _instruments[2].frequency = _majorScale[_currentNote] + _chorusVariance;
+        _instruments[3].frequency = _majorScale[_currentNote] - _chorusVariance;
+        _currentNote += _changeOptions[Mathf.FloorToInt((noise.snoise(new float2(sample, sample)) + 1) / 2 * _changeOptions.Length)];
+        if (_currentNote >= _majorScale.Length) {
+          _currentNote %= _majorScale.Length;
+        } else if (_currentNote < 0) {
+          _currentNote += _majorScale.Length;
+        }
+        _subBeat[0] = false;
       }
 
       for (int instrument = 0; instrument < _instruments.Length; instrument++) {
         switch (_instruments[instrument].instrumentType) {
           case 0:
             value += SoundPrimitives.kickDrum(_instruments[instrument].phase,
-              0.5f, 1f, 20, _beatPhases[0]);
+              0.5f, 1, 20, _beatPhases[0]);
             break;
           case 1:
             value += SoundPrimitives.leadSynth(_instruments[instrument].phase,
-              0.5f, 4f, _beatPhases[1]);
+              0.1f, 25f, _beatPhases[2]);
               break;
         }
         _instruments[instrument].phase = (_instruments[instrument].phase + 1f / _sampleRate * _instruments[instrument].frequency) % 1;
       }
 
       for (int i = 0; i < _beatPhases.Length; i++) {
-        _beatPhases[i] += 1f / _sampleRate * _tempo / 60;
-        if (_beatPhases[i] >= Mathf.Pow(2, i)) {
-          _beatPhases[i] %= Mathf.Pow(2, i);
+        _beatPhases[i] += 1f / _sampleRate * _tempo / 60 / Mathf.Pow(2, i);
+        if (_beatPhases[i] >= 1) {
+          _beatPhases[i] %= 1;
           _beat[i] = true;
         }
       }
       for (int i = 0; i < _subDPhases.Length; i++) {
-        _subDPhases[i] += 1f / _sampleRate * _tempo / 60;
-        if (_subDPhases[i] >= Mathf.Pow(2, -i - 1)) {
-          _subDPhases[i] %= Mathf.Pow(2, -i - 1);
+        _subDPhases[i] += 1f / _sampleRate * _tempo / 60 / Mathf.Pow(2, -i - 1);
+        if (_subDPhases[i] >= 1) {
+          _subDPhases[i] %= 1;
           _subBeat[i] = true;
         }
       }

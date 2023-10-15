@@ -19,7 +19,7 @@ public static class SoundPrimitives
   {
     float value = WavePrimitives.sineWave(phase) * amplitude;
     value = Mathf.Lerp(0, value, (float) beatPhase * envelope * attackBias);
-    value = Mathf.Lerp(value, 0, (float) beatPhase * envelope);
+    value = Mathf.Lerp(value, 0, Mathf.Pow((float) beatPhase, envelope));
     return value;
   }
 
