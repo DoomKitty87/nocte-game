@@ -21,8 +21,8 @@ public class WorldGenerator : MonoBehaviour
         public float[] humidityMap;
         public int x;
         public int z;
-        public int grassIndexStart;
-        public int grassCount;
+        public int[] grassIndexStart;
+        public int[] grassCount;
         public int[] biomeData;
 
     }
@@ -342,7 +342,7 @@ public class WorldGenerator : MonoBehaviour
     
     private void GenerateGrass(int index, int density, int bufferID) {
         List<GrassData> buffer = _grassData[bufferID];
-        if (_tilePool[index].grassCount > 0) return;
+        if (_tilePool[index].grassCount[bufferID] > 0) return;
         Vector3[] vertexData = _tilePool[index].mesh.vertices;
 		int[] triangles = _tilePool[index].mesh.triangles;
 		Vector3[] normals = new Vector3[triangles.Length / 3];
@@ -354,7 +354,7 @@ public class WorldGenerator : MonoBehaviour
 			normals[i] = Vector3.Cross(vertexData[triangles[i * 3 + 1]] - vertexData[triangles[i * 3]], vertexData[triangles[i * 3 + 2]] - vertexData[triangles[i * 3]]).normalized;
 		}
 
-		_tilePool[index].grassIndexStart = buffer.Count;
+		_tilePool[index].grassIndexStart[bufferID] = buffer.Count;
         
         // TODO:
         // Increase performance by converting to compute shader
@@ -380,31 +380,32 @@ public class WorldGenerator : MonoBehaviour
             }
         }
         
-        _tilePool[index].grassCount = buffer.Count - _tilePool[index].grassIndexStart;
+        _tilePool[index].grassCount[bufferID] = buffer.Count - _tilePool[index].grassIndexStart[bufferID];
     }
     
     private void GenerateGrassBasedOffLODs(int x, int z, int maxDistance) {
         
         int currentChunkSetting;
+        int previousChunkSetting = _grassLODChunkCache[_tilePositions[x, z]];
         if (maxDistance >= _grassLODLevels[^1].distance) currentChunkSetting = -1;
         else currentChunkSetting = _grassLODLookupBufferArray[maxDistance];
         
-        if (currentChunkSetting != _grassLODChunkCache[_tilePositions[x, z]]) {
-           if (_grassLODChunkCache[_tilePositions[x, z]] != -1) {
-                 _grassData[0].RemoveRange(
-                    _tilePool[_tilePositions[x, z]].grassIndexStart,
-                    _tilePool[_tilePositions[x, z]].grassCount);
+        if (currentChunkSetting != previousChunkSetting) {
+           if (previousChunkSetting != -1) {
+                 _grassData[previousChunkSetting].RemoveRange(
+                    _tilePool[_tilePositions[x, z]].grassIndexStart[previousChunkSetting],
+                    _tilePool[_tilePositions[x, z]].grassCount[previousChunkSetting]);
                 for (int j = 0; j < _xTiles * _zTiles; j++) {
-                    if (_tilePool[j].grassIndexStart > _tilePool[_tilePositions[x, z]].grassIndexStart)
-                        _tilePool[j].grassIndexStart -= _tilePool[_tilePositions[x, z]].grassCount;
+                    if (_tilePool[j].grassIndexStart[previousChunkSetting] > _tilePool[_tilePositions[x, z]].grassIndexStart[previousChunkSetting])
+                        _tilePool[j].grassIndexStart[previousChunkSetting] -= _tilePool[_tilePositions[x, z]].grassCount[previousChunkSetting];
                 }
-
-               _tilePool[_tilePositions[x, z]].grassCount = 0;
-               _tilePool[_tilePositions[x, z]].grassIndexStart = 0;
+           
+               _tilePool[_tilePositions[x, z]].grassCount[previousChunkSetting] = 0;
+               _tilePool[_tilePositions[x, z]].grassIndexStart[previousChunkSetting] = 0;
            }
 
            if (currentChunkSetting != -1) {
-                GenerateGrass(_tilePositions[x, z], _grassLODLookupDensityArray[maxDistance], 0);
+                GenerateGrass(_tilePositions[x, z], _grassLODLookupDensityArray[maxDistance], currentChunkSetting);
             }
 
             _grassLODChunkCache[_tilePositions[x, z]] = currentChunkSetting;
@@ -518,6 +519,8 @@ public class WorldGenerator : MonoBehaviour
         tile.humidityMap = humidityMap;
         tile.x = x;
         tile.z = z;
+        tile.grassCount = new int[_grassLODLevels[^1].distance];
+        tile.grassIndexStart = new int[_grassLODLevels[^1].distance];
         tile.biomeData = result.Item2;
         _tilePool[index] = tile;
         UpdateMesh(msh, index);
