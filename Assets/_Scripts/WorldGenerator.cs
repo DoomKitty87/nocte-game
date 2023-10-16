@@ -851,9 +851,6 @@ public class WorldGenerator : MonoBehaviour
             normalizations[subdVerts[i,2]]++;
             normalizations[subdVerts[i,3]]++;
             normals[subdVerts[i,0]] = faceNormals[i];
-            normals[subdVerts[i,1]] += faceNormals[i];
-            normals[subdVerts[i,2]] += faceNormals[i];
-            normals[subdVerts[i,3]] += faceNormals[i];
         }
         for (int i = 0; i < vertices.Length; i++) {
             if (normalizations[i] > 0) {
