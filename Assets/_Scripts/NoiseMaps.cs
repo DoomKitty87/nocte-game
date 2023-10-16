@@ -58,6 +58,8 @@ public static class NoiseMaps
         [ReadOnly] public bool turbulent;
         [ReadOnly] public float lacunarity;
         [ReadOnly] public float persistence;
+        [ReadOnly] public float warpStrength;
+        [ReadOnly] public float warpSize;
 
         [WriteOnly] public NativeArray<float> output;
 
@@ -68,8 +70,10 @@ public static class NoiseMaps
             float noise = 0;
             float normalization = 0;
             for (int i = 0; i < octaves; i++)
-            {
-                float octaveNoise = snoise(new float2((sampleX * xResolution + xOffset) * (scaleX * Mathf.Pow(lacunarity, i)), (sampleZ * zResolution + zOffset) * (scaleZ * Mathf.Pow(lacunarity, i)))) * Mathf.Pow(persistence, i);
+            {   
+                float x = (sampleX * xResolution + xOffset) * (scaleX * Mathf.Pow(lacunarity, i));
+                float y = (sampleZ * zResolution + zOffset) * (scaleZ * Mathf.Pow(lacunarity, i));
+                float octaveNoise = snoise(new float3(x, y, warpStrength * snoise(new float2(x * warpSize, y * warpSize)))) * Mathf.Pow(persistence, i);
                 noise += (turbulent ? Mathf.Abs(octaveNoise) : (octaveNoise + 1) / 2);
                 normalization += Mathf.Pow(persistence, i);
             }
@@ -129,6 +133,8 @@ public static class NoiseMaps
         [ReadOnly] public bool turbulent;
         [ReadOnly] public float lacunarity;
         [ReadOnly] public float persistence;
+        [ReadOnly] public float warpStrength;
+        [ReadOnly] public float warpSize;
 
         [WriteOnly] public NativeArray<float> output;
 
@@ -140,7 +146,9 @@ public static class NoiseMaps
             float normalization = 0;
             for (int i = 0; i < octaves; i++)
             {
-                float octaveNoise = (cellular(new float2((sampleX * xResolution + xOffset) * (scaleX * Mathf.Pow(lacunarity, i)), (sampleZ * zResolution + zOffset) * (scaleZ * Mathf.Pow(lacunarity, i)))).x * Mathf.Pow(persistence, i));
+                float x = (sampleX * xResolution + xOffset) * (scaleX * Mathf.Pow(lacunarity, i));
+                float y = (sampleZ * zResolution + zOffset) * (scaleZ * Mathf.Pow(lacunarity, i));
+                float octaveNoise = (cellular(new float2(x, y, warpStrength * cellular(new float2(x * warpSize, y * warpSize)).x)).x * Mathf.Pow(persistence, i));
                 noise += (turbulent ? Mathf.Abs(octaveNoise) : (octaveNoise + 1) / 2);
                 normalization += Mathf.Pow(persistence, i);
             }
@@ -257,7 +265,9 @@ public static class NoiseMaps
             zResolution = zResolution,
             turbulent = false,
             lacunarity = 2,
-            persistence = 0.5f
+            persistence = 0.5f,
+            warpStrength = 0,
+            warpSize = 1
         };
         var biomeHandle = biomeJob.Schedule(biomeResult.Length, 32);
         biomeHandle.Complete();
@@ -289,7 +299,9 @@ public static class NoiseMaps
                         zResolution = zResolution,
                         turbulent = biomes[b].noiseLayers[i].turbulent,
                         lacunarity = biomes[b].noiseLayers[i].lacunarity,
-                        persistence = biomes[b].noiseLayers[i].persistence
+                        persistence = biomes[b].noiseLayers[i].persistence,
+                        warpStrength = biomes[b].noiseLayers[i].warpStrength,
+                        warpSize = biomes[b].noiseLayers[i].warpSize
                     };
                     var handle = job.Schedule(jobResult.Length, 32);
                     handle.Complete();
@@ -308,7 +320,9 @@ public static class NoiseMaps
                         zResolution = zResolution,
                         turbulent = biomes[b].noiseLayers[i].turbulent,
                         lacunarity = biomes[b].noiseLayeres[i].lacunarity,
-                        persistence = biomes[b].noiseLayers[i].persistence
+                        persistence = biomes[b].noiseLayers[i].persistence,
+                        warpStrength = biomes[b].noiseLayers[i].warpStrength,
+                        warpSize = biomes[b].noiseLayers[i].warpSize
                     };
                     var handle = job.Schedule(jobResult.Length, 32);
                     handle.Complete();
