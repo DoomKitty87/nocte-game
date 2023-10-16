@@ -148,7 +148,7 @@ public static class NoiseMaps
             {
                 float x = (sampleX * xResolution + xOffset) * (scaleX * Mathf.Pow(lacunarity, i));
                 float y = (sampleZ * zResolution + zOffset) * (scaleZ * Mathf.Pow(lacunarity, i));
-                float octaveNoise = (cellular(new float2(x, y, warpStrength * cellular(new float2(x * warpSize, y * warpSize)).x)).x * Mathf.Pow(persistence, i));
+                float octaveNoise = (cellular(new float3(x, y, warpStrength * cellular(new float2(x * warpSize, y * warpSize)).x)).x * Mathf.Pow(persistence, i));
                 noise += (turbulent ? Mathf.Abs(octaveNoise) : (octaveNoise + 1) / 2);
                 normalization += Mathf.Pow(persistence, i);
             }
@@ -319,7 +319,7 @@ public static class NoiseMaps
                         xResolution = xResolution,
                         zResolution = zResolution,
                         turbulent = biomes[b].noiseLayers[i].turbulent,
-                        lacunarity = biomes[b].noiseLayeres[i].lacunarity,
+                        lacunarity = biomes[b].noiseLayers[i].lacunarity,
                         persistence = biomes[b].noiseLayers[i].persistence,
                         warpStrength = biomes[b].noiseLayers[i].warpStrength,
                         warpSize = biomes[b].noiseLayers[i].warpSize

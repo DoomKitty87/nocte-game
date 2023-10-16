@@ -4,6 +4,10 @@ public class ProceduralMusic : MonoBehaviour
 {
 
   private int _sampleRate;
+  private bool[] _beat = new bool[9];
+  private float[] _beatPhases = new float[9];
+
+  private int _tempo;
 
   private void Awake() {
     _sampleRate = AudioSettings.outputSampleRate;
@@ -28,7 +32,7 @@ public class ProceduralMusic : MonoBehaviour
         _beatPhases[beatSub] += 1f / _sampleRate * _tempo / 60 / Mathf.Pow(2, beatSub - 2);
         if (_beatPhases[beatSub] >= 1) {
           _beatPhases[beatSub] %= 1;
-          _beatPhases[beatSub] = true;
+          _beat[beatSub] = true;
         }
       }
 
