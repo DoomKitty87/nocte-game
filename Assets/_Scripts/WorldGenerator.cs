@@ -38,6 +38,8 @@ public class WorldGenerator : MonoBehaviour
         public float scaleX;
         public float scaleZ;
         public bool turbulent;
+        public float lacunarity;
+        public float persistence;
 
     }
 

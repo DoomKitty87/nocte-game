@@ -33,11 +33,11 @@ public static class NoiseMaps
             for (int i = 0; i < octaves; i++)
             {
                 float octaveNoise = snoise(new float2((sampleX * xResolution + xOffset) * (scale * Mathf.Pow(2, i)), (sampleZ * zResolution + zOffset) * (scale * Mathf.Pow(2, i)))) * amplitude * (1 / Mathf.Pow(2, i));
-                noise += octaveNoise;
+                noise += Mathf.Abs(octaveNoise);
                 normalization += 1 / Mathf.Pow(2, i);
             }
 
-            noise = Mathf.Abs(noise / normalization);
+            noise = noise / normalization;
             output[index] = noise;
         }
 
@@ -56,6 +56,8 @@ public static class NoiseMaps
         [ReadOnly] public float xResolution;
         [ReadOnly] public float zResolution;
         [ReadOnly] public bool turbulent;
+        [ReadOnly] public float lacunarity;
+        [ReadOnly] public float persistence;
 
         [WriteOnly] public NativeArray<float> output;
 
@@ -67,13 +69,12 @@ public static class NoiseMaps
             float normalization = 0;
             for (int i = 0; i < octaves; i++)
             {
-                float octaveNoise = snoise(new float2((sampleX * xResolution + xOffset) * (scaleX * Mathf.Pow(2, i)), (sampleZ * zResolution + zOffset) * (scaleZ * Mathf.Pow(2, i)))) * (1 / Mathf.Pow(2, i));
-                noise += octaveNoise;
-                normalization += 1 / Mathf.Pow(2, i);
+                float octaveNoise = snoise(new float2((sampleX * xResolution + xOffset) * (scaleX * Mathf.Pow(lacunarity, i)), (sampleZ * zResolution + zOffset) * (scaleZ * Mathf.Pow(lacunarity, i)))) * Mathf.Pow(persistence, i);
+                noise += (turbulent ? Mathf.Abs(octaveNoise) : (octaveNoise + 1) / 2);
+                normalization += Mathf.Pow(persistence, i);
             }
 
-            if (turbulent) noise = Mathf.Abs(noise / normalization);
-            else noise = (noise / normalization + 1) / 2;
+            noise /= normalization;
             output[index] = noise;
         }
 
@@ -103,11 +104,11 @@ public static class NoiseMaps
             for (int i = 0; i < octaves; i++)
             {
                 float octaveNoise = (cellular(new float2((sampleX * xResolution + xOffset) * (scale * Mathf.Pow(2, i)), (sampleZ * zResolution + zOffset) * (scale * Mathf.Pow(2, i)))).x * amplitude * (1 / Mathf.Pow(2, i)));
-                noise += octaveNoise;
+                noise += Mathf.Abs(octaveNoise);
                 normalization += 1 / Mathf.Pow(2, i);
             }
 
-            noise = Mathf.Abs(noise / normalization);
+            noise /= normalization;
             output[index] = noise;
         }
 
@@ -126,6 +127,8 @@ public static class NoiseMaps
         [ReadOnly] public float xResolution;
         [ReadOnly] public float zResolution;
         [ReadOnly] public bool turbulent;
+        [ReadOnly] public float lacunarity;
+        [ReadOnly] public float persistence;
 
         [WriteOnly] public NativeArray<float> output;
 
@@ -137,13 +140,12 @@ public static class NoiseMaps
             float normalization = 0;
             for (int i = 0; i < octaves; i++)
             {
-                float octaveNoise = (cellular(new float2((sampleX * xResolution + xOffset) * (scaleX * Mathf.Pow(2, i)), (sampleZ * zResolution + zOffset) * (scaleZ * Mathf.Pow(2, i)))).x * (1 / Mathf.Pow(2, i)));
-                noise += octaveNoise;
-                normalization += 1 / Mathf.Pow(2, i);
+                float octaveNoise = (cellular(new float2((sampleX * xResolution + xOffset) * (scaleX * Mathf.Pow(lacunarity, i)), (sampleZ * zResolution + zOffset) * (scaleZ * Mathf.Pow(lacunarity, i)))).x * Mathf.Pow(persistence, i));
+                noise += (turbulent ? Mathf.Abs(octaveNoise) : (octaveNoise + 1) / 2);
+                normalization += Mathf.Pow(persistence, i);
             }
 
-            if (turbulent) noise = Mathf.Abs(noise / normalization);
-            else noise = (noise / normalization + 1) / 2;
+            noise /= normalization;
             output[index] = noise;
         }
 
@@ -253,7 +255,9 @@ public static class NoiseMaps
             output = biomeResult,
             xResolution = xResolution,
             zResolution = zResolution,
-            turbulent = false
+            turbulent = false,
+            lacunarity = 2,
+            persistence = 0.5f
         };
         var biomeHandle = biomeJob.Schedule(biomeResult.Length, 32);
         biomeHandle.Complete();
@@ -283,7 +287,9 @@ public static class NoiseMaps
                         output = jobResult,
                         xResolution = xResolution,
                         zResolution = zResolution,
-                        turbulent = biomes[b].noiseLayers[i].turbulent
+                        turbulent = biomes[b].noiseLayers[i].turbulent,
+                        lacunarity = biomes[b].noiseLayers[i].lacunarity,
+                        persistence = biomes[b].noiseLayers[i].persistence
                     };
                     var handle = job.Schedule(jobResult.Length, 32);
                     handle.Complete();
@@ -300,7 +306,9 @@ public static class NoiseMaps
                         output = jobResult,
                         xResolution = xResolution,
                         zResolution = zResolution,
-                        turbulent = biomes[b].noiseLayers[i].turbulent
+                        turbulent = biomes[b].noiseLayers[i].turbulent,
+                        lacunarity = biomes[b].noiseLayeres[i].lacunarity,
+                        persistence = biomes[b].noiseLayers[i].persistence
                     };
                     var handle = job.Schedule(jobResult.Length, 32);
                     handle.Complete();
@@ -344,7 +352,9 @@ public static class NoiseMaps
         output = jobResult,
         xResolution = xResolution,
         zResolution = zResolution,
-        turbulent = turbulent
+        turbulent = turbulent,
+        lacunarity = 2,
+        persistence = 0.5f
       };
 
       var handle = job.Schedule(jobResult.Length, 32);
