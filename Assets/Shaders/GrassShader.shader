@@ -66,8 +66,7 @@ Shader "GrassShader"
 
                 // Mesh dependant high correction
                 const float uvy = v.vertex.y / 1.442;
-
-                /*
+                
                 float3 trample = (1, 1, 1);
                 float trampleDistance = distance(pos.xyz, _PlayerPosition);
                 if (trampleDistance < 1) {
@@ -79,7 +78,6 @@ Shader "GrassShader"
                     else trampleDistance = 1 / (pow(trampleDistance, 50));
                     trample.xz = uvy * scale * (trampleVector * trampleDistance);
                 }
-                */
                 
                 float movement = uvy * (sin(tex2Dlod(_Wind, float4(_PositionsBuffer[instanceID].uv, 0, 0)).r)) * lerp(0.5f, 1.0f, abs(posHash)) * _WindIntensity;
                 float4 lpos = RotateAroundYInDegrees(float4(

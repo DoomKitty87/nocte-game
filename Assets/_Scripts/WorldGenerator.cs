@@ -1,9 +1,7 @@
 using System;
 using UnityEngine;
 using System.Collections.Generic;
-using System.Numerics;
 using Matrix4x4 = UnityEngine.Matrix4x4;
-using Random = System.Random;
 using Vector2 = UnityEngine.Vector2;
 using Vector3 = UnityEngine.Vector3;
 using Vector4 = UnityEngine.Vector4;
@@ -119,7 +117,6 @@ public class WorldGenerator : MonoBehaviour
     public bool _hasColliders;
     
     public Material _material2;
-    public Mesh _mesh;
 
     public int _maxGrassDistChunks = 10;
     public int _grassDensity = 5;
@@ -361,14 +358,26 @@ public class WorldGenerator : MonoBehaviour
         for (int i = 0; i < triangles.Length / 3; i++) {
             if (normals[i].y < 0.7f) continue;
             for (int j = 0; j < density; j++) {
-                double r1 = UnityEngine.Random.Range(0f, 1f); // HashVector3ToFloat(vertexData[triangles[i]], j);
-                double r2 = UnityEngine.Random.Range(0f, 1f); // HashVector3ToFloat(vertexData[triangles[i]], j + 1);
                 GrassData gd = new GrassData();
+                
+                float r1 = UnityEngine.Random.Range(0f, 1f); // HashVector3ToFloat(vertexData[triangles[i]], j);
+                float r2 = UnityEngine.Random.Range(0f, 1f); // HashVector3ToFloat(vertexData[triangles[i]], j + 1);
+                
+                // Corrects for values
+                if (r1 + r2 > 1) {
+                    r1 = 1 - r1;
+                    r2 = 1 - r2;
+                }
+                float r3 = 1 - r1 - r2;
                 // Randomly pick points between the vertices of the triangle
-                Vector3 randomPosition = 
-                    (float)(1 - Math.Sqrt(r1)) * vertexData[triangles[i * 3]] 
-                    + (float)(Math.Sqrt(r1) * (1 - r2)) * vertexData[triangles[i * 3 + 1]]
-                    + (float)(r2 * Math.Sqrt(r1)) * vertexData[triangles[i * 3 + 2]];
+                Vector3 randomPosition = r1 * vertexData[triangles[i * 3]]
+                                         + r2 * vertexData[triangles[i * 3 + 1]]
+                                         + r3 * vertexData[triangles[i * 3 + 2]];
+
+                // Vector3 randomPosition = 
+                //     (float)(1 - Math.Sqrt(r1)) * vertexData[triangles[i * 3]] 
+                //     + (float)(Math.Sqrt(r1) * (1 - r2)) * vertexData[triangles[i * 3 + 1]]
+                //     + (float)(r2 * Math.Sqrt(r1)) * vertexData[triangles[i * 3 + 2]];
                 gd.position = new Vector4(
 					randomPosition.x + (_tilePool[index].x * _xSize * _xResolution),
 				    randomPosition.y, 
@@ -587,9 +596,9 @@ public class WorldGenerator : MonoBehaviour
         for (int i = 0; i < _grassData.Length; i++) {
             _rp[i].worldBounds = new Bounds(new Vector3(_playerX, 0, _playerZ),
                 _xTiles * _xSize * _xResolution * Vector3.one); // use tighter bounds for better FOV culling
-            _commandData[i][0].indexCountPerInstance = _mesh.GetIndexCount(0);
+            _commandData[i][0].indexCountPerInstance = _grassLODLevels[i].mesh.GetIndexCount(0);
             _commandData[i][0].instanceCount = (uint)_grassData[i].Count;
-            _commandData[i][1].indexCountPerInstance = _mesh.GetIndexCount(0);
+            _commandData[i][1].indexCountPerInstance = _grassLODLevels[i].mesh.GetIndexCount(0);
             _commandData[i][1].instanceCount = (uint)_grassData[i].Count;
             _commandBuf[i].SetData(_commandData[i]);
             _positionsBuffer[i].SetData(_grassData[i]);
