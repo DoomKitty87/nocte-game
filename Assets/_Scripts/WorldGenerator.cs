@@ -30,18 +30,32 @@ public class WorldGenerator : MonoBehaviour
     {
 
         public string name;
+        [Tooltip("simplex or cellular - noise sampling used. Simplex looks like hills, cellular looks like hexagons.")]
+        [Space(10)]
         public string noiseType;
+        [Tooltip("Height of noise layer in Unity units.")]
         public float amplitude;
+        [Tooltip("Number of iterations of noise layered for final result.")]
         public int octaves;
+        [Tooltip("Curve used to ease the noise function.")]
         public AnimationCurve easeCurve;
+        [Tooltip("Easing based on noise from previous layers.")]
         public AnimationCurve primaryEase;
+        [Tooltip("Size of noise - bigger means larger scale.")]
         public float scaleX;
+        [Tooltip("Size of noise - bigger means larger scale.")]
         public float scaleZ;
+        [Tooltip("Create more bumpy noise - enables sharpness.")]
         public bool turbulent;
+        [Tooltip("Transition value between billow and ridge noise if turbulent (0-1).")]
         public float sharpness;
+        [Tooltip("Scale change factor between octaves.")]
         public float lacunarity;
+        [Tooltip("Significance of each octave.")]
         public float persistence;
+        [Tooltip("Amplitude of domain warp.")]
         public float warpStrength;
+        [Tooltip("Scale of domain warp noise.")]
         public float warpSize;
 
     }
@@ -100,23 +114,25 @@ public class WorldGenerator : MonoBehaviour
     
     public int _xTiles = 101;
     public int _zTiles = 101;
+    [Space(5)]
     public float _scale = 1000;
     public float _biomeScale = 0.0001f;
     
-    public float _amplitude = 50;
-    public int _octaves = 10;
+    //public float _amplitude = 50;
+    //public int _octaves = 10;
 
     public float _temperatureScale = 2;
     public float _humidityScale = 1.5f;
 
     public int _seed;
+    [Space(5)]
     public int _colliderRange;
     
     public Material _material;
     public Gradient _colorGradient;
     public bool _useColorGradient;
     public AnimationCurve _easeCurve;
-    
+    [Space(5)]
     public int _maxUpdatesPerFrame = 5;
 
     public bool _hasColliders;
@@ -125,16 +141,16 @@ public class WorldGenerator : MonoBehaviour
 
     public int _maxGrassDistChunks = 10;
     public int _grassDensity = 5;
-
+    [Space(5)]
     public AnimationCurve _rockPassCurve;
     public AnimationCurve _rockPassNoiseCurve;
     public float _rockPassAmplitude = 1;
     public float _rockPassScale = 2;
-
+    [Space(5)]
     public float _cavePassScale = 100;
     public float _cavePassAmplitude = 10;
     public AnimationCurve _cavePassCurve;
-
+    [Space(5)]
     [SerializeField] private GrassLOD[] _grassLODLevels;
     [SerializeField] private Biome[] _biomes;
     [SerializeField] private ScatterSettings[] _scatterSettings;
