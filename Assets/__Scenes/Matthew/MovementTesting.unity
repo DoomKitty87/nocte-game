@@ -171,7 +171,7 @@ Rigidbody:
   m_ImplicitTensor: 1
   m_UseGravity: 1
   m_IsKinematic: 0
-  m_Interpolate: 0
+  m_Interpolate: 1
   m_Constraints: 112
   m_CollisionDetection: 3
 --- !u!136 &70028132
@@ -235,7 +235,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 70028130}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ffd93dad4c06e4042937fe92563fbc94, type: 3}
   m_Name: 
@@ -288,13 +288,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _transformAlignToMovement: {fileID: 1037996415}
-  _alignSpeed: 1
-  _snapInsteadAngle: 5.7
+  _alignSpeed: 0.3
+  _snapInsteadLessThanAngle: 15
   _movementScript: {fileID: 70028138}
   _xMouseMovementTransform: {fileID: 759724845}
   _yMouseMovementTransform: {fileID: 227975683}
-  _mouseSensitivity: 40
-  _smoothingFactor: 20
+  _mouseSensitivity: 1
+  _invertY: 1
 --- !u!114 &70028140
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1338,10 +1338,9 @@ MonoBehaviour:
   _flockable: 0
   _inflock: 0
   _infighter: 0
-  _leading: 0
-  _following: 0
   _leader: {fileID: 0}
   _priority: 0
+  _state: 0
 --- !u!1 &382653254
 GameObject:
   m_ObjectHideFlags: 0
