@@ -34,7 +34,7 @@ public class ProceduralMusic : MonoBehaviour
   private bool[] _beat = new bool[9];
   private double[] _beatPhases = new double[9];
 
-  private Instrument[] _instruments = new Instrument[] {
+  private Instrument[] _instruments = {
     new Instrument(0),
     new Instrument(1),
     new Instrument(2),
@@ -59,7 +59,13 @@ public class ProceduralMusic : MonoBehaviour
       for (int beatSub = 0; beatSub < _beat.Length; beatSub++) {
         if (_beat[beatSub]) {
           // Do something on subdivisions here
-
+          if (beatSub == 2) {
+            int note =
+                MusicConstants.scales[_currentScale][
+                  (int)((noise.snoise(new float2(sample * 2f, 0)) + 1) / 2 * MusicConstants.scales[_currentScale].Length)] + _currentKey;
+            note %= 11;
+            _instruments[1].frequency = MusicConstants.notes[note];
+          }
           _beat[beatSub] = false;
         }
       }
@@ -108,9 +114,8 @@ public class ProceduralMusic : MonoBehaviour
   }
 
   private void SetupInstruments() {
-    _currentKey = (int) (noise.snoise(new float2(DateTime.UtcNow.GetHashCode(), 0) + 1) / 2 * MusicConstants.notes.Length);
-    _currentScale = (int) (noise.snoise(new float2(0, DateTime.UtcNow.GetHashCode()) + 1) / 2 * MusicConstants.scales.Length);
-    
+    _currentKey = (int) ((noise.snoise(new float2(DateTime.UtcNow.GetHashCode(), 0)) + 1) / 2 * MusicConstants.notes.Length);
+    _currentScale = (int) ((noise.snoise(new float2(0, DateTime.UtcNow.GetHashCode())) + 1) / 2 * MusicConstants.scales.Length);
     _instruments[0].frequency = MusicConstants.notes[_currentKey] / 4;
     _instruments[0].volume = 0.5f;
     _instruments[0].subdivision = 2;
@@ -118,6 +123,10 @@ public class ProceduralMusic : MonoBehaviour
     _instruments[1].frequency = MusicConstants.notes[_currentKey];
     _instruments[1].volume = 0.1f;
     _instruments[1].subdivision = 1;
+    
+    _tempo = 120;
+    
+    Debug.Log("Set up instruments.");
   }
 
 }
