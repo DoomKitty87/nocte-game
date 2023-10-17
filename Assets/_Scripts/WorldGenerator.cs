@@ -139,9 +139,6 @@ public class WorldGenerator : MonoBehaviour
     
     public Material _material2;
 
-    public int _maxGrassDistChunks = 10;
-    public int _grassDensity = 5;
-    [Space(5)]
     public AnimationCurve _rockPassCurve;
     public AnimationCurve _rockPassNoiseCurve;
     public float _rockPassAmplitude = 1;
@@ -150,7 +147,9 @@ public class WorldGenerator : MonoBehaviour
     public float _cavePassScale = 100;
     public float _cavePassAmplitude = 10;
     public AnimationCurve _cavePassCurve;
-    [Space(5)]
+
+    [SerializeField] private bool _disableGrass;
+    
     [SerializeField] private GrassLOD[] _grassLODLevels;
     [SerializeField] private Biome[] _biomes;
     [SerializeField] private ScatterSettings[] _scatterSettings;
@@ -188,8 +187,10 @@ public class WorldGenerator : MonoBehaviour
     private Vector2 _windPos;
 
     private void Awake() {
-        //MakeGrassBuffers();
-        //FillGrassArray();
+        if (!_disableGrass) {
+            MakeGrassBuffers();
+            FillGrassArray();
+        }
     }
 
     private float HashVector3ToFloat(Vector3 inputVector, int otherSeed)
@@ -346,16 +347,18 @@ public class WorldGenerator : MonoBehaviour
                         if (_tilePool[_tilePositions[x, z]].meshCollider) _tilePool[_tilePositions[x, z]].meshCollider.enabled = false;
                     }
 
-                    //GenerateGrassBasedOffLODs(x, z, Mathf.FloorToInt(maxDistance));
+                    if (!_disableGrass) GenerateGrassBasedOffLODs(x, z, Mathf.FloorToInt(maxDistance));
                 }
             }
         }
         
         _lastPlayerChunkX = playerXChunkScale;
         _lastPlayerChunkZ = playerZChunkScale;
-        //for (int i = 0; i < _rp.Length; i++) {
-        //    _rp[i].matProps.SetVector("_PlayerPosition", playerPos);
-        //}
+        if (!_disableGrass) {
+            for (int i = 0; i < _rp.Length; i++) {
+                _rp[i].matProps.SetVector("_PlayerPosition", playerPos);
+            }
+        }
     }
     
     private void GenerateGrass(int index, int density, int bufferID) {
@@ -446,7 +449,7 @@ public class WorldGenerator : MonoBehaviour
         _seed = int.Parse(Hash128.Compute(_seed).ToString().Substring(0, 6), System.Globalization.NumberStyles.HexNumber);
         _scale = 1 / _scale;
         
-        //SetupGrass();
+        if (!_disableGrass) SetupGrass();
         SetupPool();
     }
 
@@ -557,8 +560,11 @@ public class WorldGenerator : MonoBehaviour
         tile.humidityMap = humidityMap;
         tile.x = x;
         tile.z = z;
-        //tile.grassCount = new int[_grassLODLevels[^1].distance];
-        //tile.grassIndexStart = new int[_grassLODLevels[^1].distance];
+        if (!_disableGrass) {
+            tile.grassCount = new int[_grassLODLevels[^1].distance];
+            tile.grassIndexStart = new int[_grassLODLevels[^1].distance];
+        }
+
         tile.biomeData = result.Item2;
         _tilePool[index] = tile;
         UpdateMesh(msh, index);
@@ -569,8 +575,10 @@ public class WorldGenerator : MonoBehaviour
         //if (!_useColorGradient) CalculateUVs(msh);
         //else CalculateColors(index);
         _tilePositions[index / _zTiles, index % _zTiles] = index;
-        if (index == (_xTiles * _zTiles) - 1) {
-            //UpdateGrassBuffers();
+        if (!_disableGrass) {
+            if (index == (_xTiles * _zTiles) - 1) {
+                UpdateGrassBuffers();
+            }
         }
 
         if (Math.Abs(x) < _scatterRange && Math.Abs(z) < _scatterRange) {
@@ -616,7 +624,7 @@ public class WorldGenerator : MonoBehaviour
             ScatterTile(index);
         }
         if (_updateQueue.Count > 1) return;
-        //UpdateGrassBuffers();
+        if (!_disableGrass) UpdateGrassBuffers();
     }
     
     private void UpdateGrassBuffers() {

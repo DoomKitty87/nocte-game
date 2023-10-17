@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.ProBuilder;
 
 [RequireComponent(typeof(Movement))]
 public class PlayerControl : MonoBehaviour
@@ -16,14 +17,18 @@ public class PlayerControl : MonoBehaviour
   [SerializeField] private Transform _yMouseMovementTransform;
   [Header("Controls")]
   [SerializeField] private float _mouseSensitivity = 30;
+  [SerializeField] private bool _invertY;
   
   private float _desX, _desY;
 
   private void RotateMouseTransforms() {
-    _desX += Input.GetAxisRaw("Mouse X") * _mouseSensitivity * Time.deltaTime;
-    _desY -= Input.GetAxisRaw("Mouse Y") * _mouseSensitivity * Time.deltaTime;
-    _xMouseMovementTransform.transform.localRotation = Quaternion.Euler(0, _desX, 0);
-    _yMouseMovementTransform.transform.localRotation = Quaternion.Euler(_desY, 0, 0);
+    _xMouseMovementTransform.transform.Rotate(Vector3.up, Input.GetAxisRaw("Mouse X") * _mouseSensitivity);
+    if (_invertY) {
+      _yMouseMovementTransform.transform.Rotate(Vector3.left, Input.GetAxisRaw("Mouse Y") * _mouseSensitivity);
+    }
+    else {
+      _yMouseMovementTransform.transform.Rotate(Vector3.right, Input.GetAxisRaw("Mouse Y") * _mouseSensitivity);
+    }
   }
   
   private Vector3 GetInputVector() {
@@ -40,12 +45,13 @@ public class PlayerControl : MonoBehaviour
   private void AlignToMovement() {
     Quaternion target = Quaternion.LookRotation(GetInputVector(), Vector3.up);
     Quaternion current = _transformAlignToMovement.transform.rotation;
-    if (Mathf.Abs(Quaternion.Angle(target, current)) > _snapInsteadLessThanAngle) {
-      _transformAlignToMovement.transform.rotation = Quaternion.Lerp(current, target, _alignSpeed);
-    }
-    else {
-      _transformAlignToMovement.transform.rotation = target;
-    }
+    _transformAlignToMovement.transform.rotation = target;
+    // if (Mathf.Abs(Quaternion.Angle(target, current)) > _snapInsteadLessThanAngle) {
+    //   _transformAlignToMovement.transform.rotation = Quaternion.Lerp(current, target, _alignSpeed);
+    // }
+    // else {
+    //   _transformAlignToMovement.transform.rotation = target;
+    // }
   }
   
   private void OnValidate() {
@@ -55,10 +61,8 @@ public class PlayerControl : MonoBehaviour
   private void Update() {
     RotateMouseTransforms();
     _movementScript.SetInputVector(GetInputVector());
-    _movementScript.SetBoolInputs(Input.GetAxisRaw("Jump") > 0, Input.GetAxisRaw("Crouch") > 0);
-  }
-  private void FixedUpdate() {
     if (GetInputVector() != Vector3.zero) AlignToMovement();
+    _movementScript.SetBoolInputs(Input.GetAxisRaw("Jump") > 0, Input.GetAxisRaw("Crouch") > 0);
   }
 
 }
