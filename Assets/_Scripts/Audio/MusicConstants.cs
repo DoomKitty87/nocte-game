@@ -1,4 +1,4 @@
-public static class Musicants
+public static class MusicConstants
 {
 
   public static  float[] notes = {

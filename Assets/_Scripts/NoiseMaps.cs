@@ -74,7 +74,7 @@ public static class NoiseMaps
                 float x = (sampleX * xResolution + xOffset) * (scaleX * Mathf.Pow(lacunarity, i));
                 float y = (sampleZ * zResolution + zOffset) * (scaleZ * Mathf.Pow(lacunarity, i));
                 float octaveNoise = snoise(new float3(x, y, warpStrength * snoise(new float2(x * warpSize, y * warpSize)))) * Mathf.Pow(persistence, i);
-                noise += (turbulent ? Mathf.Abs(octaveNoise) : (octaveNoise + 1) / 2);
+                noise += (turbulent ? Mathf.Abs(octaveNoise) : ((octaveNoise + 1) / 2));
                 normalization += Mathf.Pow(persistence, i);
             }
 
@@ -149,7 +149,7 @@ public static class NoiseMaps
                 float x = (sampleX * xResolution + xOffset) * (scaleX * Mathf.Pow(lacunarity, i));
                 float y = (sampleZ * zResolution + zOffset) * (scaleZ * Mathf.Pow(lacunarity, i));
                 float octaveNoise = (cellular(new float3(x, y, warpStrength * cellular(new float2(x * warpSize, y * warpSize)).x)).x * Mathf.Pow(persistence, i));
-                noise += (turbulent ? Mathf.Abs(octaveNoise) : (octaveNoise + 1) / 2);
+                noise += (turbulent ? Mathf.Abs(octaveNoise) : ((octaveNoise + 1) / 2));
                 normalization += Mathf.Pow(persistence, i);
             }
 

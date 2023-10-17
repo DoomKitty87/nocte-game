@@ -171,8 +171,8 @@ public class WorldGenerator : MonoBehaviour
     private Vector2 _windPos;
 
     private void Awake() {
-        MakeGrassBuffers();
-        FillGrassArray();
+        //MakeGrassBuffers();
+        //FillGrassArray();
     }
 
     private float HashVector3ToFloat(Vector3 inputVector, int otherSeed)
@@ -329,16 +329,16 @@ public class WorldGenerator : MonoBehaviour
                         if (_tilePool[_tilePositions[x, z]].meshCollider) _tilePool[_tilePositions[x, z]].meshCollider.enabled = false;
                     }
 
-                    GenerateGrassBasedOffLODs(x, z, Mathf.FloorToInt(maxDistance));
+                    //GenerateGrassBasedOffLODs(x, z, Mathf.FloorToInt(maxDistance));
                 }
             }
         }
         
         _lastPlayerChunkX = playerXChunkScale;
         _lastPlayerChunkZ = playerZChunkScale;
-        for (int i = 0; i < _rp.Length; i++) {
-            _rp[i].matProps.SetVector("_PlayerPosition", playerPos);
-        }
+        //for (int i = 0; i < _rp.Length; i++) {
+        //    _rp[i].matProps.SetVector("_PlayerPosition", playerPos);
+        //}
     }
     
     private void GenerateGrass(int index, int density, int bufferID) {
@@ -429,7 +429,7 @@ public class WorldGenerator : MonoBehaviour
         _seed = int.Parse(Hash128.Compute(_seed).ToString().Substring(0, 6), System.Globalization.NumberStyles.HexNumber);
         _scale = 1 / _scale;
         
-        SetupGrass();
+        //SetupGrass();
         SetupPool();
     }
 
@@ -447,10 +447,10 @@ public class WorldGenerator : MonoBehaviour
                 Time.timeScale = 1f;
             } else break;
         }
-        UpdateWind();
-        for (int i = 0; i < _positionsBuffer.Length; i++) {
-            Graphics.RenderMeshIndirect(_rp[i], _grassLODLevels[i].mesh, _commandBuf[i], _commandCount);
-        }
+        //UpdateWind();
+        //for (int i = 0; i < _positionsBuffer.Length; i++) {
+            //Graphics.RenderMeshIndirect(_rp[i], _grassLODLevels[i].mesh, _commandBuf[i], _commandCount);
+        //}
     }
     
     private void UpdateWind() {
@@ -532,8 +532,8 @@ public class WorldGenerator : MonoBehaviour
         tile.humidityMap = humidityMap;
         tile.x = x;
         tile.z = z;
-        tile.grassCount = new int[_grassLODLevels[^1].distance];
-        tile.grassIndexStart = new int[_grassLODLevels[^1].distance];
+        //tile.grassCount = new int[_grassLODLevels[^1].distance];
+        //tile.grassIndexStart = new int[_grassLODLevels[^1].distance];
         tile.biomeData = result.Item2;
         _tilePool[index] = tile;
         UpdateMesh(msh, index);
@@ -545,7 +545,7 @@ public class WorldGenerator : MonoBehaviour
         //else CalculateColors(index);
         _tilePositions[index / _zTiles, index % _zTiles] = index;
         if (index == (_xTiles * _zTiles) - 1) {
-            UpdateGrassBuffers();
+            //UpdateGrassBuffers();
         }
 
         if (Math.Abs(x) < _scatterRange && Math.Abs(z) < _scatterRange) {
@@ -591,10 +591,8 @@ public class WorldGenerator : MonoBehaviour
             ScatterTile(index);
         }
         if (_updateQueue.Count > 1) return;
-        UpdateGrassBuffers();
+        //UpdateGrassBuffers();
     }
-
-
     
     private void UpdateGrassBuffers() {
         for (int i = 0; i < _grassData.Length; i++) {
@@ -678,7 +676,6 @@ public class WorldGenerator : MonoBehaviour
             normals[vertexIndexB] += normal;
             normals[vertexIndexC] += normal;
         }
-        
 
         for (int i = 0; i < normals.Length; i++) {
             normals[i].Normalize();
