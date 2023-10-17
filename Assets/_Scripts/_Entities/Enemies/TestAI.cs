@@ -9,8 +9,6 @@ public class TestAI : MonoBehaviour
 {
     public string _species;
     public bool _flockable;
-    public bool _inflock;
-    public bool _infighter;
     public GameObject _leader;
     public int _priority;
     private Movement _movement;
@@ -109,7 +107,7 @@ public class TestAI : MonoBehaviour
         {
             transform.LookAt(_leader.transform);
             _movement.SetInputVector(this.transform.forward);
-        } else if (Vector3.Distance(_leader.transform.position, this.transform.position) > 15f)
+        } else if (Vector3.Distance(_leader.transform.position, this.transform.position) > 5f)
         {
             _movement.SetInputVector(_leader.transform.forward);
         } else
