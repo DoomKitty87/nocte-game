@@ -74,14 +74,14 @@ public static class NoiseMaps
             {   
                 float x = (sampleX * xResolution + xOffset) * (scaleX * Mathf.Pow(lacunarity, i));
                 float y = (sampleZ * zResolution + zOffset) * (scaleZ * Mathf.Pow(lacunarity, i));
-                float octaveNoise = snoise(new float3(x, y, warpStrength * snoise(new float2(x * warpSize, y * warpSize)))) * Mathf.Pow(persistence, i);
+                float octaveNoise = snoise(new float3(x, y, warpStrength * snoise(new float2(x * warpSize, y * warpSize))));
                 if (turbulent) {
                     float billowNoise = Mathf.Abs(octaveNoise);
                     float ridgeNoise = 1 - billowNoise;
-                    noise += Mathf.Lerp(billowNoise, ridgeNoise, sharpness);
+                    noise += Mathf.Lerp(billowNoise, ridgeNoise, sharpness) * Mathf.Pow(persistence, i);
                 }
                 else {
-                    noise += (octaveNoise + 1) / 2;
+                    noise += (octaveNoise + 1) / 2 * Mathf.Pow(persistence, i);
                 }
                 normalization += Mathf.Pow(persistence, i);
             }
