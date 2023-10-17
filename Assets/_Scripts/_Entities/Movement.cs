@@ -159,7 +159,7 @@ public class Movement : MonoBehaviour
     }
   }
   private void FixedUpdate() {
-
+    
     if (_moveState == MovementState.Walking) { // ------------
       
       if (!Grounded()) {
