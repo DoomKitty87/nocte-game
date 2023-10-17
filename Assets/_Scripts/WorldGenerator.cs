@@ -38,6 +38,7 @@ public class WorldGenerator : MonoBehaviour
         public float scaleX;
         public float scaleZ;
         public bool turbulent;
+        public float sharpness;
         public float lacunarity;
         public float persistence;
         public float warpStrength;
@@ -430,6 +431,14 @@ public class WorldGenerator : MonoBehaviour
         _scale = 1 / _scale;
         
         //SetupGrass();
+        SetupPool();
+    }
+
+    public void Regenerate() {
+        Debug.Log("Regenerating Terrain");
+        for (int i = 0; i < _tilePool.Length; i++) {
+            Destroy(_tilePool[i].obj);
+        }
         SetupPool();
     }
 
