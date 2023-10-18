@@ -62,8 +62,11 @@ public class ProceduralMusic : MonoBehaviour
   [SerializeField] private int _kickSubdivision = 1;
   [SerializeField] private float _kickProbability = 0.2f;
   [SerializeField] private float _kickVolume = 0.5f;
+
+  [SerializeField] private int _leadSubdivision = 1;
   [SerializeField] private float _leadProbability = 0.6f;
   [SerializeField] private float _leadVolume = 0.2f;
+  [SerializeField] private float _leadSubChangeProbability = 0.1f;
 
   private void Awake() {
     _sampleRate = AudioSettings.outputSampleRate;
@@ -81,12 +84,15 @@ public class ProceduralMusic : MonoBehaviour
       for (int beatSub = 0; beatSub < _beat.Length; beatSub++) {
         if (_beat[beatSub]) {
           // Do something on subdivisions here
-          if (beatSub == 1) {
+          if (beatSub == _leadSubdivision) {
             int note = MusicConstants.scales[_currentScale][(int) (Noise(_timeSeed * 813.4f) * MusicConstants.scales[_currentScale].Length)] + _currentKey;
             note %= 12;
             _instruments[1].frequency = MusicConstants.notes[note];
-            if (Noise(_timeSeed * 5612.5321f) < _leadProbability) _instruments[1].volume = _leadVolume;
+            if (Noise(_timeSeed * 5612.532f) < _leadProbability) _instruments[1].volume = _leadVolume;
             else _instruments[1].volume = 0;
+            if (Noise(_timeSeed * 157.259f) < _leadSubChangeProbability) {
+              _leadSubdivision = (int) (Noise(_timeSeed * 2190.214f) * 4);
+            }
           }
           if (beatSub == 4) {
             int note = MusicConstants.scales[_currentScale][(int) (Noise(_timeSeed * 813.4f) * MusicConstants.scales[_currentScale].Length)] + _currentKey;
@@ -151,7 +157,7 @@ public class ProceduralMusic : MonoBehaviour
 
   private void Update() {
     if (_tempoChangeRequested) ChangeTempo(_requestedTempo, _requestedTempoChangeTime);
-    _timeSeed = (int) DateTime.UtcNow.Ticks % (int.MaxValue / 100000000);
+    _timeSeed = (int) DateTime.UtcNow.Ticks % 1000;
   }
 
   private void RequestTempoChange(float newTempo, float changeTime) {
@@ -176,7 +182,7 @@ public class ProceduralMusic : MonoBehaviour
   }
 
   private void SetupInstruments() {
-    _timeSeed = (int) DateTime.UtcNow.Ticks % (int.MaxValue / 100000000);
+    _timeSeed = (int) DateTime.UtcNow.Ticks % 1000;
     _currentKey = (int) ((noise.snoise(new float2(_timeSeed, 0)) + 1) / 2 * MusicConstants.notes.Length);
     _currentScale = (int) ((noise.snoise(new float2(0, _timeSeed)) + 1) / 2 * MusicConstants.scales.Length);
     _instruments[0].frequency = MusicConstants.notes[_currentKey] / 4;
