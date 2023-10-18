@@ -24,7 +24,7 @@ public static class SoundPrimitives
   }
 
   public static float leadSynth(double phase, float amplitude, float envelope, double beatPhase) {
-    float value = WavePrimitives.sawWave(phase) * amplitude;
+    float value = WavePrimitives.squareWave(phase) * amplitude;
     value = Mathf.Lerp(0, value, (float) beatPhase * envelope);
     value = Mathf.Lerp(value, 0, Mathf.Pow((float) beatPhase, envelope));
     return value;

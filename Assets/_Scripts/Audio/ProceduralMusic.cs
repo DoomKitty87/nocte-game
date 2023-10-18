@@ -1,4 +1,3 @@
-/*
 using System;
 using System.Collections;
 using UnityEngine;
@@ -44,11 +43,16 @@ public class ProceduralMusic : MonoBehaviour
     new Instrument(4)
   };
 
-  private int _tempo;
+  private float _tempo;
   private int _currentScale;
   private int _currentKey;
-  private float _kickVolume = 0.5f;
   // 0 is C, increasing by half-steps
+
+  private int _timeSeed;
+
+  private bool _tempoChangeRequested = false;
+  private float _requestedTempo;
+  private float _requestedTempoChangeTime;
 
   [SerializeField] private float _tempoChangeProbability = 0.5f;
   [SerializeField] private int _tempoChangeSubdivision = 7;
@@ -57,13 +61,16 @@ public class ProceduralMusic : MonoBehaviour
 
   [SerializeField] private int _kickSubdivision = 1;
   [SerializeField] private float _kickProbability = 0.2f;
+  [SerializeField] private float _kickVolume = 0.5f;
+  [SerializeField] private float _leadProbability = 0.6f;
+  [SerializeField] private float _leadVolume = 0.2f;
 
   private void Awake() {
     _sampleRate = AudioSettings.outputSampleRate;
     SetupInstruments();
   }
 
-  private void Noise(int sample) {
+  private float Noise(float sample) {
     return (noise.snoise(new float2(sample, 0)) + 1) / 2;
   }
 
@@ -74,16 +81,23 @@ public class ProceduralMusic : MonoBehaviour
       for (int beatSub = 0; beatSub < _beat.Length; beatSub++) {
         if (_beat[beatSub]) {
           // Do something on subdivisions here
-          if (beatSub == 2) {
-            int note = MusicConstants.scales[_currentScale][(int) (Noise(sample * 2) * MusicConstants.scales[_currentScale].Length)] + _currentKey;
+          if (beatSub == 1) {
+            int note = MusicConstants.scales[_currentScale][(int) (Noise(_timeSeed * 813.4f) * MusicConstants.scales[_currentScale].Length)] + _currentKey;
             note %= 12;
             _instruments[1].frequency = MusicConstants.notes[note];
+            if (Noise(_timeSeed * 5612.5321f) < _leadProbability) _instruments[1].volume = _leadVolume;
+            else _instruments[1].volume = 0;
+          }
+          if (beatSub == 4) {
+            int note = MusicConstants.scales[_currentScale][(int) (Noise(_timeSeed * 813.4f) * MusicConstants.scales[_currentScale].Length)] + _currentKey;
+            note %= 12;
+            _instruments[3].frequency = MusicConstants.notes[note] / 4;
           }
           if (beatSub == _tempoChangeSubdivision) {
-            if (Noise(sample * 5.241f) < _tempoChangeProbability) ChangeTempo((Noise(sample) - 0.5f) * 2 * _tempoChangeVariance + _tempoChangeMean, 2);
+            if (Noise(_timeSeed * 5.241f) < _tempoChangeProbability) RequestTempoChange((Noise(_timeSeed) - 0.5f) * 2 * _tempoChangeVariance + _tempoChangeMean, 2);
           }
           if (beatSub == _kickSubdivision) {
-            if (Noise(sample * 234.862f) < _kickProbability) _instruments[0].volume = _kickVolume;
+            if (Noise(_timeSeed * 234.862f) < _kickProbability) _instruments[0].volume = _kickVolume;
             else _instruments[0].volume = 0;
           }
           _beat[beatSub] = false;
@@ -135,6 +149,17 @@ public class ProceduralMusic : MonoBehaviour
     }
   }
 
+  private void Update() {
+    if (_tempoChangeRequested) ChangeTempo(_requestedTempo, _requestedTempoChangeTime);
+    _timeSeed = (int) DateTime.UtcNow.Ticks % (int.MaxValue / 100000000);
+  }
+
+  private void RequestTempoChange(float newTempo, float changeTime) {
+    _requestedTempo = newTempo;
+    _requestedTempoChangeTime = changeTime;
+    _tempoChangeRequested = true;
+  }
+
   private void ChangeTempo(float newTempo, float tempoChangeTime) {
     StartCoroutine(TempoEase(newTempo, tempoChangeTime));
   }
@@ -151,18 +176,19 @@ public class ProceduralMusic : MonoBehaviour
   }
 
   private void SetupInstruments() {
-    _currentKey = (int) ((noise.snoise(new float2(DateTime.UtcNow.GetHashCode(), 0)) + 1) / 2 * MusicConstants.notes.Length);
-    _currentScale = (int) ((noise.snoise(new float2(0, DateTime.UtcNow.GetHashCode())) + 1) / 2 * MusicConstants.scales.Length);
+    _timeSeed = (int) DateTime.UtcNow.Ticks % (int.MaxValue / 100000000);
+    _currentKey = (int) ((noise.snoise(new float2(_timeSeed, 0)) + 1) / 2 * MusicConstants.notes.Length);
+    _currentScale = (int) ((noise.snoise(new float2(0, _timeSeed)) + 1) / 2 * MusicConstants.scales.Length);
     _instruments[0].frequency = MusicConstants.notes[_currentKey] / 4;
     _instruments[0].volume = _kickVolume;
     _instruments[0].subdivision = _kickSubdivision;
 
     _instruments[1].frequency = MusicConstants.notes[_currentKey];
-    _instruments[1].volume = 0.1f;
+    _instruments[1].volume = 0.2f;
     _instruments[1].subdivision = 1;
 
-    _instruments[3].frequency = MusicConstants.notes[_currentKey] / 2;
-    _instruments[3].volume = 0.2f;
+    _instruments[3].frequency = MusicConstants.notes[_currentKey] / 4;
+    _instruments[3].volume = 0.1f;
     _instruments[3].subdivision = 4;
     
     _tempo = 120;
@@ -171,4 +197,3 @@ public class ProceduralMusic : MonoBehaviour
   }
 
 }
-*/

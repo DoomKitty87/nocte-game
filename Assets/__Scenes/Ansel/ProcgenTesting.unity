@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 262.30203, g: 324.99054, b: 430.14313, a: 1}
+  m_IndirectSpecularColor: {r: 261.80212, g: 324.32928, b: 429.2493, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -556,6 +556,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 927fbf415f4623948a342a10de43719c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _tempoChangeProbability: 0.5
+  _tempoChangeSubdivision: 7
+  _tempoChangeVariance: 40
+  _tempoChangeMean: 100
+  _kickSubdivision: 1
+  _kickProbability: 0.2
+  _kickVolume: 0.5
+  _leadProbability: 0.6
+  _leadVolume: 0.15
 --- !u!1 &1004352483
 GameObject:
   m_ObjectHideFlags: 0
@@ -1042,6 +1051,7 @@ MonoBehaviour:
   _xMouseMovementTransform: {fileID: 1652958439}
   _yMouseMovementTransform: {fileID: 1495856366}
   _mouseSensitivity: 40
+  _invertY: 0
 --- !u!54 &1353372712
 Rigidbody:
   m_ObjectHideFlags: 0
