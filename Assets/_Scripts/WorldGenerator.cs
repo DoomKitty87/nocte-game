@@ -719,10 +719,10 @@ public class WorldGenerator : MonoBehaviour
 
     private int[] CullTriangles(Mesh targetMesh) {
         int[] triangles = targetMesh.triangles;
-        int sideLength = (int) Mathf.Sqrt(triangles.Length / 6) - 2;
-        int[] culled = new int[(int) Mathf.Pow(sideLength, 2) * 6];
+        int sideLength = _xSize - 2;
+        List<int> culled = new List<int>();
 
-        for (int i = 0, j = 0; i < triangles.Length; i += 6) {
+        for (int i = 0, j = 0; i < sideLength * sideLength * 6; i += 6) {
             int triangleIndex = i / 6;
             if (triangleIndex / (sideLength + 2) == sideLength + 1) continue;
             if (triangleIndex % (sideLength + 2) == sideLength + 1) continue;
@@ -736,8 +736,12 @@ public class WorldGenerator : MonoBehaviour
             culled[j + 5] = triangles[i + 5];
             j += 6;
         }
-
-        return culled;
+        List<int> additional = new List<int>();
+        for (int i = sideLength * sideLength * 6; i < triangles.Length; i++) {
+          additional.Add(triangles[i]);
+        }
+        culled.AddRange(additional);
+        return culled.ToArray();
     }
 
     private void UpdateCollider(int index) {
@@ -920,9 +924,9 @@ public class WorldGenerator : MonoBehaviour
 
     private void UpdateMesh(Mesh targetMesh, int index) {
         targetMesh.normals = CalculateNormals(targetMesh, index);
+        // CavePass(targetMesh, index);
         targetMesh.triangles = CullTriangles(targetMesh);
         RockPass(targetMesh, index);
-        // CavePass(targetMesh, index); Cave pass not the best really
         targetMesh.RecalculateBounds();
     }
 
