@@ -61,6 +61,31 @@ public class WorldGenerator : MonoBehaviour
     }
 
     [System.Serializable]
+    private struct AmalgamNoiseParams
+    {
+
+        public int octaves;
+        public float lacunarity;
+        public float persistence;
+        public float sharpnessScale;
+        public float sharpnessAmplitude;
+        public float sharpnessMean;
+        public float scaleScale;
+        public float scaleAmplitude;
+        public float scaleMean;
+        public float amplitudeScale;
+        public float amplitudeAmplitude;
+        public float amplitudeMean;
+        public float warpStrengthScale;
+        public float warpStrengthAmplitude;
+        public float warpStrengthMean;
+        public float warpScaleScale;
+        public float warpScaleAmplitude;
+        public float warpScaleMean;
+
+    }
+
+    [System.Serializable]
     public struct ScatterLayer
     {
 
@@ -120,6 +145,7 @@ public class WorldGenerator : MonoBehaviour
     
     //public float _amplitude = 50;
     //public int _octaves = 10;
+    [SerializeField] private AmalgamNoiseParams _noiseParameters;
 
     public float _temperatureScale = 2;
     public float _humidityScale = 1.5f;
@@ -539,8 +565,14 @@ public class WorldGenerator : MonoBehaviour
         mf.mesh = new Mesh();
         Mesh msh = mf.mesh;
         int seed = _seed;
-        var result = NoiseMaps.GenerateTerrainBiomes(x * _xSize * _xResolution + seed, z * _zSize * _zResolution + seed, _xSize, _zSize, _biomes, _biomeScale, _xResolution, _zResolution);
-        Vector3[] vertexData = result.Item1;
+        //var result = NoiseMaps.GenerateTerrainBiomes(x * _xSize * _xResolution + seed, z * _zSize * _zResolution + seed, _xSize, _zSize, _biomes, _biomeScale, _xResolution, _zResolution);
+        Vector3[] result = AmalgamNoise.GenerateTerrain(_xSize, x * _xSize * _xResolution + seed, z * _zSize * _zResolution + seed, _xResolution, _zResolution,
+          _noiseParameters.octaves, _noiseParameters.lacunarity, _noiseParameters.persistence, _noiseParameters.sharpnessScale,
+          _noiseParameters.sharpnessAmplitude, _noiseParameters.sharpnessMean, _noiseParameters.scaleScale, _noiseParameters.scaleAmplitude,
+          _noiseParameters.scaleMean, _noiseParameters.amplitudeScale, _noiseParameters.amplitudeAmplitude, _noiseParameters.amplitudeMean,
+          _noiseParameters.warpStrengthScale, _noiseParameters.warpStrengthAmplitude, _noiseParameters.warpStrengthMean,
+          _noiseParameters.warpScaleScale, _noiseParameters.warpScaleAmplitude, _noiseParameters.warpScaleMean);
+        Vector3[] vertexData = result;
         msh.vertices = vertexData;
         WindTriangles(msh);
         
@@ -565,7 +597,7 @@ public class WorldGenerator : MonoBehaviour
             tile.grassIndexStart = new int[_grassLODLevels[^1].distance];
         }
 
-        tile.biomeData = result.Item2;
+        //tile.biomeData = result.Item2;
         _tilePool[index] = tile;
         UpdateMesh(msh, index);
         if (_hasColliders && Math.Abs(x) < _colliderRange && Math.Abs(z) < _colliderRange) {
@@ -604,9 +636,14 @@ public class WorldGenerator : MonoBehaviour
         int z = _tilePool[index].z;
         _tilePool[index].mesh.Clear();
         int seed = _seed;
-        var result = NoiseMaps.GenerateTerrainBiomes(x * _xSize * _xResolution + seed, z * _zSize * _zResolution + seed, _xSize, _zSize, _biomes, _biomeScale, _xResolution, _zResolution);
-        _tilePool[index].mesh.vertices = result.Item1;
-        _tilePool[index].biomeData = result.Item2;
+        // var result = NoiseMaps.GenerateTerrainBiomes(x * _xSize * _xResolution + seed, z * _zSize * _zResolution + seed, _xSize, _zSize, _biomes, _biomeScale, _xResolution, _zResolution);
+        Vector3[] result = AmalgamNoise.GenerateTerrain(_xSize, x * _xSize * _xResolution + seed, z * _zSize * _zResolution + seed, _xResolution, _zResolution,
+          _noiseParameters.octaves, _noiseParameters.lacunarity, _noiseParameters.persistence, _noiseParameters.sharpnessScale,
+          _noiseParameters.sharpnessAmplitude, _noiseParameters.sharpnessMean, _noiseParameters.scaleScale, _noiseParameters.scaleAmplitude,
+          _noiseParameters.scaleMean, _noiseParameters.amplitudeScale, _noiseParameters.amplitudeAmplitude, _noiseParameters.amplitudeMean,
+          _noiseParameters.warpStrengthScale, _noiseParameters.warpStrengthAmplitude, _noiseParameters.warpStrengthMean,
+          _noiseParameters.warpScaleScale, _noiseParameters.warpScaleAmplitude, _noiseParameters.warpScaleMean);
+        _tilePool[index].mesh.vertices = result;
         _tilePool[index].temperatureMap = NoiseMaps.GenerateTemperatureMap(_tilePool[index].mesh.vertices, x * _xSize * _xResolution + (seed * 2), z * _zSize * _zResolution + (seed * 2), _xSize, _zSize, _scale / _temperatureScale, _easeCurve, _xResolution, _zResolution);
         _tilePool[index].humidityMap = NoiseMaps.GenerateHumidityMap(_tilePool[index].mesh.vertices, _tilePool[index].temperatureMap, x * _xSize * _xResolution + (seed * 0.5f), z * _zSize * _zResolution + (seed * 0.5f), _xSize, _zSize, _scale / _humidityScale, _easeCurve, _xResolution, _zResolution);
 
@@ -719,27 +756,29 @@ public class WorldGenerator : MonoBehaviour
 
     private int[] CullTriangles(Mesh targetMesh) {
         int[] triangles = targetMesh.triangles;
-        int sideLength = _xSize - 2;
+        int sideLength = _xSize;
         List<int> culled = new List<int>();
 
-        for (int i = 0, j = 0; i < sideLength * sideLength * 6; i += 6) {
+        for (int i = 0, j = 0; i < (sideLength + 2) * (sideLength + 2) * 6; i += 6) {
             int triangleIndex = i / 6;
             if (triangleIndex / (sideLength + 2) == sideLength + 1) continue;
             if (triangleIndex % (sideLength + 2) == sideLength + 1) continue;
-            if (triangleIndex < sideLength + 2) continue;
+            if (triangleIndex / (sideLength + 2) == 0) continue;
             if (triangleIndex % (sideLength + 2) == 0) continue;
-            culled[j] = triangles[i];
-            culled[j + 1] = triangles[i + 1];
-            culled[j + 2] = triangles[i + 2];
-            culled[j + 3] = triangles[i + 3];
-            culled[j + 4] = triangles[i + 4];
-            culled[j + 5] = triangles[i + 5];
+            culled.Add(triangles[j]);
+            culled.Add(triangles[j + 1]);
+            culled.Add(triangles[j + 2]);
+            culled.Add(triangles[j + 3]);
+            culled.Add(triangles[j + 4]);
+            culled.Add(triangles[j + 5]);
             j += 6;
         }
+
         List<int> additional = new List<int>();
         for (int i = sideLength * sideLength * 6; i < triangles.Length; i++) {
           additional.Add(triangles[i]);
         }
+
         culled.AddRange(additional);
         return culled.ToArray();
     }
@@ -926,7 +965,7 @@ public class WorldGenerator : MonoBehaviour
         targetMesh.normals = CalculateNormals(targetMesh, index);
         // CavePass(targetMesh, index);
         targetMesh.triangles = CullTriangles(targetMesh);
-        RockPass(targetMesh, index);
+        //RockPass(targetMesh, index);
         targetMesh.RecalculateBounds();
     }
 
