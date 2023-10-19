@@ -54,37 +54,41 @@ public static class AmalgamNoise
       float sampleX = index % size;
       float sampleZ = index / size;
 
-      // Compute all complementary values
-
-      float sharpnessValue = sharpnessMean + sharpnessAmplitude * snoise(new float2((sampleX * xResolution + xOffset) * sharpnessScale, (sampleZ * zResolution + zOffset) * sharpnessScale));
-
+      float sharpnessValue = sharpnessMean + sharpnessAmplitude * Mathf.Pow(snoise(new float2((sampleX * xResolution + xOffset) * sharpnessScale, (sampleZ * zResolution + zOffset) * sharpnessScale)), 3);
+      float secondarySharpness = sharpnessAmplitude / 5 * snoise(new float2((sampleX * xResolution + xOffset) * sharpnessScale * 5, (sampleZ * zResolution + zOffset) * sharpnessScale * 5));
+      sharpnessValue += secondarySharpness;
       float scaleValue = scaleMean + scaleAmplitude * snoise(new float2((sampleX * xResolution + xOffset) * scaleScale, (sampleZ * zResolution + zOffset) * scaleScale));
-
       float amplitudeValue = amplitudeMean + amplitudeAmplitude * snoise(new float2((sampleX * xResolution + xOffset) * amplitudeScale, (sampleZ * zResolution + zOffset) * amplitudeScale));
-
       float warpStrengthValue = warpStrengthMean + warpStrengthAmplitude * snoise(new float2((sampleX * xResolution + xOffset) * warpStrengthScale, (sampleZ * zResolution + zOffset) * warpStrengthScale));
-      
       float warpScaleValue = warpScaleMean + warpScaleAmplitude * snoise(new float2((sampleX * xResolution + xOffset) * warpScaleScale, (sampleZ * zResolution + zOffset) * warpScaleScale));
-      
       if (scaleValue != 0) scaleValue = 1f / scaleValue;
       if (warpScaleValue != 0) warpScaleValue = 1f / warpScaleValue;
-
-      // Compute height value
 
       float height = 0;
       float normalization = 0;
 
       for (int i = 0; i < octaves; i++) {
-        float x = (sampleX * xResolution + xOffset) * scaleValue * Mathf.Pow(lacunarity, i);
-        float y = (sampleZ * zResolution + zOffset) * scaleValue * Mathf.Pow(lacunarity, i);
+        float octaveScale = Mathf.Pow(lacunarity, i);
+        float octaveAmp = Mathf.Pow(persistence, i);
+        // Compute all complementary values
+        //float sharpnessValue = sharpnessMean + octaveAmp * sharpnessAmplitude * snoise(new float2((sampleX * xResolution + xOffset) * sharpnessScale * octaveScale, (sampleZ * zResolution + zOffset) * sharpnessScale * octaveScale));
+        //float scaleValue = scaleMean + octaveAmp * scaleAmplitude * snoise(new float2((sampleX * xResolution + xOffset) * scaleScale * octaveScale, (sampleZ * zResolution + zOffset) * scaleScale * octaveScale));
+        //float amplitudeValue = amplitudeMean + octaveAmp * amplitudeAmplitude * snoise(new float2((sampleX * xResolution + xOffset) * amplitudeScale * octaveScale, (sampleZ * zResolution + zOffset) * amplitudeScale * octaveScale));
+        //float warpStrengthValue = warpStrengthMean + octaveAmp * warpStrengthAmplitude * snoise(new float2((sampleX * xResolution + xOffset) * warpStrengthScale * octaveScale, (sampleZ * zResolution + zOffset) * warpStrengthScale * octaveScale));
+        //float warpScaleValue = warpScaleMean + octaveAmp * warpScaleAmplitude * snoise(new float2((sampleX * xResolution + xOffset) * warpScaleScale * octaveScale, (sampleZ * zResolution + zOffset) * warpScaleScale * octaveScale));
+        //if (scaleValue != 0) scaleValue = 1f / scaleValue;
+        //if (warpScaleValue != 0) warpScaleValue = 1f / warpScaleValue;
+        // Compute height value
+        float x = (sampleX * xResolution + xOffset) * scaleValue * octaveScale;
+        float y = (sampleZ * zResolution + zOffset) * scaleValue * octaveScale;
         float warpValue = warpStrengthValue * snoise(new float2(x * warpScaleValue, y * warpScaleValue));
         float sample = snoise(new float2(x + warpValue, y + warpValue));
         float billow = Mathf.Abs(sample);
         float ridge = 1 - billow;
         sample = Mathf.Lerp(billow, ridge, sharpnessValue);
-        sample *= Mathf.Pow(persistence, i) * amplitudeValue;
+        sample *= octaveAmp * amplitudeValue;
         height += sample;
-        normalization += Mathf.Pow(persistence, i);
+        normalization += octaveAmp;
       }
       
       height /= normalization;
