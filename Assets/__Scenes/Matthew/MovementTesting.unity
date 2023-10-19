@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 4484.896, g: 2875.975, b: 2160.2346, a: 1}
+  m_IndirectSpecularColor: {r: 262.30203, g: 324.99054, b: 430.14313, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -146,7 +146,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!54 &70028131
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -519,7 +519,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!64 &197155012
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -875,7 +875,7 @@ Transform:
   m_GameObject: {fileID: 208800702}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 22.394249, y: 7.192772, z: 15.369398}
+  m_LocalPosition: {x: 29.13, y: 17.064999, z: 4.51}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1098,7 +1098,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!54 &305148099
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -14858,7 +14858,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1087242015
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -15175,7 +15175,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &1603938050
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -15190,7 +15190,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _mouseSensitivity: 5
   _speed: 100
-  _maxRotationDeltaPerFrame: 20
+  _maxDeltaRotationPerFrame: 30
   _cameraTarget: {fileID: 1159723274}
 --- !u!136 &1603938051
 CapsuleCollider:
@@ -15589,8 +15589,8 @@ MonoBehaviour:
   m_StreamingVersion: 20170927
   m_Priority: 10
   m_StandbyUpdate: 2
-  m_LookAt: {fileID: 1603938054}
-  m_Follow: {fileID: 1159723274}
+  m_LookAt: {fileID: 70028135}
+  m_Follow: {fileID: 759724845}
   m_Lens:
     FieldOfView: 40
     OrthographicSize: 10
@@ -15626,7 +15626,7 @@ Transform:
   m_GameObject: {fileID: 1998142526}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 22.394249, y: 7.192772, z: 15.369398}
+  m_LocalPosition: {x: 29.13, y: 17.064999, z: 4.51}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:

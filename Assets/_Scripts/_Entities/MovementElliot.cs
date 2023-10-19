@@ -39,17 +39,15 @@ public class MovementElliot : MonoBehaviour
   private void Awake() {
     rb = gameObject.GetComponent<Rigidbody>();
   }
-
-  private void Update() {
+  
+  private void FixedUpdate() {
+    rb.AddForce(Quaternion.Euler(0, _cameraTarget.eulerAngles.y, 0) * direction * _speed);
+    
     direction = new Vector3(Input.GetAxisRaw("Horizontal"), 0, Input.GetAxisRaw("Vertical"));
     
     DoRotation();
 
     MatchRotations(previousRotationDelta);
-  }
-
-  private void FixedUpdate() {
-    rb.AddForce(Quaternion.Euler(0, _cameraTarget.eulerAngles.y, 0) * direction * _speed);
   }
 
   private void DoRotation() {
@@ -60,7 +58,7 @@ public class MovementElliot : MonoBehaviour
     _cameraTarget.Rotate(mouseX * _mouseSensitivity * Vector3.up);
 
     rotationX -= mouseY * _mouseSensitivity;
-    rotationX = Mathf.Clamp(rotationX, -90.0f, 90.0f);
+    rotationX = Mathf.Clamp(rotationX, -70.0f, 70.0f);
 
     _cameraTarget.rotation = Quaternion.Euler(rotationX, _cameraTarget.eulerAngles.y, 0f);
   }
