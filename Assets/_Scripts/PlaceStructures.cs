@@ -12,6 +12,15 @@ public class PlaceStructures : MonoBehaviour
   [SerializeField] private float _nodeDistance;
   [SerializeField] private float _beamWidth;
 
+  private int[] _beamWindingOrder = {
+    0, 2, 1, 2, 3, 1, // Bottom Face
+    4, 6, 5, 4, 7, 5, // Top Face
+    0, 4, 1, 4, 5, 1, // Front Face
+    1, 5, 3, 5, 7, 3, // Right Face
+    3, 7, 2, 7, 6, 2, // Back Face
+    2, 6, 0, 6, 4, 0 // Left Face
+  }
+
   private void Start() {
     Vector3 mainPosition = new Vector3(0, 0, 0);
     mainPosition.y = _worldGen.GetHeightValue(new Vector2(mainPosition.x, mainPosition.z));
@@ -48,7 +57,8 @@ public class PlaceStructures : MonoBehaviour
       heightd = _worldGen.GetHeightValue(new Vector2(outPosition.x, outPosition.z + 1));
       normal = -Vector3.Cross(new Vector3(1, heightb, 0) - new Vector3(-1, heighta, 0),
         new Vector3(0, heightd, 1) - new Vector3(0, heightc, -1)).normalized;
-      go = Instantiate(_outerStructures[nodeChoice], outPosition, Quaternion.FromToRotation(Vector3.up, normal));
+      // go = Instantiate(_outerStructures[nodeChoice], outPosition, Quaternion.FromToRotation(Vector3.up, normal));
+      go = Instantiate(_outerStructures[nodeChoice], outPosition, Quaternion.identity);
       if (go.GetComponent<MeshFilter>()) bounds = go.GetComponent<MeshFilter>().mesh.bounds.size;
       else bounds = new Vector2(10, 10);
       heighte = _worldGen.GetHeightValue(new Vector2(outPosition.x + bounds.x / 2, outPosition.z + bounds.y / 2));
@@ -65,24 +75,59 @@ public class PlaceStructures : MonoBehaviour
       GameObject supportBeams = new GameObject();
       supportBeams.AddComponent<MeshRenderer>();
       MeshFilter msh = supportBeams.AddComponent<MeshFilter>();
-      // This is rudimentary rework with more procedural version
+      List<Vector3> vertices = new List<Vector3>();
+      List<int> triangles = new List<int>();
       if (heighte < outPosition.y) {
-        Vector3 vertexA = new Vector3(outPosition.x + bounds.x / 2 + _beamWidth / 2, heighte, outPosition.x + bounds.y / 2 + _beamWidth / 2);
+        for (int i = 0; i < _beamWindingOrder.Length; i++) {
+          triangles.Add(_beamWindingOrder[i] + vertices.Length);
+        }
+        vertices.AddRange(GeneratePillar(new Vector3(outPosition.x + bounds.x / 2, heighte, outPosition.x + bounds.z / 2), new Vector3(outPosition.x + bounds.x / 2, outPosition.y, outPosition.x + bounds.z / 2)));
       }
 
       if (heightf < outPosition.y) {
-        
+                for (int i = 0; i < _beamWindingOrder.Length; i++) {
+          triangles.Add(_beamWindingOrder[i] + vertices.Length);
+        }
+        vertices.AddRange(GeneratePillar(new Vector3(outPosition.x - bounds.x / 2, heightf, outPosition.x + bounds.z / 2), new Vector3(outPosition.x - bounds.x / 2, outPosition.y, outPosition.x + bounds.z / 2)));
       }
 
       if (heightg < outPosition.y) {
-        
+                for (int i = 0; i < _beamWindingOrder.Length; i++) {
+          triangles.Add(_beamWindingOrder[i] + vertices.Length);
+        }
+        vertices.AddRange(GeneratePillar(new Vector3(outPosition.x - bounds.x / 2, heightg, outPosition.x - bounds.z / 2), new Vector3(outPosition.x - bounds.x / 2, outPosition.y, outPosition.x - bounds.z / 2)));
       }
 
       if (heighth < outPosition.y) {
-        
+                for (int i = 0; i < _beamWindingOrder.Length; i++) {
+          triangles.Add(_beamWindingOrder[i] + vertices.Length);
+        }
+        vertices.AddRange(GeneratePillar(new Vector3(outPosition.x + bounds.x / 2, heighth, outPosition.x - bounds.z / 2), new Vector3(outPosition.x + bounds.x / 2, outPosition.y, outPosition.x - bounds.z / 2)));
       }
+      
+      msh.mesh = new Mesh():
+      msh.mesh.vertices = vertices.ToArray();
+      msh.mesh.triangles = triangles.ToArray();
+      supportBeams.AddComponent<MeshCollider>():
       go.transform.parent = transform;
     }
+  }
+
+  private Vector3[] GeneratePillar(Vector3 vertexA, Vector3 vertexB) {
+    Vector3[] vertices = new Vector3[8];
+    int[] triangles = new int[36];
+
+    vertices[0] = new Vector3(vertexA.x - _beamWidth / 2, vertexA.y, vertexA.z - _beamWidth / 2);
+    vertices[1] = new Vector3(vertexA.x + _beamWidth / 2, vertexA.y, vertexA.z - _beamWidth / 2);
+    vertices[2] = new Vector3(vertexA.x - _beamWidth / 2, vertexA.y, vertexA.z + _beamWidth / 2);
+    vertices[3] = new Vector3(vertexA.x + _beamWidth / 2, vertexA.y, vertexA.z + _beamWidth / 2);
+
+    vertices[4] = new Vector3(vertexB.x - _beamWidth / 2, vertexB.y, vertexB.z - _beamWidth / 2);
+    vertices[5] = new Vector3(vertexB.x + _beamWidth / 2, vertexB.y, vertexB.z - _beamWidth / 2);
+    vertices[6] = new Vector3(vertexB.x - _beamWidth / 2, vertexB.y, vertexB.z + _beamWidth / 2);
+    vertices[7] = new Vector3(vertexB.x + _beamWidth / 2, vertexB.y, vertexB.z + _beamWidth / 2);
+
+    return vertices;
   }
 
 }
