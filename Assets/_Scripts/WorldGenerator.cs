@@ -5,7 +5,6 @@ using Matrix4x4 = UnityEngine.Matrix4x4;
 using Vector2 = UnityEngine.Vector2;
 using Vector3 = UnityEngine.Vector3;
 using Vector4 = UnityEngine.Vector4;
-using UnityEngine.ProBuilder;
 using Math = System.Math;
 
 public class WorldGenerator : MonoBehaviour
@@ -211,13 +210,6 @@ public class WorldGenerator : MonoBehaviour
     private int _playerXChunkScale, _playerZChunkScale;
     
     private Vector2 _windPos;
-
-    private void Awake() {
-        if (!_disableGrass) {
-            MakeGrassBuffers();
-            FillGrassArray();
-        }
-    }
 
     private float HashVector3ToFloat(Vector3 inputVector, int otherSeed)
     {
@@ -470,11 +462,29 @@ public class WorldGenerator : MonoBehaviour
             _grassLODChunkCache[_tilePositions[x, z]] = currentChunkSetting;
         }
     }
-    
-    private void Start() {
+
+    public float GetHeightValue(Vector2 worldPosition) {
+        return AmalgamNoise.GenerateTerrain(0, worldPosition.x + _seed, worldPosition.y + _seed, 0, 0, _noiseParameters.octaves, _noiseParameters.lacunarity, _noiseParameters.persistence, _noiseParameters.sharpnessScale,
+            _noiseParameters.sharpnessAmplitude, _noiseParameters.sharpnessMean, _noiseParameters.scaleScale, _noiseParameters.scaleAmplitude,
+            _noiseParameters.scaleMean, _noiseParameters.amplitudeScale, _noiseParameters.amplitudeAmplitude, _noiseParameters.amplitudeMean,
+            _noiseParameters.warpStrengthScale, _noiseParameters.warpStrengthAmplitude, _noiseParameters.warpStrengthMean,
+            _noiseParameters.warpScaleScale, _noiseParameters.warpScaleAmplitude, _noiseParameters.warpScaleMean)[0].y;
+    }
+
+    public float GetSeedHash() {
+        return _seed;
+    }
+
+    private void Awake() {
+        if (!_disableGrass) {
+            MakeGrassBuffers();
+            FillGrassArray();
+        }
         _seed = int.Parse(Hash128.Compute(_seed).ToString().Substring(0, 6), System.Globalization.NumberStyles.HexNumber);
         _scale = 1 / _scale;
-        
+    }
+    
+    private void Start() {
         if (!_disableGrass) SetupGrass();
         SetupPool();
     }
