@@ -1,6 +1,7 @@
 using System;
 using Unity.VisualScripting;
 using UnityEngine;
+using System.Collections.Generic;
 
 public class PlaceStructures : MonoBehaviour
 {
@@ -12,15 +13,16 @@ public class PlaceStructures : MonoBehaviour
   [SerializeField] private float _nodeDistance;
   [SerializeField] private float _beamWidth;
   [SerializeField] private Material _beamMaterial;
+  [SerializeField] private float _groundInset;
 
   private int[] _beamWindingOrder = {
-    0, 2, 1, 2, 3, 1, // Bottom Face
-    4, 6, 5, 4, 7, 5, // Top Face
+    1, 2, 0, 1, 3, 2, // Bottom Face
+    4, 6, 5, 6, 7, 5, // Top Face
     0, 4, 1, 4, 5, 1, // Front Face
     1, 5, 3, 5, 7, 3, // Right Face
     3, 7, 2, 7, 6, 2, // Back Face
     2, 6, 0, 6, 4, 0 // Left Face
-  }
+  };
 
   private void Start() {
     Vector3 mainPosition = new Vector3(0, 0, 0);
@@ -31,21 +33,65 @@ public class PlaceStructures : MonoBehaviour
     float heightd = _worldGen.GetHeightValue(new Vector2(mainPosition.x, mainPosition.z + 1));
     Vector3 normal = -Vector3.Cross(new Vector3(1, heightb, 0) - new Vector3(-1, heighta, 0),
       new Vector3(0, heightd, 1) - new Vector3(0, heightc, -1)).normalized;
-    GameObject go = Instantiate(_centralStructure, mainPosition, Quaternion.FromToRotation(Vector3.up, normal));
+    // GameObject go = Instantiate(_centralStructure, mainPosition, Quaternion.FromToRotation(Vector3.up, normal));
+    GameObject go = Instantiate(_centralStructure, mainPosition, Quaternion.identity);
     Vector2 bounds;
     if (go.GetComponent<MeshFilter>()) bounds = go.GetComponent<MeshFilter>().mesh.bounds.size;
-    else bounds = new Vector2(10, 10);
+    else bounds = new Vector2(50, 50);
     float heighte = _worldGen.GetHeightValue(new Vector2(mainPosition.x + bounds.x / 2, mainPosition.z + bounds.y / 2));
     float heightf = _worldGen.GetHeightValue(new Vector2(mainPosition.x - bounds.x / 2, mainPosition.z + bounds.y / 2));
     float heightg = _worldGen.GetHeightValue(new Vector2(mainPosition.x - bounds.x / 2, mainPosition.z - bounds.y / 2));
     float heighth = _worldGen.GetHeightValue(new Vector2(mainPosition.x + bounds.x / 2, mainPosition.z - bounds.y / 2));
-    float minHeight = mainPosition.y;
-    if (heighte < minHeight) minHeight = heighte;
-    if (heightf < minHeight) minHeight = heightf;
-    if (heightg < minHeight) minHeight = heightg;
-    if (heighth < minHeight) minHeight = heighth;
-    go.transform.position = new Vector3(go.transform.position.x, minHeight, go.transform.position.z);
+    float maxHeight = mainPosition.y;
+    if (heighte > maxHeight) maxHeight = heighte;
+    if (heightf > maxHeight) maxHeight = heightf;
+    if (heightg > maxHeight) maxHeight = heightg;
+    if (heighth > maxHeight) maxHeight = heighth;
+    go.transform.position = new Vector3(go.transform.position.x, maxHeight, go.transform.position.z);
     go.transform.parent = transform;
+    mainPosition = go.transform.position;
+
+    List<Vector3> vertices = new List<Vector3>();
+    List<int> triangles = new List<int>();
+
+    if (heighte < mainPosition.y) {
+      for (int j = 0; j < _beamWindingOrder.Length; j++) {
+        triangles.Add(_beamWindingOrder[j] + vertices.Count);
+      }
+      vertices.AddRange(GeneratePillar(new Vector3(mainPosition.x + bounds.x / 2, heighte - _groundInset, mainPosition.z + bounds.y / 2), new Vector3(mainPosition.x + bounds.x / 2, mainPosition.y, mainPosition.z + bounds.y / 2)));
+    }
+
+    if (heightf < mainPosition.y) {
+      for (int j = 0; j < _beamWindingOrder.Length; j++) {
+        triangles.Add(_beamWindingOrder[j] + vertices.Count);
+      }
+      vertices.AddRange(GeneratePillar(new Vector3(mainPosition.x - bounds.x / 2, heightf - _groundInset, mainPosition.z + bounds.y / 2), new Vector3(mainPosition.x - bounds.x / 2, mainPosition.y, mainPosition.z + bounds.y / 2)));
+    }
+
+    if (heightg < mainPosition.y) {
+      for (int j = 0; j < _beamWindingOrder.Length; j++) {
+        triangles.Add(_beamWindingOrder[j] + vertices.Count);
+      }
+      vertices.AddRange(GeneratePillar(new Vector3(mainPosition.x - bounds.x / 2, heightg - _groundInset, mainPosition.z - bounds.y / 2), new Vector3(mainPosition.x - bounds.x / 2, mainPosition.y, mainPosition.z - bounds.y / 2)));
+    }
+
+    if (heighth < mainPosition.y) {
+      for (int j = 0; j < _beamWindingOrder.Length; j++) {
+        triangles.Add(_beamWindingOrder[j] + vertices.Count);
+      }
+      vertices.AddRange(GeneratePillar(new Vector3(mainPosition.x + bounds.x / 2, heighth - _groundInset, mainPosition.z - bounds.y / 2), new Vector3(mainPosition.x + bounds.x / 2, mainPosition.y, mainPosition.z - bounds.y / 2)));
+    }
+
+    if (vertices.Count > 0) {
+      GameObject supportBeams = new GameObject();
+      MeshRenderer mr = supportBeams.AddComponent<MeshRenderer>();
+      mr.material = _beamMaterial;
+      MeshFilter msh = supportBeams.AddComponent<MeshFilter>();
+      msh.mesh = new Mesh();
+      msh.mesh.vertices = vertices.ToArray();
+      msh.mesh.triangles = triangles.ToArray();
+      supportBeams.AddComponent<MeshCollider>();
+    }
 
     for (int i = 0; i < _nodeCount; i++) {
       float nodeRotation = (_worldGen.GetSeedHash() * (i + 1)) % 1000 / 1000 * 2 * Mathf.PI;
@@ -61,62 +107,67 @@ public class PlaceStructures : MonoBehaviour
       // go = Instantiate(_outerStructures[nodeChoice], outPosition, Quaternion.FromToRotation(Vector3.up, normal));
       go = Instantiate(_outerStructures[nodeChoice], outPosition, Quaternion.identity);
       if (go.GetComponent<MeshFilter>()) bounds = go.GetComponent<MeshFilter>().mesh.bounds.size;
-      else bounds = new Vector2(10, 10);
+      else bounds = new Vector2(50, 50);
       heighte = _worldGen.GetHeightValue(new Vector2(outPosition.x + bounds.x / 2, outPosition.z + bounds.y / 2));
       heightf = _worldGen.GetHeightValue(new Vector2(outPosition.x - bounds.x / 2, outPosition.z + bounds.y / 2));
       heightg = _worldGen.GetHeightValue(new Vector2(outPosition.x - bounds.x / 2, outPosition.z - bounds.y / 2));
       heighth = _worldGen.GetHeightValue(new Vector2(outPosition.x + bounds.x / 2, outPosition.z - bounds.y / 2));
-      minHeight = outPosition.y;
-      if (heighte < minHeight) minHeight = heighte;
-      if (heightf < minHeight) minHeight = heightf;
-      if (heightg < minHeight) minHeight = heightg;
-      if (heighth < minHeight) minHeight = heighth;
-      // If adjusting by minHeight (ends up clipping) go.transform.position = new Vector3(go.transform.position.x, minHeight, go.transform.position.z);
+      maxHeight = outPosition.y;
+      if (heighte > maxHeight) maxHeight = heighte;
+      if (heightf > maxHeight) maxHeight = heightf;
+      if (heightg > maxHeight) maxHeight = heightg;
+      if (heighth > maxHeight) maxHeight = heighth;
+      go.transform.position = new Vector3(go.transform.position.x, maxHeight, go.transform.position.z);
+      outPosition = go.transform.position;
       // Place support beams
-      GameObject supportBeams = new GameObject();
-      supportBeams.AddComponent<MeshRenderer>().material = _beamMaterial;
-      MeshFilter msh = supportBeams.AddComponent<MeshFilter>();
-      List<Vector3> vertices = new List<Vector3>();
-      List<int> triangles = new List<int>();
+      vertices = new List<Vector3>();
+      triangles = new List<int>();
+
       if (heighte < outPosition.y) {
-        for (int i = 0; i < _beamWindingOrder.Length; i++) {
-          triangles.Add(_beamWindingOrder[i] + vertices.Length);
+        for (int j = 0; j < _beamWindingOrder.Length; j++) {
+          triangles.Add(_beamWindingOrder[j] + vertices.Count);
         }
-        vertices.AddRange(GeneratePillar(new Vector3(outPosition.x + bounds.x / 2, heighte, outPosition.x + bounds.z / 2), new Vector3(outPosition.x + bounds.x / 2, outPosition.y, outPosition.x + bounds.z / 2)));
+        vertices.AddRange(GeneratePillar(new Vector3(outPosition.x + bounds.x / 2, heighte - _groundInset, outPosition.z + bounds.y / 2), new Vector3(outPosition.x + bounds.x / 2, outPosition.y, outPosition.z + bounds.y / 2)));
       }
 
       if (heightf < outPosition.y) {
-                for (int i = 0; i < _beamWindingOrder.Length; i++) {
-          triangles.Add(_beamWindingOrder[i] + vertices.Length);
+        for (int j = 0; j < _beamWindingOrder.Length; j++) {
+          triangles.Add(_beamWindingOrder[j] + vertices.Count);
         }
-        vertices.AddRange(GeneratePillar(new Vector3(outPosition.x - bounds.x / 2, heightf, outPosition.x + bounds.z / 2), new Vector3(outPosition.x - bounds.x / 2, outPosition.y, outPosition.x + bounds.z / 2)));
+        vertices.AddRange(GeneratePillar(new Vector3(outPosition.x - bounds.x / 2, heightf - _groundInset, outPosition.z + bounds.y / 2), new Vector3(outPosition.x - bounds.x / 2, outPosition.y, outPosition.z + bounds.y / 2)));
       }
 
       if (heightg < outPosition.y) {
-                for (int i = 0; i < _beamWindingOrder.Length; i++) {
-          triangles.Add(_beamWindingOrder[i] + vertices.Length);
+        for (int j = 0; j < _beamWindingOrder.Length; j++) {
+          triangles.Add(_beamWindingOrder[j] + vertices.Count);
         }
-        vertices.AddRange(GeneratePillar(new Vector3(outPosition.x - bounds.x / 2, heightg, outPosition.x - bounds.z / 2), new Vector3(outPosition.x - bounds.x / 2, outPosition.y, outPosition.x - bounds.z / 2)));
+        vertices.AddRange(GeneratePillar(new Vector3(outPosition.x - bounds.x / 2, heightg - _groundInset, outPosition.z - bounds.y / 2), new Vector3(outPosition.x - bounds.x / 2, outPosition.y, outPosition.z - bounds.y / 2)));
       }
 
       if (heighth < outPosition.y) {
-                for (int i = 0; i < _beamWindingOrder.Length; i++) {
-          triangles.Add(_beamWindingOrder[i] + vertices.Length);
+        for (int j = 0; j < _beamWindingOrder.Length; j++) {
+          triangles.Add(_beamWindingOrder[j] + vertices.Count);
         }
-        vertices.AddRange(GeneratePillar(new Vector3(outPosition.x + bounds.x / 2, heighth, outPosition.x - bounds.z / 2), new Vector3(outPosition.x + bounds.x / 2, outPosition.y, outPosition.x - bounds.z / 2)));
+        vertices.AddRange(GeneratePillar(new Vector3(outPosition.x + bounds.x / 2, heighth - _groundInset, outPosition.z - bounds.y / 2), new Vector3(outPosition.x + bounds.x / 2, outPosition.y, outPosition.z - bounds.y / 2)));
       }
-      
-      msh.mesh = new Mesh():
-      msh.mesh.vertices = vertices.ToArray();
-      msh.mesh.triangles = triangles.ToArray();
-      supportBeams.AddComponent<MeshCollider>():
+
+      if (vertices.Count > 0) {
+        GameObject supportBeams = new GameObject();
+        MeshRenderer mr = supportBeams.AddComponent<MeshRenderer>();
+        mr.material = _beamMaterial;
+        MeshFilter msh = supportBeams.AddComponent<MeshFilter>();
+        msh.mesh = new Mesh();
+        msh.mesh.vertices = vertices.ToArray();
+        msh.mesh.triangles = triangles.ToArray();
+        supportBeams.AddComponent<MeshCollider>();
+      }
+
       go.transform.parent = transform;
     }
   }
 
   private Vector3[] GeneratePillar(Vector3 vertexA, Vector3 vertexB) {
     Vector3[] vertices = new Vector3[8];
-    int[] triangles = new int[36];
 
     vertices[0] = new Vector3(vertexA.x - _beamWidth / 2, vertexA.y, vertexA.z - _beamWidth / 2);
     vertices[1] = new Vector3(vertexA.x + _beamWidth / 2, vertexA.y, vertexA.z - _beamWidth / 2);
