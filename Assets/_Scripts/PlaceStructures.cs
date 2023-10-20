@@ -11,6 +11,7 @@ public class PlaceStructures : MonoBehaviour
   [SerializeField] private int _nodeCount;
   [SerializeField] private float _nodeDistance;
   [SerializeField] private float _beamWidth;
+  [SerializeField] private Material _beamMaterial;
 
   private int[] _beamWindingOrder = {
     0, 2, 1, 2, 3, 1, // Bottom Face
@@ -73,7 +74,7 @@ public class PlaceStructures : MonoBehaviour
       // If adjusting by minHeight (ends up clipping) go.transform.position = new Vector3(go.transform.position.x, minHeight, go.transform.position.z);
       // Place support beams
       GameObject supportBeams = new GameObject();
-      supportBeams.AddComponent<MeshRenderer>();
+      supportBeams.AddComponent<MeshRenderer>().material = _beamMaterial;
       MeshFilter msh = supportBeams.AddComponent<MeshFilter>();
       List<Vector3> vertices = new List<Vector3>();
       List<int> triangles = new List<int>();
