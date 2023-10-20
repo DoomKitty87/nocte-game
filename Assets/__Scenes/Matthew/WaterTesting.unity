@@ -247,11 +247,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 96778f8f206204d4186e61263624db4f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _transformAlignToMovement: {fileID: 0}
+  _alignSpeed: 0.5
+  _snapInsteadLessThanAngle: 15
   _movementScript: {fileID: 1123272894}
   _xMouseMovementTransform: {fileID: 1123272901}
   _yMouseMovementTransform: {fileID: 1974686217}
   _mouseSensitivity: 40
-  _smoothingFactor: 20
+  _invertY: 0
 --- !u!54 &1123272896
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -893,6 +896,11 @@ PrefabInstance:
         type: 3}
       propertyPath: _zTiles
       value: 11
+      objectReference: {fileID: 0}
+    - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
+        type: 3}
+      propertyPath: _disableGrass
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7828621975473438852, guid: 862d92a67177d4c7b84ab88d6b6e0257,
         type: 3}
