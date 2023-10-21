@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 262.30203, g: 324.99054, b: 430.14313, a: 1}
+  m_IndirectSpecularColor: {r: 261.80212, g: 324.32928, b: 429.2493, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -1046,14 +1046,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 96778f8f206204d4186e61263624db4f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _transformAlignToMovement: {fileID: 1678507866}
-  _alignSpeed: 12
-  _snapInsteadLessThanAngle: 15
-  _movementScript: {fileID: 1353372710}
-  _xMouseMovementTransform: {fileID: 1652958439}
-  _yMouseMovementTransform: {fileID: 1495856366}
   _mouseSensitivity: 2
-  _invertY: 1
+  _speed: 0
+  _maxDeltaRotationPerFrame: 0
+  _cameraTarget: {fileID: 0}
 --- !u!54 &1353372712
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -14523,6 +14519,9 @@ MonoBehaviour:
   - {fileID: 919132149155446097, guid: e30265bac54dc452faabf2f5ef0e78bd, type: 3}
   _nodeCount: 12
   _nodeDistance: 800
+  _beamWidth: 5
+  _beamMaterial: {fileID: 2100000, guid: e070baac7ac0c374ba010641b095c1b4, type: 2}
+  _groundInset: 5
 --- !u!1 &1877083391
 GameObject:
   m_ObjectHideFlags: 0
