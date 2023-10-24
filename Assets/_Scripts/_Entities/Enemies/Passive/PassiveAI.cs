@@ -21,22 +21,29 @@ public class PassiveAI : MonoBehaviour
     StartGrouping,
     Grouping,
   }
+
+  [SerializeField] private GameObject _player;
   
   [Header("Wandering")] 
   [SerializeField] private float _maxNewWaypointDistance = 15;
   [SerializeField] private float _minNewWaypointDistance = 5;
   [SerializeField] private float _waypointArriveRadius = 2;
   [SerializeField] private Vector3 _waypoint;
-
+  private bool _firstWanderFrame;
+  
   [Header("Watching")] 
   [SerializeField] private float _watchIfDistanceLess = 10;
   [SerializeField] private float _timeWatchMin = 2;
   [SerializeField] private float _timeWatchMax = 1;
   [SerializeField] private float _timeWatchLimit = 0;
   [SerializeField] private float _timeSinceWatchStart = 0;
+  private bool _firstWatchingFrame;
+  
   private float GetDistanceToPlayer() {
-    GameObject player = GameObject.FindWithTag("Player");
-    return Vector3.Distance(player.transform.position, transform.position);
+    if (_player == null) {
+      _player = GameObject.FindWithTag("Player");
+    }
+    return Vector3.Distance(_player.transform.position, transform.position);
   }
   
   private Vector3 GetRandomWaypoint() {
@@ -53,7 +60,7 @@ public class PassiveAI : MonoBehaviour
     }
     return hit.point;
   }
-
+  
   private void Start() {
     _state = AIState.Wandering;
   }
@@ -61,10 +68,17 @@ public class PassiveAI : MonoBehaviour
   private void Update() {
     if (_state == AIState.Wandering) {
       
-      if (GetDistanceToPlayer() < _watchIfDistanceLess) {
+      if (GetDistanceToPlayer() < _watchIfDistanceLess && _firstWanderFrame) {
+        _firstWanderFrame = true;
+      }
+      if (GetDistanceToPlayer() < _watchIfDistanceLess && !_firstWanderFrame) {
+        _firstWatchingFrame = true;
         _state = AIState.Watching;
       }
       else {
+        if (GetDistanceToPlayer() < _watchIfDistanceLess && _firstWanderFrame) {
+          _firstWanderFrame = true;
+        }
         if (Vector3.Distance(transform.position, _waypoint) < _waypointArriveRadius || _waypoint == Vector3.zero) {
           _waypoint = GetRandomWaypoint();
         }
@@ -76,17 +90,26 @@ public class PassiveAI : MonoBehaviour
       
     }
     if (_state == AIState.Watching) {
+      
+      if (_firstWatchingFrame) {
+        _timeWatchLimit = Random.Range(_timeWatchMin, _timeWatchMax);
+      }
       if (_timeSinceWatchStart > _timeWatchLimit) {
-        _state = AIState.Wandering;
         _timeSinceWatchStart = 0;
         _timeWatchLimit = 0;
+        _firstWanderFrame = true;
+        _state = AIState.Wandering;
       }
       else {
-        _timeWatchLimit = Random.Range(_timeWatchMin, _timeWatchMax);
+        _firstWatchingFrame = false;
+        _movement.SetInputVector(Vector3.zero);
         _timeSinceWatchStart += Time.deltaTime;
       }
+      
     }
     if (_state == AIState.Fleeing) {
+      
+      
       
     }
     if (_state == AIState.StartGrouping) {
@@ -98,8 +121,12 @@ public class PassiveAI : MonoBehaviour
   }
 
   private void OnDrawGizmos() {
+    if (_player == null) {
+      _player = GameObject.FindWithTag("Player");
+    }
     Gizmos.color = Color.green;
     Gizmos.DrawSphere(_waypoint, _waypointArriveRadius);
+    Gizmos.DrawWireSphere(_player.transform.position, _watchIfDistanceLess);
   }
   
   
