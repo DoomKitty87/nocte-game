@@ -766,26 +766,24 @@ public class WorldGenerator : MonoBehaviour
 
     private int[] CullTriangles(Mesh targetMesh) {
         int[] triangles = targetMesh.triangles;
-        int sideLength = _xSize;
+        int sideLength = _xSize + 2;
         List<int> culled = new List<int>();
 
-        for (int i = 0, j = 0; i < (sideLength + 2) * (sideLength + 2) * 6; i += 6) {
-            int triangleIndex = i / 6;
-            if (triangleIndex / (sideLength + 2) == sideLength + 1) continue;
-            if (triangleIndex % (sideLength + 2) == sideLength + 1) continue;
-            if (triangleIndex / (sideLength + 2) == 0) continue;
-            if (triangleIndex % (sideLength + 2) == 0) continue;
-            culled.Add(triangles[j]);
-            culled.Add(triangles[j + 1]);
-            culled.Add(triangles[j + 2]);
-            culled.Add(triangles[j + 3]);
-            culled.Add(triangles[j + 4]);
-            culled.Add(triangles[j + 5]);
-            j += 6;
+        for (int i = 0; i < sideLength * sideLength; i++) {
+            if (i / sideLength == sideLength - 1) continue;
+            if (i % sideLength == sideLength - 1) continue;
+            if (i / sideLength == 0) continue;
+            if (i % sideLength == 0) continue;
+            culled.Add(triangles[i * 6]);
+            culled.Add(triangles[i * 6 + 1]);
+            culled.Add(triangles[i * 6 + 2]);
+            culled.Add(triangles[i * 6 + 3]);
+            culled.Add(triangles[i * 6 + 4]);
+            culled.Add(triangles[i * 6 + 5]);
         }
 
         List<int> additional = new List<int>();
-        for (int i = sideLength * sideLength * 6; i < triangles.Length; i++) {
+        for (int i = (sideLength + 2) * (sideLength + 2) * 6; i < triangles.Length; i++) {
           additional.Add(triangles[i]);
         }
 
