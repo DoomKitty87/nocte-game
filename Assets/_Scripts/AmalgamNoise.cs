@@ -97,6 +97,28 @@ public static class AmalgamNoise
 
   }
 
+  [BurstCompile]
+  private struct RiverJob : IJobParallelFor
+  {
+
+    [ReadOnly] public float size;
+    [ReadOnly] public float xOffset;
+    [ReadOnly] public float zOffset;
+    [ReadOnly] public float xResolution;
+    [ReadOnly] public float zResolution;
+    [ReadOnly] public float scale;
+
+    [WriteOnly] public NativeArray<float> output;
+
+    public void Execute(int index) {
+      float sampleX = index % size;
+      float sampleZ = index / size;
+
+      output[index] = Mathf.Abs(snoise(new float2((sampleX * xResolution + xOffset) * scale, (sampleZ * zResolution + zOffset) * scale)));
+    }
+    
+  }
+
   public static Vector3[] GenerateTerrain(int size, float xOffset, float zOffset, float xResolution, float zResolution, int octaves, float lacunarity, float persistence, float sharpnessScale, float sharpnessAmplitude, float sharpnessMean, float scaleScale, float scaleAmplitude, float scaleMean, float amplitudeScale, float amplitudeAmplitude, float amplitudeMean, float warpStrengthScale, float warpStrengthAmplitude, float warpStrengthMean, float warpScaleScale, float warpScaleAmplitude, float warpScaleMean) {
     size += 3;
     NativeArray<float> output = new NativeArray<float>(size * size, Allocator.TempJob);
@@ -134,5 +156,27 @@ public static class AmalgamNoise
     }
     output.Dispose();
     return vertices;
+  }
+
+  public static float[] GenerateRivers(int size, float xOffset, float zOffset, float xResolution, float zResolution, float scale) {
+    size += 3;
+    float[] heightMap = new float[size * size];
+    NativeArray<float> output = new NativeArray<float>(size * size, Allocator.TempJob);
+    RiverJob job = new RiverJob {
+      size = size,
+      xOffset = xOffset,
+      zOffset = zOffset,
+      xResolution = xResolution,
+      zResolution = zResolution,
+      scale = 1f / scale,
+      output = output
+    };
+    JobHandle handle = job.Schedule(size * size, 64);
+    handle.Complete();
+    for (int i = 0; i < size * size; i++) {
+      heightMap[i] = output[i];
+    }
+    output.Dispose();
+    return heightMap;
   }
 }
