@@ -1,6 +1,7 @@
 using System;
 using UnityEngine;
 using System.Collections.Generic;
+using UnityEngine.Rendering.HighDefinition;
 using Matrix4x4 = UnityEngine.Matrix4x4;
 using Vector2 = UnityEngine.Vector2;
 using Vector3 = UnityEngine.Vector3;
@@ -21,6 +22,7 @@ public class WorldGenerator : MonoBehaviour
         public int[] grassIndexStart;
         public int[] grassCount;
         public int[] biomeData;
+        public GameObject water;
 
     }
     
@@ -172,6 +174,9 @@ public class WorldGenerator : MonoBehaviour
     public float _cavePassScale = 100;
     public float _cavePassAmplitude = 10;
     public AnimationCurve _cavePassCurve;
+    public float _riverPassScale;
+    public float _riverPassAmplitude;
+    public AnimationCurve _riverPassCurve;
 
     [SerializeField] private bool _disableGrass;
     
@@ -595,7 +600,10 @@ public class WorldGenerator : MonoBehaviour
         go.tag = "Ground";
         
         WorldTile tile = new WorldTile();
-        
+        GameObject water = new GameObject();
+        water.AddComponent<WaterSurface>().geometryType = WaterGeometryType.CustomMesh;
+        water.GetComponent<WaterSurface>().surfaceType = WaterSurfaceType.River;
+        tile.water = water;
         tile.obj = go;
         tile.mesh = msh;
         tile.temperatureMap = temperatureMap;
@@ -969,7 +977,43 @@ public class WorldGenerator : MonoBehaviour
         targetMesh.RecalculateNormals();
     }
 
+    private void RiverPass(Mesh targetMesh, int index) {
+        Vector3[] vertices = targetMesh.vertices;
+        float[] heightMods = AmalgamNoise.GenerateRivers(_xSize, _tilePool[index].x * _xSize * _xResolution + _seed,
+            _tilePool[index].z * _zSize * _zResolution + _seed, _xResolution, _zResolution, _riverPassScale);
+        Vector3[] waterVerts = new Vector3[vertices.Length];
+        for (int i = 0; i < heightMods.Length; i++) {
+            heightMods[i] = _riverPassCurve.Evaluate(heightMods[i]);
+            waterVerts[i] = vertices[i];
+            if (heightMods[i] == 0) {
+                waterVerts[i] -= new Vector3(0, _riverPassAmplitude, 0);
+                continue;
+            }
+            vertices[i] -= new Vector3(0, heightMods[i] * _riverPassAmplitude, 0);
+        }
+
+        int[] triangles = new int[waterVerts.Length * 6];
+        int sideLength = (int) Mathf.Sqrt(waterVerts.Length);
+        for (int i = 0; i < waterVerts.Length; i++) {
+            if (i % sideLength == sideLength - 1 || i / sideLength == sideLength - 1) continue;
+            triangles[i * 6] = i;
+            triangles[i * 6 + 1] = i + sideLength;
+            triangles[i * 6 + 2] = i + 1;
+            triangles[i * 6 + 3] = i + sideLength;
+            triangles[i * 6 + 4] = i + sideLength + 1;
+            triangles[i * 6 + 5] = i + 1;
+        }
+
+        _tilePool[index].water.transform.position = _tilePool[index].obj.transform.position;
+        WaterSurface water = _tilePool[index].water.GetComponent<WaterSurface>();
+        targetMesh.vertices = vertices;
+        water.mesh = new Mesh();
+        water.mesh.vertices = waterVerts;
+        water.mesh.triangles = triangles;
+    }
+
     private void UpdateMesh(Mesh targetMesh, int index) {
+        RiverPass(targetMesh, index);
         targetMesh.normals = CalculateNormals(targetMesh, index);
         // CavePass(targetMesh, index);
         targetMesh.triangles = CullTriangles(targetMesh);
