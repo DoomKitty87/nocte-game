@@ -177,6 +177,9 @@ public class WorldGenerator : MonoBehaviour
     public float _riverPassScale;
     public float _riverPassAmplitude;
     public AnimationCurve _riverPassCurve;
+    public GameObject _waterObject;
+
+    private Mesh _waterMesh;
 
     [SerializeField] private bool _disableGrass;
     
@@ -485,6 +488,9 @@ public class WorldGenerator : MonoBehaviour
             MakeGrassBuffers();
             FillGrassArray();
         }
+        _waterMesh = new Mesh();
+        _waterMesh.indexFormat = UnityEngine.Rendering.IndexFormat.UInt32;
+        _waterObject.GetComponent<WaterSurface>().mesh = _waterMesh;
         _seed = int.Parse(Hash128.Compute(_seed).ToString().Substring(0, 6), System.Globalization.NumberStyles.HexNumber);
         _scale = 1 / _scale;
     }
@@ -600,10 +606,6 @@ public class WorldGenerator : MonoBehaviour
         go.tag = "Ground";
         
         WorldTile tile = new WorldTile();
-        GameObject water = new GameObject();
-        water.AddComponent<WaterSurface>().geometryType = WaterGeometryType.CustomMesh;
-        water.GetComponent<WaterSurface>().surfaceType = WaterSurfaceType.River;
-        tile.water = water;
         tile.obj = go;
         tile.mesh = msh;
         tile.temperatureMap = temperatureMap;
@@ -870,7 +872,7 @@ public class WorldGenerator : MonoBehaviour
             Vector3 pointA = vertices[pointAIndx];
             Vector3 pointB = vertices[pointBIndx];
             Vector3 pointC = vertices[pointCIndx];
-           
+            
             Vector3 newVertex = (pointA + pointB + pointC) / 3;
 
             vertices[originalVertLength + i] = newVertex;
@@ -982,34 +984,59 @@ public class WorldGenerator : MonoBehaviour
         float[] heightMods = AmalgamNoise.GenerateRivers(_xSize, _tilePool[index].x * _xSize * _xResolution + _seed,
             _tilePool[index].z * _zSize * _zResolution + _seed, _xResolution, _zResolution, _riverPassScale);
         Vector3[] waterVerts = new Vector3[vertices.Length];
+        bool[] ignoreVerts = new bool[vertices.Length];
+        int ignored = 0;
         for (int i = 0; i < heightMods.Length; i++) {
             heightMods[i] = _riverPassCurve.Evaluate(heightMods[i]);
             waterVerts[i] = vertices[i];
             if (heightMods[i] == 0) {
-                waterVerts[i] -= new Vector3(0, _riverPassAmplitude, 0);
+                waterVerts[i] -= new Vector3(0, _riverPassAmplitude / 10, 0);
+                ignoreVerts[i] = true;
+                ignored++;
                 continue;
             }
             vertices[i] -= new Vector3(0, heightMods[i] * _riverPassAmplitude, 0);
+            waterVerts[i] += _tilePool[index].obj.transform.position;
         }
 
-        int[] triangles = new int[waterVerts.Length * 6];
-        int sideLength = (int) Mathf.Sqrt(waterVerts.Length);
-        for (int i = 0; i < waterVerts.Length; i++) {
-            if (i % sideLength == sideLength - 1 || i / sideLength == sideLength - 1) continue;
-            triangles[i * 6] = i;
-            triangles[i * 6 + 1] = i + sideLength;
-            triangles[i * 6 + 2] = i + 1;
-            triangles[i * 6 + 3] = i + sideLength;
-            triangles[i * 6 + 4] = i + sideLength + 1;
-            triangles[i * 6 + 5] = i + 1;
+        int sideLength = _xSize + 3;
+        int[] triangles = new int[(sideLength - 1) * (sideLength - 1) * 6];
+        for (int i = 0, j = 0; i < waterVerts.Length; i++) {
+            if (i / sideLength >= sideLength - 1) continue;
+            if (i % sideLength >= sideLength - 1) continue;
+            if (i / sideLength == 0) continue;
+            if (i % sideLength == 0) continue;
+            triangles[j * 6] = i;
+            triangles[j * 6 + 1] = i + sideLength;
+            triangles[j * 6 + 2] = i + 1;
+            triangles[j * 6 + 3] = i + sideLength;
+            triangles[j * 6 + 4] = i + sideLength + 1;
+            triangles[j * 6 + 5] = i + 1;
+            j++;
         }
-
-        _tilePool[index].water.transform.position = _tilePool[index].obj.transform.position;
-        WaterSurface water = _tilePool[index].water.GetComponent<WaterSurface>();
         targetMesh.vertices = vertices;
-        water.mesh = new Mesh();
-        water.mesh.vertices = waterVerts;
-        water.mesh.triangles = triangles;
+        Vector3[] newWaterVerts = new Vector3[_waterMesh.vertices.Length + waterVerts.Length];
+        int[] newTriangles = new int[_waterMesh.triangles.Length + triangles.Length];
+        Vector3[] currWaterVerts = _waterMesh.vertices;
+        int[] currTriangles = _waterMesh.triangles;
+        for (int i = 0; i < currWaterVerts.Length; i++) {
+            newWaterVerts[i] = currWaterVerts[i];
+        }
+        for (int i = 0; i < waterVerts.Length; i++) {
+          if (!ignoreVerts[i]) newWaterVerts[i + currWaterVerts.Length] = waterVerts[i];
+        }
+        for (int i = 0; i < currTriangles.Length; i++) {
+            newTriangles[i] = currTriangles[i];
+        }
+        for (int i = 0; i < triangles.Length; i+= 3) {
+          if (!ignoreVerts[triangles[i]] && !ignoreVerts[triangles[i + 1]] && !ignoreVerts[triangles[i + 2]]) {
+            newTriangles[i + currTriangles.Length] = triangles[i] + currWaterVerts.Length;
+            newTriangles[i + 1 + currTriangles.Length] = triangles[i + 1] + currWaterVerts.Length;
+            newTriangles[i + 2 + currTriangles.Length] = triangles[i + 2] + currWaterVerts.Length;
+          }
+        }
+        _waterMesh.vertices = newWaterVerts;
+        _waterMesh.triangles = newTriangles;
     }
 
     private void UpdateMesh(Mesh targetMesh, int index) {
