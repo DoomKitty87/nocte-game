@@ -598,6 +598,7 @@ public class WorldGenerator : MonoBehaviour
         
         // If you need to put anything else (tag, components, etc) on the tile, do it here. If it needs to change every time the LOD is changed, do it in the UpdateTile function.
         go.tag = "Ground";
+        go.layer = 6;
         
         WorldTile tile = new WorldTile();
         GameObject water = new GameObject();
