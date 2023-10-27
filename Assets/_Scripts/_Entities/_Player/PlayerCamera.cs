@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Serialization;
 
-public class PlayerCameraController : MonoBehaviour
+public class PlayerCamera : MonoBehaviour
 {
     [Header("References")] 
     [SerializeField] private Transform _orientation;
