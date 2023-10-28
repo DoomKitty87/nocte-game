@@ -199,7 +199,7 @@ public class ProceduralMusic : MonoBehaviour
     
     _tempo = 120;
     
-    Debug.Log("Set up instruments.");
+    // Debug.Log("Set up instruments.");
   }
 
 }

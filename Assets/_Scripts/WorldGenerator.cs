@@ -544,6 +544,7 @@ public class WorldGenerator : MonoBehaviour
     }
     
     private void OnDestroy() {
+      if (_disableGrass) return;
         for (int i = 0; i < _positionsBuffer.Length; i++) {
             _commandBuf[i]?.Release();
             _positionsBuffer[i]?.Release();
