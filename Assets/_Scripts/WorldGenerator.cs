@@ -22,7 +22,10 @@ public class WorldGenerator : MonoBehaviour
         public int[] grassIndexStart;
         public int[] grassCount;
         public int[] biomeData;
-        public GameObject water;
+        public int waterVertIndex;
+        public int waterVertCount;
+        public int waterTriIndex;
+        public int waterTriCount;
 
     }
     
@@ -180,6 +183,9 @@ public class WorldGenerator : MonoBehaviour
     public GameObject _waterObject;
 
     private Mesh _waterMesh;
+
+    private List<Vector3> _waterVertices = new List<Vector3>();
+    private List<int> _waterTriangles = new List<int>();
 
     [SerializeField] private bool _disableGrass;
     
@@ -630,9 +636,10 @@ public class WorldGenerator : MonoBehaviour
         if (!_disableGrass) {
             if (index == (_xTiles * _zTiles) - 1) {
                 UpdateGrassBuffers();
+                
             }
         }
-
+        if (index == (_xTiles * _zTiles) - 1) UpdateWaterMesh();
         if (Math.Abs(x) < _scatterRange && Math.Abs(z) < _scatterRange) {
             ScatterTile(index);
         }
@@ -668,10 +675,10 @@ public class WorldGenerator : MonoBehaviour
         _tilePool[index].humidityMap = NoiseMaps.GenerateHumidityMap(_tilePool[index].mesh.vertices, _tilePool[index].temperatureMap, x * _xSize * _xResolution + (seed * 0.5f), z * _zSize * _zResolution + (seed * 0.5f), _xSize, _zSize, _scale / _humidityScale, _easeCurve, _xResolution, _zResolution);
 
         WindTriangles(_tilePool[index].mesh);
-        UpdateMesh(_tilePool[index].mesh, index);
         //if (!_useColorGradient) CalculateUVs(_tilePool[index].mesh);
         //else CalculateColors(index);
         _tilePool[index].obj.transform.position = new Vector3(x * _xSize * _xResolution, 0, z * _zSize * _zResolution);
+        UpdateMesh(_tilePool[index].mesh, index);
         int maxDistance = Mathf.Max(Mathf.Abs(x - _playerXChunkScale), Mathf.Abs(z - _playerZChunkScale));
 
         if (maxDistance < 2) UpdateCollider(index);
@@ -682,6 +689,12 @@ public class WorldGenerator : MonoBehaviour
         }
         if (_updateQueue.Count > 1) return;
         if (!_disableGrass) UpdateGrassBuffers();
+        UpdateWaterMesh();
+    }
+
+    private void UpdateWaterMesh() {
+      _waterMesh.vertices = _waterVertices.ToArray();
+      _waterMesh.triangles = _waterTriangles.ToArray();
     }
     
     private void UpdateGrassBuffers() {
@@ -980,6 +993,20 @@ public class WorldGenerator : MonoBehaviour
     }
 
     private void RiverPass(Mesh targetMesh, int index) {
+        if (_tilePool[index].waterVertCount > 0) {
+          _waterVertices.RemoveRange(_tilePool[index].waterVertIndex, _tilePool[index].waterVertCount);
+          _waterTriangles.RemoveRange(_tilePool[index].waterTriIndex, _tilePool[index].waterTriCount);
+          for (int i = 0; i < _waterTriangles.Count; i++) {
+            if (_waterTriangles[i] >= _tilePool[index].waterVertIndex) _waterTriangles[i] -= _tilePool[index].waterVertCount;
+          }
+          for (int i = 0; i < _xTiles * _zTiles; i++) {
+            if (_tilePool[i].waterVertIndex > _tilePool[index].waterVertIndex) {
+              _tilePool[i].waterVertIndex -= _tilePool[index].waterVertCount;
+              _tilePool[i].waterTriIndex -= _tilePool[index].waterTriCount;
+            }
+          }
+        }
+        
         Vector3[] vertices = targetMesh.vertices;
         float[] heightMods = AmalgamNoise.GenerateRivers(_xSize, _tilePool[index].x * _xSize * _xResolution + _seed,
             _tilePool[index].z * _zSize * _zResolution + _seed, _xResolution, _zResolution, _riverPassScale);
@@ -1015,28 +1042,27 @@ public class WorldGenerator : MonoBehaviour
             j++;
         }
         targetMesh.vertices = vertices;
-        Vector3[] newWaterVerts = new Vector3[_waterMesh.vertices.Length + waterVerts.Length];
-        int[] newTriangles = new int[_waterMesh.triangles.Length + triangles.Length];
-        Vector3[] currWaterVerts = _waterMesh.vertices;
-        int[] currTriangles = _waterMesh.triangles;
-        for (int i = 0; i < currWaterVerts.Length; i++) {
-            newWaterVerts[i] = currWaterVerts[i];
-        }
-        for (int i = 0; i < waterVerts.Length; i++) {
-          if (!ignoreVerts[i]) newWaterVerts[i + currWaterVerts.Length] = waterVerts[i];
-        }
-        for (int i = 0; i < currTriangles.Length; i++) {
-            newTriangles[i] = currTriangles[i];
+        int waterVertsLength = _waterVertices.Count;
+        int waterTriLength = _waterTriangles.Count;
+        int[] realIndices = new int[waterVerts.Length];
+        for (int i = 0, j = 0; i < waterVerts.Length; i++) {
+          if (!ignoreVerts[i]) {
+            _waterVertices.Add(waterVerts[i]);
+            realIndices[i] = j;
+            j++;
+          }
         }
         for (int i = 0; i < triangles.Length; i+= 3) {
           if (!ignoreVerts[triangles[i]] && !ignoreVerts[triangles[i + 1]] && !ignoreVerts[triangles[i + 2]]) {
-            newTriangles[i + currTriangles.Length] = triangles[i] + currWaterVerts.Length;
-            newTriangles[i + 1 + currTriangles.Length] = triangles[i + 1] + currWaterVerts.Length;
-            newTriangles[i + 2 + currTriangles.Length] = triangles[i + 2] + currWaterVerts.Length;
+            _waterTriangles.Add(realIndices[triangles[i]] + waterVertsLength);
+            _waterTriangles.Add(realIndices[triangles[i + 1]] + waterVertsLength);
+            _waterTriangles.Add(realIndices[triangles[i + 2]] + waterVertsLength);
           }
         }
-        _waterMesh.vertices = newWaterVerts;
-        _waterMesh.triangles = newTriangles;
+        _tilePool[index].waterVertIndex = waterVertsLength;
+        _tilePool[index].waterVertCount = waterVerts.Length - ignored;
+        _tilePool[index].waterTriIndex = waterTriLength;
+        _tilePool[index].waterTriCount = _waterTriangles.Count - waterTriLength;
     }
 
     private void UpdateMesh(Mesh targetMesh, int index) {
