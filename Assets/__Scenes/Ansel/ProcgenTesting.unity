@@ -452,6 +452,54 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &477133367
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 477133369}
+  - component: {fileID: 477133368}
+  m_Layer: 0
+  m_Name: GameObject (1)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &477133368
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 477133367}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 53417a5a82a84c0d93421da7211a86da, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _birdPrefab: {fileID: 1678507865}
+  _birdCount: 25
+  _flockCount: 5
+  _yOffset: 1200
+--- !u!4 &477133369
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 477133367}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &481985701 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7350972160547800114, guid: 0c0511ade06054cf6894e1b94b3f9611,
@@ -1291,17 +1339,17 @@ PrefabInstance:
     - target: {fileID: 4133239242422613954, guid: 9e3d3511a625b4b97a786c18a52517ad,
         type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0.13870126
+      value: 0.13870125
       objectReference: {fileID: 0}
     - target: {fileID: 4133239242422613954, guid: 9e3d3511a625b4b97a786c18a52517ad,
         type: 3}
       propertyPath: m_LocalRotation.y
-      value: -1.1991549e-22
+      value: 0.000000029514265
       objectReference: {fileID: 0}
     - target: {fileID: 4133239242422613954, guid: 9e3d3511a625b4b97a786c18a52517ad,
         type: 3}
       propertyPath: m_LocalRotation.z
-      value: 4.1525805e-23
+      value: -0.0000000041336197
       objectReference: {fileID: 0}
     - target: {fileID: 6526674080702092614, guid: 9e3d3511a625b4b97a786c18a52517ad,
         type: 3}
@@ -16346,3 +16394,4 @@ SceneRoots:
   - {fileID: 450384085}
   - {fileID: 44394397}
   - {fileID: 1321193843}
+  - {fileID: 477133369}
