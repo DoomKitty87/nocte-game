@@ -1,16 +1,20 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.ProBuilder;
 
-public class MovementElliot : MonoBehaviour
+[RequireComponent(typeof(Rigidbody))]
+[RequireComponent(typeof(MovementDeprecated))]
+public class PlayerRotate : MonoBehaviour
 {
-
+  
   [SerializeField] private float _mouseSensitivity;
   [SerializeField] private float _speed;
   [SerializeField] private float _maxDeltaRotationPerFrame;
 
+  private MovementDeprecated _movementScript;
+  
   [SerializeField] private Transform _cameraTarget;
   private Rigidbody rb;
 
@@ -36,17 +40,19 @@ public class MovementElliot : MonoBehaviour
     return angle;
   }
   
+  
   private void Awake() {
     rb = gameObject.GetComponent<Rigidbody>();
+    _movementScript = gameObject.GetComponent<MovementDeprecated>();
   }
   
   private void FixedUpdate() {
-    rb.AddForce(Quaternion.Euler(0, _cameraTarget.eulerAngles.y, 0) * direction * _speed);
-    
+    //rb.AddForce(Quaternion.Euler(0, _cameraTarget.eulerAngles.y, 0) * direction * _speed);
     direction = new Vector3(Input.GetAxisRaw("Horizontal"), 0, Input.GetAxisRaw("Vertical"));
     
+    _movementScript.SetInputVector(Quaternion.Euler(0, _cameraTarget.eulerAngles.y, 0) * direction);
+    
     DoRotation();
-
     MatchRotations(previousRotationDelta);
   }
 
@@ -95,4 +101,63 @@ public class MovementElliot : MonoBehaviour
     transform.rotation = Quaternion.Euler(transform.eulerAngles.x, currentYRotation, 0f);
     _cameraTarget.rotation = Quaternion.Euler(_cameraTarget.eulerAngles.x, stashedCameraYRotation, 0f);
   }
+  
+/*
+  [Header("References")] 
+  [SerializeField] private Transform _transformAlignToMovement;
+  [SerializeField] private float _alignSpeed = 0.5f;
+  [Range(0, 180)][SerializeField] private float _snapInsteadLessThanAngle = 15;
+  [SerializeField] private Movement _movementScript;
+  [SerializeField] private Transform _xMouseMovementTransform;
+  [SerializeField] private Transform _yMouseMovementTransform;
+  [Header("Controls")]
+  [SerializeField] private float _mouseSensitivity = 30;
+  [SerializeField] private bool _invertY;
+  
+  private float _desX, _desY;
+
+  private void RotateMouseTransforms() {
+    _xMouseMovementTransform.transform.Rotate(Vector3.up, Input.GetAxisRaw("Mouse X") * _mouseSensitivity);
+    if (_invertY) {
+      _yMouseMovementTransform.transform.Rotate(Vector3.left, Input.GetAxisRaw("Mouse Y") * _mouseSensitivity);
+    }
+    else {
+      _yMouseMovementTransform.transform.Rotate(Vector3.right, Input.GetAxisRaw("Mouse Y") * _mouseSensitivity);
+    }
+  }
+  
+  private Vector3 GetInputVector() {
+    Vector3 rawDirection = Vector3.zero;
+    if (Input.GetAxisRaw("Horizontal") != 0) {
+      rawDirection.x = Input.GetAxisRaw("Horizontal");
+    }
+    if (Input.GetAxisRaw("Vertical") != 0) {
+      rawDirection.z = Input.GetAxisRaw("Vertical");
+    }
+    return _xMouseMovementTransform.TransformDirection(rawDirection);
+  }
+   
+  private void AlignToMovement() {
+    Quaternion target = Quaternion.LookRotation(GetInputVector(), Vector3.up);
+    Quaternion current = _transformAlignToMovement.transform.rotation;
+    _transformAlignToMovement.transform.rotation = target;
+    // if (Mathf.Abs(Quaternion.Angle(target, current)) > _snapInsteadLessThanAngle) {
+    //   _transformAlignToMovement.transform.rotation = Quaternion.Lerp(current, target, _alignSpeed);
+    // }
+    // else {
+    //   _transformAlignToMovement.transform.rotation = target;
+    // }
+  }
+  
+  private void OnValidate() {
+    _movementScript = gameObject.GetComponent<Movement>();
+  }
+
+  private void Update() {
+    RotateMouseTransforms();
+    _movementScript.SetInputVector(GetInputVector());
+    if (GetInputVector() != Vector3.zero) AlignToMovement();
+    _movementScript.SetBoolInputs(Input.GetAxisRaw("Jump") > 0, Input.GetAxisRaw("Crouch") > 0);
+  }
+*/
 }

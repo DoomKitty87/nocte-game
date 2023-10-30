@@ -9,7 +9,7 @@ using UnityEngine.Serialization;
 //       player object, highly configurable
 // ===============================================================
 [RequireComponent(typeof(Rigidbody))]
-public class Movement : MonoBehaviour
+public class MovementDeprecated : MonoBehaviour
 {
   [Header("References")]
   [SerializeField] private Rigidbody _rigidbody;
@@ -53,7 +53,7 @@ public class Movement : MonoBehaviour
   [SerializeField] private float _slideMinSpeed = 9.8f;
   [SerializeField] private float _slideDrag = 0.2f;
   [SerializeField] private float _jumpForce = 8;
-  [SerializeField] private float _jumpForceDown = -0.1f;
+  // [SerializeField] private float _jumpForceDown = -0.1f;
   [SerializeField] private float _jumpMaxStrafeSpeed = 6;
   [SerializeField] private float _jumpStrafeAccel = 0.5f;
   [SerializeField] private float _airDrag = 0;

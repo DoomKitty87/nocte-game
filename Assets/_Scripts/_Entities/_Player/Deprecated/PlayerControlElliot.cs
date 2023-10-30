@@ -5,18 +5,17 @@ using UnityEngine;
 using UnityEngine.ProBuilder;
 
 [RequireComponent(typeof(Rigidbody))]
-[RequireComponent(typeof(Movement))]
-public class PlayerRotate : MonoBehaviour
+[RequireComponent(typeof(MovementDeprecated))]
+public class PlayerRotateElliot : MonoBehaviour
 {
-  
+ 
   [SerializeField] private float _mouseSensitivity;
   [SerializeField] private float _speed;
   [SerializeField] private float _maxDeltaRotationPerFrame;
 
-  private Movement _movementScript;
-  
   [SerializeField] private Transform _cameraTarget;
   private Rigidbody rb;
+  private MovementDeprecated _movementScript;
 
   private Vector3 direction;
   private float rotationX;
@@ -40,19 +39,19 @@ public class PlayerRotate : MonoBehaviour
     return angle;
   }
   
-  
   private void Awake() {
     rb = gameObject.GetComponent<Rigidbody>();
-    _movementScript = gameObject.GetComponent<Movement>();
+    _movementScript = GetComponent<MovementDeprecated>();
   }
   
   private void FixedUpdate() {
-    //rb.AddForce(Quaternion.Euler(0, _cameraTarget.eulerAngles.y, 0) * direction * _speed);
-    direction = new Vector3(Input.GetAxisRaw("Horizontal"), 0, Input.GetAxisRaw("Vertical"));
+    rb.AddForce(Quaternion.Euler(0, _cameraTarget.eulerAngles.y, 0) * direction * _speed, ForceMode.Impulse);
+    //direction = new Vector3(Input.GetAxisRaw("Horizontal"), 0, Input.GetAxisRaw("Vertical"));
     
     _movementScript.SetInputVector(Quaternion.Euler(0, _cameraTarget.eulerAngles.y, 0) * direction);
     
     DoRotation();
+
     MatchRotations(previousRotationDelta);
   }
 
@@ -85,10 +84,9 @@ public class PlayerRotate : MonoBehaviour
     // TODO: Make this a quadratic lerp function
     if (Mathf.Abs(currentYRotation - targetYRotation) < _maxDeltaRotationPerFrame) currentYRotation = targetYRotation;
     else {
-      // Corrects for values over 360 degrees
-      if (Mathf.Abs(currentYRotation - targetYRotation) > Mathf.Abs((currentYRotation + 360) - targetYRotation))
-        currentYRotation += 360;
       
+      // Corrects for incorrect targetYRotation
+
       // Moves currentYRotation towards targetYRotation
       if (currentYRotation > targetYRotation) {
         currentYRotation -= _maxDeltaRotationPerFrame;
@@ -101,7 +99,6 @@ public class PlayerRotate : MonoBehaviour
     transform.rotation = Quaternion.Euler(transform.eulerAngles.x, currentYRotation, 0f);
     _cameraTarget.rotation = Quaternion.Euler(_cameraTarget.eulerAngles.x, stashedCameraYRotation, 0f);
   }
-  
 /*
   [Header("References")] 
   [SerializeField] private Transform _transformAlignToMovement;
