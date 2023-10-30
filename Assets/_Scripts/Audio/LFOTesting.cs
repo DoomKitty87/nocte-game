@@ -33,7 +33,7 @@ public class LFOTesting : MonoBehaviour
 
   private void Awake() {
     _sampleRate = AudioSettings.outputSampleRate;
-    Debug.Log(_sampleRate);
+    // Debug.Log(_sampleRate);
   }
 
   //TODO: Add multiple beat subdivisions being tracked because that's the only way I can think of to do that

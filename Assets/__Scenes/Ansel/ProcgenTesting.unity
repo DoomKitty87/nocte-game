@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 243.79715, g: 294.80325, b: 386.81937, a: 1}
+  m_IndirectSpecularColor: {r: 243.31699, g: 294.17502, b: 385.96448, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -202,12 +202,12 @@ GameObject:
   - component: {fileID: 450384085}
   - component: {fileID: 450384084}
   m_Layer: 0
-  m_Name: Ocean
+  m_Name: Rivers
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &450384084
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -220,14 +220,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d8f6fd535518f5540b4bcc3099582f77, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  surfaceType: 0
-  geometryType: 2
+  surfaceType: 1
+  geometryType: 1
   mesh: {fileID: 0}
-  cpuSimulation: 1
+  cpuSimulation: 0
   cpuFullResolution: 0
   cpuEvaluateRipples: 0
   timeMultiplier: 1
-  repetitionSize: 500
+  repetitionSize: 150
   largeWindSpeed: 30
   largeWindOrientationValue: 0
   largeCurrentSpeedValue: 0
@@ -266,11 +266,11 @@ MonoBehaviour:
   displacementScattering: 0.1
   directLightTipScattering: 0.6
   directLightBodyScattering: 0.5
-  caustics: 0
+  caustics: 1
   causticsIntensity: 0.5
   causticsPlaneBlendDistance: 1
   causticsResolution: 256
-  causticsBand: 2
+  causticsBand: 1
   virtualPlaneDistance: 4
   foam: 1
   simulationFoamAmount: 0.2
@@ -328,7 +328,7 @@ MonoBehaviour:
   waterMaskOffset: {x: 0, y: 0}
   decalLayerMask: 1
   lightLayerMask: 1
-  underWater: 0
+  underWater: 1
   volumeBounds: {fileID: 0}
   volumeDepth: 50
   volumePrority: 0
@@ -343,7 +343,7 @@ Transform:
   m_GameObject: {fileID: 450384083}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: -5, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -14677,7 +14677,8 @@ MonoBehaviour:
   _nodeCount: 12
   _nodeDistance: 800
   _beamWidth: 5
-  _beamMaterial: {fileID: 2100000, guid: e070baac7ac0c374ba010641b095c1b4, type: 2}
+  _beamMaterial: {fileID: -6478536213147159724, guid: e30265bac54dc452faabf2f5ef0e78bd,
+    type: 3}
   _groundInset: 5
 --- !u!1 &1877083391
 GameObject:
@@ -14822,12 +14823,12 @@ PrefabInstance:
     - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
         type: 3}
       propertyPath: _xTiles
-      value: 5
+      value: 45
       objectReference: {fileID: 0}
     - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
         type: 3}
       propertyPath: _zTiles
-      value: 5
+      value: 45
       objectReference: {fileID: 0}
     - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
         type: 3}
@@ -14844,6 +14845,11 @@ PrefabInstance:
       propertyPath: _biomeScale
       value: 0.0002
       objectReference: {fileID: 0}
+    - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
+        type: 3}
+      propertyPath: _waterObject
+      value: 
+      objectReference: {fileID: 450384083}
     - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
         type: 3}
       propertyPath: _xResolution
@@ -14872,7 +14878,7 @@ PrefabInstance:
     - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
         type: 3}
       propertyPath: _riverPassScale
-      value: 100
+      value: 2500
       objectReference: {fileID: 0}
     - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
         type: 3}
@@ -14897,7 +14903,7 @@ PrefabInstance:
     - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
         type: 3}
       propertyPath: _riverPassAmplitude
-      value: 10
+      value: 15
       objectReference: {fileID: 0}
     - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
         type: 3}
@@ -15053,7 +15059,7 @@ PrefabInstance:
     - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
         type: 3}
       propertyPath: _riverPassCurve.m_Curve.Array.data[1].time
-      value: 0.35
+      value: 0.08
       objectReference: {fileID: 0}
     - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
         type: 3}
