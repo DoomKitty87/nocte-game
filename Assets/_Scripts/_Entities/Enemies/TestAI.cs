@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-[RequireComponent(typeof(Movement))]
+[RequireComponent(typeof(MovementDeprecated))]
 
 public class TestAI : MonoBehaviour
 {
@@ -11,7 +11,7 @@ public class TestAI : MonoBehaviour
     public bool _flockable;
     public GameObject _leader;
     public int _priority;
-    private Movement _movement;
+    private MovementDeprecated _movement;
     private GameObject _player;
 
     public enum AIState
@@ -25,7 +25,7 @@ public class TestAI : MonoBehaviour
 
     private void OnValidate()
     {
-        _movement = gameObject.GetComponent<Movement>();
+        _movement = gameObject.GetComponent<MovementDeprecated>();
     }
 
     private void Start()

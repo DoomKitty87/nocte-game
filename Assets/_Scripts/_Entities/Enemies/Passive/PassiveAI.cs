@@ -9,7 +9,7 @@ public class PassiveAI : MonoBehaviour
 {
 
   [Header("Dependancies")] 
-  [SerializeField] private Movement _movement;
+  [SerializeField] private MovementDeprecated _movement;
   
   [Header("State")] 
   public AIState _state;
