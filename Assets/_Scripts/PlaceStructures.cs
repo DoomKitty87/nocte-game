@@ -91,6 +91,7 @@ public class PlaceStructures : MonoBehaviour
       msh.mesh.vertices = vertices.ToArray();
       msh.mesh.triangles = triangles.ToArray();
       supportBeams.AddComponent<MeshCollider>();
+      supportBeams.transform.parent = go.transform;
     }
 
     for (int i = 0; i < _nodeCount; i++) {
@@ -160,6 +161,7 @@ public class PlaceStructures : MonoBehaviour
         msh.mesh.vertices = vertices.ToArray();
         msh.mesh.triangles = triangles.ToArray();
         supportBeams.AddComponent<MeshCollider>();
+        supportBeams.transform.parent = go.transform;
       }
 
       go.transform.parent = transform;
