@@ -3,11 +3,14 @@ using UnityEngine;
 
 namespace _Scripts._BehaviorTree
 {
-	// Evaluates child nodes in order.
-	// If child completes, Selector will return complete.
-	// If child is running, Selector will return running.
-	// Otherwise, it will evaluate the next child.
-	// If all child nodes fail, Selector will fail as well.
+	// Selector
+	//
+	// Will return a success if any of its children succeed and
+	// not process any further children. It will process the first
+	// child, and if it fails will process the second, and if that
+	// fails will process the third, until a success is reached,
+	// at which point it will instantly return success. It will
+	// fail if all children fail.
 	public class Selector : TreeNode
 	{
 		public override TreeNodeState Evaluate() {
