@@ -55,8 +55,8 @@ public class PlayerSliding : MonoBehaviour
     {
         pm.sliding = true;
 
-        //playerObj.localScale = new Vector3(playerObj.localScale.x, slideYScale, playerObj.localScale.z);
-        // rb.AddForce(Vector3.down * 5f, ForceMode.Impulse);
+        playerObj.localScale = new Vector3(playerObj.localScale.x, slideYScale, playerObj.localScale.z);
+        rb.AddForce(Vector3.down * 5f, ForceMode.Impulse);
 
         slideTimer = maxSlideTime;
     }
@@ -87,6 +87,6 @@ public class PlayerSliding : MonoBehaviour
     {
         pm.sliding = false;
 
-        // playerObj.localScale = new Vector3(playerObj.localScale.x, startYScale, playerObj.localScale.z);
+        playerObj.localScale = new Vector3(playerObj.localScale.x, startYScale, playerObj.localScale.z);
     }
 }

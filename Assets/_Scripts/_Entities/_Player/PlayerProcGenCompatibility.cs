@@ -12,8 +12,8 @@ public class PlayerWorldGeneratorCompatibility : MonoBehaviour
 
     private void Awake() {
         if (_worldGeneratorObject == null) {
-            Debug.LogWarning("_worldGeneratorObject is missing. Disable PlayerWorldGeneratorCompatibility " +
-                             "script if there is no WorldGenerator in scene.");
+            Debug.LogWarning("World Generator Object is missing. Either assign the script or disable " +
+                             "PlayerWorldGeneratorCompatibility script if there is no WorldGenerator in scene.");
             enabled = false;
         }
     }
