@@ -3,7 +3,11 @@ using UnityEngine;
 
 public class SnapCamera : MonoBehaviour
 {
-    [SerializeField] private Transform _camera;
+    private Transform _camera;
+
+    private void Start() {
+        _camera = GameObject.FindWithTag("MainCamera").transform;
+    }
 
     // Transform is done in late update in order to allow all other operations to be performed before 
     // frame rendering starts
