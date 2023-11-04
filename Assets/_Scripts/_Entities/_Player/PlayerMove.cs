@@ -1,9 +1,7 @@
-using System;
 using UnityEngine;
 
 public class PlayerMove : MonoBehaviour
 {
-  public LayerMask groundMask;
   public Transform _model;
   
   [SerializeField] private float _moveSmoothSpeed;
@@ -11,6 +9,7 @@ public class PlayerMove : MonoBehaviour
   [SerializeField] private float _jumpStrength;
   [SerializeField] private float _walkSpeed;
   [SerializeField] private float _runSpeed;
+  [SerializeField] private float _crouchSpeed;
 
   private PlayerMovementHandler _handler;
   private CharacterController _characterController;
@@ -23,23 +22,13 @@ public class PlayerMove : MonoBehaviour
   private void Start() {
     _characterController = GetComponent<CharacterController>();
     _handler = GetComponent<PlayerMovementHandler>();
-
-    // Application.targetFrameRate = 10;
   }
 
   private void Update() {
-
-    GetMovementVelocity();
-    _characterController.Move(_currentMoveVelocity * Time.deltaTime);
-    
-    CalculateGravityVelocity();
-    _characterController.Move(new Vector3(0, _gravityVelocity, 0) * Time.deltaTime);
-
-    GetJump();
-    _characterController.Move(_currentForceVelocity * Time.deltaTime);
+    _characterController.Move(GetMovementVelocity() + CalculateGravityVelocity() + GetJump());
   }
   
-  private void GetMovementVelocity() {
+  private Vector3 GetMovementVelocity() {
     Vector3 playerInput = new Vector3 {
       x = Input.GetAxisRaw("Horizontal"),
       y = 0f,
@@ -48,8 +37,41 @@ public class PlayerMove : MonoBehaviour
     
     if (playerInput.magnitude > 1) playerInput.Normalize();
 
-    Vector3 moveVector = _model.forward * playerInput.z + _model.right * playerInput.x;
-    float currentSpeed = Input.GetKey(KeyCode.LeftShift) ? _runSpeed : _walkSpeed;
+    Vector3 moveVector;
+    float currentSpeed;
+    switch (_handler.State) {
+      case "walking": {
+        moveVector = _model.forward * playerInput.z + _model.right * playerInput.x;
+        currentSpeed = _walkSpeed;
+        break;
+      }
+      case "sprinting": {
+        moveVector = _model.forward * playerInput.z + _model.right * playerInput.x;
+        currentSpeed = _runSpeed;
+        break;
+      }
+      case "crouching": {
+        moveVector = _model.forward * playerInput.z + _model.right * playerInput.x;
+        currentSpeed = _crouchSpeed;
+        break;
+      }
+      case "air": {
+        moveVector = _currentMoveVelocity.normalized;
+        currentSpeed = _currentForceVelocity.magnitude;
+        break;
+      }
+      case "freeze": {
+        moveVector = Vector3.zero;
+        currentSpeed = 0;
+        break;
+      }
+      default: {
+        Debug.LogWarning("Unexpected MovementState: " + _handler.State);
+        moveVector = Vector3.zero;
+        currentSpeed = 0;
+        break;
+      }
+    }
 
     _currentMoveVelocity = Vector3.SmoothDamp(
       _currentMoveVelocity,
@@ -57,25 +79,32 @@ public class PlayerMove : MonoBehaviour
       ref _moveDampVelocity,
       _moveSmoothSpeed
     );
+
+    return _currentMoveVelocity * Time.deltaTime;
   }
 
-  private void CalculateGravityVelocity() {
-    if (_handler._movementState == PlayerMovementHandler.MovementState.air) {
+  private Vector3 CalculateGravityVelocity() {
+    if (_handler.State == "air") {
       // Equation for gravity: strength * seconds^2, so must multiply by Time.deltaTime twice
       _gravityVelocity -= _gravityStrengh * Time.deltaTime;
     }
     else
       _gravityVelocity = 0;
+
+    return new Vector3(0, _gravityVelocity, 0) * Time.deltaTime;
   }
 
-  private void GetJump() {
-    if (_handler._movementState != PlayerMovementHandler.MovementState.air) {
+  private Vector3 GetJump() {
+    if (_handler.State != "air") {
       if (Input.GetKey(_handler._jumpKey)) {
         _currentForceVelocity.y = _jumpStrength;
+        _handler.State = "air";
       }
       else {
         _currentForceVelocity.y = 0;
       }
     }
+
+    return _currentForceVelocity * Time.deltaTime;
   }
 }

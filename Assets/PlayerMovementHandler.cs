@@ -5,18 +5,22 @@ using UnityEngine;
 
 public class PlayerMovementHandler : MonoBehaviour
 {
-  public MovementState _movementState;
-  
-  private PlayerMove _playerMove;
+  [SerializeField] MovementState _movementState;
 
+  public string State {
+    get => _movementState.ToString();
+    set => _movementState = Enum.Parse<MovementState>(value);
+  }
+  
   [SerializeField] private LayerMask _groundMask;
   
   [Header("Keybinds")] 
   public KeyCode _jumpKey = KeyCode.Space;
   public KeyCode _sprintKey = KeyCode.LeftShift;
   public KeyCode _crouchKey = KeyCode.LeftControl;
+  public KeyCode _slideKey = KeyCode.LeftControl;
   
-  public enum MovementState
+  private enum MovementState
   {
     freeze,
     walking,
@@ -26,21 +30,21 @@ public class PlayerMovementHandler : MonoBehaviour
     air
   }
 
-  private void Start() {
-    _playerMove = GetComponent<PlayerMove>();
-  }
-
   private void Update() {
     UpdateMovementState();
   }
 
   private void UpdateMovementState() {
+    // TODO: Improve ground check
+    // Sphere cast? More raycasts?
     Ray groundCheckRay = new Ray(transform.position, Vector3.down);
-    if (!Physics.Raycast(groundCheckRay, 1.2f, _groundMask)) 
-      _movementState = MovementState.air;
-    else if (Input.GetKey(_sprintKey)) 
-      _movementState = MovementState.sprinting;
-    else 
-      _movementState = MovementState.walking;
+    if (!Physics.Raycast(groundCheckRay, 1.25f, _groundMask)) 
+      State = "air";
+    else if (Input.GetKey(_sprintKey))
+      State = "sprinting";
+    else if (Input.GetKey(_crouchKey))
+      State = "crouching";
+    else
+      State = "walking";
   }
 }

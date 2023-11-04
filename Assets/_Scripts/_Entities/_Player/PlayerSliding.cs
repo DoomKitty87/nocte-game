@@ -1,16 +1,14 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[RequireComponent(typeof(PlayerMovement))]
 public class PlayerSliding : MonoBehaviour
 {
-    [Header("References")]
-    public Transform orientation;
-    public Transform playerObj;
-    private Rigidbody rb;
-    private PlayerMovement pm;
+    public Transform _model;
 
+    private PlayerMovementHandler _handler;
+    
     [Header("Sliding")]
     public float maxSlideTime;
     public float slideForce;
@@ -19,24 +17,19 @@ public class PlayerSliding : MonoBehaviour
     public float slideYScale;
     private float startYScale;
 
-    [Header("Input")]
-    public KeyCode slideKey = KeyCode.LeftControl;
-    private float horizontalInput;
-    private float verticalInput;
-
 
     private void Start()
     {
-        rb = GetComponent<Rigidbody>();
-        pm = GetComponent<PlayerMovement>();
-
-        startYScale = playerObj.localScale.y;
+        startYScale = _model.localScale.y;
     }
 
+    private void Update() {
+        
+    }
+
+    /*
     private void Update()
     {
-        horizontalInput = Input.GetAxisRaw("Horizontal");
-        verticalInput = Input.GetAxisRaw("Vertical");
 
         if (Input.GetKeyDown(slideKey) && (horizontalInput != 0 || verticalInput != 0) && pm.AbleToSlide())
             StartSlide();
@@ -89,4 +82,5 @@ public class PlayerSliding : MonoBehaviour
 
         playerObj.localScale = new Vector3(playerObj.localScale.x, startYScale, playerObj.localScale.z);
     }
+    */
 }
