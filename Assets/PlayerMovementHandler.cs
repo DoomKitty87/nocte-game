@@ -1,12 +1,13 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class PlayerMovementHandler : MonoBehaviour
 {
   [SerializeField] MovementState _movementState;
 
+  public float distance;
+  public float radius;
+  
   public string State {
     get => _movementState.ToString();
     set => _movementState = Enum.Parse<MovementState>(value);
@@ -37,8 +38,9 @@ public class PlayerMovementHandler : MonoBehaviour
   private void UpdateMovementState() {
     // TODO: Improve ground check
     // Sphere cast? More raycasts?
-    Ray groundCheckRay = new Ray(transform.position, Vector3.down);
-    if (!Physics.Raycast(groundCheckRay, 1.25f, _groundMask)) 
+    Ray groundCheckRay = new Ray(transform.position + (Vector3.down * 0.6f), Vector3.down);
+    //if (!Physics.Raycast(groundCheckRay, 1.25f, _groundMask)) 
+    if (!Physics.SphereCast(groundCheckRay, 0.25f, 0.65f, _groundMask))
       State = "air";
     else if (Input.GetKey(_sprintKey))
       State = "sprinting";
@@ -46,5 +48,10 @@ public class PlayerMovementHandler : MonoBehaviour
       State = "crouching";
     else
       State = "walking";
+  }
+
+  private void OnDrawGizmos() {
+    Gizmos.color = Color.red;
+    Gizmos.DrawSphere(transform.position + (Vector3.down * distance), radius);
   }
 }
