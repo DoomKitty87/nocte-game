@@ -181,6 +181,7 @@ public class WorldGenerator : MonoBehaviour
     public float _riverPassAmplitude;
     public AnimationCurve _riverPassCurve;
     public GameObject _waterObject;
+    public int _maxWaterRange;
 
     private Mesh _waterMesh;
 
@@ -370,26 +371,26 @@ public class WorldGenerator : MonoBehaviour
         }
 
         if (deltaZ != 0 || deltaX != 0) {
-            for (int x = 0; x < _xTiles; x++) {
-                for (int z = 0; z < _zTiles; z++) { 
-                    float maxDistance = Mathf.Max(Mathf.Abs(_tilePool[_tilePositions[x, z]].x - playerXChunkScale), Mathf.Abs(_tilePool[_tilePositions[x, z]].z - playerZChunkScale));
-                    if (_hasColliders && maxDistance < _colliderRange) { 
-                        UpdateCollider(_tilePositions[x, z]);
-                    } else if (_hasColliders) {
-                        if (_tilePool[_tilePositions[x, z]].meshCollider) _tilePool[_tilePositions[x, z]].meshCollider.enabled = false;
-                    }
-
-                    if (!_disableGrass) GenerateGrassBasedOffLODs(x, z, Mathf.FloorToInt(maxDistance));
-                }
+          _updateQueue.Sort((c1, c2) => (Mathf.Abs(_tilePool[c1].x - _playerChunkXWorld) + Mathf.Abs(_tilePool[c1].z - _playerChunkZWorld)).CompareTo(Mathf.Abs(_tilePool[c2].x - _playerChunkXWorld) + Mathf.Abs(_tilePool[c2].z - _playerChunkZWorld)));
+          for (int x = 0; x < _xTiles; x++) {
+            for (int z = 0; z < _zTiles; z++) { 
+              float maxDistance = Mathf.Max(Mathf.Abs(_tilePool[_tilePositions[x, z]].x - playerXChunkScale), Mathf.Abs(_tilePool[_tilePositions[x, z]].z - playerZChunkScale));
+              if (_hasColliders && maxDistance < _colliderRange) { 
+                UpdateCollider(_tilePositions[x, z]);
+              } else if (_hasColliders) {
+              if (_tilePool[_tilePositions[x, z]].meshCollider) _tilePool[_tilePositions[x, z]].meshCollider.enabled = false;
+              }
+              if (!_disableGrass) GenerateGrassBasedOffLODs(x, z, Mathf.FloorToInt(maxDistance));
             }
+          }
         }
         
         _lastPlayerChunkX = playerXChunkScale;
         _lastPlayerChunkZ = playerZChunkScale;
         if (!_disableGrass) {
-            for (int i = 0; i < _rp.Length; i++) {
-                _rp[i].matProps.SetVector("_PlayerPosition", playerPos);
-            }
+          for (int i = 0; i < _rp.Length; i++) {
+            _rp[i].matProps.SetVector("_PlayerPosition", playerPos);
+          }
         }
     }
     
@@ -525,7 +526,7 @@ public class WorldGenerator : MonoBehaviour
             if (_generateQueue.Count > 0) {
                 GenerateTile(_generateQueue[0][0], _generateQueue[0][1], _generateQueue[0][2]);
                 _generateQueue.RemoveAt(0);
-                Time.timeScale = 1f;
+                if (Time.timeScale == 0f) Time.timeScale = 1f;
             } else break;
         }
         //UpdateWind();
@@ -566,6 +567,7 @@ public class WorldGenerator : MonoBehaviour
                 i++;
             }
         }
+        _generateQueue.Sort((c1, c2) => (Mathf.Abs(c1[0]) + Mathf.Abs(c1[1])).CompareTo(Mathf.Abs(c2[0]) + Mathf.Abs(c2[1])));
     }
 
     private void SetupGrass() {
@@ -649,14 +651,12 @@ public class WorldGenerator : MonoBehaviour
 
     private void QueueTileUpdate(int index) {
         _updateQueue.Add(index);
-        _updateQueue.Sort((c1, c2) => (Mathf.Abs(_tilePool[c1].x - _playerChunkXWorld) + Mathf.Abs(_tilePool[c1].z - _playerChunkZWorld)).CompareTo(Mathf.Abs(_tilePool[c2].x - _playerChunkXWorld) + Mathf.Abs(_tilePool[c2].z - _playerChunkZWorld)));
     }
 
     private void QueueTileGen(int x, int z, int index) {
         _generateQueue.Add(new int[] {
             x, z, index
         }); 
-        _generateQueue.Sort((c1, c2) => (Mathf.Abs(c1[0]) + Mathf.Abs(c1[1])).CompareTo(Mathf.Abs(c2[0]) + Mathf.Abs(c2[1])));
     }
     
     //Regenerate given tile based on an LOD parameter.
@@ -1015,7 +1015,8 @@ public class WorldGenerator : MonoBehaviour
             }
           }
         }
-        
+        _tilePool[index].waterVertCount = 0;
+        float maxDistance = Mathf.Max(Mathf.Abs(_tilePool[index].x - _playerXChunkScale), Mathf.Abs(_tilePool[index].z - _playerZChunkScale));
         Vector3[] vertices = targetMesh.vertices;
         float[] heightMods = AmalgamNoise.GenerateRivers(_xSize, _tilePool[index].x * _xSize * _xResolution + _seed,
             _tilePool[index].z * _zSize * _zResolution + _seed, _xResolution, _zResolution, _riverPassScale);
@@ -1051,6 +1052,7 @@ public class WorldGenerator : MonoBehaviour
             j++;
         }
         targetMesh.vertices = vertices;
+        if (maxDistance >= _maxWaterRange) return;
         int waterVertsLength = _waterVertices.Count;
         int waterTriLength = _waterTriangles.Count;
         int[] realIndices = new int[waterVerts.Length];
