@@ -522,6 +522,7 @@ public class WorldGenerator : MonoBehaviour
             if (_updateQueue.Count > 0 && _generateQueue.Count == 0) {
                 UpdateTile(_updateQueue[0]);
                 _updateQueue.RemoveAt(0);
+                if (_updateQueue.Count == 0) UpdateWaterMesh();
             } else break;
         }
         for (int i = 0; i < _maxUpdatesPerFrame * 10; i++) {
@@ -665,7 +666,6 @@ public class WorldGenerator : MonoBehaviour
     private void UpdateTile(int index) {
         int x = _tilePool[index].x;
         int z = _tilePool[index].z;
-        _tilePool[index].mesh.Clear();
         int seed = _seed;
         // var result = NoiseMaps.GenerateTerrainBiomes(x * _xSize * _xResolution + seed, z * _zSize * _zResolution + seed, _xSize, _zSize, _biomes, _biomeScale, _xResolution, _zResolution);
         Vector3[] result = AmalgamNoise.GenerateTerrain(_xSize, x * _xSize * _xResolution + seed, z * _zSize * _zResolution + seed, _xResolution, _zResolution,
@@ -693,7 +693,6 @@ public class WorldGenerator : MonoBehaviour
         }
         if (_updateQueue.Count > 1) return;
         if (!_disableGrass) UpdateGrassBuffers();
-        UpdateWaterMesh();
     }
 
     private void UpdateWaterMesh() {
