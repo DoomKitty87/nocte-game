@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 262.30203, g: 324.99054, b: 430.14313, a: 1}
+  m_IndirectSpecularColor: {r: 262.38358, g: 325.10843, b: 430.30963, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -12920,7 +12920,6 @@ GameObject:
   - component: {fileID: 142048773}
   - component: {fileID: 142048772}
   - component: {fileID: 142048771}
-  - component: {fileID: 142048777}
   - component: {fileID: 142048769}
   m_Layer: 3
   m_Name: First Person Player
@@ -12962,6 +12961,11 @@ MonoBehaviour:
   _walkSpeed: 6
   _runSpeed: 10
   _crouchSpeed: 4
+  _slideFriction: 30
+  _slideSpeedBoost: 5
+  _slideJumpBoost: 2
+  _slideCutoffSpeed: 5
+  _slideCoolDown: 0
 --- !u!114 &142048772
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -12991,9 +12995,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d422197e3df6f436bbbdd48ba94e0600, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _movementState: 0
-  distance: 0
-  radius: 0
+  _movementState: 5
   _groundMask:
     serializedVersion: 2
     m_Bits: 64
@@ -13043,22 +13045,6 @@ Transform:
   - {fileID: 98243406}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &142048777
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 142048768}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 24cc56deff5bc4da5b5e6f2366f3db52, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _model: {fileID: 98243406}
-  maxSlideTime: 0
-  slideForce: 0
-  slideYScale: 0
 --- !u!1 &197155011
 GameObject:
   m_ObjectHideFlags: 0

@@ -1,7 +1,9 @@
 using System;
 using UnityEngine;
 
-public class PlayerMovementHandler : MonoBehaviour
+using ObserverPattern;
+
+public class PlayerMovementHandler : Subject
 {
   [SerializeField] MovementState _movementState;
 
@@ -9,27 +11,26 @@ public class PlayerMovementHandler : MonoBehaviour
 
   public string State {
     get => _movementState.ToString();
-    set => _movementState = Enum.Parse<MovementState>(value);
+    set => _movementState = Enum.Parse<MovementState>(value, true);
   }
-  
+
   [SerializeField] private LayerMask _groundMask;
-  
-  [Header("Keybinds")] 
-  public KeyCode _jumpKey = KeyCode.Space;
+
+  [Header("Keybinds")] public KeyCode _jumpKey = KeyCode.Space;
   public KeyCode _sprintKey = KeyCode.LeftShift;
   public KeyCode _crouchKey = KeyCode.LeftControl;
   public KeyCode _slideKey = KeyCode.LeftControl;
-  
+
   private enum MovementState
   {
-    freeze,
-    walking,
-    sprinting,
-    crouching,
-    sliding,
-    air
+    Freeze,
+    Walking,
+    Sprinting,
+    Crouching,
+    Sliding,
+    Air
   }
-  
+
   private void Start() {
     _previousState = State;
   }
@@ -39,21 +40,24 @@ public class PlayerMovementHandler : MonoBehaviour
   }
 
   private void UpdateMovementState() {
-    var groundCheckRay = new Ray(transform.position + (Vector3.down * 0.6f), Vector3.down);
-    if (!Physics.SphereCast(groundCheckRay, 0.25f, 0.65f, _groundMask))
-      State = "air";
-    else if (Input.GetKey(_slideKey))
-      State = "sliding";
-    else if (Input.GetKey(_sprintKey))
-      State = "sprinting";
-    else if (Input.GetKey(_crouchKey))
-      State = "crouching";
-    else
-      State = "walking";
-
-    if (_previousState != State) {
-      // Do things here
-      _previousState = State;
+    if (State != "Freeze") {
+      var groundCheckRay = new Ray(transform.position + (Vector3.down * 0.6f), Vector3.down);
+      if (!Physics.SphereCast(groundCheckRay, 0.25f, 0.65f, _groundMask))
+        State = "Air";
+      else if (Input.GetKey(_slideKey))
+        State = "Sliding";
+      else if (Input.GetKey(_sprintKey))
+        State = "Sprinting";
+      else if (Input.GetKey(_crouchKey))
+        State = "Crouching";
+      else
+        State = "Walking";
     }
+
+    if (_previousState == State) return;
+    NotifyObservers(_previousState, State);
+    _previousState = State;
+    
   }
 }
+

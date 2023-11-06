@@ -1,4 +1,7 @@
-public interface IObserver
+namespace ObserverPattern
 {
-    public void OnNotify();
+    public interface IObserver
+    {
+        public void OnNotify(string previousState, string currentState);
+    }
 }

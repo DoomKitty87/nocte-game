@@ -1,6 +1,7 @@
 using UnityEngine;
+using ObserverPattern;
 
-public class PlayerMove : MonoBehaviour
+public class PlayerMove : MonoBehaviour, IObserver
 {
   public Transform _model;
   
@@ -17,6 +18,7 @@ public class PlayerMove : MonoBehaviour
   [SerializeField] private float _slideSpeedBoost;
   [SerializeField] private float _slideJumpBoost;
   [SerializeField] private float _slideCutoffSpeed;
+  [SerializeField] private float _slideCoolDown;
 
   private PlayerMovementHandler _handler;
   private CharacterController _characterController;
@@ -26,9 +28,20 @@ public class PlayerMove : MonoBehaviour
   private Vector3 _currentForceVelocity;
   private float _gravityVelocity;
 
+  private string _currentState;
+
+  private void OnEnable() {
+    _handler = GetComponent<PlayerMovementHandler>();
+    _handler.AddObserver(this);
+  }
+
+  private void OnDisable() {
+    _handler.RemoveObserver(this);
+  }
+
   private void Start() {
     _characterController = GetComponent<CharacterController>();
-    _handler = GetComponent<PlayerMovementHandler>();
+    _currentState = _handler.State;
   }
 
   private void Update() {
@@ -46,18 +59,18 @@ public class PlayerMove : MonoBehaviour
 
     Vector3 moveVector;
     float currentSpeed;
-    switch (_handler.State) {
-      case "walking": {
+    switch (_currentState) {
+      case "Walking": {
         moveVector = _model.forward * playerInput.z + _model.right * playerInput.x;
         currentSpeed = _walkSpeed;
         break;
       }
-      case "sprinting": {
+      case "Sprinting": {
         moveVector = _model.forward * playerInput.z + _model.right * playerInput.x;
         currentSpeed = _runSpeed;
         break;
       }
-      case "sliding": {
+      case "Sliding": {
         var velocity = _characterController.velocity;
         var horizontalVelocity = new Vector3(velocity.x, 0, velocity.z);
         
@@ -65,12 +78,12 @@ public class PlayerMove : MonoBehaviour
         currentSpeed = horizontalVelocity.magnitude - (_slideFriction * Time.deltaTime);
         break;
       }
-      case "crouching": {
+      case "Crouching": {
         moveVector = _model.forward * playerInput.z + _model.right * playerInput.x;
         currentSpeed = _crouchSpeed;
         break;
       }
-      case "air": {
+      case "Air": {
         var velocity = _characterController.velocity;
         var horizontalVelocity = new Vector3(velocity.x, 0, velocity.z);
         
@@ -78,13 +91,13 @@ public class PlayerMove : MonoBehaviour
         currentSpeed = horizontalVelocity.magnitude;
         break;
       }
-      case "freeze": {
+      case "Freeze": {
         moveVector = Vector3.zero;
         currentSpeed = 0;
         break;
       }
       default: {
-        Debug.LogWarning("Unexpected MovementState: " + _handler.State);
+        Debug.LogWarning("Unexpected MovementState: " + _currentState);
         moveVector = Vector3.zero;
         currentSpeed = 0;
         break;
@@ -102,21 +115,20 @@ public class PlayerMove : MonoBehaviour
   }
 
   private Vector3 CalculateGravityVelocity() {
-    if (_handler.State == "air") {
+    if (_currentState == "Air") 
       // Equation for gravity: strength * seconds^2, so must multiply by Time.deltaTime twice
       _gravityVelocity -= _gravityStrengh * Time.deltaTime;
-    }
     else
-      _gravityVelocity = 0;
+      _gravityVelocity = 0f;
 
     return new Vector3(0, _gravityVelocity, 0) * Time.deltaTime;
   }
 
   private Vector3 GetJump() {
-    if (_handler.State != "air") {
+    if (_currentState != "Air") {
       if (Input.GetKey(_handler._jumpKey)) {
         _currentForceVelocity.y = _jumpStrength;
-        _handler.State = "air";
+        _handler.State = "Air";
       }
       else {
         _currentForceVelocity.y = 0;
@@ -126,7 +138,8 @@ public class PlayerMove : MonoBehaviour
     return _currentForceVelocity * Time.deltaTime;
   }
 
-  private void NewState(string previousState, string newState) {
-    // Do stuff here
+  public void OnNotify(string previousState, string currentState) {
+    
+    _currentState = currentState;
   }
 }
