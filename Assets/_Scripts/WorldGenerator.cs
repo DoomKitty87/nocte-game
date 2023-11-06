@@ -182,6 +182,7 @@ public class WorldGenerator : MonoBehaviour
     public AnimationCurve _riverPassCurve;
     public GameObject _waterObject;
     public int _maxWaterRange;
+    public bool _limitWater;
 
     private Mesh _waterMesh;
 
@@ -381,6 +382,7 @@ public class WorldGenerator : MonoBehaviour
               if (_tilePool[_tilePositions[x, z]].meshCollider) _tilePool[_tilePositions[x, z]].meshCollider.enabled = false;
               }
               if (!_disableGrass) GenerateGrassBasedOffLODs(x, z, Mathf.FloorToInt(maxDistance));
+              if (_limitWater && maxDistance <= _maxWaterRange) UpdateTile(_tilePositions[x, z]);
             }
           }
         }
@@ -1052,7 +1054,7 @@ public class WorldGenerator : MonoBehaviour
             j++;
         }
         targetMesh.vertices = vertices;
-        if (maxDistance >= _maxWaterRange) return;
+        if (maxDistance >= _maxWaterRange && _limitWater) return;
         int waterVertsLength = _waterVertices.Count;
         int waterTriLength = _waterTriangles.Count;
         int[] realIndices = new int[waterVerts.Length];
