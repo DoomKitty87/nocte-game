@@ -1002,10 +1002,6 @@ public class WorldGenerator : MonoBehaviour
           _waterTriangles.RemoveRange(_tilePool[index].waterTriIndex, _tilePool[index].waterTriCount);
           for (int i = 0; i < _waterTriangles.Count; i++) {
             if (_waterTriangles[i] >= _tilePool[index].waterVertIndex) _waterTriangles[i] -= _tilePool[index].waterVertCount;
-            if (_waterTriangles[i] >= _waterVertices.Count) {
-              Debug.Log(_waterTriangles[i]);
-              Debug.Log(_waterVertices.Count);
-            }
           }
           for (int i = 0; i < _xTiles * _zTiles; i++) {
             if (_tilePool[i].waterVertIndex > _tilePool[index].waterVertIndex) {
