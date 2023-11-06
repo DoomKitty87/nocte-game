@@ -10,14 +10,14 @@ public class PlayerCameraFirstPerson : MonoBehaviour
     [SerializeField] private Transform _model;
     [SerializeField] private Transform _camera;
     
-    private float yRotation;
-    private float xRotation;
+    private float _yRotation;
+    private float _xRotation;
 
     private void Start() {
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
 
-        xRotation = _model.eulerAngles.x;   
+        _xRotation = _model.eulerAngles.x;   
     }
 
     private void Update() {
@@ -26,18 +26,18 @@ public class PlayerCameraFirstPerson : MonoBehaviour
         float mouseX = Input.GetAxisRaw("Mouse X") * Time.deltaTime * _sensX * 10f;
         float mouseY = Input.GetAxisRaw("Mouse Y") * Time.deltaTime * _sensY * 10f;
 
-        yRotation += mouseX;
-        xRotation -= mouseY;
+        _yRotation += mouseX;
+        _xRotation -= mouseY;
 
-        xRotation = Mathf.Clamp(xRotation, -85, 85);
+        _xRotation = Mathf.Clamp(_xRotation, -85, 85);
 
-        _camera.localRotation = Quaternion.Euler(xRotation, 0, 0);
-        _model.localRotation = Quaternion.Euler(0, yRotation, 0);
+        _camera.localRotation = Quaternion.Euler(_xRotation, 0, 0);
+        _model.localRotation = Quaternion.Euler(0, _yRotation, 0);
     }
 
     // Called after cutscene ends to reset camera position (probably doesnt work but should be easy enough to fix)
     public void ResetRotation() {
-        yRotation = _camera.eulerAngles.x;
-        xRotation = _camera.eulerAngles.y;
+        _yRotation = _camera.eulerAngles.x;
+        _xRotation = _camera.eulerAngles.y;
     }
 }

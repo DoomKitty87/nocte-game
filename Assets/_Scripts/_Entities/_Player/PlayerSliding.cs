@@ -10,16 +10,13 @@ public class PlayerSliding : MonoBehaviour
     private PlayerMovementHandler _handler;
     
     [Header("Sliding")]
-    public float maxSlideTime;
-    public float slideForce;
-    private float slideTimer;
 
-    public float slideYScale;
     private float startYScale;
 
 
     private void Start()
     {
+        _handler = GetComponent<PlayerMovementHandler>();
         startYScale = _model.localScale.y;
     }
 

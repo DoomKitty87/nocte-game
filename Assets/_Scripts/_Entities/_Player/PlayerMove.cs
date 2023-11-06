@@ -10,6 +10,13 @@ public class PlayerMove : MonoBehaviour
   [SerializeField] private float _walkSpeed;
   [SerializeField] private float _runSpeed;
   [SerializeField] private float _crouchSpeed;
+  
+  [Space(10)]
+  [Header("Sliding")]
+  [SerializeField] private float _slideFriction;
+  [SerializeField] private float _slideSpeedBoost;
+  [SerializeField] private float _slideJumpBoost;
+  [SerializeField] private float _slideCutoffSpeed;
 
   private PlayerMovementHandler _handler;
   private CharacterController _characterController;
@@ -50,6 +57,14 @@ public class PlayerMove : MonoBehaviour
         currentSpeed = _runSpeed;
         break;
       }
+      case "sliding": {
+        var velocity = _characterController.velocity;
+        var horizontalVelocity = new Vector3(velocity.x, 0, velocity.z);
+        
+        moveVector = horizontalVelocity.normalized;
+        currentSpeed = horizontalVelocity.magnitude - (_slideFriction * Time.deltaTime);
+        break;
+      }
       case "crouching": {
         moveVector = _model.forward * playerInput.z + _model.right * playerInput.x;
         currentSpeed = _crouchSpeed;
@@ -58,6 +73,7 @@ public class PlayerMove : MonoBehaviour
       case "air": {
         var velocity = _characterController.velocity;
         var horizontalVelocity = new Vector3(velocity.x, 0, velocity.z);
+        
         moveVector = horizontalVelocity.normalized;
         currentSpeed = horizontalVelocity.magnitude;
         break;
@@ -108,5 +124,9 @@ public class PlayerMove : MonoBehaviour
     }
 
     return _currentForceVelocity * Time.deltaTime;
+  }
+
+  private void NewState(string previousState, string newState) {
+    // Do stuff here
   }
 }
