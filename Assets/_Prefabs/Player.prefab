@@ -13004,7 +13004,6 @@ GameObject:
   - component: {fileID: 7787669529357129929}
   - component: {fileID: 2092907033816758835}
   - component: {fileID: 4365295876085138291}
-  - component: {fileID: 6321650067282569752}
   - component: {fileID: 6646034027122973706}
   - component: {fileID: 546470281293933449}
   - component: {fileID: 6627170951947150035}
@@ -13137,24 +13136,6 @@ MonoBehaviour:
   freeze: 0
   activeGrapple: 0
   sliding: 0
---- !u!114 &6321650067282569752
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 9043420670059374841}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 24cc56deff5bc4da5b5e6f2366f3db52, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  orientation: {fileID: 1273677439548843134}
-  playerObj: {fileID: 7350972160547800114}
-  maxSlideTime: 0.75
-  slideForce: 200
-  slideYScale: 0.5
-  slideKey: 306
 --- !u!114 &6646034027122973706
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -13168,6 +13149,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _worldGeneratorObject: {fileID: 0}
+  _timeToInitialize: 0.25
 --- !u!114 &546470281293933449
 MonoBehaviour:
   m_ObjectHideFlags: 0

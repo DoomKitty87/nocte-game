@@ -56,8 +56,10 @@ public class PlayerMove : MonoBehaviour
         break;
       }
       case "air": {
-        moveVector = _currentMoveVelocity.normalized;
-        currentSpeed = _currentForceVelocity.magnitude;
+        var velocity = _characterController.velocity;
+        var horizontalVelocity = new Vector3(velocity.x, 0, velocity.z);
+        moveVector = horizontalVelocity.normalized;
+        currentSpeed = horizontalVelocity.magnitude;
         break;
       }
       case "freeze": {
