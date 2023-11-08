@@ -15,9 +15,9 @@ namespace ObserverPattern
             _observers.Remove(observer);
         }
 
-        // This might be all very stupid but it works so :shrug:
+        // This might be all very stupid but it works so improve it if you want
         protected void NotifyObservers(string previousState, string currentState) {
-            _observers.ForEach((_observer) => { _observer.OnNotify(previousState, currentState); });
+            _observers.ForEach((observer) => { observer.OnNotify(previousState, currentState); });
         }
     }
 }
