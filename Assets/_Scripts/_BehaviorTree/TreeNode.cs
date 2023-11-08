@@ -1,31 +1,35 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 namespace _Scripts._BehaviorTree
 {
+	[Serializable]
 	public enum TreeNodeState
 	{	
-		COMPLETED,
+		SUCCESS,
 		FAILED,
 		RUNNING,
 	}
-	// Base Node, although can be used as a "failer", not recommended for neatness
+	
+	// Base Node
+	[Serializable]
 	public abstract class TreeNode
 	{
 		// State
-		protected TreeNodeState _nodeState;
+		[SerializeField] protected TreeNodeState _nodeState;
 		
 		// Node Relations
-		public TreeNode _parent;
-		protected List<TreeNode> _children = new List<TreeNode>();
+		[SerializeField] public TreeNode _parent;
+		[SerializeField] protected List<TreeNode> _children = new List<TreeNode>();
 		public void AttachChild(TreeNode childNode) {
 			childNode._parent = this;
 			_children.Add(childNode);
 		}
 		
 		// Data
-		private Dictionary<string, object> _localData = new Dictionary<string, object>();
+		[SerializeField] private Dictionary<string, object> _localData = new Dictionary<string, object>();
 
 		public void SetData(string key, object data) {
 			_localData[key] = data;

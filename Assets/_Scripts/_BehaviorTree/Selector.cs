@@ -18,8 +18,8 @@ namespace _Scripts._BehaviorTree
 				switch (child.Evaluate()) {
 					case TreeNodeState.FAILED:
 						continue;
-					case TreeNodeState.COMPLETED:
-						_nodeState = TreeNodeState.COMPLETED;
+					case TreeNodeState.SUCCESS:
+						_nodeState = TreeNodeState.SUCCESS;
 						return _nodeState;
 					case TreeNodeState.RUNNING:
 						_nodeState = TreeNodeState.RUNNING;

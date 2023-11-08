@@ -16,26 +16,36 @@ namespace _Scripts._BehaviorTree
 		// then the sequence will return success to its parent.
 
 		public override TreeNodeState Evaluate() {
-			_children = RandomizeNodeList(_children);
-			foreach (TreeNode child in _children) {
+			List<TreeNode> children = RandomizeNodeList(_children);
+			foreach (TreeNode child in children) {
 				switch (child.Evaluate()) {
 					case TreeNodeState.FAILED:
 						_nodeState = TreeNodeState.FAILED;
 						return _nodeState;
-					case TreeNodeState.COMPLETED:
+					case TreeNodeState.SUCCESS:
 						continue;
 					case TreeNodeState.RUNNING:
 						_nodeState = TreeNodeState.RUNNING;
 						return _nodeState;
 				}
 			}
-			_nodeState = TreeNodeState.COMPLETED;
+			_nodeState = TreeNodeState.SUCCESS;
 			return _nodeState;
 		}
 		
 		// Helper Functions
 		private List<TreeNode> RandomizeNodeList(List<TreeNode> list) {
-			throw new System.NotImplementedException();
+			for (int i = list.Count - 1; i > 0; i--) {
+				int j = Random.Range(0, i);
+				if (j == i) {
+					continue;
+				}
+				TreeNode iNode = list[i];
+				TreeNode jNode = list[j];
+				list[i] = jNode;
+				list[j] = iNode;
+			}
+			return list;
 		}
 		
 		// Constructors

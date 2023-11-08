@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEngine.Serialization;
 using Random = UnityEngine.Random;
 
-public class PassiveAI : MonoBehaviour
+public class PassiveAI_OLD : MonoBehaviour
 {
 
   [Header("Dependancies")] 
