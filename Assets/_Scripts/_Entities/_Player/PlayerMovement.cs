@@ -1,8 +1,4 @@
-using System;
 using System.Collections;
-using System.Collections.Generic;
-using System.Net;
-using Unity.VisualScripting;
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody))]
@@ -119,6 +115,7 @@ public class PlayerMovement : MonoBehaviour
 
         if (freeze) {
             _movementState = MovementState.freeze;
+            rb.useGravity = true;
             moveSpeed = 0;
             rb.velocity = Vector3.zero;
         }
@@ -148,14 +145,14 @@ public class PlayerMovement : MonoBehaviour
 
         if (Input.GetKeyDown(crouchKey)) {
             // TODO: Put crouch changes here
-            Vector3 scale = transform.localScale;
-            transform.localScale = new Vector3(scale.x, crouchYScale, scale.z);
-            rb.AddForce(Vector3.down * 5f, ForceMode.Impulse);
+            //Vector3 scale = transform.localScale;
+            //transform.localScale = new Vector3(scale.x, crouchYScale, scale.z);
+            // rb.AddForce(Vector3.down * 5f, ForceMode.Impulse);
         }
 
         if (Input.GetKeyUp(crouchKey)) {
-            Vector3 scale = transform.localScale;
-            transform.localScale = new Vector3(scale.x, startYScale, scale.z);
+            //Vector3 scale = transform.localScale;
+            //transform.localScale = new Vector3(scale.x, startYScale, scale.z);
         }
 
         if (Mathf.Abs(desiredMoveSpeed - lastMoveDesiredSpeed) > 4f && moveSpeed != 0) {
@@ -261,11 +258,17 @@ public class PlayerMovement : MonoBehaviour
     
     public void JumpToPosition(Vector3 targetPosition, float trajectoryHeight) {
         activeGrapple = true;
+        sliding = false;
         
         velocityToSet = CalculateJumpVelocity(transform.position, targetPosition, trajectoryHeight);
         Invoke(nameof(SetVelocity), 0.1f);
         
         Invoke(nameof(ResetRestrictions), 3.0f);
+    }
+
+    public bool AbleToSlide() {
+        if (activeGrapple) return false;
+        else return true;
     }
     
     private Vector3 velocityToSet;

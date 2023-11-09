@@ -51,8 +51,8 @@ public static class AmalgamNoise
     [WriteOnly] public NativeArray<float> output;
 
     public void Execute(int index) {
-      float sampleX = index % size;
-      float sampleZ = index / size;
+      int sampleX = (int) index % (int) size;
+      int sampleZ = (int) index / (int) size;
 
       float sharpnessValue = sharpnessMean + sharpnessAmplitude * Mathf.Pow(snoise(new float2((sampleX * xResolution + xOffset) * sharpnessScale, (sampleZ * zResolution + zOffset) * sharpnessScale)), 3);
       float secondarySharpness = sharpnessAmplitude / 5 * snoise(new float2((sampleX * xResolution + xOffset) * sharpnessScale * 5, (sampleZ * zResolution + zOffset) * sharpnessScale * 5));
@@ -111,8 +111,8 @@ public static class AmalgamNoise
     [WriteOnly] public NativeArray<float> output;
 
     public void Execute(int index) {
-      float sampleX = index % size;
-      float sampleZ = index / size;
+      int sampleX = (int) index % (int) size;
+      int sampleZ = (int) index / (int) size;
 
       output[index] = Mathf.Abs(snoise(new float2((sampleX * xResolution + xOffset) * scale, (sampleZ * zResolution + zOffset) * scale)));
     }

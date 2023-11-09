@@ -6,7 +6,7 @@ using UnityEngine.Serialization;
 // ===============================================================
 // Matthew
 // Desc: Handles movement (with sliding, jumping, etc) for
-//       player object, highly configurable
+//       any rb object, highly configurable
 // ===============================================================
 [RequireComponent(typeof(Rigidbody))]
 public class MovementDeprecated : MonoBehaviour

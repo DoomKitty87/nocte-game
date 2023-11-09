@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 4484.7827, g: 2876.1584, b: 2161.6604, a: 1}
+  m_IndirectSpecularColor: {r: 4486.0454, g: 2873.4282, b: 2152.4302, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -266,7 +266,6 @@ MonoBehaviour:
   _slideMinSpeed: 9.8
   _slideDrag: 0.2
   _jumpForce: 15
-  _jumpForceDown: 40
   _jumpMaxStrafeSpeed: 6
   _jumpStrafeAccel: 0.5
   _airDrag: 0
@@ -287,14 +286,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 96778f8f206204d4186e61263624db4f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _transformAlignToMovement: {fileID: 1037996415}
-  _alignSpeed: 1
-  _snapInsteadAngle: 5.7
-  _movementScript: {fileID: 70028138}
-  _xMouseMovementTransform: {fileID: 759724845}
-  _yMouseMovementTransform: {fileID: 227975683}
   _mouseSensitivity: 40
-  _smoothingFactor: 20
+  _speed: 0
+  _maxDeltaRotationPerFrame: 0
+  _cameraTarget: {fileID: 0}
 --- !u!114 &70028140
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -309,7 +304,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _mainCamera: {fileID: 208800704}
   _weaponContainer: {fileID: 1069515275}
-  _currentWeaponItem: {fileID: 11400000, guid: dc95d4731caee0d47921b965cee96a44, type: 2}
+  _currentWeaponItem: {fileID: 11400000, guid: b2ccf24f472cd49bc9315353002edbf9, type: 2}
   _weaponInstance: {fileID: 0}
   _instanceScript: {fileID: 0}
 --- !u!114 &70028141
@@ -1313,7 +1308,6 @@ MonoBehaviour:
   _slideMinSpeed: 9.8
   _slideDrag: 0.2
   _jumpForce: 8
-  _jumpForceDown: -0.1
   _jumpMaxStrafeSpeed: 6
   _jumpStrafeAccel: 0.5
   _airDrag: 0
@@ -14953,7 +14947,6 @@ MonoBehaviour:
   _slideMinSpeed: 9.8
   _slideDrag: 0.2
   _jumpForce: 8
-  _jumpForceDown: -0.1
   _jumpMaxStrafeSpeed: 6
   _jumpStrafeAccel: 0.5
   _airDrag: 0
@@ -15332,7 +15325,7 @@ GameObject:
   - component: {fileID: 1957678546}
   - component: {fileID: 1957678545}
   - component: {fileID: 1957678547}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Cube
   m_TagString: Ground
   m_Icon: {fileID: 0}
