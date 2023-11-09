@@ -11,6 +11,14 @@ public class PlayerMove : MonoBehaviour, IObserver
   [SerializeField] private float _walkSpeed;
   [SerializeField] private float _runSpeed;
   [SerializeField] private float _crouchSpeed;
+
+  // Local current move speed for the played based on inputs
+  private float _moveSpeed;
+
+  [Space(10)] [Header("Air")] 
+  [SerializeField] private float _airMaxSpeed;
+  [SerializeField] private float _airTurnControl;
+  [SerializeField] private float _airSpeedControl;
   
   [Space(10)]
   [Header("Sliding")]
@@ -62,12 +70,14 @@ public class PlayerMove : MonoBehaviour, IObserver
     switch (_currentState) {
       case "Walking": {
         moveVector = _model.forward * playerInput.z + _model.right * playerInput.x;
-        currentSpeed = _walkSpeed;
+        _moveSpeed = _walkSpeed;
+        currentSpeed = _moveSpeed;
         break;
       }
       case "Sprinting": {
         moveVector = _model.forward * playerInput.z + _model.right * playerInput.x;
-        currentSpeed = _runSpeed;
+        _moveSpeed = _runSpeed;
+        currentSpeed = _moveSpeed;
         break;
       }
       case "Sliding": {
@@ -80,19 +90,28 @@ public class PlayerMove : MonoBehaviour, IObserver
       }
       case "Crouching": {
         moveVector = _model.forward * playerInput.z + _model.right * playerInput.x;
-        currentSpeed = _crouchSpeed;
+        _moveSpeed = _crouchSpeed;
+        currentSpeed = _moveSpeed;
         break;
       }
       case "Air": {
         var velocity = _characterController.velocity;
         var horizontalVelocity = new Vector3(velocity.x, 0, velocity.z);
         
-        moveVector = horizontalVelocity.normalized;
-        currentSpeed = horizontalVelocity.magnitude;
+        moveVector = (horizontalVelocity.normalized + 
+                      ((_model.forward * playerInput.z + _model.right * playerInput.x) * _airTurnControl)).normalized;
+        currentSpeed = Mathf.Min(
+        (horizontalVelocity + ((_model.forward * playerInput.z + _model.right * playerInput.x) * _airSpeedControl)).magnitude, 
+        horizontalVelocity.magnitude);
+        // Calculates air speed based off _airSpeedControl and previous velocity
+        // currentSpeed = Mathf.Min(
+        //   (horizontalVelocity + ((_model.forward * playerInput.z + _model.right * playerInput.x) * _airSpeedControl)).magnitude, 
+        //   _moveSpeed);
         break;
       }
       case "Freeze": {
         moveVector = Vector3.zero;
+        _moveSpeed = 0;
         currentSpeed = 0;
         break;
       }
@@ -104,6 +123,37 @@ public class PlayerMove : MonoBehaviour, IObserver
       }
     }
 
+    Vector3 AirMovement(Vector3 moveVector, Vector3 previousVelocity)
+    {
+      // project the velocity onto the movevector
+      Vector3 projVel = Vector3.Project(previousVelocity, moveVector);
+
+      // check if the movevector is moving towards or away from the projected velocity
+      bool isAway = Vector3.Dot(moveVector, projVel) <= 0f;
+
+      // only apply force if moving away from velocity or velocity is below MaxAirSpeed
+      if (projVel.magnitude < _airMaxSpeed || isAway)
+      {
+        // calculate the ideal movement force
+        Vector3 vc = moveVector.normalized * _airMaxSpeed;
+
+        // cap it if it would accelerate beyond MaxAirSpeed directly.
+        if (!isAway)
+        {
+          vc = Vector3.ClampMagnitude(vc, _airMaxSpeed - projVel.magnitude);
+        }
+        else
+        {
+          vc = Vector3.ClampMagnitude(vc, _airMaxSpeed + projVel.magnitude);
+        }
+
+        // Apply the force
+        return vc;
+      }
+
+      return previousVelocity;
+    }
+    
     _currentMoveVelocity = Vector3.SmoothDamp(
       _currentMoveVelocity,
       moveVector * currentSpeed,
@@ -134,7 +184,6 @@ public class PlayerMove : MonoBehaviour, IObserver
         _currentForceVelocity.y = 0;
       }
     }
-
     return _currentForceVelocity * Time.deltaTime;
   }
 
