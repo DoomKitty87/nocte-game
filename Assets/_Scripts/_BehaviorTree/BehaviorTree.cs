@@ -3,18 +3,37 @@ using UnityEngine;
 
 namespace _Scripts._BehaviorTree
 {
-  public abstract class BehaviorTree : MonoBehaviour
-  {
-    [SerializeField]
-    private TreeNode _rootNode = null;
+	public abstract class BehaviorTree : MonoBehaviour
+	{
+		public enum UpdateType
+		{
+			Update,
+			FixedUpdate,
+			LateUpdate,
+		}
 
-    private void Start() {
-      _rootNode = SetupTree();
-    }
-    private void Update() {
-      _rootNode.Evaluate();
-    }
+		[SerializeField] private UpdateType _updateType; 
+		[SerializeField] private TreeNode _rootNode = null;
+		
+		private void Start() {
+			_rootNode = SetupTree();
+		}
+		
+		private void Update() {
+			if (_updateType != UpdateType.Update) return;
+			_rootNode.Evaluate();
+		}
 
-    protected abstract TreeNode SetupTree();
-  }
+		private void FixedUpdate() {
+			if (_updateType != UpdateType.FixedUpdate) return;
+			_rootNode.Evaluate();
+		}
+		
+		private void LateUpdate() {
+			if (_updateType != UpdateType.LateUpdate) return;
+			_rootNode.Evaluate();
+		}
+
+		protected abstract TreeNode SetupTree();
+	}
 }
