@@ -78,6 +78,10 @@ namespace _Scripts._BehaviorTree
 			}
 		}
 		
+		// Anything that needs to be run the first time the node is visited
+		public virtual void Init() {
+			throw new NotImplementedException();
+		}
 		// Base Evaluation - Can be run once per frame or multiple times per frame.
 		public abstract TreeNodeState Evaluate();
 
