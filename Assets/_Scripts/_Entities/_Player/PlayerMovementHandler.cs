@@ -21,7 +21,10 @@ public class PlayerMovementHandler : Subject
   // public KeyCode _sprintKey = KeyCode.LeftShift;
   public KeyCode _crouchKey = KeyCode.LeftControl;
   public KeyCode _slideKey = KeyCode.LeftControl;
+  public KeyCode _grappleKey = KeyCode.Mouse0;
 
+  public int _localGrappleType = -1;
+  
   private enum MovementState
   {
     Freeze,
@@ -29,7 +32,8 @@ public class PlayerMovementHandler : Subject
     Sprinting,
     Crouching,
     Sliding,
-    Air
+    Air,
+    Grapple
   }
 
   private void Start() {
@@ -38,10 +42,11 @@ public class PlayerMovementHandler : Subject
 
   private void Update() {
     UpdateMovementState();
+    CheckForGrapple();
   }
 
   private void UpdateMovementState() {
-    if (State != "Freeze") {
+    if (State != "Freeze" && State != "Grapple") {
       var groundCheckRay = new Ray(transform.position + (Vector3.down * 0.6f), Vector3.down);
       if (!Physics.SphereCast(groundCheckRay, 0.25f, 0.65f, _groundMask))
         State = "Air";
@@ -56,9 +61,24 @@ public class PlayerMovementHandler : Subject
     }
 
     if (_previousState == State) return;
-    NotifyObservers(_previousState, State);
+    NewSceneNotification(_previousState, State);
     _previousState = State;
     
+  }
+
+  private void CheckForGrapple() {
+    if (Input.GetKeyDown(_grappleKey) && _localGrappleType != 0) {
+      _localGrappleType = 0;
+      GrappleNotification(0);
+    } 
+    else if (Input.GetKey(_grappleKey) && _localGrappleType != 1) {
+      _localGrappleType = 1;
+      GrappleNotification(1);
+    }
+    else if (Input.GetKeyUp(_grappleKey) && _localGrappleType != 2) {
+      _localGrappleType = 2;
+      GrappleNotification(2);
+    }
   }
 }
 

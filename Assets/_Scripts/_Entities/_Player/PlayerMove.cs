@@ -1,12 +1,16 @@
+using System;
+using System.Collections.Generic;
 using UnityEngine;
 using ObserverPattern;
+using UnityEngine.Serialization;
 
 public class PlayerMove : MonoBehaviour, IObserver
 {
   public Transform _model;
   
+  public float _gravityStrength;
+  
   [SerializeField] private float _moveSmoothSpeed;
-  [SerializeField] private float _gravityStrengh;
   [SerializeField] private float _jumpStrength;
   [SerializeField] private float _runSpeed;
   [SerializeField] private float _crouchSpeed;
@@ -34,6 +38,9 @@ public class PlayerMove : MonoBehaviour, IObserver
   private Vector3 _currentForceVelocity;
   private float _gravityVelocity;
 
+  // Should be used by other scripts to add forces to player object
+  public Vector3[] _additionalForces = new Vector3[0];
+  
   private string _currentState;
 
   private void OnEnable() {
@@ -53,8 +60,8 @@ public class PlayerMove : MonoBehaviour, IObserver
     _currentState = _handler.State;
   }
 
-  private void Update() {
-    _characterController.Move(GetMovementVelocity() + CalculateGravityVelocity() + GetJump());
+  private void LateUpdate() {
+    _characterController.Move(GetMovementVelocity() + CalculateGravityVelocity() + GetJump() + GetOtherForces());
   }
   
   private Vector3 GetMovementVelocity() {
@@ -93,24 +100,23 @@ public class PlayerMove : MonoBehaviour, IObserver
         var velocity = _characterController.velocity;
         var horizontalVelocity = new Vector3(velocity.x, 0, velocity.z);
         
-        // Enable like some of this code if you don't want air strafing
+        // Enable if you don't want air strafing
         //moveVector = (horizontalVelocity.normalized + 
         //              ((_model.forward * playerInput.z + _model.right * playerInput.x) * _airTurnControl)).normalized;
         //currentSpeed = Mathf.Min(
         //(horizontalVelocity + ((_model.forward * playerInput.z + _model.right * playerInput.x) * _airSpeedControl)).magnitude, 
         //horizontalVelocity.magnitude);
-        //currentSpeed =
-        //  (horizontalVelocity + ((_model.forward * playerInput.z + _model.right * playerInput.x) * _airSpeedControl))
-        //  .magnitude;
-        // Calculates air speed based off _airSpeedControl and previous velocity
-        // currentSpeed = Mathf.Min(
-        //   (horizontalVelocity + ((_model.forward * playerInput.z + _model.right * playerInput.x) * _airSpeedControl)).magnitude, 
-        //   _moveSpeed);
 
         Vector3 newDirection = AirMovement((_model.forward * playerInput.z + _model.right * playerInput.x).normalized, horizontalVelocity);
         
         moveVector = newDirection.normalized;
         currentSpeed = newDirection.magnitude;
+        break;
+      }
+      case "Grapple": {
+        moveVector = Vector3.zero;
+        _moveSpeed = 0;
+        currentSpeed = 0;
         break;
       }
       case "Freeze": {
@@ -157,9 +163,9 @@ public class PlayerMove : MonoBehaviour, IObserver
   }
 
   private Vector3 CalculateGravityVelocity() {
-    if (_currentState == "Air") 
+    if (_currentState == "Air" || _currentState == "Grapple") 
       // Equation for gravity: strength * seconds^2, so must multiply by Time.deltaTime twice
-      _gravityVelocity -= _gravityStrengh * Time.deltaTime;
+      _gravityVelocity -= _gravityStrength * Time.deltaTime;
     else
       _gravityVelocity = 0f;
 
@@ -167,7 +173,7 @@ public class PlayerMove : MonoBehaviour, IObserver
   }
 
   private Vector3 GetJump() {
-    if (_currentState != "Air") {
+    if (_currentState != "Air" && _currentState != "Grapple") {
       if (Input.GetKey(_handler._jumpKey)) {
         _currentForceVelocity.y = _jumpStrength;
         _handler.State = "Air";
@@ -179,8 +185,23 @@ public class PlayerMove : MonoBehaviour, IObserver
     return _currentForceVelocity * Time.deltaTime;
   }
 
-  public void OnNotify(string previousState, string currentState) {
-    
+  // Called by a different script to 'register' a spot in _additionalForces array, returning the index to be edited
+  public int RegisterForce() {
+    Array.Resize(ref _additionalForces, _additionalForces.Length + 1);
+    return _additionalForces.Length - 1;
+  }
+
+  // Sums up all external forces
+  private Vector3 GetOtherForces() {
+    if (_additionalForces.Length == 0) return Vector3.zero;
+    Vector3 forces = Vector3.zero;
+    for (int i = 0; i < _additionalForces.Length; i++)
+      forces += _additionalForces[i];
+
+    return forces;
+  }
+  
+  public void OnSceneChangeNotify(string previousState, string currentState) {
     _currentState = currentState;
   }
 }

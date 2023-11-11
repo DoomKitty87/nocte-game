@@ -1,112 +1,159 @@
-using System.Collections;
-using System.Collections.Generic;
+using ObserverPattern;
 using UnityEngine;
+using UnityEngine.Serialization;
 
-[RequireComponent(typeof(PlayerMovement))]
-public class PlayerGrapple : MonoBehaviour
+[RequireComponent(typeof(LineRenderer))]
+public class PlayerGrapple : MonoBehaviour, IObserverGrapple
 {
-    [Header("References")]
-    private PlayerMovement pm;
-    public Transform cam;
-    public Transform gunTip;
-    public LayerMask whatIsGrappleable;
-    public LineRenderer lr;
-
+    private PlayerMovementHandler _handler;
+    private PlayerMove _playerMove;
+    
+    // Used in PlayerMove for indexing
+    private int _forceIndex;
+    
+    [Header("References")] 
+    [SerializeField] private Transform _camera;
+    [SerializeField] private Transform _gunEnd;
+    [SerializeField] private LayerMask _grapplable;
+    private LineRenderer _lineRenderer;
+    
     [Header("Grappling")]
-    public float maxGrappleDistance;
-    public float grappleDelayTime;
-    public float overshootYAxis;
+    [SerializeField] private float _maxGrappleDistance;
+    [SerializeField] private float _grappleDelayTime;
+    [SerializeField] private float _overshootYAxis;
 
-    private Vector3 grapplePoint;
+    private Vector3 _grapplePoint;
 
     [Header("Cooldown")]
-    public float grapplingCd;
-    private float grapplingCdTimer;
+    [SerializeField] private float _grapplingCoolDown;
+    private float _grapplingCoolDownTimer;
 
-    [Header("Input")]
-    public KeyCode grappleKey = KeyCode.Mouse1;
+    private bool _renderGrapple;
+    private bool _currentlyGrappling;
+    private Vector3 _grappleForce;
 
-    private bool grappling;
+    private string _currentState;
+    
+    private void OnEnable() {
+        _handler = GetComponent<PlayerMovementHandler>();
+        _handler.AddObserverGrapple(this);
+    }
 
-    private void Start()
-    {
-        pm = GetComponent<PlayerMovement>();
+    private void OnDisable() {
+        _handler.AddObserverGrapple(this);
+    }
+
+    private void Start() {
+        _lineRenderer = GetComponent<LineRenderer>();
+        _playerMove = GetComponent<PlayerMove>();
+
+        _forceIndex = _playerMove.RegisterForce();
     }
 
     private void Update()
     {
-        if (Input.GetKeyDown(grappleKey)) StartGrapple();
+        if (_grapplingCoolDownTimer > 0)
+            _grapplingCoolDownTimer -= Time.deltaTime;
 
-        if (grapplingCdTimer > 0)
-            grapplingCdTimer -= Time.deltaTime;
+        if (_currentlyGrappling) {
+            _playerMove._additionalForces[_forceIndex] = _grappleForce;
+        }
+        else if (_currentState != "air") {
+            _grappleForce = Vector3.zero;
+            _playerMove._additionalForces[_forceIndex] = Vector3.zero;
+        }
     }
     
     private void LateUpdate()
     {
-        if (grappling)
-           lr.SetPosition(0, gunTip.position);
+        if (_renderGrapple)
+           _lineRenderer.SetPosition(0, _gunEnd.position);
     }
 
     private void StartGrapple()
     {
-        if (grapplingCdTimer > 0) return;
+        if (_grapplingCoolDownTimer > 0) return;
 
-        grappling = true;
-
-        pm.freeze = true;
-
+        _renderGrapple = true;
+        
         RaycastHit hit;
-        if(Physics.Raycast(cam.position, cam.forward, out hit, maxGrappleDistance, whatIsGrappleable))
+        if(Physics.Raycast(_camera.position, _camera.forward, out hit, _maxGrappleDistance, _grapplable))
         {
-            grapplePoint = hit.point;
+            _grapplePoint = hit.point;
 
-            Invoke(nameof(ExecuteGrapple), grappleDelayTime);
+            Invoke(nameof(ExecuteGrapple), _grappleDelayTime);
         }
         else
         {
-            grapplePoint = cam.position + cam.forward * maxGrappleDistance;
+            _grapplePoint = _camera.position + _camera.forward * _maxGrappleDistance;
 
-            Invoke(nameof(StopGrapple), grappleDelayTime);
+            Invoke(nameof(StopGrapple), _grappleDelayTime);
         }
 
-        lr.enabled = true;
-        lr.SetPosition(1, grapplePoint);
+        _lineRenderer.enabled = true;
+        _lineRenderer.SetPosition(1, _grapplePoint);
     }
 
-    private void ExecuteGrapple()
-    {
-        pm.freeze = false;
-
+    private void ExecuteGrapple() {
+        if (_renderGrapple == false) return;
+        
+        _currentlyGrappling = true;
+        
+        _handler.State = "Grapple";
+        
         Vector3 lowestPoint = new Vector3(transform.position.x, transform.position.y - 1f, transform.position.z);
 
-        float grapplePointRelativeYPos = grapplePoint.y - lowestPoint.y;
-        float highestPointOnArc = grapplePointRelativeYPos + overshootYAxis;
+        float grapplePointRelativeYPos = _grapplePoint.y - lowestPoint.y;
+        float highestPointOnArc = grapplePointRelativeYPos + _overshootYAxis;
 
-        if (grapplePointRelativeYPos < 0) highestPointOnArc = overshootYAxis;
-
-        pm.JumpToPosition(grapplePoint, highestPointOnArc);
+        if (grapplePointRelativeYPos < 0) highestPointOnArc = _overshootYAxis;
+        
+        _grappleForce = CalculateJumpVelocity(transform.position, _grapplePoint, highestPointOnArc);
 
         Invoke(nameof(StopGrapple), 1f);
     }
-
+    
+    private Vector3 CalculateJumpVelocity(Vector3 startPoint, Vector3 endPoint, float trajectoryHeight) {
+        float gravity = -_playerMove._gravityStrength;
+        float displacementY = endPoint.y - startPoint.y;
+        Vector3 displacementXZ = new Vector3(endPoint.x - startPoint.x, 0f, endPoint.z - startPoint.z);
+        
+        Vector3 velocityY = Vector3.up * Mathf.Sqrt(-2 * gravity * trajectoryHeight);
+        Vector3 velocityXZ = displacementXZ / (Mathf.Sqrt(-2 * trajectoryHeight / gravity) 
+                                               + Mathf.Sqrt(2 * (displacementY - trajectoryHeight) / gravity));
+        return (velocityXZ + velocityY) * Time.deltaTime;
+    }
+    
     public void StopGrapple()
     {
-        pm.freeze = false;
+        _renderGrapple = false;
+        _currentlyGrappling = false;
 
-        grappling = false;
+        _handler.State = "Air";
+        
+        _grapplingCoolDownTimer = _grapplingCoolDown;
 
-        grapplingCdTimer = grapplingCd;
-
-        lr.enabled = false;
+        _lineRenderer.enabled = false;
+    }
+    
+    public void OnSceneChangeNotify(string previousState, string currentState) {
+        _currentState = currentState;
     }
 
-    public bool IsGrappling()
-    {
-        return grappling;
+    public void OnGrappleNotify(int type) {
+        switch (type) {
+            case 0:
+                StartGrapple();
+                break;
+            case 1:
+                break;
+            case 2:
+                if (_renderGrapple) 
+                    StopGrapple();
+                break;
+            default:
+                break;
+        }
     }
-
-    public Vector3 GetGrapplePoint()
-    {
-        return grapplePoint;
-    }
+    
 }

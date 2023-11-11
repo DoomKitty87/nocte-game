@@ -2,6 +2,12 @@ namespace ObserverPattern
 {
     public interface IObserver
     {
-        public void OnNotify(string firstString, string secondString);
+        public void OnSceneChangeNotify(string firstString, string secondString);
+        
+    }
+
+    public interface IObserverGrapple
+    {
+        public void OnGrappleNotify(int type);
     }
 }
