@@ -8,9 +8,15 @@ public class PlayerMove : MonoBehaviour, IObserver
   [SerializeField] private float _moveSmoothSpeed;
   [SerializeField] private float _gravityStrengh;
   [SerializeField] private float _jumpStrength;
-  [SerializeField] private float _walkSpeed;
   [SerializeField] private float _runSpeed;
   [SerializeField] private float _crouchSpeed;
+
+  // Local current move speed for the played based on inputs
+  private float _moveSpeed;
+
+  [Space(10)]
+  [Header("Air")]
+  [SerializeField] private float _airMaxSpeed;
   
   [Space(10)]
   [Header("Sliding")]
@@ -40,6 +46,9 @@ public class PlayerMove : MonoBehaviour, IObserver
   }
 
   private void Start() {
+    // TODO: Figure out why this happens ????
+    Time.timeScale = 1;
+    
     _characterController = GetComponent<CharacterController>();
     _currentState = _handler.State;
   }
@@ -60,14 +69,10 @@ public class PlayerMove : MonoBehaviour, IObserver
     Vector3 moveVector;
     float currentSpeed;
     switch (_currentState) {
-      case "Walking": {
-        moveVector = _model.forward * playerInput.z + _model.right * playerInput.x;
-        currentSpeed = _walkSpeed;
-        break;
-      }
       case "Sprinting": {
         moveVector = _model.forward * playerInput.z + _model.right * playerInput.x;
-        currentSpeed = _runSpeed;
+        _moveSpeed = _runSpeed;
+        currentSpeed = _moveSpeed;
         break;
       }
       case "Sliding": {
@@ -80,19 +85,38 @@ public class PlayerMove : MonoBehaviour, IObserver
       }
       case "Crouching": {
         moveVector = _model.forward * playerInput.z + _model.right * playerInput.x;
-        currentSpeed = _crouchSpeed;
+        _moveSpeed = _crouchSpeed;
+        currentSpeed = _moveSpeed;
         break;
       }
       case "Air": {
         var velocity = _characterController.velocity;
         var horizontalVelocity = new Vector3(velocity.x, 0, velocity.z);
         
-        moveVector = horizontalVelocity.normalized;
-        currentSpeed = horizontalVelocity.magnitude;
+        // Enable like some of this code if you don't want air strafing
+        //moveVector = (horizontalVelocity.normalized + 
+        //              ((_model.forward * playerInput.z + _model.right * playerInput.x) * _airTurnControl)).normalized;
+        //currentSpeed = Mathf.Min(
+        //(horizontalVelocity + ((_model.forward * playerInput.z + _model.right * playerInput.x) * _airSpeedControl)).magnitude, 
+        //horizontalVelocity.magnitude);
+        //currentSpeed =
+        //  (horizontalVelocity + ((_model.forward * playerInput.z + _model.right * playerInput.x) * _airSpeedControl))
+        //  .magnitude;
+        // Calculates air speed based off _airSpeedControl and previous velocity
+        // currentSpeed = Mathf.Min(
+        //   (horizontalVelocity + ((_model.forward * playerInput.z + _model.right * playerInput.x) * _airSpeedControl)).magnitude, 
+        //   _moveSpeed);
+
+        Vector3 newDirection = AirMovement((_model.forward * playerInput.z + _model.right * playerInput.x).normalized, horizontalVelocity);
+        Debug.Log(newDirection.magnitude);
+        
+        moveVector = newDirection.normalized;
+        currentSpeed = newDirection.magnitude;
         break;
       }
       case "Freeze": {
         moveVector = Vector3.zero;
+        _moveSpeed = 0;
         currentSpeed = 0;
         break;
       }
@@ -103,7 +127,7 @@ public class PlayerMove : MonoBehaviour, IObserver
         break;
       }
     }
-
+    
     _currentMoveVelocity = Vector3.SmoothDamp(
       _currentMoveVelocity,
       moveVector * currentSpeed,
@@ -112,6 +136,25 @@ public class PlayerMove : MonoBehaviour, IObserver
     );
 
     return _currentMoveVelocity * Time.deltaTime;
+  }
+  
+  private Vector3 AirMovement(Vector3 moveVector, Vector3 previousVelocity)
+  {
+    Vector3 projVel = Vector3.Project(previousVelocity, moveVector);
+    bool isAway = Vector3.Dot(moveVector, projVel) <= 0f;
+
+    if (projVel.magnitude < _airMaxSpeed || isAway)
+    {
+      Vector3 vc = moveVector.normalized * _airMaxSpeed;
+      if (!isAway)
+        vc = Vector3.ClampMagnitude(vc, _airMaxSpeed - projVel.magnitude);
+      else
+        vc = Vector3.ClampMagnitude(vc, _airMaxSpeed + projVel.magnitude);
+        
+      return previousVelocity + vc;
+    }
+
+    return previousVelocity;
   }
 
   private Vector3 CalculateGravityVelocity() {
@@ -134,7 +177,6 @@ public class PlayerMove : MonoBehaviour, IObserver
         _currentForceVelocity.y = 0;
       }
     }
-
     return _currentForceVelocity * Time.deltaTime;
   }
 
