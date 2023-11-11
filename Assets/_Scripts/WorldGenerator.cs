@@ -1053,20 +1053,24 @@ public class WorldGenerator : MonoBehaviour
         int waterVertsLength = _waterVertices.Count;
         int waterTriLength = _waterTriangles.Count;
         int[] realIndices = new int[waterVerts.Length];
+        Vector3[] verts = new Vector3[waterVerts.Length - ignored];
+        List<int> tris = new List<int>();
         for (int i = 0, j = 0; i < waterVerts.Length; i++) {
           if (!ignoreVerts[i]) {
-            _waterVertices.Add(waterVerts[i]);
+            verts[j] = waterVerts[i];
             realIndices[i] = j;
             j++;
           }
         }
         for (int i = 0; i < triangles.Length; i+= 3) {
           if (!ignoreVerts[triangles[i]] && !ignoreVerts[triangles[i + 1]] && !ignoreVerts[triangles[i + 2]]) {
-            _waterTriangles.Add(realIndices[triangles[i]] + waterVertsLength);
-            _waterTriangles.Add(realIndices[triangles[i + 1]] + waterVertsLength);
-            _waterTriangles.Add(realIndices[triangles[i + 2]] + waterVertsLength);
+            tris.Add(realIndices[triangles[i]] + waterVertsLength);
+            tris.Add(realIndices[triangles[i + 1]] + waterVertsLength);
+            tris.Add(realIndices[triangles[i + 2]] + waterVertsLength);
           }
         }
+        _waterVertices.AddRange(verts);
+        _waterTriangles.AddRange(tris);
         _tilePool[index].waterVertIndex = waterVertsLength;
         _tilePool[index].waterVertCount = waterVerts.Length - ignored;
         _tilePool[index].waterTriIndex = waterTriLength;

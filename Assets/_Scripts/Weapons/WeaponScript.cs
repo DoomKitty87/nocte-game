@@ -1,8 +1,9 @@
 using UnityEngine;
+using UnityEngine.Serialization;
 
 public abstract class WeaponScript : MonoBehaviour
 {
-  [HideInInspector] public CombatCore _instancingCombatCoreScript;
+  [FormerlySerializedAs("_instancingCombatCoreScript")] [HideInInspector] public PlayerCombatCore _instancingPlayerCombatCoreScript;
 
   // Called on any frame fire is down immediately after a frame where fire is up
   public abstract void FireDown();
