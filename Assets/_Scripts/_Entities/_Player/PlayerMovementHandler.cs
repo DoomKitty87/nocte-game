@@ -16,8 +16,9 @@ public class PlayerMovementHandler : Subject
 
   [SerializeField] private LayerMask _groundMask;
 
-  [Header("Keybinds")] public KeyCode _jumpKey = KeyCode.Space;
-  public KeyCode _sprintKey = KeyCode.LeftShift;
+  [Header("Keybinds")] 
+  public KeyCode _jumpKey = KeyCode.Space;
+  // public KeyCode _sprintKey = KeyCode.LeftShift;
   public KeyCode _crouchKey = KeyCode.LeftControl;
   public KeyCode _slideKey = KeyCode.LeftControl;
 
@@ -46,12 +47,12 @@ public class PlayerMovementHandler : Subject
         State = "Air";
       else if (Input.GetKey(_slideKey))
         State = "Sliding";
-      else if (Input.GetKey(_sprintKey))
-        State = "Sprinting";
+      //else if (Input.GetKey(_sprintKey))
+      //  State = "Sprinting";
       else if (Input.GetKey(_crouchKey))
         State = "Crouching";
       else
-        State = "Walking";
+        State = "Sprinting";
     }
 
     if (_previousState == State) return;
