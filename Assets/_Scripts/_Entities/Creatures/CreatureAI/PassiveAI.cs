@@ -11,12 +11,10 @@ namespace _Scripts._Entities.Creatures.CreatureAI
 	[RequireComponent(typeof(NavMeshAgent))]
 	public class PassiveAI : BehaviorTree
 	{
-		// References to gameObject components will be static for simplicity
-		// References to other GameObjects will be non-static for flexibility
 		[Header("References")]
-		public static Transform _transform;
-		public static NavMeshAgent _navMeshAgent;
-		public Transform _playerTransform;
+		private Transform _transform;
+		private NavMeshAgent _navMeshAgent;
+		[SerializeField] private Transform _playerTransform;
 
 		[Header("Settings")]
 		[SerializeField] private float _distanceEvade;
