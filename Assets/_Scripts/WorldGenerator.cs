@@ -1015,8 +1015,8 @@ public class WorldGenerator : MonoBehaviour
         _tilePool[index].waterVertCount = 0;
         float maxDistance = Mathf.Max(Mathf.Abs(_tilePool[index].x - _playerXChunkScale), Mathf.Abs(_tilePool[index].z - _playerZChunkScale));
         Vector3[] vertices = targetMesh.vertices;
-        float[] heightMods = AmalgamNoise.GenerateRivers(_xSize, _tilePool[index].x * _xSize * _xResolution + _seed,
-            _tilePool[index].z * _zSize * _zResolution + _seed, _xResolution, _zResolution, _riverPassScale);
+        float[] heightMods = AmalgamNoise.GenerateRivers(_xSize, _tilePool[index].x * _xSize * _xResolution + _seed % 216812,
+            _tilePool[index].z * _zSize * _zResolution + _seed % 216812, _xResolution, _zResolution, _riverPassScale);
         Vector3[] waterVerts = new Vector3[vertices.Length];
         bool[] ignoreVerts = new bool[vertices.Length];
         int ignored = 0;
