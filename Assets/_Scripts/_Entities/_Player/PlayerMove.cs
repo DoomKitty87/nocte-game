@@ -108,7 +108,6 @@ public class PlayerMove : MonoBehaviour, IObserver
         //   _moveSpeed);
 
         Vector3 newDirection = AirMovement((_model.forward * playerInput.z + _model.right * playerInput.x).normalized, horizontalVelocity);
-        Debug.Log(newDirection.magnitude);
         
         moveVector = newDirection.normalized;
         currentSpeed = newDirection.magnitude;

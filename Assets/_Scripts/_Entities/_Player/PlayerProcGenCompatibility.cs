@@ -12,7 +12,7 @@ public class PlayerWorldGeneratorCompatibility : MonoBehaviour
     private bool _hasInitialized;
 
     private void Awake() {
-        if (_worldGeneratorObject == null) {
+        if (enabled && _worldGeneratorObject == null) {
             Debug.LogWarning("World Generator Object is missing. Either assign the script or disable " +
                              "PlayerWorldGeneratorCompatibility script if there is no WorldGenerator in scene.");
             enabled = false;
