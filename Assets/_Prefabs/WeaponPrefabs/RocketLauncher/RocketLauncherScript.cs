@@ -18,7 +18,7 @@ public class RocketLauncherScript : WeaponScript
   private float _timeSinceLastShot;
   
   public Vector3 GetCenterScreenWorldPosition() {
-    Camera mainCamera = _instancingCombatCoreScript._mainCamera;
+    Camera mainCamera = _instancingPlayerCombatCoreScript._mainCamera;
     if (mainCamera != null) {
       // Maybe make a variable for max distance here later?
       Physics.Raycast(mainCamera.ScreenToWorldPoint(new Vector3(mainCamera.pixelWidth / 2, mainCamera.pixelHeight / 2)), mainCamera.transform.forward, out RaycastHit hit, _maxRaycastDistance, _raycastLayerMask);

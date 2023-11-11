@@ -13,7 +13,7 @@ namespace _Scripts._BehaviorTree
 		}
 
 		[SerializeField] private UpdateType _updateType; 
-		[SerializeField] private TreeNode _rootNode = null;
+		private TreeNode _rootNode = null;
 		
 		private void Start() {
 			_rootNode = SetupTree();
