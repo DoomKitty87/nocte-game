@@ -20,7 +20,7 @@ namespace _Scripts._Entities.Creatures
 			if (hit.collider != null) {
 				GameObject hitObject = hit.collider.gameObject;
 				if (hitObject.TryGetComponent<HealthInterface>(out HealthInterface healthInterface)) {
-					healthInterface.Damage(attack._attackDamage);
+					healthInterface.Damage(attack._attackDamage, hit.point);
 					return true;
 				}
 			}

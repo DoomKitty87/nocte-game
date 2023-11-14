@@ -41,7 +41,7 @@ public class RifleScript : WeaponScript
     Debug.DrawLine(barrelPosition, hitPosition, Color.red, 1f);
     if (hit.collider == null) return;
     if (hit.collider.GetComponent<HealthInterface>() != null) {
-      hit.collider.GetComponent<HealthInterface>().Damage(_damage);
+      hit.collider.GetComponent<HealthInterface>().Damage(_damage, hit.point);
     }
   }
 
