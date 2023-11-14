@@ -4,7 +4,7 @@ using UnityEngine.AI;
 
 namespace _Scripts._Entities.Creatures.CreatureAI
 {
-	public class EvadeTransform : TreeNode
+	public class SetAgentToEvadeTransform : TreeNode
 	{
 		private Transform _transform;
 		private Transform _transformToEvade;
@@ -12,7 +12,7 @@ namespace _Scripts._Entities.Creatures.CreatureAI
 		private NavMeshAgent _navMeshAgent;
 		private float _evadedDistance;
 
-		public EvadeTransform(NavMeshAgent navMeshAgent, Transform transform, Transform transformToEvade, float evadedDistance) {
+		public SetAgentToEvadeTransform(NavMeshAgent navMeshAgent, Transform transform, Transform transformToEvade, float evadedDistance) {
 			_transform = transform;
 			_transformToEvade = transformToEvade;
 			_navMeshAgent = navMeshAgent;

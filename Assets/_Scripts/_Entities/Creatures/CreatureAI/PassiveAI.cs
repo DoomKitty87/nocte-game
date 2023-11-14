@@ -23,9 +23,11 @@ namespace _Scripts._Entities.Creatures.CreatureAI
 		protected override TreeNode SetupTree() {
 			_transform = gameObject.GetComponent<Transform>();
 			_navMeshAgent = gameObject.GetComponent<NavMeshAgent>();
-			return new Sequencer(new List<TreeNode> {
-				new DistanceToPlayerLessThan(transform, _playerTransform, _distanceEvade),
-				new EvadeTransform(_navMeshAgent, transform, _playerTransform, _distanceEvadeTo)
+			return new Selector(new List<TreeNode> {
+				new Sequencer(new List<TreeNode> {
+					new DistanceToPlayerLessThan(transform, _playerTransform, _distanceEvade),
+					new SetAgentToEvadeTransform(_navMeshAgent, transform, _playerTransform, _distanceEvadeTo)
+				})
 			});
 		}
 	}
