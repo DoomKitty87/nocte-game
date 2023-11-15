@@ -76,9 +76,7 @@ public class PlayerMove : MonoBehaviour, IObserver
     switch (_currentState) {
       case "Sprinting": {
         Vector3 moveVector = _model.forward * playerInput.z + _model.right * playerInput.x;
-        Approach(_characterController.velocity, moveVector * _runSpeed);
-        // _moveSpeed = _runSpeed;
-        // currentSpeed = _moveSpeed;
+        ApproachVector(_characterController.velocity, moveVector * _runSpeed);
         break;
       }
       //case "Sliding": {
@@ -89,29 +87,24 @@ public class PlayerMove : MonoBehaviour, IObserver
       //  currentSpeed = horizontalVelocity.magnitude - (_slideFriction * Time.deltaTime);
       //  break;
       //}
-      //case "Crouching": {
-      //  moveVector = _model.forward * playerInput.z + _model.right * playerInput.x;
-      //  _moveSpeed = _crouchSpeed;
-      //  currentSpeed = _moveSpeed;
-      //  break;
-      //}
-      //case "Air": {
-      //  var velocity = _characterController.velocity;
-      //  var horizontalVelocity = new Vector3(velocity.x, 0, velocity.z);
-      //  
-      //  // Enable if you don't want air strafing
-      //  //moveVector = (horizontalVelocity.normalized + 
-      //  //              ((_model.forward * playerInput.z + _model.right * playerInput.x) * _airTurnControl)).normalized;
-      //  //currentSpeed = Mathf.Min(
-      //  //(horizontalVelocity + ((_model.forward * playerInput.z + _model.right * playerInput.x) * _airSpeedControl)).magnitude, 
-      //  //horizontalVelocity.magnitude);
-// //
-      //  Vector3 newDirection = AirMovement((_model.forward * playerInput.z + _model.right * playerInput.x).normalized, horizontalVelocity);
-      //  
-      //  moveVector = newDirection.normalized;
-      //  currentSpeed = newDirection.magnitude;
-      //  break;
-      //}
+      case "Crouching": {
+        Vector3 moveVector = _model.forward * playerInput.z + _model.right * playerInput.x;
+        ApproachVector(_characterController.velocity, moveVector * _crouchSpeed);
+        break;
+      }
+      case "Air": {
+        Vector3 moveVector = _model.forward * playerInput.z + _model.right * playerInput.x;
+        AirMovement(_characterController.velocity, moveVector);
+        
+        // Enable if you don't want air strafing
+        //moveVector = (horizontalVelocity.normalized + 
+        //              ((_model.forward * playerInput.z + _model.right * playerInput.x) * _airTurnControl)).normalized;
+        //currentSpeed = Mathf.Min(
+        //(horizontalVelocity + ((_model.forward * playerInput.z + _model.right * playerInput.x) * _airSpeedControl)).magnitude, 
+        //horizontalVelocity.magnitude);
+        
+        break;
+      }
       //case "Grapple": {
       //  moveVector = Vector3.zero;
       //  _moveSpeed = 0;
@@ -140,7 +133,7 @@ public class PlayerMove : MonoBehaviour, IObserver
     //_handler.AddForce(_currentMoveVelocity);
   }
 
-  private void Approach(Vector3 previousVector, Vector3 targetVector) {
+  private void ApproachVector(Vector3 previousVector, Vector3 targetVector) {
     // Calculate the difference between previousVector and targetVector
     Vector3 vectorDifference = targetVector - previousVector;
 
@@ -149,7 +142,7 @@ public class PlayerMove : MonoBehaviour, IObserver
 
     _handler._newVelocity += nextVector;
   }
-  private Vector3 AirMovement(Vector3 moveVector, Vector3 previousVelocity)
+  private void AirMovement(Vector3 previousVelocity, Vector3 moveVector)
   {
     Vector3 projVel = Vector3.Project(previousVelocity, moveVector);
     bool isAway = Vector3.Dot(moveVector, projVel) <= 0f;
@@ -162,17 +155,14 @@ public class PlayerMove : MonoBehaviour, IObserver
       else
         vc = Vector3.ClampMagnitude(vc, _airMaxSpeed + projVel.magnitude);
         
-      return previousVelocity + vc;
+      _handler._newVelocity += vc;
     }
-
-    return previousVelocity;
   }
 
   private void GetJump() {
     if (_handler.State != "Air" && _currentState != "Grapple") {
       if (Input.GetKey(_handler._jumpKey)) {
-        //_handler.AddForce(new Vector3(0, _jumpStrength, 0));
-        // _handler.State = "Air";
+        _handler._newVelocity += new Vector3(0, _jumpStrength, 0);
       }
     }
   }

@@ -12960,10 +12960,10 @@ MonoBehaviour:
   _model: {fileID: 98243406}
   _gravityStrength: 0
   _moveSmoothSpeed: 0
-  _jumpStrength: 1.5
-  _runSpeed: 15
+  _jumpStrength: 5
+  _runSpeed: 10
   _crouchSpeed: 4
-  _airMaxSpeed: 3
+  _airMaxSpeed: 10
   _slideFriction: 30
   _slideSpeedBoost: 5
   _slideJumpBoost: 2
@@ -12999,14 +12999,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d422197e3df6f436bbbdd48ba94e0600, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _movementState: 5
+  _movementState: 2
   _groundMask:
     serializedVersion: 2
     m_Bits: 64
   _frictionCoefficient: 0.2
-  _gravity: -9.8
-  _groundedGravity: -0.05
-  _newVelocity: {x: 0, y: 0, z: 0}
+  _gravity: -15
+  _groundedGravity: -0.1
+  _decayFactor: 1.2
+  _newVelocity: {x: 0, y: -0.1, z: 0}
   _jumpKey: 32
   _crouchKey: 99
   _slideKey: 306

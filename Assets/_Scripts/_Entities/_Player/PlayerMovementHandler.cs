@@ -61,11 +61,6 @@ public class PlayerMovementHandler : Subject
     HandleGravity();
     UpdateState();
   }
-
-  private void Update() {
-    Debug.Log(_newVelocity.y);
-  }
-
   private void HandleGravity() {
     if (!_characterController.isGrounded) {
       _newVelocity.y += _characterController.velocity.y + (_gravity * Time.deltaTime);
