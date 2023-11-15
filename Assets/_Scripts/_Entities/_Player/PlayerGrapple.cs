@@ -43,7 +43,7 @@ public class PlayerGrapple : MonoBehaviour
         _lineRenderer = GetComponent<LineRenderer>();
         _playerMove = GetComponent<PlayerMove>();
 
-        _forceIndex = _playerMove.RegisterForce();
+        //_forceIndex = _playerMove.RegisterForce();
     }
 
     private void Update()
@@ -52,11 +52,11 @@ public class PlayerGrapple : MonoBehaviour
             _grapplingCoolDownTimer -= Time.deltaTime;
 
         if (_currentlyGrappling) {
-            _playerMove._additionalForces[_forceIndex] = _grappleForce;
+            //_playerMove._additionalForces[_forceIndex] = _grappleForce;
         }
         else if (_currentState != "air") {
             _grappleForce = Vector3.zero;
-            _playerMove._additionalForces[_forceIndex] = Vector3.zero;
+            //_playerMove._additionalForces[_forceIndex] = Vector3.zero;
         }
     }
     
@@ -110,14 +110,15 @@ public class PlayerGrapple : MonoBehaviour
     }
     
     private Vector3 CalculateJumpVelocity(Vector3 startPoint, Vector3 endPoint, float trajectoryHeight) {
-        float gravity = -_playerMove._gravityStrength;
+        //float gravity = -_playerMove._gravityStrength;
         float displacementY = endPoint.y - startPoint.y;
         Vector3 displacementXZ = new Vector3(endPoint.x - startPoint.x, 0f, endPoint.z - startPoint.z);
         
-        Vector3 velocityY = Vector3.up * Mathf.Sqrt(-2 * gravity * trajectoryHeight);
-        Vector3 velocityXZ = displacementXZ / (Mathf.Sqrt(-2 * trajectoryHeight / gravity) 
-                                               + Mathf.Sqrt(2 * (displacementY - trajectoryHeight) / gravity));
-        return (velocityXZ + velocityY) * Time.deltaTime;
+        //Vector3 velocityY = Vector3.up * Mathf.Sqrt(-2 * gravity * trajectoryHeight);
+        //Vector3 velocityXZ = displacementXZ / (Mathf.Sqrt(-2 * trajectoryHeight / gravity) 
+        //                                      + Mathf.Sqrt(2 * (displacementY - trajectoryHeight) / gravity));
+        //return (velocityXZ + velocityY) * Time.deltaTime;
+        return Vector3.zero;
     }
     
     public void StopGrapple()

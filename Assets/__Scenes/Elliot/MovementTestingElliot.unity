@@ -158,6 +158,7 @@ Transform:
   m_Children:
   - {fileID: 921693423}
   - {fileID: 1711703762}
+  - {fileID: 1692973914}
   m_Father: {fileID: 142048776}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &98243407
@@ -12958,18 +12959,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _model: {fileID: 98243406}
-  _gravityStrength: 0
-  _moveSmoothSpeed: 0
-  _jumpStrength: 5
-  _runSpeed: 10
+  _moveSmoothSpeed: 0.1
+  _gravityStrengh: 15
+  _jumpStrength: 3
+  _runSpeed: 8
   _crouchSpeed: 4
-  _airMaxSpeed: 10
+  _airMaxSpeed: 3
   _slideFriction: 30
   _slideSpeedBoost: 5
   _slideJumpBoost: 2
   _slideCutoffSpeed: 5
   _slideCoolDown: 0
-  _additionalForces: []
 --- !u!114 &142048772
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -12999,19 +12999,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d422197e3df6f436bbbdd48ba94e0600, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _groundCheck: {fileID: 1692973914}
   _movementState: 2
   _groundMask:
     serializedVersion: 2
     m_Bits: 64
-  _frictionCoefficient: 0.2
-  _gravity: -15
-  _groundedGravity: -0.1
-  _decayFactor: 1.2
-  _newVelocity: {x: 0, y: -0.1, z: 0}
   _jumpKey: 32
   _crouchKey: 99
   _slideKey: 306
-  _grappleKey: 323
 --- !u!143 &142048774
 CharacterController:
   m_ObjectHideFlags: 0
@@ -14744,6 +14739,37 @@ Transform:
   - {fileID: 557259419}
   - {fileID: 197155016}
   m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1692973913
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1692973914}
+  m_Layer: 3
+  m_Name: Ground Check
+  m_TagString: Untagged
+  m_Icon: {fileID: 7250588514170254948, guid: 0000000000000000d000000000000000, type: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1692973914
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1692973913}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: -0.6, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 98243406}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1711703761
 GameObject:

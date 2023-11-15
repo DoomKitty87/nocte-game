@@ -1,16 +1,12 @@
-using System;
-using System.Collections.Generic;
 using UnityEngine;
 using ObserverPattern;
-using UnityEngine.Serialization;
 
 public class PlayerMove : MonoBehaviour, IObserver
 {
   public Transform _model;
   
-  public float _gravityStrength;
-  
   [SerializeField] private float _moveSmoothSpeed;
+  [SerializeField] private float _gravityStrengh;
   [SerializeField] private float _jumpStrength;
   [SerializeField] private float _runSpeed;
   [SerializeField] private float _crouchSpeed;
@@ -38,9 +34,6 @@ public class PlayerMove : MonoBehaviour, IObserver
   private Vector3 _currentForceVelocity;
   private float _gravityVelocity;
 
-  // Should be used by other scripts to add forces to player object
-  public Vector3[] _additionalForces = new Vector3[0];
-  
   private string _currentState;
 
   private void OnEnable() {
@@ -58,91 +51,91 @@ public class PlayerMove : MonoBehaviour, IObserver
   }
 
   private void Update() {
-    GetJump();
-    GetMovementVelocity();
+    _characterController.Move(GetMovementVelocity() + CalculateGravityVelocity() + GetJump());
   }
   
-  private void GetMovementVelocity() {
+  private Vector3 GetMovementVelocity() {
     Vector3 playerInput = new Vector3 {
       x = Input.GetAxisRaw("Horizontal"),
       y = 0f,
-      z = Input.GetAxisRaw("Vertical")  
+      z = Input.GetAxisRaw("Vertical")
     };
     
-    if (playerInput + _characterController.velocity == Vector3.zero) return;
-    
     if (playerInput.magnitude > 1) playerInput.Normalize();
-    
+
+    Vector3 moveVector;
+    float currentSpeed;
     switch (_currentState) {
       case "Sprinting": {
-        Vector3 moveVector = _model.forward * playerInput.z + _model.right * playerInput.x;
-        ApproachVector(_characterController.velocity, moveVector * _runSpeed);
+        moveVector = _model.forward * playerInput.z + _model.right * playerInput.x;
+        _moveSpeed = _runSpeed;
+        currentSpeed = _moveSpeed;
         break;
       }
-      //case "Sliding": {
-      //  var velocity = _characterController.velocity;
-      //  var horizontalVelocity = new Vector3(velocity.x, 0, velocity.z);
-      //  
-      //  moveVector = horizontalVelocity.normalized;
-      //  currentSpeed = horizontalVelocity.magnitude - (_slideFriction * Time.deltaTime);
-      //  break;
-      //}
+      case "Sliding": {
+        var velocity = _characterController.velocity;
+        var horizontalVelocity = new Vector3(velocity.x, 0, velocity.z);
+        
+        moveVector = horizontalVelocity.normalized;
+        currentSpeed = horizontalVelocity.magnitude - (_slideFriction * Time.deltaTime);
+        break;
+      }
       case "Crouching": {
-        Vector3 moveVector = _model.forward * playerInput.z + _model.right * playerInput.x;
-        ApproachVector(_characterController.velocity, moveVector * _crouchSpeed);
+        moveVector = _model.forward * playerInput.z + _model.right * playerInput.x;
+        _moveSpeed = _crouchSpeed;
+        currentSpeed = _moveSpeed;
         break;
       }
       case "Air": {
-        Vector3 moveVector = _model.forward * playerInput.z + _model.right * playerInput.x;
-        AirMovement(_characterController.velocity, moveVector);
+        var velocity = _characterController.velocity;
+        var horizontalVelocity = new Vector3(velocity.x, 0, velocity.z);
         
-        // Enable if you don't want air strafing
+        // Enable like some of this code if you don't want air strafing
         //moveVector = (horizontalVelocity.normalized + 
         //              ((_model.forward * playerInput.z + _model.right * playerInput.x) * _airTurnControl)).normalized;
         //currentSpeed = Mathf.Min(
         //(horizontalVelocity + ((_model.forward * playerInput.z + _model.right * playerInput.x) * _airSpeedControl)).magnitude, 
         //horizontalVelocity.magnitude);
+        //currentSpeed =
+        //  (horizontalVelocity + ((_model.forward * playerInput.z + _model.right * playerInput.x) * _airSpeedControl))
+        //  .magnitude;
+        // Calculates air speed based off _airSpeedControl and previous velocity
+        // currentSpeed = Mathf.Min(
+        //   (horizontalVelocity + ((_model.forward * playerInput.z + _model.right * playerInput.x) * _airSpeedControl)).magnitude, 
+        //   _moveSpeed);
+
+        Vector3 newDirection = AirMovement((_model.forward * playerInput.z + _model.right * playerInput.x).normalized, horizontalVelocity);
+        Debug.Log(newDirection.magnitude);
         
+        moveVector = newDirection.normalized;
+        currentSpeed = newDirection.magnitude;
         break;
       }
-      //case "Grapple": {
-      //  moveVector = Vector3.zero;
-      //  _moveSpeed = 0;
-      //  currentSpeed = 0;
-      //  break;
-      //}
-      //case "Freeze": {
-      //  moveVector = Vector3.zero;
-      //  _moveSpeed = 0;
-      //  currentSpeed = 0;
-      //  break;
-      //}
+      case "Freeze": {
+        moveVector = Vector3.zero;
+        _moveSpeed = 0;
+        currentSpeed = 0;
+        break;
+      }
       default: {
         Debug.LogWarning("Unexpected MovementState: " + _currentState);
-        return;
+        moveVector = Vector3.zero;
+        currentSpeed = 0;
+        break;
       }
     }
     
-    //_currentMoveVelocity = Vector3.SmoothDamp(
-    //   _currentMoveVelocity,
-    //   moveVector * currentSpeed,
-    //   ref _moveDampVelocity,
-    //   _moveSmoothSpeed
-    // );
+    _currentMoveVelocity = Vector3.SmoothDamp(
+      _currentMoveVelocity,
+      moveVector * currentSpeed,
+      ref _moveDampVelocity,
+      _moveSmoothSpeed
+    );
 
-    //_handler.AddForce(_currentMoveVelocity);
+    return _currentMoveVelocity * Time.deltaTime;
   }
-
-  private void ApproachVector(Vector3 previousVector, Vector3 targetVector) {
-    // Calculate the difference between previousVector and targetVector
-    Vector3 vectorDifference = targetVector - previousVector;
-
-    // Use exponential decay to approach targetVector
-    Vector3 nextVector = previousVector + vectorDifference * Mathf.Exp(-_handler._decayFactor);
-
-    _handler._newVelocity += nextVector;
-  }
-  private void AirMovement(Vector3 previousVelocity, Vector3 moveVector)
+  
+  private Vector3 AirMovement(Vector3 moveVector, Vector3 previousVelocity)
   {
     Vector3 projVel = Vector3.Project(previousVelocity, moveVector);
     bool isAway = Vector3.Dot(moveVector, projVel) <= 0f;
@@ -155,35 +148,37 @@ public class PlayerMove : MonoBehaviour, IObserver
       else
         vc = Vector3.ClampMagnitude(vc, _airMaxSpeed + projVel.magnitude);
         
-      _handler._newVelocity += vc;
+      return previousVelocity + vc;
     }
+
+    return previousVelocity;
   }
 
-  private void GetJump() {
-    if (_handler.State != "Air" && _currentState != "Grapple") {
+  private Vector3 CalculateGravityVelocity() {
+    if (_currentState == "Air") 
+      // Equation for gravity: strength * seconds^2, so must multiply by Time.deltaTime twice
+      _gravityVelocity -= _gravityStrengh * Time.deltaTime;
+    else
+      _gravityVelocity = 0f;
+
+    return new Vector3(0, _gravityVelocity, 0) * Time.deltaTime;
+  }
+
+  private Vector3 GetJump() {
+    if (_currentState != "Air") {
       if (Input.GetKey(_handler._jumpKey)) {
-        _handler._newVelocity += new Vector3(0, _jumpStrength, 0);
+        _currentForceVelocity.y = _jumpStrength;
+        _handler.State = "Air";
+      }
+      else {
+        _currentForceVelocity.y = 0;
       }
     }
+    return _currentForceVelocity * Time.deltaTime;
   }
 
-  // Called by a different script to 'register' a spot in _additionalForces array, returning the index to be edited
-  public int RegisterForce() {
-    Array.Resize(ref _additionalForces, _additionalForces.Length + 1);
-    return _additionalForces.Length - 1;
-  }
-
-  // Sums up all external forces
-  private Vector3 GetOtherForces() {
-    if (_additionalForces.Length == 0) return Vector3.zero;
-    Vector3 forces = Vector3.zero;
-    for (int i = 0; i < _additionalForces.Length; i++)
-      forces += _additionalForces[i];
-
-    return forces;
-  }
-  
   public void OnSceneChangeNotify(string previousState, string currentState) {
+    
     _currentState = currentState;
   }
 }
