@@ -11,7 +11,7 @@ public class SnapCamera : MonoBehaviour
 
     // Transform is done in late update in order to allow all other operations to be performed before 
     // frame rendering starts
-    private void LateUpdate() {
+    private void Update() {
         var localTransform = transform;
         _camera.position = localTransform.position;
         _camera.rotation = localTransform.rotation;

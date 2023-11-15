@@ -53,96 +53,102 @@ public class PlayerMove : MonoBehaviour, IObserver
   }
 
   private void Start() {
-    // TODO: Figure out why this happens ????
-    Time.timeScale = 1;
-    
     _characterController = GetComponent<CharacterController>();
     _currentState = _handler.State;
   }
 
-  private void LateUpdate() {
-    _characterController.Move(GetMovementVelocity() + CalculateGravityVelocity() + GetJump() + GetOtherForces());
+  private void Update() {
+    GetJump();
+    GetMovementVelocity();
   }
   
-  private Vector3 GetMovementVelocity() {
+  private void GetMovementVelocity() {
     Vector3 playerInput = new Vector3 {
       x = Input.GetAxisRaw("Horizontal"),
       y = 0f,
-      z = Input.GetAxisRaw("Vertical")
+      z = Input.GetAxisRaw("Vertical")  
     };
     
+    if (playerInput + _characterController.velocity == Vector3.zero) return;
+    
     if (playerInput.magnitude > 1) playerInput.Normalize();
-
-    Vector3 moveVector;
-    float currentSpeed;
+    
     switch (_currentState) {
       case "Sprinting": {
-        moveVector = _model.forward * playerInput.z + _model.right * playerInput.x;
-        _moveSpeed = _runSpeed;
-        currentSpeed = _moveSpeed;
+        Vector3 moveVector = _model.forward * playerInput.z + _model.right * playerInput.x;
+        Approach(_characterController.velocity, moveVector * _runSpeed);
+        // _moveSpeed = _runSpeed;
+        // currentSpeed = _moveSpeed;
         break;
       }
-      case "Sliding": {
-        var velocity = _characterController.velocity;
-        var horizontalVelocity = new Vector3(velocity.x, 0, velocity.z);
-        
-        moveVector = horizontalVelocity.normalized;
-        currentSpeed = horizontalVelocity.magnitude - (_slideFriction * Time.deltaTime);
-        break;
-      }
-      case "Crouching": {
-        moveVector = _model.forward * playerInput.z + _model.right * playerInput.x;
-        _moveSpeed = _crouchSpeed;
-        currentSpeed = _moveSpeed;
-        break;
-      }
-      case "Air": {
-        var velocity = _characterController.velocity;
-        var horizontalVelocity = new Vector3(velocity.x, 0, velocity.z);
-        
-        // Enable if you don't want air strafing
-        //moveVector = (horizontalVelocity.normalized + 
-        //              ((_model.forward * playerInput.z + _model.right * playerInput.x) * _airTurnControl)).normalized;
-        //currentSpeed = Mathf.Min(
-        //(horizontalVelocity + ((_model.forward * playerInput.z + _model.right * playerInput.x) * _airSpeedControl)).magnitude, 
-        //horizontalVelocity.magnitude);
-
-        Vector3 newDirection = AirMovement((_model.forward * playerInput.z + _model.right * playerInput.x).normalized, horizontalVelocity);
-        
-        moveVector = newDirection.normalized;
-        currentSpeed = newDirection.magnitude;
-        break;
-      }
-      case "Grapple": {
-        moveVector = Vector3.zero;
-        _moveSpeed = 0;
-        currentSpeed = 0;
-        break;
-      }
-      case "Freeze": {
-        moveVector = Vector3.zero;
-        _moveSpeed = 0;
-        currentSpeed = 0;
-        break;
-      }
+      //case "Sliding": {
+      //  var velocity = _characterController.velocity;
+      //  var horizontalVelocity = new Vector3(velocity.x, 0, velocity.z);
+      //  
+      //  moveVector = horizontalVelocity.normalized;
+      //  currentSpeed = horizontalVelocity.magnitude - (_slideFriction * Time.deltaTime);
+      //  break;
+      //}
+      //case "Crouching": {
+      //  moveVector = _model.forward * playerInput.z + _model.right * playerInput.x;
+      //  _moveSpeed = _crouchSpeed;
+      //  currentSpeed = _moveSpeed;
+      //  break;
+      //}
+      //case "Air": {
+      //  var velocity = _characterController.velocity;
+      //  var horizontalVelocity = new Vector3(velocity.x, 0, velocity.z);
+      //  
+      //  // Enable if you don't want air strafing
+      //  //moveVector = (horizontalVelocity.normalized + 
+      //  //              ((_model.forward * playerInput.z + _model.right * playerInput.x) * _airTurnControl)).normalized;
+      //  //currentSpeed = Mathf.Min(
+      //  //(horizontalVelocity + ((_model.forward * playerInput.z + _model.right * playerInput.x) * _airSpeedControl)).magnitude, 
+      //  //horizontalVelocity.magnitude);
+// //
+      //  Vector3 newDirection = AirMovement((_model.forward * playerInput.z + _model.right * playerInput.x).normalized, horizontalVelocity);
+      //  
+      //  moveVector = newDirection.normalized;
+      //  currentSpeed = newDirection.magnitude;
+      //  break;
+      //}
+      //case "Grapple": {
+      //  moveVector = Vector3.zero;
+      //  _moveSpeed = 0;
+      //  currentSpeed = 0;
+      //  break;
+      //}
+      //case "Freeze": {
+      //  moveVector = Vector3.zero;
+      //  _moveSpeed = 0;
+      //  currentSpeed = 0;
+      //  break;
+      //}
       default: {
         Debug.LogWarning("Unexpected MovementState: " + _currentState);
-        moveVector = Vector3.zero;
-        currentSpeed = 0;
-        break;
+        return;
       }
     }
     
-    _currentMoveVelocity = Vector3.SmoothDamp(
-      _currentMoveVelocity,
-      moveVector * currentSpeed,
-      ref _moveDampVelocity,
-      _moveSmoothSpeed
-    );
+    //_currentMoveVelocity = Vector3.SmoothDamp(
+    //   _currentMoveVelocity,
+    //   moveVector * currentSpeed,
+    //   ref _moveDampVelocity,
+    //   _moveSmoothSpeed
+    // );
 
-    return _currentMoveVelocity * Time.deltaTime;
+    //_handler.AddForce(_currentMoveVelocity);
   }
-  
+
+  private void Approach(Vector3 previousVector, Vector3 targetVector) {
+    // Calculate the difference between previousVector and targetVector
+    Vector3 vectorDifference = targetVector - previousVector;
+
+    // Use exponential decay to approach targetVector
+    Vector3 nextVector = previousVector + vectorDifference * Mathf.Exp(-_handler._decayFactor);
+
+    _handler._newVelocity += nextVector;
+  }
   private Vector3 AirMovement(Vector3 moveVector, Vector3 previousVelocity)
   {
     Vector3 projVel = Vector3.Project(previousVelocity, moveVector);
@@ -162,27 +168,13 @@ public class PlayerMove : MonoBehaviour, IObserver
     return previousVelocity;
   }
 
-  private Vector3 CalculateGravityVelocity() {
-    if (_currentState == "Air" || _currentState == "Grapple") 
-      // Equation for gravity: strength * seconds^2, so must multiply by Time.deltaTime twice
-      _gravityVelocity -= _gravityStrength * Time.deltaTime;
-    else
-      _gravityVelocity = 0f;
-
-    return new Vector3(0, _gravityVelocity, 0) * Time.deltaTime;
-  }
-
-  private Vector3 GetJump() {
-    if (_currentState != "Air" && _currentState != "Grapple") {
+  private void GetJump() {
+    if (_handler.State != "Air" && _currentState != "Grapple") {
       if (Input.GetKey(_handler._jumpKey)) {
-        _currentForceVelocity.y = _jumpStrength;
-        _handler.State = "Air";
-      }
-      else {
-        _currentForceVelocity.y = 0;
+        //_handler.AddForce(new Vector3(0, _jumpStrength, 0));
+        // _handler.State = "Air";
       }
     }
-    return _currentForceVelocity * Time.deltaTime;
   }
 
   // Called by a different script to 'register' a spot in _additionalForces array, returning the index to be edited

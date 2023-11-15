@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEngine.Serialization;
 
 [RequireComponent(typeof(LineRenderer))]
-public class PlayerGrapple : MonoBehaviour, IObserverGrapple
+public class PlayerGrapple : MonoBehaviour
 {
     private PlayerMovementHandler _handler;
     private PlayerMove _playerMove;
@@ -36,12 +36,8 @@ public class PlayerGrapple : MonoBehaviour, IObserverGrapple
     
     private void OnEnable() {
         _handler = GetComponent<PlayerMovementHandler>();
-        _handler.AddObserverGrapple(this);
     }
-
-    private void OnDisable() {
-        _handler.AddObserverGrapple(this);
-    }
+    
 
     private void Start() {
         _lineRenderer = GetComponent<LineRenderer>();

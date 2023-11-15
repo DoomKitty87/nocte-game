@@ -6,6 +6,7 @@ using ObserverPattern;
 public class PlayerMovementHandler : Subject
 {
   [SerializeField] MovementState _movementState;
+  private CharacterController _characterController;
 
   private string _previousState;
 
@@ -16,6 +17,16 @@ public class PlayerMovementHandler : Subject
 
   [SerializeField] private LayerMask _groundMask;
 
+  [Header("Physics")] 
+  [SerializeField] private float _frictionCoefficient;
+  [SerializeField] private float _gravity;
+  [SerializeField] private float _groundedGravity;
+  public float _decayFactor;
+
+  private Vector3 _accelerationVector;
+  private Vector3 _velocityVector;
+  public Vector3 _newVelocity;
+  
   [Header("Keybinds")] 
   public KeyCode _jumpKey = KeyCode.Space;
   // public KeyCode _sprintKey = KeyCode.LeftShift;
@@ -23,7 +34,6 @@ public class PlayerMovementHandler : Subject
   public KeyCode _slideKey = KeyCode.LeftControl;
   public KeyCode _grappleKey = KeyCode.Mouse0;
 
-  public int _localGrappleType = -1;
   
   private enum MovementState
   {
@@ -36,20 +46,85 @@ public class PlayerMovementHandler : Subject
     Grapple
   }
 
+  private void Awake() {
+    _characterController = GetComponent<CharacterController>();
+  }
+  
   private void Start() {
     _previousState = State;
   }
 
-  private void Update() {
-    UpdateMovementState();
-    CheckForGrapple();
+  private void LateUpdate() {
+    _characterController.Move(_newVelocity * Time.deltaTime);
+    _newVelocity = Vector3.zero;
+
+    HandleGravity();
+    UpdateState();
   }
 
-  private void UpdateMovementState() {
+  private void Update() {
+    Debug.Log(_newVelocity.y);
+  }
+
+  private void HandleGravity() {
+    if (!_characterController.isGrounded) {
+      _newVelocity.y += _characterController.velocity.y + (_gravity * Time.deltaTime);
+    }
+    else {
+      _newVelocity.y += _characterController.velocity.y + _groundedGravity;
+    }
+  }
+  
+  /*
+  private void Update() {
+    UpdateMovementState();
+
+    CalculateGravity();
+  }
+
+  private void LateUpdate() {
+    ApplyForce();
+    _characterController.Move(_newVelocity * Time.deltaTime);
+    _accelerationVector = Vector3.zero;
+  }
+
+  private void ApplyForce() {
+    // _velocityVector = _characterController.velocity;
+    // 
+    // // Apply friction if grounded
+    // if (State != "Air") {
+    //   _velocityVector += new Vector3(CalculateFriction(_characterController.velocity.x), 0f,
+    //     CalculateFriction(_characterController.velocity.z));
+    // }
+    // 
+    _velocityVector += _accelerationVector;
+    
+    _newVelocity = _velocityVector;
+    // Debug.Log(_characterController.velocity.magnitude);
+  }
+  
+  public void AddForce(Vector3 forceVector) {
+    _accelerationVector += forceVector;
+  }
+
+  private void CalculateGravity() {
+    if (_characterController.isGrounded)
+      _accelerationVector.y += _groundedGravity * Time.deltaTime;
+    else 
+      _accelerationVector.y += _gravity * Time.deltaTime;
+  }
+  
+  private float CalculateFriction(float magnitude) {
+    float magnitudeWithFriction = magnitude * _frictionCoefficient;
+    return -magnitudeWithFriction * Time.deltaTime;
+  }
+  */
+  
+  private void UpdateState() {
     if (State != "Freeze" && State != "Grapple") {
-      var groundCheckRay = new Ray(transform.position + (Vector3.down * 0.6f), Vector3.down);
-      if (!Physics.SphereCast(groundCheckRay, 0.25f, 0.65f, _groundMask))
+      if (!_characterController.isGrounded) {
         State = "Air";
+      }
       else if (Input.GetKey(_slideKey))
         State = "Sliding";
       //else if (Input.GetKey(_sprintKey))
@@ -64,21 +139,6 @@ public class PlayerMovementHandler : Subject
     NewSceneNotification(_previousState, State);
     _previousState = State;
     
-  }
-
-  private void CheckForGrapple() {
-    if (Input.GetKeyDown(_grappleKey) && _localGrappleType != 0) {
-      _localGrappleType = 0;
-      GrappleNotification(0);
-    } 
-    else if (Input.GetKey(_grappleKey) && _localGrappleType != 1) {
-      _localGrappleType = 1;
-      GrappleNotification(1);
-    }
-    else if (Input.GetKeyUp(_grappleKey) && _localGrappleType != 2) {
-      _localGrappleType = 2;
-      GrappleNotification(2);
-    }
   }
 }
 
