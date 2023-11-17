@@ -6,9 +6,8 @@ using UnityEngine;
 public class PlayerWorldGeneratorCompatibility : MonoBehaviour
 {
     [SerializeField] private WorldGenerator _worldGeneratorObject;
-
-    [SerializeField] private float _timeToInitialize = .25f;
-    
+    [SerializeField] private LayerMask _groundMask;
+    [SerializeField] private float _timeToInitialize;
     private bool _hasInitialized;
 
     private void Awake() {
@@ -19,6 +18,10 @@ public class PlayerWorldGeneratorCompatibility : MonoBehaviour
         }
     }
 
+    private void Start() {
+        GetComponent<PlayerMovementHandler>().State = "Freeze";
+    }
+
     private void Update() {
         _worldGeneratorObject.UpdatePlayerLoadedChunks(transform.position 
             - new Vector3(0, GetComponent<Collider>().bounds.extents.y / 2, 0));
@@ -26,9 +29,15 @@ public class PlayerWorldGeneratorCompatibility : MonoBehaviour
         // Delayed start
         if (!_hasInitialized && Time.time > _timeToInitialize && Time.timeScale != 0) {
             RaycastHit hit;
-            Physics.Raycast(Vector3.up * 2500, Vector3.down, out hit);
-            transform.position = hit.point + Vector3.up * 5;
-            _hasInitialized = true;
+            
+            // Arbitrarily high origin, pointed downwards due to World Gen Chunks only having upwards facing colliders
+            if (Physics.Raycast(Vector3.up * 10000, Vector3.down, out hit, Mathf.Infinity, _groundMask)) { 
+                _hasInitialized = true;
+            
+                GetComponent<CharacterController>().Move(hit.point - transform.position);
+                GetComponent<PlayerMovementHandler>().State = "Air";
+            
+            }
         }
     }
 }
