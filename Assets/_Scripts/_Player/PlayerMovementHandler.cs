@@ -2,12 +2,13 @@ using System;
 using UnityEngine;
 
 using ObserverPattern;
+using UnityEngine.Serialization;
 
 public class PlayerMovementHandler : Subject
 {
   [SerializeField] private Transform _groundCheck;
 
-  [SerializeField] MovementState _movementState;
+  [SerializeField] private MovementState _movementState;
 
   private string _previousState;
 
@@ -26,9 +27,17 @@ public class PlayerMovementHandler : Subject
 
   private CharacterController _characterController;
 
-  private bool Grounded => IsGrounded();
+  public bool Grounded => IsGrounded();
+  public bool OnSteepSlope => IsOnSteepSlope();
+  public bool IsSliding => Input.GetKey(_slideKey);
 
-  public bool OnSlope => IsOnSlope();
+  public Vector3 _velocity;
+
+  // Rider is mad at me, if you know how to fix this please do
+  public Vector3 Velocity { get => _velocity; }
+
+  private Vector3 _newAcceleration;
+  private Vector3 _newEarlyVelocity;
   
   private enum MovementState
   {
@@ -40,20 +49,35 @@ public class PlayerMovementHandler : Subject
     Air
   }
 
+  private void Awake() {
+    _characterController = GetComponent<CharacterController>();
+  }
+
   private void Start() {
     _previousState = State;
   }
 
   private void Update() {
     UpdateState();
+    HandleGravity();
+  }
+
+  private void LateUpdate() {
+    _characterController.Move((_characterController.velocity * Time.deltaTime) + _newAcceleration);
+    Debug.Log("Velocity: " + Velocity + _newAcceleration);
+    Debug.Log("Acceleration: " + _newAcceleration);
+    
+    _newAcceleration = Vector3.zero;
+    _velocity = _characterController.velocity;
   }
   
   private bool IsGrounded() {
     return Physics.CheckSphere(_groundCheck.position, 0.5f, _groundMask);
   }
 
-  private bool IsOnSlope() {
-    return false;
+  private bool IsOnSteepSlope() {
+    Physics.Raycast(transform.position, Vector3.down, out RaycastHit hit, 2);
+    return (Vector3.Angle(hit.normal, Vector3.up) > _characterController.slopeLimit);
   }
   
   private void UpdateState() {
@@ -76,4 +100,30 @@ public class PlayerMovementHandler : Subject
     _previousState = State;
     
   }
-}
+
+  private void HandleGravity() {
+    if (State == "Air") {
+      AddForceContinuous(Vector3.down * 15f);
+    }
+  }
+
+  public void AddForceContinuous(Vector3 newForce) {
+    _newAcceleration += newForce * Time.deltaTime;
+  }
+
+  public void AddForceImpulse(Vector3 newForce) {
+    _newAcceleration += newForce;
+  }
+
+  public void SetVerticalVelocity(float newForce) {
+    _newAcceleration += (Vector3.up * newForce - new Vector3(0, Velocity.y, 0));
+    Debug.Log(_newAcceleration);
+  }
+
+  public void SetHorizontalVelocity(Vector3 newForce) {
+    _newAcceleration += newForce * Time.deltaTime - new Vector3(Velocity.x, 0, Velocity.z);
+  }
+  
+  public void SetVelocityLate(Vector3 newVelocity) {
+    _newAcceleration += newVelocity - Velocity;
+  }}
