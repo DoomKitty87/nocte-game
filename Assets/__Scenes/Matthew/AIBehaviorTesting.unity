@@ -124,6 +124,37 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!1 &26852788
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 26852789}
+  m_Layer: 3
+  m_Name: Check
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &26852789
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 26852788}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: -1.407, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 417567579}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &96078929
 GameObject:
   m_ObjectHideFlags: 0
@@ -815,6 +846,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d422197e3df6f436bbbdd48ba94e0600, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _groundCheck: {fileID: 26852789}
   _movementState: 5
   _groundMask:
     serializedVersion: 2
@@ -862,6 +894,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 2035441772}
+  - {fileID: 26852789}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &417567580
@@ -2188,9 +2221,9 @@ MonoBehaviour:
   _updateType: 0
   _playerTransform: {fileID: 417567579}
   _distanceChase: 50
-  _distanceAttack: 3
+  _distanceAttack: 10
   _attacks:
-  - _attackDistance: 2
+  - _attackDistance: 20
     _attackDamage: 10
     _attackRepeatSeconds: 1
 --- !u!114 &997477785
@@ -2610,9 +2643,9 @@ MonoBehaviour:
   _updateType: 0
   _playerTransform: {fileID: 417567579}
   _distanceChase: 50
-  _distanceAttack: 3
+  _distanceAttack: 10
   _attacks:
-  - _attackDistance: 2
+  - _attackDistance: 20
     _attackDamage: 10
     _attackRepeatSeconds: 1
 --- !u!114 &1545442565
@@ -3073,9 +3106,9 @@ MonoBehaviour:
   _updateType: 0
   _playerTransform: {fileID: 417567579}
   _distanceChase: 50
-  _distanceAttack: 3
+  _distanceAttack: 10
   _attacks:
-  - _attackDistance: 2
+  - _attackDistance: 20
     _attackDamage: 10
     _attackRepeatSeconds: 1
 --- !u!114 &1961365215

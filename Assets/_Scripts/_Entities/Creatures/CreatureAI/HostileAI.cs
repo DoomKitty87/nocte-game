@@ -36,11 +36,13 @@ namespace _Scripts._Entities.Creatures.CreatureAI
 				new Sequencer(new List<TreeNode> {
 					new DistanceToPlayerLessThan(_transform, _playerTransform, _distanceAttack),
 					new FaceTransform(_transform, _playerTransform, true, false, true),
-					new AttackWithCreatureCombat(_creatureCombat, _attacks[Random.Range(0, _attacks.Count - 1)])
+					new Succeder(
+						new AttackWithCreatureCombat(_creatureCombat, _attacks[Random.Range(0, _attacks.Count - 1)])
+					)
 				}),
 				new Sequencer(new List<TreeNode> {
 					new DistanceToPlayerLessThan(transform, _playerTransform, _distanceChase),
-					new SetAgentToChaseTransform(_playerTransform, _navMeshAgent)
+					new SetAgentToChaseTransform(_playerTransform, _navMeshAgent, _distanceAttack - 0.1f)
 				})
 			});
 		}

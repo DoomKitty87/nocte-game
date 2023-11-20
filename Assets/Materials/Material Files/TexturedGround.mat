@@ -1,21 +1,5 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!114 &-2768135727955532309
-MonoBehaviour:
-  m_ObjectHideFlags: 11
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: da692e001514ec24dbc4cca1949ff7e8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  version: 13
-  hdPluginSubTargetMaterialVersions:
-    m_Keys: []
-    m_Values: 
 --- !u!21 &2100000
 Material:
   serializedVersion: 8
@@ -23,8 +7,8 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: ProcGround
-  m_Shader: {fileID: -6465566751694194690, guid: 5d6f1c85a990e4ea0be0542ca41af3e3,
+  m_Name: TexturedGround
+  m_Shader: {fileID: -6465566751694194690, guid: 6eec4be5693190d44ac2ec7c4da2bd28,
     type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
@@ -48,6 +32,22 @@ Material:
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
+    - _AOGrass:
+        m_Texture: {fileID: 2800000, guid: 649308d7c00145448a7ef2a4078e2b90, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _AORock:
+        m_Texture: {fileID: 2800000, guid: d9c290c677f0722479e31564a2b41bd9, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _Albedo_Grass:
+        m_Texture: {fileID: 2800000, guid: 80edec3c1092f09408179d9139971228, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _Albedo_Rock:
+        m_Texture: {fileID: 2800000, guid: 21c4d882dd2913c4ba02556222337ef0, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _AnisotropyMap:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
@@ -104,24 +104,20 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
-    - _SampleTexture2DLOD_2d9e6abb08b1456792925c6f598bb237_Texture_1_Texture2D:
-        m_Texture: {fileID: 2800000, guid: 1e613eb32d2f47bd916aafece48ec323, type: 3}
+    - _Normal_Grass:
+        m_Texture: {fileID: 2800000, guid: 0479b8e017ad32c41af6870db55eb8bf, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
-    - _SampleTexture2DLOD_5a43ea6d0ddf47b8935e745da19a12c0_Texture_1_Texture2D:
-        m_Texture: {fileID: 2800000, guid: eddb4402fdfb4dfa9549de5c49710367, type: 3}
+    - _Normal_Rock:
+        m_Texture: {fileID: 2800000, guid: c7137034b80af9a4693d0915878033a4, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
-    - _SampleTexture2DLOD_689f6cb0929b4c7898330a647eaa2569_Texture_1_Texture2D:
-        m_Texture: {fileID: 2800000, guid: a0ffa4fa9e0646f0b6d8ab71da587dc0, type: 3}
+    - _Smooth_Grass:
+        m_Texture: {fileID: 2800000, guid: 2f0e1d70c83366b43a4d14bc1e3dca6b, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
-    - _SampleTexture2DLOD_6d8830c707bc4492ba0fdeb09fe2bfa7_Texture_1_Texture2D:
-        m_Texture: {fileID: 2800000, guid: 38617793a75e41a08cf9202157e3f5e3, type: 3}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _SampleTexture2DLOD_ec349e0bb0564e9988444091d9bcff29_Texture_1_Texture2D:
-        m_Texture: {fileID: 2800000, guid: 3e3c699ffb9b4865bd0ca477f269bef0, type: 3}
+    - _Smooth_Rock:
+        m_Texture: {fileID: 2800000, guid: 8d3dc2d28088af94f855dfcd5ca6af43, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _SpecularColorMap:
@@ -182,6 +178,9 @@ Material:
     - _AlphaSrcBlend: 1
     - _Anisotropy: 0
     - _BlendMode: 0
+    - _BlendNoiseIntensity: 0.2
+    - _BlendNoiseScale: 2
+    - _BlendThreshold: 0.7
     - _CoatMask: 0
     - _ConservativeDepthOffsetEnable: 0
     - _CullMode: 2
@@ -208,6 +207,7 @@ Material:
     - _EnableFogOnTransparent: 1
     - _EnableGeometricSpecularAA: 0
     - _EnergyConservingSpecularColor: 1
+    - _GrassScale: 25
     - _HeightAmplitude: 0.02
     - _HeightCenter: 0.5
     - _HeightMapParametrization: 0
@@ -221,6 +221,7 @@ Material:
     - _Ior: 1.5
     - _IridescenceMask: 1
     - _IridescenceThickness: 1
+    - _LODRange: 0
     - _LinkDetailsWithBase: 1
     - _MaterialID: 1
     - _Metallic: 0
@@ -262,15 +263,9 @@ Material:
     - _SubsurfaceMask: 1
     - _SupportDecals: 1
     - _SurfaceType: 0
-    - _TessellationBackFaceCullEpsilon: -0.25
-    - _TessellationFactorMaxDistance: 50
-    - _TessellationFactorMinDistance: 20
-    - _TessellationFactorTriangleSize: 100
-    - _TessellationMaxDisplacement: 0.01
-    - _TessellationMode: 0
-    - _TessellationShapeFactor: 0.75
     - _TexWorldScale: 1
     - _TexWorldScaleEmissive: 1
+    - _Texture_Scale: 0.1
     - _Thickness: 1
     - _TransmissionEnable: 1
     - _TransmissionMask: 1
@@ -301,7 +296,7 @@ Material:
     - _EmissiveColorLDR: {r: 0, g: 0, b: 0, a: 1}
     - _InvPrimScale: {r: 1, g: 1, b: 0, a: 0}
     - _IridescenceThicknessRemap: {r: 0, g: 1, b: 0, a: 0}
-    - _PlayerPosition: {r: -29.769436, g: 364.14874, b: -48.86824, a: 0}
+    - _PlayerPosition: {r: 54.256607, g: 1016.59375, b: 160.12819, a: 0}
     - _SpecularColor: {r: 1, g: 1, b: 1, a: 1}
     - _ThicknessRemap: {r: 0, g: 1, b: 0, a: 0}
     - _TransmittanceColor: {r: 1, g: 1, b: 1, a: 1}
@@ -309,3 +304,19 @@ Material:
     - _UVMappingMask: {r: 1, g: 0, b: 0, a: 0}
     - _UVMappingMaskEmissive: {r: 1, g: 0, b: 0, a: 0}
   m_BuildTextureStacks: []
+--- !u!114 &1338281847494419202
+MonoBehaviour:
+  m_ObjectHideFlags: 11
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: da692e001514ec24dbc4cca1949ff7e8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  version: 13
+  hdPluginSubTargetMaterialVersions:
+    m_Keys: []
+    m_Values: 
