@@ -5,6 +5,8 @@ using ObserverPattern;
 
 public class PlayerMovementHandler : Subject
 {
+  [SerializeField] private Transform _groundCheck;
+
   [SerializeField] MovementState _movementState;
 
   private string _previousState;
@@ -22,6 +24,12 @@ public class PlayerMovementHandler : Subject
   public KeyCode _crouchKey = KeyCode.LeftControl;
   public KeyCode _slideKey = KeyCode.LeftControl;
 
+  private CharacterController _characterController;
+
+  private bool Grounded => IsGrounded();
+
+  public bool OnSlope => IsOnSlope();
+  
   private enum MovementState
   {
     Freeze,
@@ -37,14 +45,22 @@ public class PlayerMovementHandler : Subject
   }
 
   private void Update() {
-    UpdateMovementState();
+    UpdateState();
+  }
+  
+  private bool IsGrounded() {
+    return Physics.CheckSphere(_groundCheck.position, 0.5f, _groundMask);
   }
 
-  private void UpdateMovementState() {
-    if (State != "Freeze") {
-      var groundCheckRay = new Ray(transform.position + (Vector3.down * 0.6f), Vector3.down);
-      if (!Physics.SphereCast(groundCheckRay, 0.25f, 0.65f, _groundMask))
+  private bool IsOnSlope() {
+    return false;
+  }
+  
+  private void UpdateState() {
+    if (State != "Freeze" && State != "Grapple") {
+      if (!Grounded) {
         State = "Air";
+      }
       else if (Input.GetKey(_slideKey))
         State = "Sliding";
       //else if (Input.GetKey(_sprintKey))
@@ -56,9 +72,8 @@ public class PlayerMovementHandler : Subject
     }
 
     if (_previousState == State) return;
-    NotifyObservers(_previousState, State);
+    NewSceneNotification(_previousState, State);
     _previousState = State;
     
   }
 }
-

@@ -46,9 +46,6 @@ public class PlayerMove : MonoBehaviour, IObserver
   }
 
   private void Start() {
-    // TODO: Figure out why this happens ????
-    Time.timeScale = 1;
-    
     _characterController = GetComponent<CharacterController>();
     _currentState = _handler.State;
   }
@@ -73,6 +70,7 @@ public class PlayerMove : MonoBehaviour, IObserver
         moveVector = _model.forward * playerInput.z + _model.right * playerInput.x;
         _moveSpeed = _runSpeed;
         currentSpeed = _moveSpeed;
+        moveVector = CorrectForSlope(moveVector);
         break;
       }
       case "Sliding": {
@@ -92,20 +90,6 @@ public class PlayerMove : MonoBehaviour, IObserver
       case "Air": {
         var velocity = _characterController.velocity;
         var horizontalVelocity = new Vector3(velocity.x, 0, velocity.z);
-        
-        // Enable like some of this code if you don't want air strafing
-        //moveVector = (horizontalVelocity.normalized + 
-        //              ((_model.forward * playerInput.z + _model.right * playerInput.x) * _airTurnControl)).normalized;
-        //currentSpeed = Mathf.Min(
-        //(horizontalVelocity + ((_model.forward * playerInput.z + _model.right * playerInput.x) * _airSpeedControl)).magnitude, 
-        //horizontalVelocity.magnitude);
-        //currentSpeed =
-        //  (horizontalVelocity + ((_model.forward * playerInput.z + _model.right * playerInput.x) * _airSpeedControl))
-        //  .magnitude;
-        // Calculates air speed based off _airSpeedControl and previous velocity
-        // currentSpeed = Mathf.Min(
-        //   (horizontalVelocity + ((_model.forward * playerInput.z + _model.right * playerInput.x) * _airSpeedControl)).magnitude, 
-        //   _moveSpeed);
 
         Vector3 newDirection = AirMovement((_model.forward * playerInput.z + _model.right * playerInput.x).normalized, horizontalVelocity);
         
@@ -156,6 +140,15 @@ public class PlayerMove : MonoBehaviour, IObserver
     return previousVelocity;
   }
 
+  private Vector3 CorrectForSlope(Vector3 vector) {
+    Physics.Raycast(transform.position, Vector3.down, out RaycastHit hit, 2);
+    Vector3 slopeNormal = hit.normal;
+
+    Vector3 inputOnSlope = Vector3.ProjectOnPlane(vector, slopeNormal).normalized;
+
+    return inputOnSlope;
+  }
+
   private Vector3 CalculateGravityVelocity() {
     if (_currentState == "Air") 
       // Equation for gravity: strength * seconds^2, so must multiply by Time.deltaTime twice
@@ -179,7 +172,7 @@ public class PlayerMove : MonoBehaviour, IObserver
     return _currentForceVelocity * Time.deltaTime;
   }
 
-  public void OnNotify(string previousState, string currentState) {
+  public void OnSceneChangeNotify(string previousState, string currentState) {
     
     _currentState = currentState;
   }
