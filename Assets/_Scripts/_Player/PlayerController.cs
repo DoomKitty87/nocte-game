@@ -37,7 +37,8 @@ public class PlayerController : MonoBehaviour
     [Space(10)]
     [Header("Moving")] 
     [SerializeField] private float _moveSpeed = 4500f;
-    [SerializeField] private float _maxSpeed = 20f;
+    [SerializeField] private float _maxGroundedSpeed = 20f;
+    [SerializeField] private float _maxAirSpeed = 30f; // I kind of like the idea of having a unbounded max air speed
     [SerializeField] private LayerMask _ground;
     [HideInInspector] public bool _grounded;
 
@@ -59,7 +60,7 @@ public class PlayerController : MonoBehaviour
     private bool _readyToJump = true;
     
     // Input
-    private Vector2 _inputVector;
+    private Vector3 _inputVector;
     private bool _jumping, _sprinting, _crouching;
 
     // Sliding
@@ -97,23 +98,29 @@ public class PlayerController : MonoBehaviour
         }
         
         //Limit diagonal running. This will also cause a full stop if sliding fast and un-crouching, so not optimal.
-        if (Mathf.Sqrt((Mathf.Pow(_rb.velocity.x, 2) + Mathf.Pow(_rb.velocity.z, 2))) > _maxSpeed) {
+        if (Mathf.Sqrt((Mathf.Pow(_rb.velocity.x, 2) + Mathf.Pow(_rb.velocity.z, 2))) > _maxGroundedSpeed) {
             float fallSpeed = _rb.velocity.y;
-            Vector3 newVelocity = _rb.velocity.normalized * _maxSpeed;
+            Vector3 newVelocity = _rb.velocity.normalized * _maxGroundedSpeed;
             _rb.velocity = new Vector3(newVelocity.x, fallSpeed, newVelocity.z);
         }
     }
     
-    private Vector3 CorrectForSlope(Vector2 vector) {
-        Vector3 fixedVector;
-        
+    private void CorrectForSlope(ref Vector3 vector) {
         Physics.Raycast(transform.position, Vector3.down, out RaycastHit hit, 2);
-    
         Vector3 slopeNormal = hit.normal;
+        
+        Vector3 fixedVector = Vector3.ProjectOnPlane(vector, slopeNormal).normalized;
 
-        fixedVector = Vector3.ProjectOnPlane(new Vector3(vector.x, 0, vector.y), slopeNormal).normalized;
+        vector = fixedVector;
+    }
 
-        return fixedVector;
+    private void ClampMaximumVelocity(ref Vector3 vector) {
+        
+        Vector2 vectorNormalized = vector.normalized;
+
+        float magnitude = Mathf.Clamp(vector.magnitude, 0, _maxGroundedSpeed);
+        Vector2 clampedVelocity = vectorNormalized * magnitude;
+        vector = clampedVelocity;
     }
     
     private void Awake() {
@@ -127,18 +134,16 @@ public class PlayerController : MonoBehaviour
     }
 
     private void Update() {
-        Physics.gravity = Vector3.down * _gravity;
-        
         HandleInput();
     }
 
     private void FixedUpdate() {
         HandleMovement();
-        Debug.Log(new Vector3(_rb.velocity.x, 0f, _rb.velocity.z).magnitude);
+        Debug.Log($"Velocity: " + new Vector3(_rb.velocity.x, 0f, _rb.velocity.z).magnitude, gameObject);
     }
 
     private void HandleInput() {
-        _inputVector = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical")).normalized;
+        _inputVector = new Vector3(Input.GetAxisRaw("Horizontal"), 0, Input.GetAxisRaw("Vertical")).normalized;
         
         _jumping = Input.GetKey(_jumpKey);
         _crouching = Input.GetKey(_crouchKey);
@@ -163,11 +168,12 @@ public class PlayerController : MonoBehaviour
     }
 
     private void HandleMovement() {
+        Physics.gravity = Vector3.down * _gravity;
         _rb.AddForce(Physics.gravity, ForceMode.Acceleration);
         
         Vector2 magnitude = FindVelRelativeToLook();
         
-        CalculateFriction(_inputVector.x, _inputVector.y, magnitude);
+        CalculateFriction(_inputVector.x, _inputVector.z, magnitude);
         
         if (_grounded && _readyToJump && _jumping) Jump();
         
@@ -176,31 +182,35 @@ public class PlayerController : MonoBehaviour
             return;
         }
         
-        /*
-        //If speed is larger than maxspeed, cancel out the input so you don't go over max speed
-        if (_inputVector.x > 0 && magnitude.x > _maxSpeed) _inputVector.x = 0;
-        if (_inputVector.x < 0 && magnitude.x < -_maxSpeed) _inputVector.x = 0;
-        if (_inputVector.y > 0 && magnitude.y > _maxSpeed) _inputVector.y = 0;
-        if (_inputVector.y < 0 && magnitude.y < -_maxSpeed) _inputVector.y = 0;
-        */
-
-        //Some multipliers
-        float multiplier = 1f;
+        // If speed is larger than maxspeed, cancel out the input so you don't go over max speed
+        // ClampMaximumVelocity(ref _inputVector);
         
         // Movement in air
         if (!_grounded) {
-            multiplier = 0.5f;
+            AirMovement(ref _inputVector);
+        } else {        
+            CorrectForSlope(ref _inputVector);
         }
         
-        // Movement while sliding
-        // if (_grounded && _crouching) multiplierV = 0f;
-
-        Vector3 _slopeFixedVelocity = CorrectForSlope(_inputVector);
-        
         //Apply forces to move player
-        _rb.AddForce(_orientation.transform.forward * _slopeFixedVelocity.z * _moveSpeed * Time.deltaTime * multiplier);
-        _rb.AddForce(_orientation.transform.right * _slopeFixedVelocity.x * _moveSpeed * Time.deltaTime * multiplier);
-        _rb.AddForce(_orientation.transform.up * _slopeFixedVelocity.y * _moveSpeed * Time.deltaTime * multiplier);
+        _rb.AddForce(_moveSpeed * Time.deltaTime * (_orientation.transform.rotation * _inputVector));
+    }
+    
+    private void AirMovement(ref Vector3 moveVector) {
+        Vector3 vector = new Vector3(moveVector.x, 0, moveVector.y);
+        Vector3 projVel = Vector3.Project(_rb.velocity, vector);
+        bool isAway = Vector3.Dot(vector, projVel) <= 0f;
+
+        if (projVel.magnitude < _maxAirSpeed || isAway)
+        {
+            Vector3 vc = vector.normalized * _maxAirSpeed;
+            if (!isAway)
+                vc = Vector3.ClampMagnitude(vc, _maxGroundedSpeed - projVel.magnitude);
+            else
+                vc = Vector3.ClampMagnitude(vc, _maxGroundedSpeed + projVel.magnitude);
+
+            moveVector = vc * Time.deltaTime;
+        }
     }
 
     private void Jump() {
@@ -209,7 +219,7 @@ public class PlayerController : MonoBehaviour
         Vector3 velocity =_rb.velocity;
         if (velocity.y <= 0) _rb.velocity = new Vector3(velocity.x, 0f, velocity.z);
         
-        // Sort of arbitrary values that cause player to jump in direction of normal
+        // Sort of arbitrary values that cause player to jump in direction of ground normal
         _rb.AddForce(_jumpForce * 1.5f * Vector3.up);
         _rb.AddForce(_jumpForce * 0.5f * _normalVector);
         

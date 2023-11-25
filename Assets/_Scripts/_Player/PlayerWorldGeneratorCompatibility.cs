@@ -19,7 +19,7 @@ public class PlayerWorldGeneratorCompatibility : MonoBehaviour
     }
 
     private void Start() {
-        GetComponent<PlayerMovementHandler>().State = "Freeze";
+        GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezeAll;
     }
 
     private void Update() {
@@ -34,9 +34,7 @@ public class PlayerWorldGeneratorCompatibility : MonoBehaviour
             if (Physics.Raycast(Vector3.up * 10000, Vector3.down, out hit, Mathf.Infinity, _groundMask)) { 
                 _hasInitialized = true;
             
-                GetComponent<CharacterController>().Move(hit.point - transform.position);
-                GetComponent<PlayerMovementHandler>().State = "Air";
-            
+                GetComponent<Rigidbody>().constraints = RigidbodyConstraints.None;
             }
         }
     }
