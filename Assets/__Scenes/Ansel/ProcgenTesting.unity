@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 243.887, g: 294.9468, b: 387.01495, a: 1}
+  m_IndirectSpecularColor: {r: 243.31871, g: 294.1732, b: 385.96448, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -14649,6 +14649,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1849557961}
   - component: {fileID: 1849557962}
+  - component: {fileID: 1849557963}
   m_Layer: 0
   m_Name: StructurePlacer
   m_TagString: Untagged
@@ -14694,6 +14695,21 @@ MonoBehaviour:
   _beamMaterial: {fileID: -6478536213147159724, guid: e30265bac54dc452faabf2f5ef0e78bd,
     type: 3}
   _groundInset: 5
+--- !u!114 &1849557963
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1849557960}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e181bbb93b7175c439371dc0a21035ca, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _worldGen: {fileID: 1338505935}
+  _structureRenderDistance: 10
+  _chunkStructureChance: 0.2
 --- !u!1 &1877083391
 GameObject:
   m_ObjectHideFlags: 0
@@ -14975,6 +14991,11 @@ PrefabInstance:
       propertyPath: _limitWater
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
+        type: 3}
+      propertyPath: _structures
+      value: 
+      objectReference: {fileID: 1849557963}
     - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
         type: 3}
       propertyPath: _waterObject

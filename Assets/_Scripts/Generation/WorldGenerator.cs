@@ -194,6 +194,7 @@ public class WorldGenerator : MonoBehaviour
     [SerializeField] private GrassLOD[] _grassLODLevels;
     [SerializeField] private Biome[] _biomes;
     [SerializeField] private ScatterSettings[] _scatterSettings;
+    [SerializeField] private SecondaryStructures _structures;
 
     public int _scatterRange = 2;
     // These are separated because density is used in calculations before biome is calculated
@@ -372,6 +373,7 @@ public class WorldGenerator : MonoBehaviour
         }
 
         if (deltaZ != 0 || deltaX != 0) {
+          _structures.CheckStructures(new Vector2(playerPos.x, playerPos.z));
           _updateQueue.Sort((c1, c2) => (Mathf.Abs(_tilePool[c1].x - _playerChunkXWorld) + Mathf.Abs(_tilePool[c1].z - _playerChunkZWorld)).CompareTo(Mathf.Abs(_tilePool[c2].x - _playerChunkXWorld) + Mathf.Abs(_tilePool[c2].z - _playerChunkZWorld)));
           for (int x = 0; x < _xTiles; x++) {
             for (int z = 0; z < _zTiles; z++) { 
@@ -617,6 +619,7 @@ public class WorldGenerator : MonoBehaviour
         // If you need to put anything else (tag, components, etc) on the tile, do it here. If it needs to change every time the LOD is changed, do it in the UpdateTile function.
         go.tag = "Ground";
         go.layer = 6;
+        _structures.GenerateChunkStructures(new Vector2(x * _xSize * _xResolution, z * _zSize * _zResolution), new Vector2((x + 1) * _xSize * _xResolution, (z + 1) * _zSize * _zResolution));
         
         WorldTile tile = new WorldTile();
         tile.obj = go;
