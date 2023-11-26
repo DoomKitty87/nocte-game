@@ -13,9 +13,9 @@ public class ProgressionStorage : MonoBehaviour
 
   public ProgressionData _progression = new ProgressionData();
 
-  public void SaveProgressionData(ProgressionData data = _progression)
+  public void SaveProgressionData()
   {
-    StorageInterface.SaveData("progression.dat", data);
+    StorageInterface.SaveData("progression.dat", _progression);
   }
 
   public ProgressionData LoadProgressionData()
