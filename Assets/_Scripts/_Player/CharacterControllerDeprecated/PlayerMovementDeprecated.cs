@@ -292,6 +292,7 @@ public class PlayerMovement : MonoBehaviour
         activeGrapple = false;
     }
     
+    /*
     private void OnCollisionEnter(Collision other) {
         if (enableMovementOnNextTouch) {
             enableMovementOnNextTouch = false;
@@ -300,4 +301,5 @@ public class PlayerMovement : MonoBehaviour
             GetComponent<PlayerGrapple>().StopGrapple();
         }
     }
+    */
 }

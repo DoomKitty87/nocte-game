@@ -139,7 +139,7 @@ public class PlayerController : MonoBehaviour
 
     private void FixedUpdate() {
         HandleMovement();
-        Debug.Log($"Velocity: " + new Vector3(_rb.velocity.x, 0f, _rb.velocity.z).magnitude, gameObject);
+        // Debug.Log($"Velocity: " + new Vector3(_rb.velocity.x, 0f, _rb.velocity.z).magnitude, gameObject);
     }
 
     private void HandleInput() {

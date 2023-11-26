@@ -10,6 +10,9 @@ public class PlayerWorldGeneratorCompatibility : MonoBehaviour
     [SerializeField] private float _timeToInitialize;
     private bool _hasInitialized;
 
+    private Rigidbody _rb;
+    private RigidbodyConstraints _rbConstraints;
+
     private void Awake() {
         if (enabled && _worldGeneratorObject == null) {
             Debug.LogWarning("World Generator Object is missing. Either assign the script or disable " +
@@ -19,7 +22,10 @@ public class PlayerWorldGeneratorCompatibility : MonoBehaviour
     }
 
     private void Start() {
-        GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezeAll;
+        _rb = GetComponent<Rigidbody>();
+        // Store original rigidbody constraints
+        _rbConstraints = _rb.constraints;
+        _rb.constraints = RigidbodyConstraints.FreezeAll;
     }
 
     private void Update() {
@@ -33,8 +39,9 @@ public class PlayerWorldGeneratorCompatibility : MonoBehaviour
             // Arbitrarily high origin, pointed downwards due to World Gen Chunks only having upwards facing colliders
             if (Physics.Raycast(Vector3.up * 10000, Vector3.down, out hit, Mathf.Infinity, _groundMask)) { 
                 _hasInitialized = true;
-            
-                GetComponent<Rigidbody>().constraints = RigidbodyConstraints.None;
+
+                // Reset rigidbody constraints
+                _rb.constraints = _rbConstraints;
             }
         }
     }
