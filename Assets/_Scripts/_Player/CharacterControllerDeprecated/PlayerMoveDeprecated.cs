@@ -27,7 +27,7 @@ public class PlayerMove : MonoBehaviour, IObserver
   [SerializeField] private float _slideCoolDown;
 
   private PlayerMovementHandler _handler;
-  private CharacterController _characterController;
+  // private CharacterController _characterController;
   private Vector3 _currentMoveVelocity;
   private Vector3 _moveDampVelocity;
 
@@ -35,6 +35,9 @@ public class PlayerMove : MonoBehaviour, IObserver
   private float _gravityVelocity;
 
   private string _currentState;
+
+  // Mini state machine used for insuring only one jump input at a time
+  private int _jumpReset = 0;
 
   private void OnEnable() {
     _handler = GetComponent<PlayerMovementHandler>();
@@ -46,15 +49,17 @@ public class PlayerMove : MonoBehaviour, IObserver
   }
 
   private void Start() {
-    _characterController = GetComponent<CharacterController>();
     _currentState = _handler.State;
   }
 
   private void Update() {
-    _characterController.Move(GetMovementVelocity() + CalculateGravityVelocity() + GetJump());
+    if (_jumpReset != 0) ManageJump();
+    
+    GetMovementVelocity();
+    GetJump();
   }
   
-  private Vector3 GetMovementVelocity() {
+  private void GetMovementVelocity() {
     Vector3 playerInput = new Vector3 {
       x = Input.GetAxisRaw("Horizontal"),
       y = 0f,
@@ -74,7 +79,7 @@ public class PlayerMove : MonoBehaviour, IObserver
         break;
       }
       case "Sliding": {
-        var velocity = _characterController.velocity;
+        var velocity = _handler.Velocity;
         var horizontalVelocity = new Vector3(velocity.x, 0, velocity.z);
         
         moveVector = horizontalVelocity.normalized;
@@ -88,7 +93,7 @@ public class PlayerMove : MonoBehaviour, IObserver
         break;
       }
       case "Air": {
-        var velocity = _characterController.velocity;
+        var velocity = _handler.Velocity;
         var horizontalVelocity = new Vector3(velocity.x, 0, velocity.z);
 
         Vector3 newDirection = AirMovement((_model.forward * playerInput.z + _model.right * playerInput.x).normalized, horizontalVelocity);
@@ -118,7 +123,9 @@ public class PlayerMove : MonoBehaviour, IObserver
       _moveSmoothSpeed
     );
 
-    return _currentMoveVelocity * Time.deltaTime;
+    if (_currentMoveVelocity == Vector3.zero && playerInput == Vector3.zero) return;
+    
+    _handler.SetHorizontalVelocity(_currentMoveVelocity * Time.deltaTime * Time.deltaTime);
   }
   
   private Vector3 AirMovement(Vector3 moveVector, Vector3 previousVelocity)
@@ -134,14 +141,20 @@ public class PlayerMove : MonoBehaviour, IObserver
       else
         vc = Vector3.ClampMagnitude(vc, _airMaxSpeed + projVel.magnitude);
         
-      return previousVelocity + vc;
+      return vc;
     }
 
-    return previousVelocity;
+    return Vector3.zero;
   }
 
   private Vector3 CorrectForSlope(Vector3 vector) {
     Physics.Raycast(transform.position, Vector3.down, out RaycastHit hit, 2);
+    // if (Vector3.Angle(hit.normal, Vector3.up) > _characterController.slopeLimit) {
+    //   // Player should slide down slope that is too steeply angled
+    //   float magnitude = Mathf.Cos(Vector3.Angle(hit.normal, Vector3.up))
+    //   return Vector3.zero;
+    // }
+    
     Vector3 slopeNormal = hit.normal;
 
     Vector3 inputOnSlope = Vector3.ProjectOnPlane(vector, slopeNormal).normalized;
@@ -153,23 +166,44 @@ public class PlayerMove : MonoBehaviour, IObserver
     if (_currentState == "Air") 
       // Equation for gravity: strength * seconds^2, so must multiply by Time.deltaTime twice
       _gravityVelocity -= _gravityStrengh * Time.deltaTime;
+    else if (_handler.OnSteepSlope || _handler.IsSliding)
+      _gravityVelocity = 0f;
     else
       _gravityVelocity = 0f;
+    
 
     return new Vector3(0, _gravityVelocity, 0) * Time.deltaTime;
   }
 
-  private Vector3 GetJump() {
-    if (_currentState != "Air") {
+  private void GetJump() {
+    if (_jumpReset != 0) return;
+    if (_handler.Grounded) {
       if (Input.GetKey(_handler._jumpKey)) {
-        _currentForceVelocity.y = _jumpStrength;
-        _handler.State = "Air";
-      }
-      else {
-        _currentForceVelocity.y = 0;
+        Debug.Log("Jump!");
+        _jumpReset = 2;
+        ManageJump();
+        _handler.SetVerticalVelocity( _jumpStrength * 0.1f);
       }
     }
-    return _currentForceVelocity * Time.deltaTime;
+  }
+
+  private void ManageJump() {
+    // 2 means Jump input has been registered, player still colliding with ground
+    // 1 means Jump input has been registered, player is not colliding with ground
+    // 0 means Jump input has not yet been registered, player is colliding with ground
+    switch (_jumpReset) {
+      case 2:
+        if (_handler.Grounded) break;
+        _jumpReset = 1;
+        break;
+      case 1:
+        if (!_handler.Grounded) break;
+        _jumpReset = 0;
+        break;
+      default:
+        Debug.LogWarning($"JumpInitialized has been called with _jumpReset value = " + _jumpReset + ". This shouldn't happen!");
+        break;
+    }
   }
 
   public void OnSceneChangeNotify(string previousState, string currentState) {
