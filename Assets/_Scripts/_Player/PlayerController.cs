@@ -31,14 +31,14 @@ public class PlayerController : MonoBehaviour
     [Space(10)] 
     [Header("Keybinds")] 
     [SerializeField] private KeyCode _jumpKey = KeyCode.Space;
-    [SerializeField] private KeyCode _runKey = KeyCode.LeftShift;
+    // [SerializeField] private KeyCode _runKey = KeyCode.LeftShift;
     [SerializeField] private KeyCode _crouchKey = KeyCode.LeftControl;
     
     [Space(10)]
     [Header("Moving")] 
     [SerializeField] private float _moveSpeed = 4500f;
     [SerializeField] private float _maxGroundedSpeed = 20f;
-    [SerializeField] private float _maxAirSpeed = 30f; // I kind of like the idea of having a unbounded max air speed
+    [SerializeField] private float _maxAirSpeed = 30f;
     [SerializeField] private LayerMask _ground;
     [HideInInspector] public bool _grounded;
 
