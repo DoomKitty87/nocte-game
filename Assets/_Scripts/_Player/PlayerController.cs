@@ -38,7 +38,7 @@ public class PlayerController : MonoBehaviour
     [Header("Moving")] 
     [SerializeField] private float _moveSpeed = 4500f;
     [SerializeField] private float _maxGroundedSpeed = 20f;
-    [SerializeField] private float _maxAirSpeed = 30f;
+    [SerializeField] private float _maxAirSpeed = 30f; // I kind of like the idea of having a unbounded max air speed
     [SerializeField] private LayerMask _ground;
     [HideInInspector] public bool _grounded;
 
