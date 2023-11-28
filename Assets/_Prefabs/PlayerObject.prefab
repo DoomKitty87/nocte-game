@@ -370,6 +370,7 @@ GameObject:
   - component: {fileID: 3392329238680246431}
   - component: {fileID: 3228834896852375800}
   - component: {fileID: 1541910194545747402}
+  - component: {fileID: 6456709365385668066}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -586,12 +587,12 @@ MonoBehaviour:
     m_Bits: 64
   _maxGrappleDistance: 100
   _grappleDelayTime: 0.25
-  _maxDistanceCoefficient: 0
-  _minDistanceCoefficient: 0
   _springStrength: 0
   _springDamper: 0
   _springMassScale: 0
+  _grappleStrengthLerpValue: 0
   _grapplingCoolDown: 2
+  _currentlyGrappling: 0
 --- !u!120 &1541910194545747402
 LineRenderer:
   serializedVersion: 2
@@ -696,6 +697,23 @@ LineRenderer:
   m_UseWorldSpace: 1
   m_Loop: 0
   m_ApplyActiveColorSpace: 1
+--- !u!114 &6456709365385668066
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5364522919904099307}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d9910d30d3bd94377ad0ca092aa3decf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _worldGeneratorObject: {fileID: 0}
+  _groundMask:
+    serializedVersion: 2
+    m_Bits: 0
+  _timeToInitialize: 0
 --- !u!1 &7329215558152044159
 GameObject:
   m_ObjectHideFlags: 0
