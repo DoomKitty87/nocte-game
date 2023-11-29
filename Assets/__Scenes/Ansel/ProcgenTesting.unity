@@ -203,7 +203,7 @@ GameObject:
   - component: {fileID: 254070715}
   - component: {fileID: 254070714}
   m_Layer: 0
-  m_Name: Moon2
+  m_Name: Moon5
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -218,8 +218,8 @@ Transform:
   m_GameObject: {fileID: 254070712}
   serializedVersion: 2
   m_LocalRotation: {x: -0.7071068, y: -0, z: -0, w: 0.7071067}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.7438633, y: 0.7438632, z: 0.7438632}
+  m_LocalPosition: {x: 0, y: 0, z: 12.03}
+  m_LocalScale: {x: 0.7438634, y: 0.7438632, z: 0.7438632}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1514333489}
@@ -301,7 +301,7 @@ Transform:
   m_GameObject: {fileID: 372723688}
   serializedVersion: 2
   m_LocalRotation: {x: -0.7071068, y: -0, z: -0, w: 0.7071067}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0.42}
   m_LocalScale: {x: 1.4718275, y: 1.4718274, z: 1.4718274}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -527,7 +527,7 @@ GameObject:
   - component: {fileID: 639103938}
   - component: {fileID: 639103937}
   m_Layer: 0
-  m_Name: Moon5
+  m_Name: Moon3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -542,7 +542,7 @@ Transform:
   m_GameObject: {fileID: 639103935}
   serializedVersion: 2
   m_LocalRotation: {x: -0.7071068, y: -0, z: -0, w: 0.7071067}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 7.211}
   m_LocalScale: {x: 1.1732075, y: 1.1732074, z: 1.1732074}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1000,14 +1000,14 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 250, y: 200, z: 250}
+  m_LocalScale: {x: 500, y: 400, z: 500}
   m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 372723689}
-  - {fileID: 254070713}
-  - {fileID: 1631298115}
   - {fileID: 1744140704}
   - {fileID: 639103936}
+  - {fileID: 1631298115}
+  - {fileID: 254070713}
   m_Father: {fileID: 1829040277}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1514333490
@@ -1031,7 +1031,7 @@ MonoBehaviour:
     yBias: 0
     phase: 0
     initialRotation: {x: 0, y: 0, z: 0, w: 0}
-  - moon: {fileID: 254070713}
+  - moon: {fileID: 1744140704}
     speed: 0.1
     distance: 6250
     orbitAxis: {x: 1, y: 0, z: 0}
@@ -1039,7 +1039,7 @@ MonoBehaviour:
     yBias: 0
     phase: 0
     initialRotation: {x: 0, y: 0, z: 0, w: 0}
-  - moon: {fileID: 1631298115}
+  - moon: {fileID: 639103936}
     speed: 0.1
     distance: 5250
     orbitAxis: {x: 1, y: 0, z: 0}
@@ -1047,7 +1047,7 @@ MonoBehaviour:
     yBias: 0
     phase: 0
     initialRotation: {x: 0, y: 0, z: 0, w: 0}
-  - moon: {fileID: 1744140704}
+  - moon: {fileID: 1631298115}
     speed: 0.1
     distance: 5500
     orbitAxis: {x: 1, y: 0, z: 0}
@@ -1055,7 +1055,7 @@ MonoBehaviour:
     yBias: 0
     phase: 0
     initialRotation: {x: 0, y: 0, z: 0, w: 0}
-  - moon: {fileID: 639103936}
+  - moon: {fileID: 254070713}
     speed: 0.1
     distance: 5750
     orbitAxis: {x: 1, y: 0, z: 0}
@@ -1076,7 +1076,7 @@ GameObject:
   - component: {fileID: 1631298117}
   - component: {fileID: 1631298116}
   m_Layer: 0
-  m_Name: Moon3
+  m_Name: Moon4
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1091,7 +1091,7 @@ Transform:
   m_GameObject: {fileID: 1631298114}
   serializedVersion: 2
   m_LocalRotation: {x: -0.7071068, y: -0, z: -0, w: 0.7071067}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 9.81}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1261,7 +1261,7 @@ GameObject:
   - component: {fileID: 1744140706}
   - component: {fileID: 1744140705}
   m_Layer: 0
-  m_Name: Moon4
+  m_Name: Moon2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1276,7 +1276,7 @@ Transform:
   m_GameObject: {fileID: 1744140703}
   serializedVersion: 2
   m_LocalRotation: {x: -0.70710677, y: -0, z: -0, w: 0.7071068}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 4.23}
   m_LocalScale: {x: 1.207881, y: 1.207881, z: 1.207881}
   m_ConstrainProportionsScale: 0
   m_Children: []
