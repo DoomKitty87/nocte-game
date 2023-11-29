@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Serialization;
 
-public class AlternativePlayerGrapple : MonoBehaviour
+public class PlayerGrappleWithSprings : MonoBehaviour
 {
     
     [Header("References")] 

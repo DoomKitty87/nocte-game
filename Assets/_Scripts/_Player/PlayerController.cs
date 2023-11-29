@@ -16,15 +16,15 @@ public class PlayerController : MonoBehaviour
     [Header("General")] 
     [SerializeField] private float _gravity = 15f;
     [SerializeField] private float _friction = 0.2f;
+    public bool _useGravity = true;
 
     public float Gravity {
         get {
-            return _gravity;
+            return Physics.gravity.y;
         }
         set
         {
             Physics.gravity = Vector3.down * value;
-            _gravity = value;
         }
     }
     
@@ -41,6 +41,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float _maxAirSpeed = 30f; // I kind of like the idea of having a unbounded max air speed
     [SerializeField] private LayerMask _ground;
     [HideInInspector] public bool _grounded;
+    public bool _useGroundFriction = true;
 
     [SerializeField] private float _centerMovement = 0.175f;
     private float _threshold = 0.01f;
@@ -139,6 +140,8 @@ public class PlayerController : MonoBehaviour
 
     private void FixedUpdate() {
         HandleMovement();
+        
+        // Debug for horizontal velocity
         // Debug.Log($"Velocity: " + new Vector3(_rb.velocity.x, 0f, _rb.velocity.z).magnitude, gameObject);
     }
 
@@ -168,8 +171,7 @@ public class PlayerController : MonoBehaviour
     }
 
     private void HandleMovement() {
-        Physics.gravity = Vector3.down * _gravity;
-        _rb.AddForce(Physics.gravity, ForceMode.Acceleration);
+        if (_useGravity) _rb.AddForce(Physics.gravity, ForceMode.Acceleration);
         
         Vector2 magnitude = FindVelRelativeToLook();
         
@@ -235,14 +237,17 @@ public class PlayerController : MonoBehaviour
     
     private bool _cancellingGrounded;
     private void OnCollisionStay(Collision other) {
-        //Make sure we are only checking for walkable layers
+        // If gravity is turned off, shouldn't slow down player
+        if (!_useGravity) return;
+        if (!_useGroundFriction) return;
+        
+        // Make sure we are only checking for walkable layers
         int layer = other.gameObject.layer;
         if (_ground != (_ground | (1 << layer))) return;
         
-        //Iterate through every collision in a physics update
+        // Iterate through every collision in a physics update
         for (int i = 0; i < other.contactCount; i++) {
             Vector3 normal = other.contacts[i].normal;
-            //FLOOR
             if (IsFloor(normal)) {
                 _grounded = true;
                 _cancellingGrounded = false;
@@ -251,7 +256,7 @@ public class PlayerController : MonoBehaviour
             }
         }
         
-        //Invoke ground/wall cancel, since we can't check normals with CollisionExit
+        // Invoke ground/wall cancel, since we can't check normals with CollisionExit
         float delay = 3f;
         if (!_cancellingGrounded) {
             _cancellingGrounded = true;
@@ -260,5 +265,7 @@ public class PlayerController : MonoBehaviour
     }
     
     private void StopGrounded() { _grounded = false; }
-    
+
+    public void ResetGravity() { Gravity = _gravity; }
+
 }
