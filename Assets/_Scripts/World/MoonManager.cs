@@ -6,7 +6,7 @@ public class MoonManager : MonoBehaviour
 {
 
   [System.Serializable]
-  private struct Moon
+  public struct Moon
   {
     public Transform moon;
     public float visibility;
@@ -24,7 +24,7 @@ public class MoonManager : MonoBehaviour
     public Quaternion initialRotation;
   }
 
-  [SerializeField] private Moon[] _moons;
+  [SerializeField] public Moon[] _moons;
   [SerializeField] private WorldGenerator _worldGenerator;
 
   void Start()
