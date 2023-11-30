@@ -273,7 +273,7 @@ MeshFilter:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 254070712}
-  m_Mesh: {fileID: 70948873267775455, guid: dd7fd4781651ec24cba750ef62c0deb9, type: 3}
+  m_Mesh: {fileID: 4711208715938537054, guid: 08f1cecdcae2cfb4d83bbca0e5601020, type: 3}
 --- !u!1 &372723688
 GameObject:
   m_ObjectHideFlags: 0
@@ -356,7 +356,7 @@ MeshFilter:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 372723688}
-  m_Mesh: {fileID: 4711208715938537054, guid: dd7fd4781651ec24cba750ef62c0deb9, type: 3}
+  m_Mesh: {fileID: 4711208715938537054, guid: 08f1cecdcae2cfb4d83bbca0e5601020, type: 3}
 --- !u!1 &450384083
 GameObject:
   m_ObjectHideFlags: 0
@@ -597,7 +597,7 @@ MeshFilter:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 639103935}
-  m_Mesh: {fileID: -1928204645961537321, guid: dd7fd4781651ec24cba750ef62c0deb9, type: 3}
+  m_Mesh: {fileID: 4711208715938537054, guid: 08f1cecdcae2cfb4d83bbca0e5601020, type: 3}
 --- !u!1 &817157067
 GameObject:
   m_ObjectHideFlags: 0
@@ -1024,46 +1024,102 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _moons:
   - moon: {fileID: 372723689}
+    visibility: 0
+    visibilityCurve:
+      serializedVersion: 2
+      m_Curve: []
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
     speed: 0.1
     distance: 6500
     orbitAxis: {x: 1, y: 0, z: 0}
     offsetAmplitude: 1
+    spinOffsetAmplitude: 0
+    spinSpeed: 0.1
+    spinAxis: {x: 0, y: 0, z: 0}
     yBias: 0
     phase: 0
+    spinPhase: 0
     initialRotation: {x: 0, y: 0, z: 0, w: 0}
   - moon: {fileID: 1744140704}
+    visibility: 0
+    visibilityCurve:
+      serializedVersion: 2
+      m_Curve: []
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
     speed: 0.1
     distance: 6250
     orbitAxis: {x: 1, y: 0, z: 0}
     offsetAmplitude: 1
+    spinOffsetAmplitude: 0
+    spinSpeed: 1
+    spinAxis: {x: 0, y: 0, z: 0}
     yBias: 0
     phase: 0
+    spinPhase: 0
     initialRotation: {x: 0, y: 0, z: 0, w: 0}
   - moon: {fileID: 639103936}
+    visibility: 0
+    visibilityCurve:
+      serializedVersion: 2
+      m_Curve: []
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
     speed: 0.1
     distance: 5250
     orbitAxis: {x: 1, y: 0, z: 0}
     offsetAmplitude: 1
+    spinOffsetAmplitude: 0
+    spinSpeed: 1
+    spinAxis: {x: 0, y: 0, z: 0}
     yBias: 0
     phase: 0
+    spinPhase: 0
     initialRotation: {x: 0, y: 0, z: 0, w: 0}
   - moon: {fileID: 1631298115}
+    visibility: 0
+    visibilityCurve:
+      serializedVersion: 2
+      m_Curve: []
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
     speed: 0.1
     distance: 5500
     orbitAxis: {x: 1, y: 0, z: 0}
     offsetAmplitude: 1
+    spinOffsetAmplitude: 0
+    spinSpeed: 1
+    spinAxis: {x: 0, y: 0, z: 0}
     yBias: 0
     phase: 0
+    spinPhase: 0
     initialRotation: {x: 0, y: 0, z: 0, w: 0}
   - moon: {fileID: 254070713}
+    visibility: 0
+    visibilityCurve:
+      serializedVersion: 2
+      m_Curve: []
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
     speed: 0.1
     distance: 5750
     orbitAxis: {x: 1, y: 0, z: 0}
     offsetAmplitude: 1
+    spinOffsetAmplitude: 0
+    spinSpeed: 1
+    spinAxis: {x: 0, y: 0, z: 0}
     yBias: 0
     phase: 0
+    spinPhase: 0
     initialRotation: {x: 0, y: 0, z: 0, w: 0}
   _worldGenerator: {fileID: 1338505935}
+  _orbitVisualizer: {fileID: 0}
 --- !u!1 &1631298114
 GameObject:
   m_ObjectHideFlags: 0
@@ -1146,7 +1202,7 @@ MeshFilter:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1631298114}
-  m_Mesh: {fileID: 212370497460711607, guid: dd7fd4781651ec24cba750ef62c0deb9, type: 3}
+  m_Mesh: {fileID: 4711208715938537054, guid: 08f1cecdcae2cfb4d83bbca0e5601020, type: 3}
 --- !u!1 &1661273512
 GameObject:
   m_ObjectHideFlags: 0
@@ -1331,7 +1387,7 @@ MeshFilter:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1744140703}
-  m_Mesh: {fileID: 3447038591770236762, guid: dd7fd4781651ec24cba750ef62c0deb9, type: 3}
+  m_Mesh: {fileID: 4711208715938537054, guid: 08f1cecdcae2cfb4d83bbca0e5601020, type: 3}
 --- !u!1 &1784028318
 GameObject:
   m_ObjectHideFlags: 0
