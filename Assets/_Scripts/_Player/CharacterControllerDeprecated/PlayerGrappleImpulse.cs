@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEngine.Serialization;
 
 [RequireComponent(typeof(LineRenderer))]
-public class PlayerGrapple : MonoBehaviour
+public class PlayerGrappleImpulse : MonoBehaviour
 {
     [Header("References")] 
     [SerializeField] private Transform _camera;

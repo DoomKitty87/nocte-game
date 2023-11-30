@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Serialization;
 
-public class PlayerGrappleWithForce : MonoBehaviour
+public class PlayerGrapple : MonoBehaviour
 {
     
     [Header("References")] 
@@ -21,6 +21,12 @@ public class PlayerGrappleWithForce : MonoBehaviour
     [SerializeField] private float _grappleDelayTime;
     
     [SerializeField] private float _grappleForce;
+    
+    [Space(10)]
+    [SerializeField] private AnimationCurve _grapplingForceCurve;
+    [SerializeField] private float _timeToReachMaxForce;
+    [Space(10)]
+    
     [SerializeField, Range(0, 1)] private float _airFriction;
     [SerializeField] private float _gravityWhileGrappling;
     [SerializeField, Range(0, 1)] private float _playerLookWhileGrapplingPower;
@@ -60,6 +66,7 @@ public class PlayerGrappleWithForce : MonoBehaviour
         if (_currentlyGrappling) {
             _rb.AddForce(GetGrappleForce(), ForceMode.Acceleration);
             _rb.AddForce(GetFrictionForce(), ForceMode.Force);
+            CancelGrapple();
         }
     }
 
@@ -71,6 +78,7 @@ public class PlayerGrappleWithForce : MonoBehaviour
         if(Physics.Raycast(_camera.position, _camera.forward, out hit, _maxGrappleDistance, _grapplable))
         {
             _grapplePoint = hit.point;
+            _grappleVectorNormal = (transform.position - _grapplePoint).normalized;
             _renderGrapple = true;
             _lineRenderer.enabled = true;
             _lineRenderer.SetPosition(1, _grapplePoint);
@@ -78,11 +86,16 @@ public class PlayerGrappleWithForce : MonoBehaviour
         }
     }
 
+
+    private float _time;
+    
     private void ExecuteGrapple() {
         if (!Input.GetKey(KeyCode.Mouse0)) return;
         _currentlyGrappling = true;
         _playerController.Gravity = -_gravityWhileGrappling;
         _playerController._useGroundFriction = false;
+
+        _time = 0;
 
     }
 
@@ -90,10 +103,19 @@ public class PlayerGrappleWithForce : MonoBehaviour
         Vector3 playerDirection = (_grapplePoint - _camera.position).normalized;
         Vector3 lookDirectionOffset = _camera.forward;
         Vector3 direction = (playerDirection + (lookDirectionOffset * _playerLookWhileGrapplingPower)).normalized;
-        
-        return direction * _grappleForce;
+
+        _time += Time.deltaTime / _timeToReachMaxForce;
+
+        float animationForce = _grapplingForceCurve.Evaluate(_time);
+        return direction * _grappleForce * animationForce;
     }
 
+    private Vector3 _grappleVectorNormal;
+    private void CancelGrapple() {
+        Vector3 playerVector = transform.position - _grapplePoint;
+        float dotProduct = Vector3.Dot(playerVector, _grappleVectorNormal);
+        if (dotProduct <= 0) StopGrapple();
+    }
 
     private Vector3 GetFrictionForce() {
         Vector3 direction = -_rb.velocity.normalized;
