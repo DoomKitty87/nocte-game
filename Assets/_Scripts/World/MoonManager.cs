@@ -38,7 +38,7 @@ public class MoonManager : MonoBehaviour
       _moons[i].spinPhase = Mathf.PerlinNoise(_worldGenerator._seed + i * 12.291f, _worldGenerator._seed + i * 91.215f) * 2 * Mathf.PI;
       _moons[i].spinAxis += new Vector3(Mathf.Sin(_worldGenerator._seed * 5.123f + i) * _moons[i].offsetAmplitude, _moons[i].yBias * Mathf.Tan(_worldGenerator._seed * 8.519f + i), Mathf.Cos(_worldGenerator._seed * 2.614f + i) * _moons[i].spinOffsetAmplitude);
     }
-    _orbitVisualizer.Initialize();
+    if (_orbitVisualizer) _orbitVisualizer.Initialize();
   }
 
   void Update()

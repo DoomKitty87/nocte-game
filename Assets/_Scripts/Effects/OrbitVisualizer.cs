@@ -10,7 +10,7 @@ public class OrbitVisualizer : MonoBehaviour
   [SerializeField] private int _resolution;
 
   public void Initialize() {
-    for (int i = 0; i < _moonManager.moons.Length; i++) {
+    for (int i = 0; i < _moonManager._moons.Length; i++) {
       Vector3[] positions = new Vector3[_resolution];
       for (int j = 0; j < _resolution; j++) {
         float radians = Mathf.PI * 2 / _resolution * (j + 1);

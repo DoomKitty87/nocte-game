@@ -8,8 +8,8 @@ public class MoonEffects : MonoBehaviour
   [SerializeField] private MoonManager _moonManager;
 
   private void Update() {
-    for (int i = 0; i < _moonManager.moons.Length; i++) {
-      float visibility = _moonManager.moons[i].visibility;
+    for (int i = 0; i < _moonManager._moons.Length; i++) {
+      float visibility = _moonManager._moons[i].visibility;
       switch (i) {
         case 0:
           break;
