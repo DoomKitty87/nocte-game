@@ -119,8 +119,8 @@ public static class AmalgamNoise
     
   }
 
-  public static Vector3[] GenerateTerrain(int size, float xOffset, float zOffset, float xResolution, float zResolution, int octaves, float lacunarity, float persistence, float sharpnessScale, float sharpnessAmplitude, float sharpnessMean, float scaleScale, float scaleAmplitude, float scaleMean, float amplitudeScale, float amplitudeAmplitude, float amplitudeMean, float warpStrengthScale, float warpStrengthAmplitude, float warpStrengthMean, float warpScaleScale, float warpScaleAmplitude, float warpScaleMean) {
-    size += 3;
+  public static Vector3[] GenerateTerrain(int size, int lodFactor, float xOffset, float zOffset, float xResolution, float zResolution, int octaves, float lacunarity, float persistence, float sharpnessScale, float sharpnessAmplitude, float sharpnessMean, float scaleScale, float scaleAmplitude, float scaleMean, float amplitudeScale, float amplitudeAmplitude, float amplitudeMean, float warpStrengthScale, float warpStrengthAmplitude, float warpStrengthMean, float warpScaleScale, float warpScaleAmplitude, float warpScaleMean) {
+    size = (size + 3) * lodFactor;
     NativeArray<float> output = new NativeArray<float>(size * size, Allocator.TempJob);
     NoiseJob job = new NoiseJob {
       size = size,
@@ -158,8 +158,8 @@ public static class AmalgamNoise
     return vertices;
   }
 
-  public static float[] GenerateRivers(int size, float xOffset, float zOffset, float xResolution, float zResolution, float scale) {
-    size += 3;
+  public static float[] GenerateRivers(int size, int lodFactor, float xOffset, float zOffset, float xResolution, float zResolution, float scale) {
+    size = (size + 3) * lodFactor;
     float[] heightMap = new float[size * size];
     NativeArray<float> output = new NativeArray<float>(size * size, Allocator.TempJob);
     RiverJob job = new RiverJob {
