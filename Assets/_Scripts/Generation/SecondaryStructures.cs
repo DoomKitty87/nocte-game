@@ -13,7 +13,7 @@ public class SecondaryStructures : MonoBehaviour
   }
 
   [SerializeField] private WorldGenerator _worldGen;
-  [SerializeField] private int _structureRenderDistance = 10; // [World Units]
+  [SerializeField] private int _structureRenderDistance = 1500; // [World Units]
   [SerializeField] private float _chunkStructureChance = 0.2f;
 
   private List<StructureData> _structures = new List<StructureData>();

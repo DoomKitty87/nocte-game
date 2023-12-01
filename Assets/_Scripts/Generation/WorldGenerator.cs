@@ -203,6 +203,7 @@ public class WorldGenerator : MonoBehaviour
     [SerializeField] private Biome[] _biomes;
     [SerializeField] private ScatterSettings[] _scatterSettings;
     [SerializeField] private SecondaryStructures _structures;
+    [SerializeField] private PlaceStructures _storyStructures;
 
     public int _scatterRange = 2;
     // These are separated because density is used in calculations before biome is calculated
@@ -384,6 +385,7 @@ public class WorldGenerator : MonoBehaviour
 
         if (deltaZ != 0 || deltaX != 0) {
             _structures.CheckStructures(new Vector2(playerPos.x, playerPos.z));
+            _storyStructures.CheckStructures(new Vector2(playerPos.x, playerPos.z));
             _updateQueue.Sort((c1, c2) => (Mathf.Abs(_tilePool[c1].x - _playerChunkXWorld) + Mathf.Abs(_tilePool[c1].z - _playerChunkZWorld)).CompareTo(Mathf.Abs(_tilePool[c2].x - _playerChunkXWorld) + Mathf.Abs(_tilePool[c2].z - _playerChunkZWorld)));
             for (int x = 0; x < _xTiles; x++) {
                 for (int z = 0; z < _zTiles; z++) { 

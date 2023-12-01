@@ -14,6 +14,7 @@ public class PlaceStructures : MonoBehaviour
   [SerializeField] private float _beamWidth;
   [SerializeField] private Material _beamMaterial;
   [SerializeField] private float _groundInset;
+  [SerializeField] private int _structureRenderDistance = 2500; // [World Units]
 
   private int[] _beamWindingOrder = {
     1, 2, 0, 1, 3, 2, // Bottom Face
@@ -182,6 +183,13 @@ public class PlaceStructures : MonoBehaviour
     vertices[7] = new Vector3(vertexB.x + _beamWidth / 2, vertexB.y, vertexB.z + _beamWidth / 2);
 
     return vertices;
+  }
+
+  public void CheckStructures(Vector2 playerPosition) {
+    for (int i = 0; i < transform.childCount; i++) {
+      if ((transform.GetChild(i).position - playerPosition).magnitude > _structureRenderDistance) transform.GetChild(i).gameObject.SetActive(false);
+      else transform.GetChild(i).setActive(true);
+    }
   }
 
 }
