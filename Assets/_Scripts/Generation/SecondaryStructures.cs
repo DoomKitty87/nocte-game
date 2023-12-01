@@ -15,6 +15,7 @@ public class SecondaryStructures : MonoBehaviour
   [SerializeField] private WorldGenerator _worldGen;
   [SerializeField] private int _structureRenderDistance = 1500; // [World Units]
   [SerializeField] private float _chunkStructureChance = 0.2f;
+  [SerializeField] private GameObject[] _availableStructures;
 
   private List<StructureData> _structures = new List<StructureData>();
 
@@ -28,7 +29,7 @@ public class SecondaryStructures : MonoBehaviour
   private void GenerateStructure(Vector2 position, int type) {
     StructureData data = new StructureData();
     data.position = position;
-    data.reference = new GameObject();
+    data.reference = Instantiate(_availableStructures[Mathf.FloorToInt((PSRHash(position) - 0.001f) * _availableStructures.Length)], Vector3.zero, Quaternion.identity, transform);
     data.reference.transform.position = new Vector3(position.x, _worldGen.GetHeightValue(position), position.y);
     data.type = type;
     _structures.Add(data);
@@ -45,7 +46,7 @@ public class SecondaryStructures : MonoBehaviour
   }
 
   private float PSRHash(Vector2 position) {
-    return Mathf.PerlinNoise(position.x * 1000, position.y * 1000);
+    return Mathf.Lerp(0, 1, Mathf.PerlinNoise(position.x * 1000, position.y * 1000));
   }
 
 }
