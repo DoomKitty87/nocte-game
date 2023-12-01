@@ -18,6 +18,14 @@ public class DevConsole : MonoBehaviour
 
   private void ToggleConsole() {
     _consoleWindow.SetActive(!_consoleWindow.activeSelf);
+    if (_consoleWindow.activeSelf) {
+      _commandInput.ActivateInputField();
+      _commandInput.isFocused = true;
+    }
+    else {
+      _commandInput.DeactivateInputField();
+      _commandInput.isFocused = true;
+    }
   }
 
   private void SubmitCommand(string command) {
