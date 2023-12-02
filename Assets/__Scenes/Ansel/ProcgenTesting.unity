@@ -2304,9 +2304,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _worldGen: {fileID: 1338505935}
-  _structureRenderDistance: 10
-  _chunkStructureChance: 0.2
-  _availableStructures: []
+  _structureRenderDistance: 1500
+  _chunkStructureChance: 0.1
+  _availableStructures:
+  - {fileID: 372723688}
+  - {fileID: 1744140703}
+  - {fileID: 639103935}
+  - {fileID: 1631298114}
+  - {fileID: 254070712}
 --- !u!1 &1877083391
 GameObject:
   m_ObjectHideFlags: 0
@@ -2742,12 +2747,12 @@ PrefabInstance:
     - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
         type: 3}
       propertyPath: _xResolution
-      value: 20
+      value: 25
       objectReference: {fileID: 0}
     - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
         type: 3}
       propertyPath: _zResolution
-      value: 20
+      value: 25
       objectReference: {fileID: 0}
     - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
         type: 3}
@@ -2963,7 +2968,7 @@ PrefabInstance:
     - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
         type: 3}
       propertyPath: _terrainLODLevels.Array.data[0].factor
-      value: 4
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
         type: 3}

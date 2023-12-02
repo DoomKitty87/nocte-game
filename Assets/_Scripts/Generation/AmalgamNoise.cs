@@ -171,7 +171,7 @@ public static class AmalgamNoise
       scale = 1f / scale,
       output = output
     };
-    JobHandle handle = job.Schedule(size * size, 64);
+    JobHandle handle = job.Schedule(size * size, size);
     handle.Complete();
     for (int i = 0; i < size * size; i++) {
       heightMap[i] = output[i];
