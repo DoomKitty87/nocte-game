@@ -14,6 +14,7 @@ public class MoonManager : MonoBehaviour
     public float speed;
     public float distance;
     public Vector3 orbitAxis;
+    public float orbitAdjustSpeed;
     public float offsetAmplitude;
     public float spinOffsetAmplitude;
     public float spinSpeed;
@@ -44,6 +45,7 @@ public class MoonManager : MonoBehaviour
   void Update()
   {
     for (int i = 0; i < _moons.Length; i++) {
+      _moons[i].orbitAxis = Quaternion.AngleAxis(_moons[i].orbitAdjustSpeed * Time.deltaTime, Quaternion.LookRotation(_moons[i].orbitAxis) * Vector3.right) * _moons[i].orbitAxis;
       _moons[i].phase += Time.deltaTime * _moons[i].speed;
       _moons[i].phase %= 2 * Mathf.PI;
       _moons[i].spinPhase += Time.deltaTime * _moons[i].spinSpeed;
@@ -52,5 +54,6 @@ public class MoonManager : MonoBehaviour
       _moons[i].moon.localRotation = Quaternion.AngleAxis(_moons[i].spinPhase / (2 * Mathf.PI) * 360, Quaternion.Euler(_moons[i].spinAxis.x, _moons[i].spinAxis.y, _moons[i].spinAxis.z) * _moons[i].orbitAxis) * _moons[i].initialRotation;
       _moons[i].visibility = _moons[i].visibilityCurve.Evaluate(_moons[i].moon.localPosition.y / _moons[i].distance * transform.localScale.x);
     }
+    _orbitVisualizer.Initialize();
   }
 }
