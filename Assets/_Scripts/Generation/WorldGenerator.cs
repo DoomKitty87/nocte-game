@@ -684,8 +684,8 @@ public class WorldGenerator : MonoBehaviour
         UpdateMesh(msh, index);
         float maxDistance = Mathf.Sqrt(x * x + z * z);
         if (_hasColliders && maxDistance <= _colliderRange) {
-            tile.meshCollider = go.AddComponent<MeshCollider>();
-            tile.meshCollider.sharedMesh = msh;
+            _tilePool[index].meshCollider = go.AddComponent<MeshCollider>();
+            _tilePool[index].meshCollider.sharedMesh = msh;
         }
         //if (!_useColorGradient) CalculateUVs(msh);
         //else CalculateColors(index);
@@ -744,7 +744,7 @@ public class WorldGenerator : MonoBehaviour
             _structures.GenerateChunkStructures(new Vector2(x * _xSize * _xResolution, z * _zSize * _zResolution), new Vector2((x + 1) * _xSize * _xResolution, (z + 1) * _zSize * _zResolution));
             _generatedStructureTiles.Add(new Vector2(x, z));
         }
-       UpdateMesh(_tilePool[index].mesh, index);
+        UpdateMesh(_tilePool[index].mesh, index);
         if (maxDistance <= _colliderRange) UpdateCollider(index);
         else if (_tilePool[index].meshCollider) _tilePool[index].obj.GetComponent<MeshCollider>().enabled = false;
 

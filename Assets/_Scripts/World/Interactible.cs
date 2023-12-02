@@ -12,4 +12,13 @@ public class Interactible : MonoBehaviour
     gameObject.tag = "Interactible";
   }
 
+  public void DestroySelf() {
+    Destroy(gameObject);
+  }
+
+  public void FindAudioTape() {
+    InventoryManager inventory = GameObject.Find("Player").GetComponent<InventoryManager>();
+    inventory.PickupAudioTape("Test", null, null);
+  }
+
 }
