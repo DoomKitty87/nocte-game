@@ -15,6 +15,7 @@ public class MoonManager : MonoBehaviour
     public float distance;
     public Vector3 orbitAxis;
     public float orbitAdjustSpeed;
+    public float orbitAdjustPhase;
     public float offsetAmplitude;
     public float spinOffsetAmplitude;
     public float spinSpeed;
@@ -45,15 +46,17 @@ public class MoonManager : MonoBehaviour
   void Update()
   {
     for (int i = 0; i < _moons.Length; i++) {
-      _moons[i].orbitAxis = Quaternion.AngleAxis(_moons[i].orbitAdjustSpeed * Time.deltaTime, Vector3.Cross(_moons[i].orbitAxis, Vector3.up)) * _moons[i].orbitAxis;
-      _orbitVisualizer.UpdateMoon(i);
+      _moons[i].orbitAdjustPhase += Time.deltaTime * _moons[i].orbitAdjustSpeed;
+      _moons[i].orbitAdjustPhase %= 2 * Mathf.PI;
       _moons[i].phase += Time.deltaTime * _moons[i].speed;
       _moons[i].phase %= 2 * Mathf.PI;
       _moons[i].spinPhase += Time.deltaTime * _moons[i].spinSpeed;
       _moons[i].spinPhase %= 2 * Mathf.PI;
-      _moons[i].moon.localPosition = Quaternion.LookRotation(_moons[i].orbitAxis) * new Vector3(Mathf.Cos(_moons[i].phase), Mathf.Sin(_moons[i].phase), 0) * (_moons[i].distance / transform.localScale.x);
-      _moons[i].moon.localRotation = Quaternion.AngleAxis(_moons[i].spinPhase / (2 * Mathf.PI) * 360, Quaternion.Euler(_moons[i].spinAxis.x, _moons[i].spinAxis.y, _moons[i].spinAxis.z) * _moons[i].orbitAxis) * _moons[i].initialRotation;
+      Vector3 tmpOrbitAxis = Quaternion.AngleAxis(_moons[i].orbitAdjustPhase / (2 * Mathf.PI) * 360, Vector3.Cross(_moons[i].orbitAxis, Vector3.up)) * _moons[i].orbitAxis;
+      _moons[i].moon.localPosition = Quaternion.LookRotation(tmpOrbitAxis, Vector3.Cross(tmpOrbitAxis, Vector3.right)) * new Vector3(Mathf.Cos(_moons[i].phase), Mathf.Sin(_moons[i].phase), 0) * (_moons[i].distance / transform.localScale.x);
+      _moons[i].moon.localRotation = Quaternion.AngleAxis(_moons[i].spinPhase / (2 * Mathf.PI) * 360, Quaternion.Euler(_moons[i].spinAxis.x, _moons[i].spinAxis.y, _moons[i].spinAxis.z) * tmpOrbitAxis) * _moons[i].initialRotation;
       _moons[i].visibility = _moons[i].visibilityCurve.Evaluate(_moons[i].moon.localPosition.y / _moons[i].distance * transform.localScale.x);
+      _orbitVisualizer.UpdateMoon(i);
     }
   }
 }

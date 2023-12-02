@@ -23,14 +23,7 @@ public class OrbitVisualizer : MonoBehaviour
   }
 
   public void UpdateMoon(int index) {
-    Vector3[] positions = new Vector3[_resolution];
-    for (int i = 0; i < _resolution; i++) {
-      float radians = Mathf.PI * 2 / _resolution * i;
-      positions[i] = Quaternion.LookRotation(_moonManager._moons[index].orbitAxis) * new Vector3(Mathf.Cos(radians), Mathf.Sin(radians), 0) / transform.parent.localScale.x * _moonManager._moons[index].distance;
-    }
-
-    _lineRenderers[index].positionCount = positions.Length;
-    _lineRenderers[index].SetPositions(positions);
+    _lineRenderers[index].transform.localRotation = Quaternion.AngleAxis(_moonManager._moons[index].orbitAdjustPhase / (2 * Mathf.PI) * 360, Vector3.Cross(_moonManager._moons[index].orbitAxis, Vector3.up));
   }
 
 }
