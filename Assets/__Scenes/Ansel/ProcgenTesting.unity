@@ -1498,9 +1498,10 @@ GameObject:
   - component: {fileID: 1401696302}
   - component: {fileID: 1401696303}
   - component: {fileID: 1401696304}
+  - component: {fileID: 1401696305}
   m_Layer: 0
   m_Name: Interactible Handler
-  m_TagString: Untagged
+  m_TagString: InventoryManager
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1555,6 +1556,18 @@ SphereCollider:
   serializedVersion: 3
   m_Radius: 1.5
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &1401696305
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1401696301}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e5c179602561594468d7d3a12fe4229f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1514333488
 GameObject:
   m_ObjectHideFlags: 0
@@ -2651,8 +2664,7 @@ MonoBehaviour:
   _structureRenderDistance: 1500
   _chunkStructureChance: 1
   _availableStructures:
-  - {fileID: 372723688}
-  - {fileID: 1744140703}
+  - {fileID: 3647316738645460703, guid: 2cb67f5a22201744b81bd7ee9f751076, type: 3}
 --- !u!1 &1877083391
 GameObject:
   m_ObjectHideFlags: 0

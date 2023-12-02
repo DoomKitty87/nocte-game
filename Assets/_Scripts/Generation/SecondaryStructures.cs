@@ -29,7 +29,7 @@ public class SecondaryStructures : MonoBehaviour
   private void GenerateStructure(Vector2 position, int type) {
     StructureData data = new StructureData();
     data.position = position;
-    data.reference = Instantiate(_availableStructures[Mathf.FloorToInt((PSRHash(position) - 0.05f) * _availableStructures.Length)], Vector3.zero, Quaternion.identity, transform);
+    data.reference = Instantiate(_availableStructures[Mathf.CeilToInt(PSRHash(position * 32.15f) * _availableStructures.Length) - 1], Vector3.zero, Quaternion.identity, transform);
     data.reference.transform.position = new Vector3(position.x, _worldGen.GetHeightValue(position), position.y);
     data.type = type;
     _structures.Add(data);
@@ -46,7 +46,7 @@ public class SecondaryStructures : MonoBehaviour
   }
 
   private float PSRHash(Vector2 position) {
-    return Mathf.Clamp(0, 1, Mathf.PerlinNoise(position.x * 1000, position.y * 1000));
+    return Mathf.Clamp(Mathf.PerlinNoise(position.x * 1000 + _worldGen._seed, position.y * 1000 + _worldGen._seed), 0, 1);
   }
 
 }

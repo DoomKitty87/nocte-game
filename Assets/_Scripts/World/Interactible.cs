@@ -17,7 +17,7 @@ public class Interactible : MonoBehaviour
   }
 
   public void FindAudioTape() {
-    InventoryManager inventory = GameObject.Find("Player").GetComponent<InventoryManager>();
+    InventoryManager inventory = GameObject.FindGameObjectWithTag("InventoryManager").GetComponent<InventoryManager>();
     inventory.PickupAudioTape("Test", null, null);
   }
 

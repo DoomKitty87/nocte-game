@@ -13,8 +13,9 @@ public class InteractHandler : MonoBehaviour
   private List<GameObject> _interactibles = new List<GameObject>();
 
   private void Update() {
-    if (Input.GetKeyDown(_interactKey)) {
+    if (Input.GetKeyDown(_interactKey) && _interactibles.Count > 0) {
       _interactibles[0].GetComponent<Interactible>()._onInteract.Invoke();
+      _interactibles.RemoveAt(0);
     }
   }
 
@@ -26,7 +27,7 @@ public class InteractHandler : MonoBehaviour
     }
   }
 
-  private void OnTriggerLeave(Collider other) {
+  private void OnTriggerExit(Collider other) {
     if (other.CompareTag("Interactible")) {
       _interactibles.Remove(other.gameObject);
       if (_interactibles.Count > 0) _promptText.gameObject.SetActive(true);
