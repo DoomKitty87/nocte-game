@@ -20,11 +20,9 @@ public class DevConsole : MonoBehaviour
     _consoleWindow.SetActive(!_consoleWindow.activeSelf);
     if (_consoleWindow.activeSelf) {
       _commandInput.ActivateInputField();
-      _commandInput.isFocused = true;
     }
     else {
       _commandInput.DeactivateInputField();
-      _commandInput.isFocused = true;
     }
   }
 
@@ -36,7 +34,7 @@ public class DevConsole : MonoBehaviour
         _worldGenerator.Regenerate();
         response = "Regenerating terrain.";
         break;
-      case default:
+      default:
         response = "Unrecognized command.";
         break;
     }

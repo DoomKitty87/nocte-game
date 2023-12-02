@@ -187,8 +187,8 @@ public class PlaceStructures : MonoBehaviour
 
   public void CheckStructures(Vector2 playerPosition) {
     for (int i = 0; i < transform.childCount; i++) {
-      if ((transform.GetChild(i).position - playerPosition).magnitude > _structureRenderDistance) transform.GetChild(i).gameObject.SetActive(false);
-      else transform.GetChild(i).setActive(true);
+      if ((new Vector2(transform.GetChild(i).position.x, transform.GetChild(i).position.z) - playerPosition).magnitude > _structureRenderDistance) transform.GetChild(i).gameObject.SetActive(false);
+      else transform.GetChild(i).gameObject.SetActive(true);
     }
   }
 

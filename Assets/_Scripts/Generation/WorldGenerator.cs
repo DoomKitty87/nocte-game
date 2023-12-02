@@ -210,7 +210,7 @@ public class WorldGenerator : MonoBehaviour
 
     private WorldTile[] _tilePool;
     private int[,] _tilePositions;
-    private List<Vector2> _generatedStructureTiles;
+    private List<Vector2> _generatedStructureTiles = new List<Vector2>();
 
     private int _lastPlayerChunkX;
     private int _lastPlayerChunkZ;
@@ -638,7 +638,7 @@ public class WorldGenerator : MonoBehaviour
         if (_xSize * lodFactor * _zSize * lodFactor > 65000) {
             msh.indexFormat = UnityEngine.Rendering.IndexFormat.UInt32;
         }
-        bool rendered = Mathf.Sqrt(x * x + z * z) <= (_xSize - 1) / 2;
+        bool rendered = Mathf.Sqrt(x * x + z * z) <= (_xTiles - 1) / 2;
         //var result = NoiseMaps.GenerateTerrainBiomes(x * _xSize * _xResolution + seed, z * _zSize * _zResolution + seed, _xSize, _zSize, _biomes, _biomeScale, _xResolution, _zResolution);
         Vector3[] result = AmalgamNoise.GenerateTerrain(_xSize, lodFactor, x * _xSize * _xResolution + seed, z * _zSize * _zResolution + seed, _xResolution / lodFactor, _zResolution / lodFactor,
             _noiseParameters.octaves, _noiseParameters.lacunarity, _noiseParameters.persistence, _noiseParameters.sharpnessScale,
@@ -714,7 +714,8 @@ public class WorldGenerator : MonoBehaviour
         if (_xSize * lodFactor * _zSize * lodFactor > 65000) {
             _tilePool[index].mesh.indexFormat = UnityEngine.Rendering.IndexFormat.UInt32;
         }
-        bool rendered = Mathf.Sqrt(x * x + z * z) <= (_xSize - 1) / 2;
+        float maxDistance = Mathf.Sqrt(Mathf.Pow(Mathf.Abs(x - _playerXChunkScale), 2) + Mathf.Pow(Mathf.Abs(z - _playerZChunkScale), 2));
+        bool rendered = maxDistance <= (_xTiles - 1) / 2;
         Vector3[] result = AmalgamNoise.GenerateTerrain(_xSize, lodFactor, x * _xSize * _xResolution + seed, z * _zSize * _zResolution + seed, _xResolution / lodFactor, _zResolution / lodFactor,
             _noiseParameters.octaves, _noiseParameters.lacunarity, _noiseParameters.persistence, _noiseParameters.sharpnessScale,
             _noiseParameters.sharpnessAmplitude, _noiseParameters.sharpnessMean, _noiseParameters.scaleScale, _noiseParameters.scaleAmplitude,
@@ -735,8 +736,6 @@ public class WorldGenerator : MonoBehaviour
             _generatedStructureTiles.Add(new Vector2(x, z));
         }
         if (rendered) UpdateMesh(_tilePool[index].mesh, index);
-        int maxDistance = Mathf.Sqrt(Mathf.Pow(Mathf.Abs(x - _playerXChunkScale), 2) + Mathf.Pow(Mathf.Abs(z - _playerZChunkScale), 2));
-
         if (rendered && maxDistance <= _colliderRange) UpdateCollider(index);
         else if (_tilePool[index].meshCollider) _tilePool[index].obj.GetComponent<MeshCollider>().enabled = false;
 
