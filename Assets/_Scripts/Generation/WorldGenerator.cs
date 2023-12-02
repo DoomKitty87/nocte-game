@@ -200,6 +200,7 @@ public class WorldGenerator : MonoBehaviour
     
     [SerializeField] private GrassLOD[] _grassLODLevels;
     [SerializeField] private LODLevel[] _terrainLODLevels;
+    [SerializeField] private int _baseLOD;
     [SerializeField] private Biome[] _biomes;
     [SerializeField] private ScatterSettings[] _scatterSettings;
     [SerializeField] private SecondaryStructures _structures;
@@ -399,8 +400,10 @@ public class WorldGenerator : MonoBehaviour
                 if (GetLOD(new Vector2(_tilePool[_tilePositions[x, z]].x, _tilePool[_tilePositions[x, z]].z), new Vector2(playerXChunkScale, playerZChunkScale)) != _tilePool[_tilePositions[x, z]].currentLOD) {
                     _tilePool[_tilePositions[x, z]].currentLOD = GetLOD(new Vector2(_tilePool[_tilePositions[x, z]].x, _tilePool[_tilePositions[x, z]].z), new Vector2(playerXChunkScale, playerZChunkScale));
                     QueueTileUpdate(_tilePositions[x, z]);
+                    continue;
                 }
-                if (_limitWater && maxDistance <= _maxWaterRange) UpdateTile(_tilePositions[x, z]);
+                if (_tilePool[_tilePositions[x, z]].waterVertCount == 0 && _limitWater && maxDistance <= _maxWaterRange) QueueTileUpdate(_tilePositions[x, z]);
+                else if (_tilePool[_tilePositions[x, z]].waterVertCount != 0 && _limitWater && maxDistance > _maxWaterRange) QueueTileUpdate(_tilePositions[x, z]);
                 }
             }
         }
@@ -544,14 +547,15 @@ public class WorldGenerator : MonoBehaviour
                 updatesLeft--;
             } else break;
         }
-        for (int i = 0; i < _maxUpdatesPerFrame * 10; i++) {
+        for (int i = 0; i < _maxUpdatesPerFrame * 20; i++) {
             if (_generateQueue.Count > 0) {
                 GenerateTile(_generateQueue[0][0], _generateQueue[0][1], _generateQueue[0][2]);
                 _generateQueue.RemoveAt(0);
                 if (Time.timeScale == 0f) Time.timeScale = 1f;
             } else break;
         }
-        updatesLeft += Time.deltaTime * _maxUpdatesPerFrame;
+        updatesLeft += _maxUpdatesPerFrame;
+        updatesLeft = Mathf.Min(updatesLeft, 1);
         //UpdateWind();
         //for (int i = 0; i < _positionsBuffer.Length; i++) {
             //Graphics.RenderMeshIndirect(_rp[i], _grassLODLevels[i].mesh, _commandBuf[i], _commandCount);
@@ -609,7 +613,7 @@ public class WorldGenerator : MonoBehaviour
     }
 
     private int GetLOD(Vector2 playerChunkCoords, Vector2 chunkCoords) {
-        int lod = 0;
+        int lod = _baseLOD;
         
         for (int i = 0; i < _terrainLODLevels.Length; i++) {
             if (Mathf.Max(Mathf.Abs(playerChunkCoords.x - chunkCoords.x), Mathf.Abs(playerChunkCoords.y - chunkCoords.y)) < _terrainLODLevels[i].distance) {
@@ -639,6 +643,7 @@ public class WorldGenerator : MonoBehaviour
             msh.indexFormat = UnityEngine.Rendering.IndexFormat.UInt32;
         }
         bool rendered = Mathf.Sqrt(x * x + z * z) <= (_xTiles - 1) / 2;
+        
         //var result = NoiseMaps.GenerateTerrainBiomes(x * _xSize * _xResolution + seed, z * _zSize * _zResolution + seed, _xSize, _zSize, _biomes, _biomeScale, _xResolution, _zResolution);
         Vector3[] result = AmalgamNoise.GenerateTerrain(_xSize, lodFactor, x * _xSize * _xResolution + seed, z * _zSize * _zResolution + seed, _xResolution / lodFactor, _zResolution / lodFactor,
             _noiseParameters.octaves, _noiseParameters.lacunarity, _noiseParameters.persistence, _noiseParameters.sharpnessScale,
@@ -646,7 +651,7 @@ public class WorldGenerator : MonoBehaviour
             _noiseParameters.scaleMean, _noiseParameters.amplitudeScale, _noiseParameters.amplitudeAmplitude, _noiseParameters.amplitudeMean,
             _noiseParameters.warpStrengthScale, _noiseParameters.warpStrengthAmplitude, _noiseParameters.warpStrengthMean,
             _noiseParameters.warpScaleScale, _noiseParameters.warpScaleAmplitude, _noiseParameters.warpScaleMean);
-        if (rendered) msh.vertices = result;
+        msh.vertices = result;
         
         //float[] temperatureMap = NoiseMaps.GenerateTemperatureMap(result, x * _xSize * _xResolution + (seed * 2), z * _zSize * _zResolution + (seed * 2), _xSize * lodFactor, _zSize * lodFactor, _scale / _temperatureScale, _easeCurve, _xResolution / lodFactor, _zResolution / lodFactor);
         //float[] humidityMap = NoiseMaps.GenerateHumidityMap(result, temperatureMap, x * _xSize * _xResolution + (seed * 0.5f), z * _zSize * _zResolution + (seed * 0.5f), _xSize * lodFactor, _zSize * lodFactor, _scale / _humidityScale, _easeCurve, _xResolution / lodFactor, _zResolution / lodFactor);
@@ -660,6 +665,8 @@ public class WorldGenerator : MonoBehaviour
         _generatedStructureTiles.Add(new Vector2(x, z));
         tile.mesh = msh;
         tile.obj = go;
+        if (!rendered) go.SetActive(false);
+        else go.SetActive(true);
         //tile.temperatureMap = temperatureMap;
         //tile.humidityMap = humidityMap;
         tile.x = x;
@@ -672,11 +679,11 @@ public class WorldGenerator : MonoBehaviour
             tile.grassIndexStart = new int[_grassLODLevels[^1].distance];
         }
 
-        if (rendered) WindTriangles(msh, index);
+        WindTriangles(msh, index);
         //tile.biomeData = result.Item2;
-        if (rendered) UpdateMesh(msh, index);
+        UpdateMesh(msh, index);
         float maxDistance = Mathf.Sqrt(x * x + z * z);
-        if (rendered && _hasColliders && maxDistance <= _colliderRange) {
+        if (_hasColliders && maxDistance <= _colliderRange) {
             tile.meshCollider = go.AddComponent<MeshCollider>();
             tile.meshCollider.sharedMesh = msh;
         }
@@ -716,6 +723,8 @@ public class WorldGenerator : MonoBehaviour
         }
         float maxDistance = Mathf.Sqrt(Mathf.Pow(Mathf.Abs(x - _playerXChunkScale), 2) + Mathf.Pow(Mathf.Abs(z - _playerZChunkScale), 2));
         bool rendered = maxDistance <= (_xTiles - 1) / 2;
+        if (!rendered) _tilePool[index].obj.SetActive(false);
+        else _tilePool[index].obj.SetActive(true);
         Vector3[] result = AmalgamNoise.GenerateTerrain(_xSize, lodFactor, x * _xSize * _xResolution + seed, z * _zSize * _zResolution + seed, _xResolution / lodFactor, _zResolution / lodFactor,
             _noiseParameters.octaves, _noiseParameters.lacunarity, _noiseParameters.persistence, _noiseParameters.sharpnessScale,
             _noiseParameters.sharpnessAmplitude, _noiseParameters.sharpnessMean, _noiseParameters.scaleScale, _noiseParameters.scaleAmplitude,
@@ -723,11 +732,11 @@ public class WorldGenerator : MonoBehaviour
             _noiseParameters.warpStrengthScale, _noiseParameters.warpStrengthAmplitude, _noiseParameters.warpStrengthMean,
             _noiseParameters.warpScaleScale, _noiseParameters.warpScaleAmplitude, _noiseParameters.warpScaleMean);
         _tilePool[index].mesh.triangles = null;
-        if (rendered) _tilePool[index].mesh.vertices = result;
+        _tilePool[index].mesh.vertices = result;
         //_tilePool[index].temperatureMap = NoiseMaps.GenerateTemperatureMap(_tilePool[index].mesh.vertices, x * _xSize * _xResolution + (seed * 2), z * _zSize * _zResolution + (seed * 2), _xSize * lodFactor, _zSize * lodFactor, _scale / _temperatureScale, _easeCurve, _xResolution / lodFactor, _zResolution / lodFactor);
         //_tilePool[index].humidityMap = NoiseMaps.GenerateHumidityMap(_tilePool[index].mesh.vertices, _tilePool[index].temperatureMap, x * _xSize * _xResolution + (seed * 0.5f), z * _zSize * _zResolution + (seed * 0.5f), _xSize * lodFactor, _zSize * lodFactor, _scale / _humidityScale, _easeCurve, _xResolution / lodFactor, _zResolution / lodFactor);
 
-        if (rendered) WindTriangles(_tilePool[index].mesh, index);
+        WindTriangles(_tilePool[index].mesh, index);
         //if (!_useColorGradient) CalculateUVs(_tilePool[index].mesh);
         //else CalculateColors(index);
         _tilePool[index].obj.transform.position = new Vector3(x * _xSize * _xResolution, 0, z * _zSize * _zResolution);
@@ -735,8 +744,8 @@ public class WorldGenerator : MonoBehaviour
             _structures.GenerateChunkStructures(new Vector2(x * _xSize * _xResolution, z * _zSize * _zResolution), new Vector2((x + 1) * _xSize * _xResolution, (z + 1) * _zSize * _zResolution));
             _generatedStructureTiles.Add(new Vector2(x, z));
         }
-        if (rendered) UpdateMesh(_tilePool[index].mesh, index);
-        if (rendered && maxDistance <= _colliderRange) UpdateCollider(index);
+       UpdateMesh(_tilePool[index].mesh, index);
+        if (maxDistance <= _colliderRange) UpdateCollider(index);
         else if (_tilePool[index].meshCollider) _tilePool[index].obj.GetComponent<MeshCollider>().enabled = false;
 
         if (maxDistance <= _scatterRange) {
@@ -767,7 +776,7 @@ public class WorldGenerator : MonoBehaviour
 
     private void WindTriangles(Mesh targetMesh, int index) {
         int lodFactor = (int) Mathf.Pow(2, _tilePool[index].currentLOD);
-        int sideLength = (_xSize + 3) * lodFactor - 1;
+        int sideLength = (_xSize + 1) * lodFactor + 3;
         int[] triangles = new int[sideLength * sideLength * 6];
         int vert = 0;
         int tris = 0;
@@ -792,8 +801,8 @@ public class WorldGenerator : MonoBehaviour
 
     private void CalculateUVs(Mesh targetMesh, int index) {
         int lodFactor = (int) Mathf.Pow(2, _tilePool[index].currentLOD);
-        int xSize = (_xSize + 3) * lodFactor;
-        int zSize = (_zSize + 3) * lodFactor;
+        int xSize = (_xSize + 1) * lodFactor + 3;
+        int zSize = (_zSize + 1) * lodFactor + 3;
 
         Vector2[] uvs = new Vector2[xSize * zSize];
 
@@ -848,7 +857,7 @@ public class WorldGenerator : MonoBehaviour
     private int[] CullTriangles(Mesh targetMesh, int index) {
         int lodFactor = (int) Mathf.Pow(2, _tilePool[index].currentLOD);
         int[] triangles = targetMesh.triangles;
-        int sideLength = (_xSize + 3) * lodFactor - 1;
+        int sideLength = (_xSize + 1) * lodFactor + 3;
         List<int> culled = new List<int>();
 
         for (int i = 0; i < sideLength * sideLength; i++) {
@@ -1089,7 +1098,7 @@ public class WorldGenerator : MonoBehaviour
             waterVerts[i] += _tilePool[index].obj.transform.position;
         }
 
-        int sideLength = (_xSize + 3) * lodFactor;
+        int sideLength = (_xSize + 1) * lodFactor + 4;
         int[] triangles = new int[(sideLength - 1) * (sideLength - 1) * 6];
         for (int i = 0, j = 0; i < waterVerts.Length; i++) {
             if (i / sideLength >= sideLength - 1) continue;

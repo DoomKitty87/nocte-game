@@ -2687,12 +2687,12 @@ PrefabInstance:
     - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
         type: 3}
       propertyPath: _xSize
-      value: 64
+      value: 16
       objectReference: {fileID: 0}
     - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
         type: 3}
       propertyPath: _zSize
-      value: 64
+      value: 16
       objectReference: {fileID: 0}
     - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
         type: 3}
@@ -2703,6 +2703,11 @@ PrefabInstance:
         type: 3}
       propertyPath: _zTiles
       value: 25
+      objectReference: {fileID: 0}
+    - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
+        type: 3}
+      propertyPath: _baseLOD
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
         type: 3}
@@ -2737,12 +2742,12 @@ PrefabInstance:
     - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
         type: 3}
       propertyPath: _xResolution
-      value: 5
+      value: 20
       objectReference: {fileID: 0}
     - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
         type: 3}
       propertyPath: _zResolution
-      value: 5
+      value: 20
       objectReference: {fileID: 0}
     - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
         type: 3}
@@ -2757,7 +2762,7 @@ PrefabInstance:
     - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
         type: 3}
       propertyPath: _maxWaterRange
-      value: 0
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
         type: 3}
@@ -2797,7 +2802,7 @@ PrefabInstance:
     - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
         type: 3}
       propertyPath: _maxUpdatesPerFrame
-      value: 0.2
+      value: 0.05
       objectReference: {fileID: 0}
     - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
         type: 3}
@@ -2847,7 +2852,7 @@ PrefabInstance:
     - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
         type: 3}
       propertyPath: _terrainLODLevels.Array.size
-      value: 1
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
         type: 3}
@@ -2958,17 +2963,17 @@ PrefabInstance:
     - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
         type: 3}
       propertyPath: _terrainLODLevels.Array.data[0].factor
-      value: 2
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
         type: 3}
       propertyPath: _terrainLODLevels.Array.data[1].factor
-      value: 1
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
         type: 3}
       propertyPath: _terrainLODLevels.Array.data[2].factor
-      value: 0
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
         type: 3}
@@ -2978,12 +2983,12 @@ PrefabInstance:
     - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
         type: 3}
       propertyPath: _terrainLODLevels.Array.data[1].distance
-      value: 0
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
         type: 3}
       propertyPath: _terrainLODLevels.Array.data[2].distance
-      value: 10
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
         type: 3}
