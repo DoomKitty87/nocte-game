@@ -6,7 +6,8 @@ using Random = UnityEngine.Random;
 public static class PoissonDisk
 {
 
-    public static List<Vector2> GeneratePoints(float radius, Vector2 sampleRegion, int numSamplesBeforeRejection = 30) {
+    public static List<Vector2> GeneratePoints(float radius, Vector2 sampleRegion, int numSamplesBeforeRejection = 30, int seed = 0) {
+        Random.InitState(seed);
         float cellSize = radius / Mathf.Sqrt(2);
         
         int[,] grid = new int[Mathf.CeilToInt(sampleRegion.x / cellSize), Mathf.CeilToInt(sampleRegion.y / cellSize)];

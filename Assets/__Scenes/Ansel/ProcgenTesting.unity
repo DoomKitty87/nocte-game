@@ -3961,6 +3961,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
         type: 3}
+      propertyPath: _scatterRange
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
+        type: 3}
       propertyPath: _colliderRange
       value: 5
       objectReference: {fileID: 0}
@@ -4023,6 +4028,11 @@ PrefabInstance:
         type: 3}
       propertyPath: _noiseParameters.octaves
       value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
+        type: 3}
+      propertyPath: _scatterLayers.Array.size
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
         type: 3}
@@ -4126,6 +4136,16 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
         type: 3}
+      propertyPath: _scatterLayers.Array.data[0].name
+      value: rock
+      objectReference: {fileID: 0}
+    - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
+        type: 3}
+      propertyPath: _scatterLayers.Array.data[1].name
+      value: rock
+      objectReference: {fileID: 0}
+    - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
+        type: 3}
       propertyPath: _grassLODLevels.Array.data[0].mesh
       value: 
       objectReference: {fileID: 6894428203817054813, guid: 71ecff4ba9093444fa01dd2b55b6e59c,
@@ -4159,6 +4179,33 @@ PrefabInstance:
         type: 3}
       propertyPath: _noiseParameters.warpScaleAmplitude
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
+        type: 3}
+      propertyPath: _scatterLayers.Array.data[0].cutoff
+      value: 0.001
+      objectReference: {fileID: 0}
+    - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
+        type: 3}
+      propertyPath: _scatterLayers.Array.data[0].prefab
+      value: 
+      objectReference: {fileID: 919132149155446097, guid: 6a41f1dbd5134e64088c76036fcc762b,
+        type: 3}
+    - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
+        type: 3}
+      propertyPath: _scatterLayers.Array.data[1].prefab
+      value: 
+      objectReference: {fileID: 919132149155446097, guid: 6027bd4d9e4ee514ca2bfc2c9f9d841a,
+        type: 3}
+    - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
+        type: 3}
+      propertyPath: _scatterLayers.Array.data[0].density
+      value: 0.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
+        type: 3}
+      propertyPath: _scatterLayers.Array.data[1].density
+      value: 0.25
       objectReference: {fileID: 0}
     - target: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
         type: 3}

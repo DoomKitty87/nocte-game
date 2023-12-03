@@ -102,15 +102,8 @@ public class WorldGenerator : MonoBehaviour
 
         public string name;
         public GameObject prefab;
-
-    }
-
-    [System.Serializable]
-    public struct ScatterSettings
-    {
-        
         public float density;
-        
+
     }
 
     [System.Serializable]
@@ -202,8 +195,8 @@ public class WorldGenerator : MonoBehaviour
     [SerializeField] private GrassLOD[] _grassLODLevels;
     [SerializeField] private LODLevel[] _terrainLODLevels;
     [SerializeField] private int _baseLOD;
-    [SerializeField] private Biome[] _biomes;
-    [SerializeField] private ScatterSettings[] _scatterSettings;
+    // [SerializeField] private Biome[] _biomes;
+    [SerializeField] private ScatterLayer[] _scatterLayers;
     [SerializeField] private SecondaryStructures _structures;
     [SerializeField] private PlaceStructures _storyStructures;
 
@@ -763,6 +756,8 @@ public class WorldGenerator : MonoBehaviour
 
         if (maxDistance <= _scatterRange) {
             ScatterTile(index);
+        } else {
+            ClearScatter(index);
         }
         if (_updateQueue.Count > 1) return;
         if (!_disableGrass) UpdateGrassBuffers();
@@ -906,9 +901,13 @@ public class WorldGenerator : MonoBehaviour
         return vertexAbs;
     }
 
+    private void ClearScatter(int index) {
+        for (int i = _tilePool[index].obj.transform.childCount - 1; i >= 0; i--) Destroy(_tilePool[index].obj.transform.GetChild(i).gameObject);
+    }
+
     private void ScatterTile(int index) {
-        for (int i = _tilePool[index].obj.transform.childCount - 1; i >= 0; i++) Destroy(_tilePool[index].obj.transform.GetChild(i).gameObject);
-        for (int i = 0; i < _scatterSettings.Length; i++) {
+        for (int i = _tilePool[index].obj.transform.childCount - 1; i >= 0; i--) Destroy(_tilePool[index].obj.transform.GetChild(i).gameObject);
+        for (int i = 0; i < _scatterLayers.Length; i++) {
             ScatterObjects(index, i);
         }
     }
@@ -916,10 +915,11 @@ public class WorldGenerator : MonoBehaviour
     private void ScatterObjects(int index, int layer) {
         Mesh targetMesh = _tilePool[index].mesh;
         Vector3[] vertices = targetMesh.vertices;
-        List<Vector2> points = PoissonDisk.GeneratePoints(1 / _scatterSettings[layer].density, new Vector2(_xSize, _zSize));
+        int sideLength = (int) Mathf.Sqrt(vertices.Length);
+        List<Vector2> points = PoissonDisk.GeneratePoints(1 / _scatterLayers[layer].density * Mathf.Pow(2, _tilePool[index].currentLOD), new Vector2(sideLength, sideLength), 30, (int) vertices[0].y + _seed);
         for (int i = 0; i < points.Count; i++) {
-            Vector3 vertex = vertices[(int)points[i].x + (int)points[i].y * _xSize];
-            GameObject go = Instantiate(_biomes[_tilePool[index].biomeData[(int)points[i].x + (int)points[i].y * _xSize]].scatterLayers[layer].prefab, new Vector3(vertex.x + (_tilePool[index].x * _xSize * _xResolution), vertex.y, vertex.z + (_tilePool[index].z * _zSize * _zResolution)), UnityEngine.Quaternion.identity);
+            Vector3 vertex = vertices[(int)points[i].x + (int)points[i].y * sideLength];
+            GameObject go = Instantiate(_scatterLayers[layer].prefab, new Vector3(vertex.x + (_tilePool[index].x * _xSize * _xResolution), vertex.y, vertex.z + (_tilePool[index].z * _zSize * _zResolution)), UnityEngine.Quaternion.identity);
             go.transform.parent = _tilePool[index].obj.transform;
         }
     }
