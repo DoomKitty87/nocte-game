@@ -26,16 +26,22 @@ public class DevConsole : MonoBehaviour
     }
   }
 
-  private void SubmitCommand(string command) {
+  private void Awake() {
+    _consoleWindow.SetActive(false);
+    _commandInput.DeactivateInputField();
+    _commandInput.onEndEdit.AddListener(delegate { SubmitCommand(_commandInput.text); });
+  }
+
+  public void SubmitCommand(string command) {
     _commandHistory.text += "\n" + command;
     string response = "";
     switch (command.Split(' ')[0]) {
       case "regenerate":
         _worldGenerator.Regenerate();
-        response = "Regenerating terrain.";
+        response = "Regenerating terrain";
         break;
       default:
-        response = "Unrecognized command.";
+        response = "Unrecognized command";
         break;
     }
     _commandHistory.text += "\n" + response;

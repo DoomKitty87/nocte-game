@@ -186,6 +186,7 @@ public class WorldGenerator : MonoBehaviour
     public AnimationCurve _cavePassCurve;
     public float _riverPassScale;
     public float _riverPassAmplitude;
+    public float _riverWaterLevel;
     public AnimationCurve _riverPassCurve;
     public GameObject _waterObject;
     public int _maxWaterRange;
@@ -392,7 +393,7 @@ public class WorldGenerator : MonoBehaviour
                 for (int z = 0; z < _zTiles; z++) { 
                 float maxDistance = Mathf.Max(Mathf.Abs(_tilePool[_tilePositions[x, z]].x - playerXChunkScale), Mathf.Abs(_tilePool[_tilePositions[x, z]].z - playerZChunkScale));
                 if (_hasColliders && maxDistance < _colliderRange) { 
-                    UpdateCollider(_tilePositions[x, z]);
+                    if (_tilePool[_tilePositions[x, z]].meshCollider == null || !_tilePool[_tilePositions[x, z]].meshCollider.enabled) UpdateCollider(_tilePositions[x, z]);
                 } else if (_hasColliders) {
                 if (_tilePool[_tilePositions[x, z]].meshCollider) _tilePool[_tilePositions[x, z]].meshCollider.enabled = false;
                 }
@@ -531,7 +532,7 @@ public class WorldGenerator : MonoBehaviour
     }
 
     public void Regenerate() {
-        Debug.Log("Regenerating Terrain");
+        // Debug.Log("Regenerating Terrain");
         for (int i = 0; i < _tilePool.Length; i++) {
             Destroy(_tilePool[i].obj);
         }
@@ -625,6 +626,17 @@ public class WorldGenerator : MonoBehaviour
         return lod;
     }
 
+    private bool GetLODEdge(Vector2 playerChunkCoords, Vector2 chunkCoords) {
+        bool edge = false;
+        for (int i = 0; i < _terrainLODLevels.Length; i++) {
+            if (Mathf.Max(Mathf.Abs(playerChunkCoords.x - chunkCoords.x), Mathf.Abs(playerChunkCoords.y - chunkCoords.y)) == _terrainLODLevels[i].distance) {
+                edge = true;
+                break;
+            }
+        }
+        return edge;
+    }
+
     private void GenerateTile(int x, int z, int index)
     {
         GameObject go = new GameObject("Tile");
@@ -682,7 +694,7 @@ public class WorldGenerator : MonoBehaviour
         WindTriangles(msh, index);
         //tile.biomeData = result.Item2;
         UpdateMesh(msh, index);
-        float maxDistance = Mathf.Sqrt(x * x + z * z);
+        float maxDistance = Mathf.Max(Mathf.Abs(x), Mathf.Abs(z));
         if (_hasColliders && maxDistance <= _colliderRange) {
             _tilePool[index].meshCollider = go.AddComponent<MeshCollider>();
             _tilePool[index].meshCollider.sharedMesh = msh;
@@ -745,6 +757,7 @@ public class WorldGenerator : MonoBehaviour
             _generatedStructureTiles.Add(new Vector2(x, z));
         }
         UpdateMesh(_tilePool[index].mesh, index);
+        maxDistance = Mathf.Max(Mathf.Abs(x - _playerXChunkScale), Mathf.Abs(z - _playerZChunkScale));
         if (maxDistance <= _colliderRange) UpdateCollider(index);
         else if (_tilePool[index].meshCollider) _tilePool[index].obj.GetComponent<MeshCollider>().enabled = false;
 
@@ -776,7 +789,7 @@ public class WorldGenerator : MonoBehaviour
 
     private void WindTriangles(Mesh targetMesh, int index) {
         int lodFactor = (int) Mathf.Pow(2, _tilePool[index].currentLOD);
-        int sideLength = (_xSize + 1) * lodFactor + 3;
+        int sideLength = (int) Mathf.Sqrt(targetMesh.vertices.Length) - 1;
         int[] triangles = new int[sideLength * sideLength * 6];
         int vert = 0;
         int tris = 0;
@@ -801,14 +814,13 @@ public class WorldGenerator : MonoBehaviour
 
     private void CalculateUVs(Mesh targetMesh, int index) {
         int lodFactor = (int) Mathf.Pow(2, _tilePool[index].currentLOD);
-        int xSize = (_xSize + 1) * lodFactor + 3;
-        int zSize = (_zSize + 1) * lodFactor + 3;
+        int sideLength = (int) Mathf.Sqrt(targetMesh.vertices.Length) - 1;
 
-        Vector2[] uvs = new Vector2[xSize * zSize];
+        Vector2[] uvs = new Vector2[sideLength * sideLength];
 
         Vector3[] vertices = targetMesh.vertices;
         for (int i = 0; i < vertices.Length; i++) {
-            uvs[i] = new Vector2(vertices[i].x / (xSize * _xResolution / lodFactor), vertices[i].z / (zSize * _zResolution / lodFactor));
+            uvs[i] = new Vector2(vertices[i].x / (sideLength * _xResolution / lodFactor), vertices[i].z / (sideLength * _zResolution / lodFactor));
         }
 
         targetMesh.uv = uvs;
@@ -857,7 +869,7 @@ public class WorldGenerator : MonoBehaviour
     private int[] CullTriangles(Mesh targetMesh, int index) {
         int lodFactor = (int) Mathf.Pow(2, _tilePool[index].currentLOD);
         int[] triangles = targetMesh.triangles;
-        int sideLength = (_xSize + 1) * lodFactor + 3;
+        int sideLength = (int) Mathf.Sqrt(targetMesh.vertices.Length) - 1;
         List<int> culled = new List<int>();
 
         for (int i = 0; i < sideLength * sideLength; i++) {
@@ -1087,7 +1099,7 @@ public class WorldGenerator : MonoBehaviour
         int ignored = 0;
         for (int i = 0; i < heightMods.Length; i++) {
             heightMods[i] = _riverPassCurve.Evaluate(heightMods[i]);
-            waterVerts[i] = vertices[i];
+            waterVerts[i] = vertices[i] - new Vector3(0, _riverWaterLevel, 0);
             if (heightMods[i] == 0) {
                 waterVerts[i] -= new Vector3(0, _riverPassAmplitude / 10, 0);
                 ignoreVerts[i] = true;
@@ -1098,7 +1110,7 @@ public class WorldGenerator : MonoBehaviour
             waterVerts[i] += _tilePool[index].obj.transform.position;
         }
 
-        int sideLength = (_xSize + 1) * lodFactor + 4;
+        int sideLength = (int) Mathf.Sqrt(vertices.Length);
         int[] triangles = new int[(sideLength - 1) * (sideLength - 1) * 6];
         for (int i = 0, j = 0; i < waterVerts.Length; i++) {
             if (i / sideLength >= sideLength - 1) continue;
