@@ -36,7 +36,8 @@ public class DevConsole : MonoBehaviour
 
   public void SubmitCommand(string command) {
     _commandHistory.text += "\n" + command;
-    string value = command.Split(' ')[1];
+    string value = "";
+    if (command.Split(' ').Length > 1) value = command.Split(' ')[1];
     string response = "";
     switch (command.Split(' ')[0]) {
       case "regenerate":
