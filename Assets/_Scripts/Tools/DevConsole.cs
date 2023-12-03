@@ -2,6 +2,8 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
+using Unity.VisualScripting;
+using UnityEngine.SceneManagement;
 
 public class DevConsole : MonoBehaviour
 {
@@ -34,11 +36,31 @@ public class DevConsole : MonoBehaviour
 
   public void SubmitCommand(string command) {
     _commandHistory.text += "\n" + command;
+    string value = command.Split(' ')[1];
     string response = "";
     switch (command.Split(' ')[0]) {
       case "regenerate":
         _worldGenerator.Regenerate();
         response = "Regenerating terrain";
+        break;
+      case "scene":
+        if (value == null) {
+          response = "Unrecognized command";
+          break;
+        }
+        SceneManager.LoadScene(value);
+        response = "Loaded scene " + value;
+        break;
+      case "quit":
+        Application.Quit();
+        break;
+      case "timescale":
+        if (value == null) {
+          response = "Unrecognized command";
+          break;
+        }
+        Time.timeScale = float.Parse(value);
+        response = "Timescale = " + value;
         break;
       default:
         response = "Unrecognized command";
@@ -46,5 +68,4 @@ public class DevConsole : MonoBehaviour
     }
     _commandHistory.text += "\n" + response;
   }
-  
 }
