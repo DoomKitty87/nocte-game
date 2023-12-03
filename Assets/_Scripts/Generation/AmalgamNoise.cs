@@ -13,6 +13,7 @@ public static class AmalgamNoise
   {
 
     [ReadOnly] public int size;
+    [ReadOnly] public int overlap;
     [ReadOnly] public float xOffset;
     [ReadOnly] public float zOffset;
     [ReadOnly] public float xResolution;
@@ -51,8 +52,8 @@ public static class AmalgamNoise
     [WriteOnly] public NativeArray<float> output;
 
     public void Execute(int index) {
-      int sampleX = (int) index % (int) size;
-      int sampleZ = (int) index / (int) size;
+      int sampleX = (int) (index % size - overlap);
+      int sampleZ = (int) (index / size - overlap);
 
       float sharpnessValue = sharpnessMean + sharpnessAmplitude * Mathf.Pow(snoise(new float2((sampleX * xResolution + xOffset) * sharpnessScale, (sampleZ * zResolution + zOffset) * sharpnessScale)), 3);
       float secondarySharpness = sharpnessAmplitude / 5 * snoise(new float2((sampleX * xResolution + xOffset) * sharpnessScale * 5, (sampleZ * zResolution + zOffset) * sharpnessScale * 5));
@@ -120,10 +121,11 @@ public static class AmalgamNoise
   }
 
   public static Vector3[] GenerateTerrain(int size, int lodFactor, float xOffset, float zOffset, float xResolution, float zResolution, int octaves, float lacunarity, float persistence, float sharpnessScale, float sharpnessAmplitude, float sharpnessMean, float scaleScale, float scaleAmplitude, float scaleMean, float amplitudeScale, float amplitudeAmplitude, float amplitudeMean, float warpStrengthScale, float warpStrengthAmplitude, float warpStrengthMean, float warpScaleScale, float warpScaleAmplitude, float warpScaleMean) {
-    size = (size + 1) * lodFactor + 4;
+    size = size * lodFactor + 5;
     NativeArray<float> output = new NativeArray<float>(size * size, Allocator.TempJob);
     NoiseJob job = new NoiseJob {
       size = size,
+      overlap = 1,
       xOffset = xOffset,
       zOffset = zOffset,
       xResolution = xResolution,
@@ -152,14 +154,15 @@ public static class AmalgamNoise
     handle.Complete();
     Vector3[] vertices = new Vector3[size * size];
     for (int i = 0; i < size * size; i++) {
-      vertices[i] = new Vector3(i % size * xResolution, output[i], i / size * zResolution);
+      vertices[i] = new Vector3((i % size - 1) * xResolution, output[i], (i / size - 1) * zResolution);
+      //if (lodEdge && (i % size == 1 || i % size == size - 2 || i / size == 1 || i / size == size - 2 || i % size == 0 || i % size == size - 1 || i / size == 0 || i / size == size - 1)) vertices[i] -= new Vector3(0, lodFactor == 1 ? 25 : 5, 0);
     }
     output.Dispose();
     return vertices;
   }
 
   public static float[] GenerateRivers(int size, int lodFactor, float xOffset, float zOffset, float xResolution, float zResolution, float scale) {
-    size = (size + 1) * lodFactor + 4;
+    size = size * lodFactor + 5;
     float[] heightMap = new float[size * size];
     NativeArray<float> output = new NativeArray<float>(size * size, Allocator.TempJob);
     RiverJob job = new RiverJob {
