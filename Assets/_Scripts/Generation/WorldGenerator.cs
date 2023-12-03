@@ -186,6 +186,7 @@ public class WorldGenerator : MonoBehaviour
     public AnimationCurve _cavePassCurve;
     public float _riverPassScale;
     public float _riverPassAmplitude;
+    public float _riverWaterLevel;
     public AnimationCurve _riverPassCurve;
     public GameObject _waterObject;
     public int _maxWaterRange;
@@ -1098,7 +1099,7 @@ public class WorldGenerator : MonoBehaviour
         int ignored = 0;
         for (int i = 0; i < heightMods.Length; i++) {
             heightMods[i] = _riverPassCurve.Evaluate(heightMods[i]);
-            waterVerts[i] = vertices[i];
+            waterVerts[i] = vertices[i] - new Vector3(0, _riverWaterLevel, 0);
             if (heightMods[i] == 0) {
                 waterVerts[i] -= new Vector3(0, _riverPassAmplitude / 10, 0);
                 ignoreVerts[i] = true;

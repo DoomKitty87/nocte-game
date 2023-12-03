@@ -8,6 +8,11 @@ public class Interactible : MonoBehaviour
 
   public UnityEvent _onInteract;
 
+  // For audio tapes
+  [SerializeField] private string _audioTapeName;
+  [SerializeField] private AudioClip _audioTapeClip;
+  [SerializeField] private Sprite _audioTapeIcon;
+
   private void Start() {
     gameObject.tag = "Interactible";
   }
@@ -18,7 +23,7 @@ public class Interactible : MonoBehaviour
 
   public void FindAudioTape() {
     InventoryManager inventory = GameObject.FindGameObjectWithTag("InventoryManager").GetComponent<InventoryManager>();
-    inventory.PickupAudioTape("Test", null, null);
+    inventory.PickupAudioTape(_audioTapeName, _audioTapeClip, _audioTapeIcon);
   }
 
 }

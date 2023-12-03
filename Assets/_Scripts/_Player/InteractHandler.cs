@@ -22,8 +22,7 @@ public class InteractHandler : MonoBehaviour
   private void OnTriggerEnter(Collider other) {
     if (other.CompareTag("Interactible")) {
       _interactibles.Add(other.gameObject);
-      if (_interactibles.Count > 0) _promptText.gameObject.SetActive(true);
-      else _promptText.gameObject.SetActive(false);
+      _promptText.gameObject.SetActive(true);    
     }
   }
 
