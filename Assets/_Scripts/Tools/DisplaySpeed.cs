@@ -16,7 +16,9 @@ public class DisplaySpeed : MonoBehaviour
     _speed = _rigidbody.velocity.magnitude;
   }
 
+  #if UNITY_EDITOR
   private void OnDrawGizmos() {
     Handles.Label(transform.position + Vector3.up * 2, _speed.ToString());
   }
+  #endif
 }
