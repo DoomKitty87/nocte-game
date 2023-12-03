@@ -20,6 +20,8 @@ public class SecondaryStructures : MonoBehaviour
   private List<StructureData> _structures = new List<StructureData>();
 
   public void GenerateChunkStructures(Vector2 corner0, Vector2 corner1) {
+    Debug.Log(PSRHash(corner0));
+    Debug.Log(PSRHash(corner1));
     Vector2 position = new Vector2((corner1.x - corner0.x) * PSRHash(corner0), (corner1.y - corner0.y) * PSRHash(corner1)) + corner0;
     if (PSRHash(position) < _chunkStructureChance) {
       GenerateStructure(position, 0);
@@ -29,6 +31,7 @@ public class SecondaryStructures : MonoBehaviour
   private void GenerateStructure(Vector2 position, int type) {
     StructureData data = new StructureData();
     data.position = position;
+    // Debug.Log(Mathf.CeilToInt(PSRHash(position * 32.15f) * _availableStructures.Length) - 1);
     data.reference = Instantiate(_availableStructures[Mathf.CeilToInt(PSRHash(position * 32.15f) * _availableStructures.Length) - 1], Vector3.zero, Quaternion.identity, transform);
     data.reference.transform.position = new Vector3(position.x, _worldGen.GetHeightValue(position), position.y);
     data.type = type;
@@ -46,7 +49,7 @@ public class SecondaryStructures : MonoBehaviour
   }
 
   private float PSRHash(Vector2 position) {
-    return Mathf.Clamp(Mathf.PerlinNoise(position.x * 1000 + _worldGen._seed, position.y * 1000 + _worldGen._seed), 0, 1);
+    return Mathf.Clamp(Mathf.PerlinNoise(position.x * 52.341f + _worldGen._seed % 1000, position.y * 26.758f + _worldGen._seed % 1000), 0.0001f, 1);
   }
 
 }
