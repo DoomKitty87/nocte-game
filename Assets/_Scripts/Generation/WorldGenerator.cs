@@ -532,7 +532,7 @@ public class WorldGenerator : MonoBehaviour
     }
 
     public void Regenerate() {
-        Debug.Log("Regenerating Terrain");
+        // Debug.Log("Regenerating Terrain");
         for (int i = 0; i < _tilePool.Length; i++) {
             Destroy(_tilePool[i].obj);
         }
