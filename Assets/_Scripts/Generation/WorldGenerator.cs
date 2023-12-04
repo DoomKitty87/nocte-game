@@ -101,7 +101,7 @@ public class WorldGenerator : MonoBehaviour
     {
 
         public string name;
-        public GameObject prefab;
+        public GameObject[] prefabs;
         public float density;
 
     }
@@ -919,7 +919,7 @@ public class WorldGenerator : MonoBehaviour
         List<Vector2> points = PoissonDisk.GeneratePoints(1 / _scatterLayers[layer].density * Mathf.Pow(2, _tilePool[index].currentLOD), new Vector2(sideLength, sideLength), 30, (int) vertices[0].y + _seed);
         for (int i = 0; i < points.Count; i++) {
             Vector3 vertex = vertices[(int)points[i].x + (int)points[i].y * sideLength];
-            GameObject go = Instantiate(_scatterLayers[layer].prefab, new Vector3(vertex.x + (_tilePool[index].x * _xSize * _xResolution), vertex.y, vertex.z + (_tilePool[index].z * _zSize * _zResolution)), UnityEngine.Quaternion.identity);
+            GameObject go = Instantiate(_scatterLayers[layer].prefabs[Mathf.CeilToInt(vertex.y % 1 * _scatterLayers[layer].prefabs.Length + 0.001f) - 1], new Vector3(vertex.x + (_tilePool[index].x * _xSize * _xResolution), vertex.y, vertex.z + (_tilePool[index].z * _zSize * _zResolution)), Quaternion.identity);
             go.transform.parent = _tilePool[index].obj.transform;
         }
     }
