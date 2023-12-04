@@ -271,7 +271,7 @@ public class WorldGenerator : MonoBehaviour
             }
         }
     }
-    
+         
     public void UpdatePlayerLoadedChunks(Vector3 playerPos) {
         if (_generateQueue.Count > 0) return;
         _material.SetVector("_PlayerPosition", playerPos);
@@ -647,7 +647,7 @@ public class WorldGenerator : MonoBehaviour
         if (_xSize * lodFactor * _zSize * lodFactor > 65000) {
             msh.indexFormat = UnityEngine.Rendering.IndexFormat.UInt32;
         }
-        bool rendered = Mathf.Sqrt(x * x + z * z) <= (_xTiles - 1) / 2;
+        // bool rendered = Mathf.Sqrt(x * x + z * z) <= (_xTiles - 1) / 2;
         
         //var result = NoiseMaps.GenerateTerrainBiomes(x * _xSize * _xResolution + seed, z * _zSize * _zResolution + seed, _xSize, _zSize, _biomes, _biomeScale, _xResolution, _zResolution);
         Vector3[] result = AmalgamNoise.GenerateTerrain(_xSize, lodFactor, x * _xSize * _xResolution + seed, z * _zSize * _zResolution + seed, _xResolution / lodFactor, _zResolution / lodFactor,
@@ -670,8 +670,8 @@ public class WorldGenerator : MonoBehaviour
         _generatedStructureTiles.Add(new Vector2(x, z));
         tile.mesh = msh;
         tile.obj = go;
-        if (!rendered) go.SetActive(false);
-        else go.SetActive(true);
+        // if (!rendered) go.SetActive(false);
+        // else go.SetActive(true);
         //tile.temperatureMap = temperatureMap;
         //tile.humidityMap = humidityMap;
         tile.x = x;
@@ -727,9 +727,9 @@ public class WorldGenerator : MonoBehaviour
             _tilePool[index].mesh.indexFormat = UnityEngine.Rendering.IndexFormat.UInt32;
         }
         float maxDistance = Mathf.Sqrt(Mathf.Pow(Mathf.Abs(x - _playerXChunkScale), 2) + Mathf.Pow(Mathf.Abs(z - _playerZChunkScale), 2));
-        bool rendered = maxDistance <= (_xTiles - 1) / 2;
-        if (!rendered) _tilePool[index].obj.SetActive(false);
-        else _tilePool[index].obj.SetActive(true);
+        // bool rendered = maxDistance <= (_xTiles - 1) / 2;
+        // if (!rendered) _tilePool[index].obj.SetActive(false);
+        // else _tilePool[index].obj.SetActive(true);
         Vector3[] result = AmalgamNoise.GenerateTerrain(_xSize, lodFactor, x * _xSize * _xResolution + seed, z * _zSize * _zResolution + seed, _xResolution / lodFactor, _zResolution / lodFactor,
             _noiseParameters.octaves, _noiseParameters.lacunarity, _noiseParameters.persistence, _noiseParameters.sharpnessScale,
             _noiseParameters.sharpnessAmplitude, _noiseParameters.sharpnessMean, _noiseParameters.scaleScale, _noiseParameters.scaleAmplitude,
