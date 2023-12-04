@@ -20,8 +20,6 @@ public class SecondaryStructures : MonoBehaviour
   private List<StructureData> _structures = new List<StructureData>();
 
   public void GenerateChunkStructures(Vector2 corner0, Vector2 corner1) {
-    Debug.Log(PSRHash(corner0));
-    Debug.Log(PSRHash(corner1));
     Vector2 position = new Vector2((corner1.x - corner0.x) * PSRHash(corner0), (corner1.y - corner0.y) * PSRHash(corner1)) + corner0;
     if (PSRHash(position) < _chunkStructureChance) {
       GenerateStructure(position, 0);

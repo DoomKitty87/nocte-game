@@ -9,7 +9,6 @@ public class PlaceStructures : MonoBehaviour
   [SerializeField] private WorldGenerator _worldGen;
   [SerializeField] private GameObject _centralStructure;
   [SerializeField] private GameObject[] _outerStructures;
-  [SerializeField] private int _nodeCount;
   [SerializeField] private float _nodeDistance;
   [SerializeField] private float _beamWidth;
   [SerializeField] private Material _beamMaterial;
@@ -95,10 +94,10 @@ public class PlaceStructures : MonoBehaviour
       supportBeams.transform.parent = go.transform;
     }
 
-    for (int i = 0; i < _nodeCount; i++) {
-      float nodeRotation = (_worldGen.GetSeedHash() * (i + 1)) % 1000 / 1000 * 2 * Mathf.PI;
-      Vector3 outPosition = new Vector3(_nodeDistance * Mathf.Cos(nodeRotation), 0, _nodeDistance * Mathf.Sin(nodeRotation));
-      int nodeChoice = Mathf.FloorToInt(_worldGen.GetHeightValue(new Vector2(outPosition.x, outPosition.z)) % 1 * _outerStructures.Length);
+    for (int i = 0; i < _outerStructures.Length; i++) {
+      float nodeRotation = (_worldGen.GetSeedHash() % 25000 * (i + 1)) % 1000 / 1000 * 2 * Mathf.PI;
+      float nodeRadius = _nodeDistance * (_worldGen.GetSeedHash() % 28921 * 91.62f * (i + i) % 10618 / 10618 + 0.5f);
+      Vector3 outPosition = new Vector3(nodeRadius * Mathf.Cos(nodeRotation), 0, nodeRadius * Mathf.Sin(nodeRotation));
       outPosition.y = _worldGen.GetHeightValue(new Vector2(outPosition.x, outPosition.z));
       heighta = _worldGen.GetHeightValue(new Vector2(outPosition.x - 1, outPosition.z));
       heightb = _worldGen.GetHeightValue(new Vector2(outPosition.x + 1, outPosition.z));
@@ -107,7 +106,7 @@ public class PlaceStructures : MonoBehaviour
       normal = -Vector3.Cross(new Vector3(1, heightb, 0) - new Vector3(-1, heighta, 0),
         new Vector3(0, heightd, 1) - new Vector3(0, heightc, -1)).normalized;
       // go = Instantiate(_outerStructures[nodeChoice], outPosition, Quaternion.FromToRotation(Vector3.up, normal));
-      go = Instantiate(_outerStructures[nodeChoice], outPosition, Quaternion.identity);
+      go = Instantiate(_outerStructures[i], outPosition, Quaternion.identity);
       if (go.GetComponent<MeshFilter>()) bounds = go.GetComponent<MeshFilter>().mesh.bounds.size;
       else bounds = new Vector2(50, 50);
       heighte = _worldGen.GetHeightValue(new Vector2(outPosition.x + bounds.x / 2, outPosition.z + bounds.y / 2));
