@@ -103,6 +103,7 @@ public class WorldGenerator : MonoBehaviour
         public string name;
         public GameObject[] prefabs;
         public float density;
+        public bool alignToNormal;
 
     }
 
@@ -921,7 +922,8 @@ public class WorldGenerator : MonoBehaviour
         for (int i = 0; i < points.Count; i++) {
             Vector3 vertex = vertices[(int)points[i].x + (int)points[i].y * sideLength];
             Vector3 normal = normals[(int)points[i].x + (int)points[i].y * sideLength];
-            GameObject go = Instantiate(_scatterLayers[layer].prefabs[Mathf.Max(0, Mathf.CeilToInt(vertex.y % 1 * _scatterLayers[layer].prefabs.Length) - 1)], new Vector3(vertex.x + (_tilePool[index].x * _xSize * _xResolution), vertex.y, vertex.z + (_tilePool[index].z * _zSize * _zResolution)), Quaternion.LookRotation(normal));
+            int chosen = Mathf.Max(0, Mathf.CeilToInt(vertex.y % 1 * _scatterLayers[layer].prefabs.Length) - 1);
+            GameObject go = Instantiate(_scatterLayers[layer].prefabs[chosen], new Vector3(vertex.x + (_tilePool[index].x * _xSize * _xResolution), vertex.y, vertex.z + (_tilePool[index].z * _zSize * _zResolution)), _scatterLayers[layer].alignToNormal ? Quaternion.LookRotation(normal) : _scatterLayers[layer].prefabs[chosen].transform.rotation);
             go.transform.parent = _tilePool[index].obj.transform;
         }
     }
