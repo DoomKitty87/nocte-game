@@ -13,6 +13,7 @@ public class DevConsole : MonoBehaviour
   [SerializeField] private TextMeshProUGUI _commandHistory;
 
   [SerializeField] private WorldGenerator _worldGenerator;
+  [SerializeField] private GameObject _fpsDisplay;
   
   private void Update() {
     if (Input.GetKeyDown(KeyCode.Slash)) ToggleConsole();
@@ -63,6 +64,19 @@ public class DevConsole : MonoBehaviour
         Time.timeScale = float.Parse(value);
         response = "Timescale = " + value;
         break;
+      case "showfps":
+        if (value == 1) {
+          _fpsDisplay.SetActive(true);
+          response = "Enabled fps display";
+        }
+        else if (value == 0) {
+          _fpsDisplay.SetActive(false);
+          response = "Disabled fps display";
+        }
+        else {
+          response = "Unrecognized command";
+          break;
+        }
       default:
         response = "Unrecognized command";
         break;
