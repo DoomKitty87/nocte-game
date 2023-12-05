@@ -104,6 +104,11 @@ public class WorldGenerator : MonoBehaviour
         public GameObject[] prefabs;
         public float density;
         public bool alignToNormal;
+        public float noiseScale;
+        public int noiseOctaves;
+        public float noiseWarpScale;
+        public float noiseWarpStrength;
+        public float jitterStrength;
 
     }
 
@@ -751,7 +756,7 @@ public class WorldGenerator : MonoBehaviour
             _generatedStructureTiles.Add(new Vector2(x, z));
         }
         UpdateMesh(_tilePool[index].mesh, index);
-        maxDistance = Mathf.Max(Mathf.Abs(x - _playerXChunkScale), Mathf.Abs(z - _playerZChunkScale));
+        maxDistance = Mathf.Max(Mathf.Abs(x - _lastPlayerChunkX), Mathf.Abs(z - _lastPlayerChunkZ));
         if (maxDistance <= _colliderRange) UpdateCollider(index);
         else if (_tilePool[index].meshCollider) _tilePool[index].obj.GetComponent<MeshCollider>().enabled = false;
 
@@ -760,8 +765,7 @@ public class WorldGenerator : MonoBehaviour
         } else {
             ClearScatter(index);
         }
-        if (_updateQueue.Count > 1) return;
-        if (!_disableGrass) UpdateGrassBuffers();
+        if (_updateQueue.Count <= 1 && !_disableGrass) UpdateGrassBuffers();
     }
 
     private void UpdateWaterMesh() {
@@ -918,12 +922,19 @@ public class WorldGenerator : MonoBehaviour
         Vector3[] vertices = targetMesh.vertices;
         Vector3[] normals = targetMesh.normals;
         int sideLength = (int) Mathf.Sqrt(vertices.Length);
-        List<Vector2> points = PoissonDisk.GeneratePoints(1 / _scatterLayers[layer].density * Mathf.Pow(2, _tilePool[index].currentLOD), new Vector2(sideLength, sideLength), 30, (int) vertices[0].y + _seed);
-        for (int i = 0; i < points.Count; i++) {
-            Vector3 vertex = vertices[(int)points[i].x + (int)points[i].y * sideLength];
-            Vector3 normal = normals[(int)points[i].x + (int)points[i].y * sideLength];
+        // List<Vector2> points = PoissonDisk.GeneratePoints(1 / _scatterLayers[layer].density * Mathf.Pow(2, _tilePool[index].currentLOD), new Vector2(sideLength, sideLength), 30, (int) vertices[0].y + _seed);
+        float lodFactor = Mathf.Pow(2, _tilePool[index].currentLOD);
+        int[] points = ScatterNoise.ScatterOrganic(sideLength, _scatterLayers[layer].density, _tilePool[index].x * _xResolution * _xSize, _tilePool[index].z * _zResolution * _zSize, _xResolution / lodFactor, _zResolution / lodFactor, _scatterLayers[layer].noiseScale, _scatterLayers[layer].noiseOctaves, _scatterLayers[layer].noiseWarpScale, _scatterLayers[layer].noiseWarpStrength);
+        for (int i = 0; i < points.Length; i++) {
+            // Vector3 vertex = vertices[(int)points[i].x + (int)points[i].y * sideLength];
+            // Vector3 normal = normals[(int)points[i].x + (int)points[i].y * sideLength];
+            Vector3 vertex = vertices[points[i]];
+            Vector3 normal = normals[points[i]];
+            Vector3 position = new Vector3(vertex.x + (_tilePool[index].x * _xSize * _xResolution), vertex.y, vertex.z + (_tilePool[index].z * _zSize * _zResolution));
+            position += new Vector3(_scatterLayers[layer].jitterStrength * (vertex.y % 2.951f / 2.951f), 0, _scatterLayers[layer].jitterStrength * (vertex.y % 1.622f / 1.622f));
+            position.y = GetHeightValue(new Vector2(position.x, position.z));
             int chosen = Mathf.Max(0, Mathf.CeilToInt(vertex.y % 1 * _scatterLayers[layer].prefabs.Length) - 1);
-            GameObject go = Instantiate(_scatterLayers[layer].prefabs[chosen], new Vector3(vertex.x + (_tilePool[index].x * _xSize * _xResolution), vertex.y, vertex.z + (_tilePool[index].z * _zSize * _zResolution)), _scatterLayers[layer].alignToNormal ? Quaternion.LookRotation(normal) : _scatterLayers[layer].prefabs[chosen].transform.rotation);
+            GameObject go = Instantiate(_scatterLayers[layer].prefabs[chosen], position, _scatterLayers[layer].alignToNormal ? Quaternion.LookRotation(normal) : _scatterLayers[layer].prefabs[chosen].transform.rotation);
             go.transform.parent = _tilePool[index].obj.transform;
         }
     }
