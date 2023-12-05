@@ -13,6 +13,8 @@ public class InventoryManager : MonoBehaviour
     public Sprite icon;
 
   }
+
+  [SerializeField] private AudioSource _audioSource;
   
   private List<AudioTape> _audioTapes = new List<AudioTape>();
 
@@ -22,6 +24,12 @@ public class InventoryManager : MonoBehaviour
     tape.clip = clip;
     tape.icon = icon;
     _audioTapes.Add(tape);
+    PlayTape(tape);
+  }
+
+  private void PlayTape(AudioTape tape) {
+    _audioSource.clip = tape.clip;
+    _audioSource.Play();
   }
   
 }
