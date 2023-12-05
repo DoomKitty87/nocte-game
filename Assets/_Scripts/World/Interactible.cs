@@ -15,6 +15,7 @@ public class Interactible : MonoBehaviour
 
   private void Start() {
     gameObject.tag = "Interactible";
+    gameObject.name = _audioTapeName;
   }
 
   public void DestroySelf() {
