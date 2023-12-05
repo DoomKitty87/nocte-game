@@ -280,7 +280,7 @@ public class WorldGenerator : MonoBehaviour
          
     public void UpdatePlayerLoadedChunks(Vector3 playerPos) {
         if (_generateQueue.Count > 0) return;
-        _material.SetVector("_PlayerPosition", playerPos);
+        // _material.SetVector("_PlayerPosition", playerPos);
         int playerXChunkScale = Mathf.FloorToInt(playerPos.x / (_xSize * _xResolution));
         int playerZChunkScale = Mathf.FloorToInt(playerPos.z / (_zSize * _zResolution));
 
@@ -502,11 +502,13 @@ public class WorldGenerator : MonoBehaviour
     }
 
     public float GetHeightValue(Vector2 worldPosition) {
-        return AmalgamNoise.GenerateTerrain(0, 1, worldPosition.x + _seed, worldPosition.y + _seed, 0, 0, _noiseParameters.octaves, _noiseParameters.lacunarity, _noiseParameters.persistence, _noiseParameters.sharpnessScale,
+        return (AmalgamNoise.GenerateTerrain(0, 1, worldPosition.x + _seed, worldPosition.y + _seed, 0, 0, _noiseParameters.octaves, _noiseParameters.lacunarity, _noiseParameters.persistence, _noiseParameters.sharpnessScale,
             _noiseParameters.sharpnessAmplitude, _noiseParameters.sharpnessMean, _noiseParameters.scaleScale, _noiseParameters.scaleAmplitude,
             _noiseParameters.scaleMean, _noiseParameters.amplitudeScale, _noiseParameters.amplitudeAmplitude, _noiseParameters.amplitudeMean,
             _noiseParameters.warpStrengthScale, _noiseParameters.warpStrengthAmplitude, _noiseParameters.warpStrengthMean,
-            _noiseParameters.warpScaleScale, _noiseParameters.warpScaleAmplitude, _noiseParameters.warpScaleMean)[0].y;
+            _noiseParameters.warpScaleScale, _noiseParameters.warpScaleAmplitude, _noiseParameters.warpScaleMean)[0].y - (_riverPassCurve.Evaluate(AmalgamNoise.GenerateRivers(
+            0, 1, worldPosition.x + _seed % 216812, worldPosition.y + _seed % 216812, 0, 0, _riverPassScale)[0]) * _riverPassAmplitude)
+            );
     }
 
     public float GetSeedHash() {
