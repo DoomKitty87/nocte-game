@@ -109,6 +109,8 @@ public class WorldGenerator : MonoBehaviour
         public float noiseWarpScale;
         public float noiseWarpStrength;
         public float jitterStrength;
+        public bool spawnsInWater;
+        public float waterThreshold;
 
     }
 
@@ -509,6 +511,11 @@ public class WorldGenerator : MonoBehaviour
             _noiseParameters.warpScaleScale, _noiseParameters.warpScaleAmplitude, _noiseParameters.warpScaleMean)[0].y - (_riverPassCurve.Evaluate(AmalgamNoise.GenerateRivers(
             0, 1, worldPosition.x + _seed % 216812, worldPosition.y + _seed % 216812, 0, 0, _riverPassScale)[0]) * _riverPassAmplitude)
             );
+    }
+
+    private float GetRiverValue(Vector2 worldPosition) {
+      return _riverPassCurve.Evaluate(AmalgamNoise.GenerateRivers(
+          0, 1, worldPosition.x + _seed % 216812, worldPosition.y + _seed % 216812, 0, 0, _riverPassScale)[0]);
     }
 
     public float GetSeedHash() {
@@ -934,6 +941,9 @@ public class WorldGenerator : MonoBehaviour
             Vector3 normal = normals[points[i]];
             Vector3 position = new Vector3(vertex.x + (_tilePool[index].x * _xSize * _xResolution), vertex.y, vertex.z + (_tilePool[index].z * _zSize * _zResolution));
             position += new Vector3(_scatterLayers[layer].jitterStrength * (vertex.y % 2.951f / 2.951f), 0, _scatterLayers[layer].jitterStrength * (vertex.y % 1.622f / 1.622f));
+            if (!_scatterLayers[layer].spawnsInWater) {
+                if (GetRiverValue(new Vector2(position.x, position.z)) > _scatterLayers[layer].waterThreshold) continue;
+            }
             position.y = GetHeightValue(new Vector2(position.x, position.z));
             int chosen = Mathf.Max(0, Mathf.CeilToInt(vertex.y % 1 * _scatterLayers[layer].prefabs.Length) - 1);
             GameObject go = Instantiate(_scatterLayers[layer].prefabs[chosen], position, _scatterLayers[layer].alignToNormal ? Quaternion.LookRotation(normal) : _scatterLayers[layer].prefabs[chosen].transform.rotation);
