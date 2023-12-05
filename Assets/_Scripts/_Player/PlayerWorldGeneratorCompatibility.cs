@@ -23,9 +23,11 @@ public class PlayerWorldGeneratorCompatibility : MonoBehaviour
 
     private void Start() {
         _rb = GetComponent<Rigidbody>();
-        // Store original rigidbody constraints
         _rbConstraints = _rb.constraints;
         _rb.constraints = RigidbodyConstraints.FreezeAll;
+        
+        // It works so i aint fixing it
+        GetComponent<PlayerController>().enabled = false;
     }
 
     private void Update() {
@@ -34,14 +36,13 @@ public class PlayerWorldGeneratorCompatibility : MonoBehaviour
         
         // Delayed start
         if (!_hasInitialized && Time.time > _timeToInitialize && Time.timeScale != 0) {
-            RaycastHit hit;
             
             // Arbitrarily high origin, pointed downwards due to World Gen Chunks only having upwards facing colliders
-            if (Physics.Raycast(Vector3.up * 10000, Vector3.down, out hit, Mathf.Infinity, _groundMask)) { 
+            if (Physics.Raycast(Vector3.up * 10000, Vector3.down, out var hit, Mathf.Infinity, _groundMask)) {
+                transform.position = hit.point + Vector3.up * 2f;
                 _hasInitialized = true;
-
-                // Reset rigidbody constraints
                 _rb.constraints = _rbConstraints;
+                GetComponent<PlayerController>().enabled = true;
             }
         }
     }
