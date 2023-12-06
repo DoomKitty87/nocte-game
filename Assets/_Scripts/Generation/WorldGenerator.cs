@@ -905,7 +905,6 @@ public class WorldGenerator : MonoBehaviour
 
     private void UpdateCollider(int index) {
         if (!_tilePool[index].meshCollider) _tilePool[index].meshCollider = _tilePool[index].obj.AddComponent<MeshCollider>();
-        else if (_tilePool[index].meshCollider.enabled) return;
         _tilePool[index].meshCollider.enabled = true;
         _tilePool[index].meshCollider.sharedMesh = _tilePool[index].mesh;
     }
