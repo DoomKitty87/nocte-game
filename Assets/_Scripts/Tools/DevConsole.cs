@@ -65,18 +65,19 @@ public class DevConsole : MonoBehaviour
         response = "Timescale = " + value;
         break;
       case "showfps":
-        if (value == 1) {
+        // wtf unity why do ints need to be strings
+        if (value == 1.ToString()) {
           _fpsDisplay.SetActive(true);
           response = "Enabled fps display";
         }
-        else if (value == 0) {
+        else if (value == 0.ToString()) {
           _fpsDisplay.SetActive(false);
           response = "Disabled fps display";
         }
         else {
           response = "Unrecognized command";
-          break;
         }
+        break;
       default:
         response = "Unrecognized command";
         break;
