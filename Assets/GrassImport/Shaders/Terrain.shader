@@ -12,6 +12,8 @@ Shader "Custom/Terrain" {
     }
 
     CGINCLUDE
+        #include "UnityCG.cginc"
+        
         float _TessellationEdgeLength;
         float _DisplacementStrength;
 
