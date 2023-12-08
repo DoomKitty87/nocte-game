@@ -620,7 +620,7 @@ MeshRenderer:
   m_RenderingLayerMask: 257
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 7a953b246929ed54e81d4fcb78f6da04, type: 2}
+  - {fileID: 2100000, guid: 9bfbd90b37b19482d9faee5c94f1da77, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -1105,14 +1105,14 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 730138449}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 0, y: 0, z: 0}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1706148189}
   - {fileID: 82234628}
-  m_Father: {fileID: 1817750033}
+  m_Father: {fileID: 1514333489}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -2084,7 +2084,7 @@ RectTransform:
   m_Children:
   - {fileID: 955900336}
   - {fileID: 2001897168}
-  m_Father: {fileID: 1817750033}
+  m_Father: {fileID: 1514333489}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -2383,6 +2383,8 @@ Transform:
   - {fileID: 1631298115}
   - {fileID: 254070713}
   - {fileID: 1817750033}
+  - {fileID: 1118809493}
+  - {fileID: 730138450}
   m_Father: {fileID: 1829040277}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1514333490
@@ -3208,7 +3210,7 @@ MeshRenderer:
   m_RenderingLayerMask: 257
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 5a884f181020a834e8742c3c4e73fffc, type: 2}
+  - {fileID: 2100000, guid: 9d8eb4c6437304f9c84900e44ddda42d, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -3649,9 +3651,8 @@ GameObject:
   m_Component:
   - component: {fileID: 1817750033}
   - component: {fileID: 1817750032}
-  - component: {fileID: 1817750034}
   m_Layer: 0
-  m_Name: Overlays
+  m_Name: Moon Orbits
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3695,27 +3696,8 @@ Transform:
   - {fileID: 1583194594}
   - {fileID: 468979425}
   - {fileID: 1549749202}
-  - {fileID: 1118809493}
-  - {fileID: 730138450}
   m_Father: {fileID: 1514333489}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1817750034
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1817750031}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cd71711e4e1a8774dbe5e47946eeeae9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _consoleWindow: {fileID: 730138449}
-  _commandInput: {fileID: 1706148190}
-  _commandHistory: {fileID: 1793863348}
-  _worldGenerator: {fileID: 1338505935}
-  _fpsDisplay: {fileID: 0}
 --- !u!1001 &1829040276
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3825,6 +3807,10 @@ PrefabInstance:
         type: 3}
       insertIndex: -1
       addedObject: {fileID: 1829040287}
+    - targetCorrespondingSourceObject: {fileID: 5364522919904099307, guid: 807785f75a4cabf4883bf2cc8fe88221,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1829040297}
   m_SourcePrefab: {fileID: 100100000, guid: 807785f75a4cabf4883bf2cc8fe88221, type: 3}
 --- !u!4 &1829040277 stripped
 Transform:
@@ -3847,6 +3833,23 @@ MonoBehaviour:
   _overlays:
   - reference: {fileID: 1817750031}
     key: 111
+--- !u!114 &1829040297
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 950212993}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cd71711e4e1a8774dbe5e47946eeeae9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _consoleWindow: {fileID: 730138449}
+  _commandInput: {fileID: 1706148190}
+  _commandHistory: {fileID: 1793863348}
+  _worldGenerator: {fileID: 1338505935}
+  _fpsDisplay: {fileID: 0}
 --- !u!1 &1849557960
 GameObject:
   m_ObjectHideFlags: 0
