@@ -196,6 +196,7 @@ public class WorldGenerator : MonoBehaviour
     public float _riverPassAmplitude;
     public float _riverWaterLevel;
     public AnimationCurve _riverPassCurve;
+    public AnimationCurve _riverHeightCurve;
     public GameObject _waterObject;
     public int _maxWaterRange;
     public bool _limitWater;
@@ -251,6 +252,8 @@ public class WorldGenerator : MonoBehaviour
     [SerializeField] private Transform _lakeObject;
     
     private Vector2 _windPos;
+
+    private float _maxPossibleHeight;
     
     #endregion
 
@@ -535,6 +538,7 @@ public class WorldGenerator : MonoBehaviour
     }
 
     private void Awake() {
+        _maxPossibleHeight = _noiseParameters.amplitudeMean + _noiseParameters.amplitudeAmplitude;
         if (!_disableGrass) {
             MakeGrassBuffers();
             FillGrassArray();
@@ -1138,7 +1142,7 @@ public class WorldGenerator : MonoBehaviour
         bool[] ignoreVerts = new bool[vertices.Length];
         int ignored = 0;
         for (int i = 0; i < heightMods.Length; i++) {
-            heightMods[i] = _riverPassCurve.Evaluate(heightMods[i]);
+            heightMods[i] = _riverPassCurve.Evaluate(heightMods[i]) * _riverHeightCurve.Evaluate(vertices[i].y / _maxPossibleHeight);
             waterVerts[i] = vertices[i] - new Vector3(0, _riverWaterLevel, 0);
             if (heightMods[i] == 0) {
                 waterVerts[i] -= new Vector3(0, _riverPassAmplitude / 10, 0);
