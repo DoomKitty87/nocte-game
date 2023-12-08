@@ -108,6 +108,8 @@ public class WorldGenerator : MonoBehaviour
         public int octaves;
         public float lacunarity;
         public float persistence;
+        public float warpScale;
+        public float warpStrength;
         public float waterLevel;
         public AnimationCurve noiseCurve;
         public AnimationCurve heightCurve;
@@ -547,7 +549,7 @@ public class WorldGenerator : MonoBehaviour
 
     private float GetRiverValue(Vector2 worldPosition) {
       return _riverParameters.heightCurve.Evaluate(worldPosition.y / _maxPossibleHeight) * _riverParameters.noiseCurve.Evaluate(AmalgamNoise.GenerateRivers(
-          0, 1, worldPosition.x + _seed % 216812, worldPosition.y + _seed % 216812, 0, 0, _riverParameters.scale, _riverParameters.octaves, _riverParameters.lacunarity, _riverParameters.persistence)[0]);
+          0, 1, worldPosition.x + _seed % 216812, worldPosition.y + _seed % 216812, 0, 0, _riverParameters.scale, _riverParameters.octaves, _riverParameters.lacunarity, _riverParameters.persistence, _riverParameters.warpScale, _riverParameters.warpStrength)[0]);
     }
 
     public float GetSeedHash() {
@@ -1154,7 +1156,7 @@ public class WorldGenerator : MonoBehaviour
         Vector3[] vertices = targetMesh.vertices;
         int lodFactor = (int) Mathf.Pow(2, _tilePool[index].currentLOD);
         float[] heightMods = AmalgamNoise.GenerateRivers(_xSize, lodFactor, _tilePool[index].x * _xSize * _xResolution + _seed % 216812,
-            _tilePool[index].z * _zSize * _zResolution + _seed % 216812, _xResolution / lodFactor, _zResolution / lodFactor, _riverParameters.scale, _riverParameters.octaves, _riverParameters.lacunarity, _riverParameters.persistence);
+            _tilePool[index].z * _zSize * _zResolution + _seed % 216812, _xResolution / lodFactor, _zResolution / lodFactor, _riverParameters.scale, _riverParameters.octaves, _riverParameters.lacunarity, _riverParameters.persistence, _riverParameters.warpScale, _riverParameters.warpStrength);
         Vector3[] waterVerts = new Vector3[vertices.Length];
         bool[] ignoreVerts = new bool[vertices.Length];
         int ignored = 0;
