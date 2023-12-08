@@ -1,6 +1,8 @@
 using System;
 using UnityEngine;
 using System.Collections.Generic;
+using Unity.AI.Navigation;
+using UnityEngine.AI;
 using UnityEngine.Rendering.HighDefinition;
 using Matrix4x4 = UnityEngine.Matrix4x4;
 using Vector2 = UnityEngine.Vector2;
@@ -918,6 +920,7 @@ public class WorldGenerator : MonoBehaviour
 
     private void UpdateCollider(int index) {
         if (!_tilePool[index].meshCollider) _tilePool[index].meshCollider = _tilePool[index].obj.AddComponent<MeshCollider>();
+        if (!_tilePool[index].obj.GetComponent<NavMeshSurface>()) _tilePool[index].obj.AddComponent<NavMeshSurface>().BuildNavMesh();
         _tilePool[index].meshCollider.enabled = true;
         _tilePool[index].meshCollider.sharedMesh = _tilePool[index].mesh;
     }
