@@ -2532,7 +2532,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 500, y: 400, z: 500}
+  m_LocalScale: {x: 1500, y: 1200, z: 1500}
   m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 372723689}
@@ -2585,7 +2585,7 @@ MonoBehaviour:
       m_PostInfinity: 2
       m_RotationOrder: 4
     speed: 0.1
-    distance: 6500
+    distance: 15000
     orbitAxis: {x: 1, y: 0, z: 0}
     orbitAdjustSpeed: 0.1
     orbitAdjustPhase: 0
@@ -2606,7 +2606,7 @@ MonoBehaviour:
       m_PostInfinity: 2
       m_RotationOrder: 4
     speed: 0.1
-    distance: 6250
+    distance: 14500
     orbitAxis: {x: 1, y: 0, z: 0}
     orbitAdjustSpeed: 0
     orbitAdjustPhase: 0
@@ -2627,7 +2627,7 @@ MonoBehaviour:
       m_PostInfinity: 2
       m_RotationOrder: 4
     speed: 0.1
-    distance: 5750
+    distance: 14000
     orbitAxis: {x: 1, y: 0, z: 0}
     orbitAdjustSpeed: 0
     orbitAdjustPhase: 0
@@ -2648,7 +2648,7 @@ MonoBehaviour:
       m_PostInfinity: 2
       m_RotationOrder: 4
     speed: 0.1
-    distance: 5500
+    distance: 13500
     orbitAxis: {x: 1, y: 0, z: 0}
     orbitAdjustSpeed: 0
     orbitAdjustPhase: 0
@@ -2669,7 +2669,7 @@ MonoBehaviour:
       m_PostInfinity: 2
       m_RotationOrder: 4
     speed: 0.1
-    distance: 5250
+    distance: 13000
     orbitAxis: {x: 1, y: 0, z: 0}
     orbitAdjustSpeed: 0
     orbitAdjustPhase: 0
@@ -3923,6 +3923,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5469634187600907412, guid: 807785f75a4cabf4883bf2cc8fe88221,
+        type: 3}
+      propertyPath: far clip plane
+      value: 20000
       objectReference: {fileID: 0}
     - target: {fileID: 6456709365385668066, guid: 807785f75a4cabf4883bf2cc8fe88221,
         type: 3}
