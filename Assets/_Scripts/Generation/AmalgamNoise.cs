@@ -105,6 +105,7 @@ public static class AmalgamNoise
   {
 
     [ReadOnly] public float size;
+    [ReadOnly] public int octaves;
     [ReadOnly] public float xOffset;
     [ReadOnly] public float zOffset;
     [ReadOnly] public float xResolution;
@@ -117,7 +118,16 @@ public static class AmalgamNoise
       int sampleX = (int) index % (int) size;
       int sampleZ = (int) index / (int) size;
 
-      output[index] = Mathf.Abs(snoise(new float2((sampleX * xResolution + xOffset) * scale, (sampleZ * zResolution + zOffset) * scale)));
+      float value = 0;
+      float normalization = 0;
+
+      for (int i = 0; i < octaves; i++) {
+        value += snoise(new float2((sampleX * xResolution + xOffset) * scale * Mathf.Pow(2, i), (sampleZ * zResolution + zOffset) * scale * Mathf.Pow(2, i))) * Mathf.Pow(0.5f, i);
+        normalization += Mathf.Pow(0.5f, i);
+      }
+      
+      value /= normalization;
+      output[index] = Mathf.Abs(value);
     }
     
   }
@@ -169,6 +179,7 @@ public static class AmalgamNoise
     NativeArray<float> output = new NativeArray<float>(size * size, Allocator.TempJob);
     RiverJob job = new RiverJob {
       size = size,
+      octaves = 2,
       xOffset = xOffset,
       zOffset = zOffset,
       xResolution = xResolution,

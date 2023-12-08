@@ -10,6 +10,9 @@ using Math = System.Math;
 
 public class WorldGenerator : MonoBehaviour
 {
+
+    #region Structs
+
     private struct WorldTile
     {
         public GameObject obj;
@@ -143,6 +146,10 @@ public class WorldGenerator : MonoBehaviour
 
     }
     
+    #endregion
+    
+    #region Properties
+    
     public int _xSize = 64;
     public int _zSize = 64;
 
@@ -189,6 +196,7 @@ public class WorldGenerator : MonoBehaviour
     public float _riverPassAmplitude;
     public float _riverWaterLevel;
     public AnimationCurve _riverPassCurve;
+    public AnimationCurve _riverHeightCurve;
     public GameObject _waterObject;
     public int _maxWaterRange;
     public bool _limitWater;
@@ -239,8 +247,15 @@ public class WorldGenerator : MonoBehaviour
     
     private float _playerX, _playerZ;
     private int _playerXChunkScale, _playerZChunkScale;
+
+    [SerializeField] private float _lakePlaneHeight = 350;
+    [SerializeField] private Transform _lakeObject;
     
     private Vector2 _windPos;
+
+    private float _maxPossibleHeight;
+    
+    #endregion
 
     private float HashVector3ToFloat(Vector3 inputVector, int otherSeed)
     {
@@ -523,6 +538,7 @@ public class WorldGenerator : MonoBehaviour
     }
 
     private void Awake() {
+        _maxPossibleHeight = _noiseParameters.amplitudeMean + _noiseParameters.amplitudeAmplitude;
         if (!_disableGrass) {
             MakeGrassBuffers();
             FillGrassArray();
@@ -532,6 +548,7 @@ public class WorldGenerator : MonoBehaviour
         _waterObject.GetComponent<WaterSurface>().mesh = _waterMesh;
         _seed = int.Parse(Hash128.Compute(_seed).ToString().Substring(0, 6), System.Globalization.NumberStyles.HexNumber);
         _scale = 1 / _scale;
+        _lakeObject.position = new Vector3(0, _lakePlaneHeight, 0);
     }
     
     private void Start() {
@@ -905,7 +922,6 @@ public class WorldGenerator : MonoBehaviour
 
     private void UpdateCollider(int index) {
         if (!_tilePool[index].meshCollider) _tilePool[index].meshCollider = _tilePool[index].obj.AddComponent<MeshCollider>();
-        else if (_tilePool[index].meshCollider.enabled) return;
         _tilePool[index].meshCollider.enabled = true;
         _tilePool[index].meshCollider.sharedMesh = _tilePool[index].mesh;
     }
@@ -942,6 +958,7 @@ public class WorldGenerator : MonoBehaviour
             Vector3 position = new Vector3(vertex.x + (_tilePool[index].x * _xSize * _xResolution), vertex.y, vertex.z + (_tilePool[index].z * _zSize * _zResolution));
             position += new Vector3(_scatterLayers[layer].jitterStrength * (vertex.y % 2.951f / 2.951f), 0, _scatterLayers[layer].jitterStrength * (vertex.y % 1.622f / 1.622f));
             if (!_scatterLayers[layer].spawnsInWater) {
+                if (position.y < _lakePlaneHeight) continue;
                 if (GetRiverValue(new Vector2(position.x, position.z)) > _scatterLayers[layer].waterThreshold) continue;
             }
             position.y = GetHeightValue(new Vector2(position.x, position.z));
@@ -958,7 +975,7 @@ public class WorldGenerator : MonoBehaviour
         float[] rockVal = NoiseMaps.GenerateRockNoise((int) Mathf.Sqrt(vertices.Length), _tilePool[index].x * _xSize * _xResolution + _seed, _tilePool[index].z * _zSize * _zResolution + _seed, _rockPassScale, _rockPassScale, 1, _xResolution, _zResolution, true);
         //This doesn't work with caves right now. Just need to make it per vertex noise instead of grid generated.
         for (int i = 0; i < vertices.Length; i++) {
-        vertices[i] += _rockPassAmplitude * _rockPassCurve.Evaluate(Mathf.Abs(normals[i].y)) *_rockPassNoiseCurve.Evaluate(rockVal[i]) * normals[i];
+            vertices[i] += _rockPassAmplitude * _rockPassCurve.Evaluate(Mathf.Abs(normals[i].y)) *_rockPassNoiseCurve.Evaluate(rockVal[i]) * normals[i];
         }
 
         targetMesh.vertices = vertices;
@@ -1125,7 +1142,7 @@ public class WorldGenerator : MonoBehaviour
         bool[] ignoreVerts = new bool[vertices.Length];
         int ignored = 0;
         for (int i = 0; i < heightMods.Length; i++) {
-            heightMods[i] = _riverPassCurve.Evaluate(heightMods[i]);
+            heightMods[i] = _riverPassCurve.Evaluate(heightMods[i]) * _riverHeightCurve.Evaluate(vertices[i].y / _maxPossibleHeight);
             waterVerts[i] = vertices[i] - new Vector3(0, _riverWaterLevel, 0);
             if (heightMods[i] == 0) {
                 waterVerts[i] -= new Vector3(0, _riverPassAmplitude / 10, 0);
