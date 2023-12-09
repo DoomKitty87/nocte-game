@@ -25,7 +25,7 @@ Shader "Unlit/ModelGrass" {
             #pragma vertex vert
             #pragma fragment frag
             
-            #pragma target 4.5
+            #pragma target 5.0
 
             #include "UnityPBSLighting.cginc"
             #include "AutoLight.cginc"

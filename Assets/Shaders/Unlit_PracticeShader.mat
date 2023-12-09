@@ -23,18 +23,36 @@ Material:
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
+    - _HeightMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _MainTex:
         m_Texture: {fileID: 2800000, guid: 8a299a99dfe3b2544907cc969e31710c, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _NormalMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _TerrainTex:
+        m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
     - Amount: 2.17
-    - _Amplitude: 2.38
-    - _CutoutThresh: 0.133
-    - _Distance: 2.29
-    - _Speed: 2.2
-    - _Transparency: 0.242
+    - _Amount: 1
+    - _Amplitude: 8.76
+    - _CutoutThresh: 0
+    - _DisplacementStrength: 5
+    - _Distance: 1
+    - _NormalStrength: 1
+    - _Speed: 2.62
+    - _TessellationEdgeLength: 1
+    - _Transparency: 0.759
     m_Colors:
-    - _TintColor: {r: 0, g: 0.9622642, b: 0.8977246, a: 0}
+    - _Albedo: {r: 1, g: 1, b: 1, a: 1}
+    - _Color: {r: 1, g: 1, b: 1, a: 1}
+    - _TintColor: {r: 0.05660379, g: 0.006140978, b: 0.006140978, a: 0}
   m_BuildTextureStacks: []
