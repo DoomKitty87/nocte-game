@@ -100,6 +100,24 @@ public class WorldGenerator : MonoBehaviour
     }
 
     [System.Serializable]
+    private struct RiverParams 
+    {
+
+        public float scale;
+        public float amplitude;
+        public int octaves;
+        public float lacunarity;
+        public float persistence;
+        public float warpScale;
+        public float warpStrength;
+        public float waterLevel;
+        public AnimationCurve noiseCurve;
+        public AnimationCurve heightCurve;
+        public GameObject obj;
+
+    }
+
+    [System.Serializable]
     public struct ScatterLayer
     {
 
@@ -165,6 +183,7 @@ public class WorldGenerator : MonoBehaviour
     //public float _amplitude = 50;
     //public int _octaves = 10;
     [SerializeField] private AmalgamNoiseParams _noiseParameters;
+    [SerializeField] private RiverParams _riverParameters;
 
     public float _temperatureScale = 2;
     public float _humidityScale = 1.5f;
@@ -529,8 +548,8 @@ public class WorldGenerator : MonoBehaviour
     }
 
     private float GetRiverValue(Vector2 worldPosition) {
-      return _riverPassCurve.Evaluate(AmalgamNoise.GenerateRivers(
-          0, 1, worldPosition.x + _seed % 216812, worldPosition.y + _seed % 216812, 0, 0, _riverPassScale)[0]);
+      return _riverParameters.heightCurve.Evaluate(worldPosition.y / _maxPossibleHeight) * _riverParameters.noiseCurve.Evaluate(AmalgamNoise.GenerateRivers(
+          0, 1, worldPosition.x + _seed % 216812, worldPosition.y + _seed % 216812, 0, 0, _riverParameters.scale, _riverParameters.octaves, _riverParameters.lacunarity, _riverParameters.persistence, _riverParameters.warpScale, _riverParameters.warpStrength)[0]);
     }
 
     public float GetSeedHash() {
@@ -1137,20 +1156,20 @@ public class WorldGenerator : MonoBehaviour
         Vector3[] vertices = targetMesh.vertices;
         int lodFactor = (int) Mathf.Pow(2, _tilePool[index].currentLOD);
         float[] heightMods = AmalgamNoise.GenerateRivers(_xSize, lodFactor, _tilePool[index].x * _xSize * _xResolution + _seed % 216812,
-            _tilePool[index].z * _zSize * _zResolution + _seed % 216812, _xResolution / lodFactor, _zResolution / lodFactor, _riverPassScale);
+            _tilePool[index].z * _zSize * _zResolution + _seed % 216812, _xResolution / lodFactor, _zResolution / lodFactor, _riverParameters.scale, _riverParameters.octaves, _riverParameters.lacunarity, _riverParameters.persistence, _riverParameters.warpScale, _riverParameters.warpStrength);
         Vector3[] waterVerts = new Vector3[vertices.Length];
         bool[] ignoreVerts = new bool[vertices.Length];
         int ignored = 0;
         for (int i = 0; i < heightMods.Length; i++) {
-            heightMods[i] = _riverPassCurve.Evaluate(heightMods[i]) * _riverHeightCurve.Evaluate(vertices[i].y / _maxPossibleHeight);
-            waterVerts[i] = vertices[i] - new Vector3(0, _riverWaterLevel, 0);
+            heightMods[i] = _riverParameters.noiseCurve.Evaluate(heightMods[i]) * _riverParameters.heightCurve.Evaluate(vertices[i].y / _maxPossibleHeight);
+            waterVerts[i] = vertices[i] - new Vector3(0, _riverParameters.waterLevel, 0);
             if (heightMods[i] == 0) {
-                waterVerts[i] -= new Vector3(0, _riverPassAmplitude / 10, 0);
+                waterVerts[i] -= new Vector3(0, _riverParameters.amplitude / 10, 0);
                 ignoreVerts[i] = true;
                 ignored++;
                 continue;
             }
-            vertices[i] -= new Vector3(0, heightMods[i] * _riverPassAmplitude, 0);
+            vertices[i] -= new Vector3(0, heightMods[i] * _riverParameters.amplitude, 0);
             waterVerts[i] += _tilePool[index].obj.transform.position;
         }
 

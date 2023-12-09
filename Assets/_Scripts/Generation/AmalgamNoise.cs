@@ -106,11 +106,15 @@ public static class AmalgamNoise
 
     [ReadOnly] public float size;
     [ReadOnly] public int octaves;
+    [ReadOnly] public float lacunarity;
+    [ReadOnly] public float persistence;
     [ReadOnly] public float xOffset;
     [ReadOnly] public float zOffset;
     [ReadOnly] public float xResolution;
     [ReadOnly] public float zResolution;
     [ReadOnly] public float scale;
+    [ReadOnly] public float warpScale;
+    [ReadOnly] public float warpStrength;
 
     [WriteOnly] public NativeArray<float> output;
 
@@ -122,8 +126,15 @@ public static class AmalgamNoise
       float normalization = 0;
 
       for (int i = 0; i < octaves; i++) {
-        value += snoise(new float2((sampleX * xResolution + xOffset) * scale * Mathf.Pow(2, i), (sampleZ * zResolution + zOffset) * scale * Mathf.Pow(2, i))) * Mathf.Pow(0.5f, i);
-        normalization += Mathf.Pow(0.5f, i);
+        float octaveScale = Mathf.Pow(lacunarity, i);
+        float octaveAmp = Mathf.Pow(persistence, i);
+        float x = (sampleX * xResolution + xOffset) * scale * octaveScale;
+        float z = (sampleZ * zResolution + zOffset) * scale * octaveScale;
+        float warpValue = snoise(new float2(x * warpScale, z * warpScale)) * warpStrength;
+        x += warpValue;
+        z += warpValue;
+        value += snoise(new float2(x, z) * octaveAmp);
+        normalization += octaveAmp;
       }
       
       value /= normalization;
@@ -173,18 +184,22 @@ public static class AmalgamNoise
     return vertices;
   }
 
-  public static float[] GenerateRivers(int size, int lodFactor, float xOffset, float zOffset, float xResolution, float zResolution, float scale) {
+  public static float[] GenerateRivers(int size, int lodFactor, float xOffset, float zOffset, float xResolution, float zResolution, float scale, int octaves, float lacunarity, float persistence, float warpScale, float warpStrength) {
     size = size * lodFactor + 5;
     float[] heightMap = new float[size * size];
     NativeArray<float> output = new NativeArray<float>(size * size, Allocator.TempJob);
     RiverJob job = new RiverJob {
       size = size,
-      octaves = 2,
+      octaves = octaves,
+      lacunarity = lacunarity,
+      persistence = persistence,
       xOffset = xOffset,
       zOffset = zOffset,
       xResolution = xResolution,
       zResolution = zResolution,
       scale = 1f / scale,
+      warpScale = 1f / warpScale,
+      warpStrength = warpStrength,
       output = output
     };
     JobHandle handle = job.Schedule(size * size, size);
