@@ -211,12 +211,6 @@ public class WorldGenerator : MonoBehaviour
     public float _cavePassScale = 100;
     public float _cavePassAmplitude = 10;
     public AnimationCurve _cavePassCurve;
-    public float _riverPassScale;
-    public float _riverPassAmplitude;
-    public float _riverWaterLevel;
-    public AnimationCurve _riverPassCurve;
-    public AnimationCurve _riverHeightCurve;
-    public GameObject _waterObject;
     public int _maxWaterRange;
     public bool _limitWater;
 
@@ -538,13 +532,14 @@ public class WorldGenerator : MonoBehaviour
     }
 
     public float GetHeightValue(Vector2 worldPosition) {
-        return (AmalgamNoise.GenerateTerrain(0, 1, worldPosition.x + _seed, worldPosition.y + _seed, 0, 0, _noiseParameters.octaves, _noiseParameters.lacunarity, _noiseParameters.persistence, _noiseParameters.sharpnessScale,
+        float heightVal = AmalgamNoise.GenerateTerrain(0, 1, worldPosition.x + _seed, worldPosition.y + _seed, 0, 0, _noiseParameters.octaves, _noiseParameters.lacunarity, _noiseParameters.persistence, _noiseParameters.sharpnessScale,
             _noiseParameters.sharpnessAmplitude, _noiseParameters.sharpnessMean, _noiseParameters.scaleScale, _noiseParameters.scaleAmplitude,
             _noiseParameters.scaleMean, _noiseParameters.amplitudeScale, _noiseParameters.amplitudeAmplitude, _noiseParameters.amplitudeMean,
             _noiseParameters.warpStrengthScale, _noiseParameters.warpStrengthAmplitude, _noiseParameters.warpStrengthMean,
-            _noiseParameters.warpScaleScale, _noiseParameters.warpScaleAmplitude, _noiseParameters.warpScaleMean)[0].y - (_riverPassCurve.Evaluate(AmalgamNoise.GenerateRivers(
-            0, 1, worldPosition.x + _seed % 216812, worldPosition.y + _seed % 216812, 0, 0, _riverPassScale)[0]) * _riverPassAmplitude)
-            );
+            _noiseParameters.warpScaleScale, _noiseParameters.warpScaleAmplitude, _noiseParameters.warpScaleMean)[0].y;
+        heightVal -= _riverParameters.heightCurve.Evaluate(heightVal) * (_riverParameters.noiseCurve.Evaluate(AmalgamNoise.GenerateRivers(
+            0, 1, worldPosition.x + _seed % 216812, worldPosition.y + _seed % 216812, 0, 0, _riverParameters.scale, _riverParameters.octaves, _riverParameters.lacunarity, _riverParameters.persistence, _riverParameters.warpScale, _riverParameters.warpStrength)[0]) * _riverParameters.amplitude);
+        return heightVal;
     }
 
     private float GetRiverValue(Vector2 worldPosition) {
@@ -564,7 +559,7 @@ public class WorldGenerator : MonoBehaviour
         }
         _waterMesh = new Mesh();
         _waterMesh.indexFormat = UnityEngine.Rendering.IndexFormat.UInt32;
-        _waterObject.GetComponent<WaterSurface>().mesh = _waterMesh;
+        _riverParameters.obj.GetComponent<WaterSurface>().mesh = _waterMesh;
         _seed = int.Parse(Hash128.Compute(_seed).ToString().Substring(0, 6), System.Globalization.NumberStyles.HexNumber);
         _scale = 1 / _scale;
         _lakeObject.position = new Vector3(0, _lakePlaneHeight, 0);
