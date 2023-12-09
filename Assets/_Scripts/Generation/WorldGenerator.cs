@@ -537,7 +537,7 @@ public class WorldGenerator : MonoBehaviour
             _noiseParameters.scaleMean, _noiseParameters.amplitudeScale, _noiseParameters.amplitudeAmplitude, _noiseParameters.amplitudeMean,
             _noiseParameters.warpStrengthScale, _noiseParameters.warpStrengthAmplitude, _noiseParameters.warpStrengthMean,
             _noiseParameters.warpScaleScale, _noiseParameters.warpScaleAmplitude, _noiseParameters.warpScaleMean)[0].y;
-        heightVal -= _riverParameters.heightCurve.Evaluate(heightVal) * (_riverParameters.noiseCurve.Evaluate(AmalgamNoise.GenerateRivers(
+        heightVal -= _riverParameters.heightCurve.Evaluate(heightVal / _maxPossibleHeight) * (_riverParameters.noiseCurve.Evaluate(AmalgamNoise.GenerateRivers(
             0, 1, worldPosition.x + _seed % 216812, worldPosition.y + _seed % 216812, 0, 0, _riverParameters.scale, _riverParameters.octaves, _riverParameters.lacunarity, _riverParameters.persistence, _riverParameters.warpScale, _riverParameters.warpStrength)[0]) * _riverParameters.amplitude);
         return heightVal;
     }
