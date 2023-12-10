@@ -113,6 +113,7 @@ public class WorldGenerator : MonoBehaviour
         public float waterLevel;
         public AnimationCurve noiseCurve;
         public AnimationCurve heightCurve;
+        public AnimationCurve normalCurve;
         public GameObject obj;
 
     }
@@ -1149,6 +1150,7 @@ public class WorldGenerator : MonoBehaviour
         _tilePool[index].waterVertCount = 0;
         float maxDistance = Mathf.Max(Mathf.Abs(_tilePool[index].x - _playerXChunkScale), Mathf.Abs(_tilePool[index].z - _playerZChunkScale));
         Vector3[] vertices = targetMesh.vertices;
+        Vector3[] normals = targetMesh.normals;
         int lodFactor = (int) Mathf.Pow(2, _tilePool[index].currentLOD);
         float[] heightMods = AmalgamNoise.GenerateRivers(_xSize, lodFactor, _tilePool[index].x * _xSize * _xResolution + _seed % 216812,
             _tilePool[index].z * _zSize * _zResolution + _seed % 216812, _xResolution / lodFactor, _zResolution / lodFactor, _riverParameters.scale, _riverParameters.octaves, _riverParameters.lacunarity, _riverParameters.persistence, _riverParameters.warpScale, _riverParameters.warpStrength);
@@ -1156,7 +1158,7 @@ public class WorldGenerator : MonoBehaviour
         bool[] ignoreVerts = new bool[vertices.Length];
         int ignored = 0;
         for (int i = 0; i < heightMods.Length; i++) {
-            heightMods[i] = _riverParameters.noiseCurve.Evaluate(heightMods[i]) * _riverParameters.heightCurve.Evaluate(vertices[i].y / _maxPossibleHeight);
+            heightMods[i] = _riverParameters.noiseCurve.Evaluate(heightMods[i]) * _riverParameters.heightCurve.Evaluate(vertices[i].y / _maxPossibleHeight) * _riverParameters.normalCurve.Evaluate(Mathf.Abs(normals[i].y));
             waterVerts[i] = vertices[i] - new Vector3(0, _riverParameters.waterLevel, 0);
             if (heightMods[i] == 0) {
                 waterVerts[i] -= new Vector3(0, _riverParameters.amplitude / 10, 0);
@@ -1213,8 +1215,8 @@ public class WorldGenerator : MonoBehaviour
     }
 
     private void UpdateMesh(Mesh targetMesh, int index) {
-        RiverPass(targetMesh, index);
         targetMesh.normals = CalculateNormals(targetMesh, index);
+        RiverPass(targetMesh, index);
         // CavePass(targetMesh, index);
         targetMesh.triangles = CullTriangles(targetMesh, index);
         //RockPass(targetMesh, index);
