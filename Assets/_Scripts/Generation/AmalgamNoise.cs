@@ -61,6 +61,7 @@ public static class AmalgamNoise
       float scaleValue = scaleMean + scaleAmplitude * snoise(new float2((sampleX * xResolution + xOffset) * scaleScale, (sampleZ * zResolution + zOffset) * scaleScale));
       float amplitudeValue = snoise(new float2((sampleX * xResolution + xOffset) * amplitudeScale, (sampleZ * zResolution + zOffset) * amplitudeScale));
       amplitudeValue = Mathf.Pow(Mathf.Max(amplitudeValue, 0), 2);
+      float amplitudeValue0 = amplitudeValue;
       amplitudeValue = amplitudeMean + amplitudeAmplitude * amplitudeValue;
       float warpStrengthValue = warpStrengthMean + warpStrengthAmplitude * snoise(new float2((sampleX * xResolution + xOffset) * warpStrengthScale, (sampleZ * zResolution + zOffset) * warpStrengthScale));
       float warpScaleValue = warpScaleMean + warpScaleAmplitude * snoise(new float2((sampleX * xResolution + xOffset) * warpScaleScale, (sampleZ * zResolution + zOffset) * warpScaleScale));
@@ -87,7 +88,9 @@ public static class AmalgamNoise
         float warpValue = warpStrengthValue * snoise(new float2(x * warpScaleValue, y * warpScaleValue));
         float sample = snoise(new float2(x + warpValue, y + warpValue));
         // sample = sample * sample * (3.0f - 2.0f * sample);
-        sample = sample * (2 - sample);
+        float samplehigh = sample * (2 - sample);
+        float samplelow = sample * sample * (0.5f + (0.5f * sample));
+        sample = Mathf.Lerp(samplelow, samplehigh, amplitudeValue0 + 0.5f);
         float billow = Mathf.Abs(sample);
         float ridge = 1 - billow;
         sample = Mathf.Lerp(billow, ridge, sharpnessValue);
