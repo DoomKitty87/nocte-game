@@ -86,6 +86,7 @@ public static class AmalgamNoise
         float y = (sampleZ * zResolution + zOffset) * scaleValue * octaveScale;
         float warpValue = warpStrengthValue * snoise(new float2(x * warpScaleValue, y * warpScaleValue));
         float sample = snoise(new float2(x + warpValue, y + warpValue));
+        sample = sample * sample * (3.0f - 2.0f * sample);
         float billow = Mathf.Abs(sample);
         float ridge = 1 - billow;
         sample = Mathf.Lerp(billow, ridge, sharpnessValue);
