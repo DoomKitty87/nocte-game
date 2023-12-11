@@ -920,28 +920,28 @@ public class WorldGenerator : MonoBehaviour
         int lodFactor = (int) Mathf.Pow(2, _tilePool[index].currentLOD);
         int[] triangles = targetMesh.triangles;
         int sideLength = (int) Mathf.Sqrt(targetMesh.vertices.Length) - 1;
-        List<int> culled = new List<int>();
-
-        for (int i = 0; i < sideLength * sideLength; i++) {
+        int[] culled = new int[sideLength * sideLength - (sideLength * 2 + (sideLength - 2) * 2)];
+        for (int i = 0, j = 0; i < sideLength * sideLength; i++) {
             if (i / sideLength == sideLength - 1) continue;
             if (i % sideLength == sideLength - 1) continue;
             if (i / sideLength == 0) continue;
             if (i % sideLength == 0) continue;
-            culled.Add(triangles[i * 6]);
-            culled.Add(triangles[i * 6 + 1]);
-            culled.Add(triangles[i * 6 + 2]);
-            culled.Add(triangles[i * 6 + 3]);
-            culled.Add(triangles[i * 6 + 4]);
-            culled.Add(triangles[i * 6 + 5]);
+            culled[j] = triangles[i * 6];
+            culled[j + 1] = triangles[i * 6 + 1];
+            culled[j + 2] = triangles[i * 6 + 2];
+            culled[j + 3] = triangles[i * 6 + 3];
+            culled[j + 4] = triangles[i * 6 + 4];
+            culled[j + 5] = triangles[i * 6 + 5];
+            j += 6;
         }
+        // Additional is for subdivision (not used)
+        //List<int> additional = new List<int>();
+        //for (int i = (sideLength + 2) * (sideLength + 2) * 6; i < triangles.Length; i++) {
+        //    additional.Add(triangles[i]);
+        //}
 
-        List<int> additional = new List<int>();
-        for (int i = (sideLength + 2) * (sideLength + 2) * 6; i < triangles.Length; i++) {
-            additional.Add(triangles[i]);
-        }
-
-        culled.AddRange(additional);
-        return culled.ToArray();
+        //culled.AddRange(additional);
+        return culled;
     }
 
     private void UpdateCollider(int index) {
@@ -1200,7 +1200,6 @@ public class WorldGenerator : MonoBehaviour
         int waterTriLength = _waterTriangles.Count;
         int[] realIndices = new int[waterVerts.Length];
         Vector3[] verts = new Vector3[waterVerts.Length - ignored];
-        List<int> tris = new List<int>();
         for (int i = 0, j = 0; i < waterVerts.Length; i++) {
             if (!ignoreVerts[i]) {
                 verts[j] = waterVerts[i];
@@ -1208,11 +1207,19 @@ public class WorldGenerator : MonoBehaviour
                 j++;
             }
         }
+        int triCount = 0;
         for (int i = 0; i < triangles.Length; i+= 3) {
             if (!ignoreVerts[triangles[i]] && !ignoreVerts[triangles[i + 1]] && !ignoreVerts[triangles[i + 2]]) {
-                tris.Add(realIndices[triangles[i]] + waterVertsLength);
-                tris.Add(realIndices[triangles[i + 1]] + waterVertsLength);
-                tris.Add(realIndices[triangles[i + 2]] + waterVertsLength);
+                triCount += 3;
+            }
+        }
+        int[] tris = new int[triCount];
+        for (int i = 0, j = 0; i < triangles.Length; i+= 3) {
+            if (!ignoreVerts[triangles[i]] && !ignoreVerts[triangles[i + 1]] && !ignoreVerts[triangles[i + 2]]) {
+                tris[j] = realIndices[triangles[i]] + waterVertsLength;
+                tris[j + 1] = realIndices[triangles[i + 1]] + waterVertsLength;
+                tris[j + 2] = realIndices[triangles[i + 2]] + waterVertsLength;
+                j += 3;
             }
         }
         _waterVertices.AddRange(verts);
