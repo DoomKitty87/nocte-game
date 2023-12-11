@@ -100,6 +100,25 @@ public class WorldGenerator : MonoBehaviour
     }
 
     [System.Serializable]
+    private struct RiverParams 
+    {
+
+        public float scale;
+        public float amplitude;
+        public int octaves;
+        public float lacunarity;
+        public float persistence;
+        public float warpScale;
+        public float warpStrength;
+        public float waterLevel;
+        public AnimationCurve noiseCurve;
+        public AnimationCurve heightCurve;
+        public AnimationCurve normalCurve;
+        public GameObject obj;
+
+    }
+
+    [System.Serializable]
     public struct ScatterLayer
     {
 
@@ -165,6 +184,7 @@ public class WorldGenerator : MonoBehaviour
     //public float _amplitude = 50;
     //public int _octaves = 10;
     [SerializeField] private AmalgamNoiseParams _noiseParameters;
+    [SerializeField] private RiverParams _riverParameters;
 
     public float _temperatureScale = 2;
     public float _humidityScale = 1.5f;
@@ -192,12 +212,6 @@ public class WorldGenerator : MonoBehaviour
     public float _cavePassScale = 100;
     public float _cavePassAmplitude = 10;
     public AnimationCurve _cavePassCurve;
-    public float _riverPassScale;
-    public float _riverPassAmplitude;
-    public float _riverWaterLevel;
-    public AnimationCurve _riverPassCurve;
-    public AnimationCurve _riverHeightCurve;
-    public GameObject _waterObject;
     public int _maxWaterRange;
     public bool _limitWater;
 
@@ -254,8 +268,17 @@ public class WorldGenerator : MonoBehaviour
     private Vector2 _windPos;
 
     private float _maxPossibleHeight;
+
+    [SerializeField] private bool _refreshButton = false;
     
     #endregion
+
+    private void OnValidate() {
+        if (_refreshButton) {
+            _refreshButton = false;
+            Regenerate();
+        }
+    }
 
     private float HashVector3ToFloat(Vector3 inputVector, int otherSeed)
     {
@@ -519,18 +542,19 @@ public class WorldGenerator : MonoBehaviour
     }
 
     public float GetHeightValue(Vector2 worldPosition) {
-        return (AmalgamNoise.GenerateTerrain(0, 1, worldPosition.x + _seed, worldPosition.y + _seed, 0, 0, _noiseParameters.octaves, _noiseParameters.lacunarity, _noiseParameters.persistence, _noiseParameters.sharpnessScale,
+        float heightVal = AmalgamNoise.GenerateTerrain(0, 1, worldPosition.x + _seed, worldPosition.y + _seed, 0, 0, _noiseParameters.octaves, _noiseParameters.lacunarity, _noiseParameters.persistence, _noiseParameters.sharpnessScale,
             _noiseParameters.sharpnessAmplitude, _noiseParameters.sharpnessMean, _noiseParameters.scaleScale, _noiseParameters.scaleAmplitude,
             _noiseParameters.scaleMean, _noiseParameters.amplitudeScale, _noiseParameters.amplitudeAmplitude, _noiseParameters.amplitudeMean,
             _noiseParameters.warpStrengthScale, _noiseParameters.warpStrengthAmplitude, _noiseParameters.warpStrengthMean,
-            _noiseParameters.warpScaleScale, _noiseParameters.warpScaleAmplitude, _noiseParameters.warpScaleMean)[0].y - (_riverPassCurve.Evaluate(AmalgamNoise.GenerateRivers(
-            0, 1, worldPosition.x + _seed % 216812, worldPosition.y + _seed % 216812, 0, 0, _riverPassScale)[0]) * _riverPassAmplitude)
-            );
+            _noiseParameters.warpScaleScale, _noiseParameters.warpScaleAmplitude, _noiseParameters.warpScaleMean)[0].y;
+        heightVal -= _riverParameters.heightCurve.Evaluate(heightVal / _maxPossibleHeight) * (_riverParameters.noiseCurve.Evaluate(AmalgamNoise.GenerateRivers(
+            0, 1, worldPosition.x + _seed % 216812, worldPosition.y + _seed % 216812, 0, 0, _riverParameters.scale, _riverParameters.octaves, _riverParameters.lacunarity, _riverParameters.persistence, _riverParameters.warpScale, _riverParameters.warpStrength)[0]) * _riverParameters.amplitude);
+        return heightVal;
     }
 
     private float GetRiverValue(Vector2 worldPosition) {
-      return _riverPassCurve.Evaluate(AmalgamNoise.GenerateRivers(
-          0, 1, worldPosition.x + _seed % 216812, worldPosition.y + _seed % 216812, 0, 0, _riverPassScale)[0]);
+      return _riverParameters.heightCurve.Evaluate(worldPosition.y / _maxPossibleHeight) * _riverParameters.noiseCurve.Evaluate(AmalgamNoise.GenerateRivers(
+          0, 1, worldPosition.x + _seed % 216812, worldPosition.y + _seed % 216812, 0, 0, _riverParameters.scale, _riverParameters.octaves, _riverParameters.lacunarity, _riverParameters.persistence, _riverParameters.warpScale, _riverParameters.warpStrength)[0]);
     }
 
     public float GetSeedHash() {
@@ -545,7 +569,7 @@ public class WorldGenerator : MonoBehaviour
         }
         _waterMesh = new Mesh();
         _waterMesh.indexFormat = UnityEngine.Rendering.IndexFormat.UInt32;
-        _waterObject.GetComponent<WaterSurface>().mesh = _waterMesh;
+        _riverParameters.obj.GetComponent<WaterSurface>().mesh = _waterMesh;
         _seed = int.Parse(Hash128.Compute(_seed).ToString().Substring(0, 6), System.Globalization.NumberStyles.HexNumber);
         _scale = 1 / _scale;
         _lakeObject.position = new Vector3(0, _lakePlaneHeight, 0);
@@ -1135,22 +1159,23 @@ public class WorldGenerator : MonoBehaviour
         _tilePool[index].waterVertCount = 0;
         float maxDistance = Mathf.Max(Mathf.Abs(_tilePool[index].x - _playerXChunkScale), Mathf.Abs(_tilePool[index].z - _playerZChunkScale));
         Vector3[] vertices = targetMesh.vertices;
+        Vector3[] normals = targetMesh.normals;
         int lodFactor = (int) Mathf.Pow(2, _tilePool[index].currentLOD);
         float[] heightMods = AmalgamNoise.GenerateRivers(_xSize, lodFactor, _tilePool[index].x * _xSize * _xResolution + _seed % 216812,
-            _tilePool[index].z * _zSize * _zResolution + _seed % 216812, _xResolution / lodFactor, _zResolution / lodFactor, _riverPassScale);
+            _tilePool[index].z * _zSize * _zResolution + _seed % 216812, _xResolution / lodFactor, _zResolution / lodFactor, _riverParameters.scale, _riverParameters.octaves, _riverParameters.lacunarity, _riverParameters.persistence, _riverParameters.warpScale, _riverParameters.warpStrength);
         Vector3[] waterVerts = new Vector3[vertices.Length];
         bool[] ignoreVerts = new bool[vertices.Length];
         int ignored = 0;
         for (int i = 0; i < heightMods.Length; i++) {
-            heightMods[i] = _riverPassCurve.Evaluate(heightMods[i]) * _riverHeightCurve.Evaluate(vertices[i].y / _maxPossibleHeight);
-            waterVerts[i] = vertices[i] - new Vector3(0, _riverWaterLevel, 0);
+            heightMods[i] = _riverParameters.noiseCurve.Evaluate(heightMods[i]) * _riverParameters.heightCurve.Evaluate(vertices[i].y / _maxPossibleHeight) * _riverParameters.normalCurve.Evaluate(Mathf.Abs(normals[i].y));
+            waterVerts[i] = vertices[i] - new Vector3(0, _riverParameters.waterLevel, 0);
             if (heightMods[i] == 0) {
-                waterVerts[i] -= new Vector3(0, _riverPassAmplitude / 10, 0);
+                waterVerts[i] -= new Vector3(0, _riverParameters.amplitude / 10, 0);
                 ignoreVerts[i] = true;
                 ignored++;
                 continue;
             }
-            vertices[i] -= new Vector3(0, heightMods[i] * _riverPassAmplitude, 0);
+            vertices[i] -= new Vector3(0, heightMods[i] * _riverParameters.amplitude, 0);
             waterVerts[i] += _tilePool[index].obj.transform.position;
         }
 
@@ -1199,8 +1224,8 @@ public class WorldGenerator : MonoBehaviour
     }
 
     private void UpdateMesh(Mesh targetMesh, int index) {
-        RiverPass(targetMesh, index);
         targetMesh.normals = CalculateNormals(targetMesh, index);
+        RiverPass(targetMesh, index);
         // CavePass(targetMesh, index);
         targetMesh.triangles = CullTriangles(targetMesh, index);
         //RockPass(targetMesh, index);
