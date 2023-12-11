@@ -268,8 +268,17 @@ public class WorldGenerator : MonoBehaviour
     private Vector2 _windPos;
 
     private float _maxPossibleHeight;
+
+    [SerializeField] private bool _refreshButton = false;
     
     #endregion
+
+    private void OnValidate() {
+        if (_refreshButton) {
+            _refreshButton = false;
+            Regenerate();
+        }
+    }
 
     private float HashVector3ToFloat(Vector3 inputVector, int otherSeed)
     {

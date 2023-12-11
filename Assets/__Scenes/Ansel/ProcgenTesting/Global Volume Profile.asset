@@ -227,10 +227,10 @@ MonoBehaviour:
     m_Value: {x: 0, y: 0}
   bottomAltitude:
     m_OverrideState: 1
-    m_Value: 3000
+    m_Value: 900
   altitudeRange:
     m_OverrideState: 1
-    m_Value: 1000
+    m_Value: 600
   fadeInMode:
     m_OverrideState: 0
     m_Value: 0
@@ -259,7 +259,7 @@ MonoBehaviour:
     m_Value: 0
   m_CloudPreset:
     m_OverrideState: 1
-    m_Value: 0
+    m_Value: 4
   cumulusMap:
     m_OverrideState: 0
     m_Value: {fileID: 0}
@@ -416,19 +416,19 @@ MonoBehaviour:
     m_Value: 0.4
   shapeFactor:
     m_OverrideState: 1
-    m_Value: 0.95
+    m_Value: 0.8
   shapeScale:
     m_OverrideState: 1
-    m_Value: 5
+    m_Value: 20
   shapeOffset:
     m_OverrideState: 0
     m_Value: {x: 0, y: 0, z: 0}
   erosionFactor:
     m_OverrideState: 1
-    m_Value: 0.8
+    m_Value: 1
   erosionScale:
     m_OverrideState: 1
-    m_Value: 107
+    m_Value: 500
   erosionNoiseType:
     m_OverrideState: 1
     m_Value: 1
@@ -436,8 +436,8 @@ MonoBehaviour:
     m_OverrideState: 0
     m_Value: 1
   sunLightDimmer:
-    m_OverrideState: 0
-    m_Value: 1
+    m_OverrideState: 1
+    m_Value: 0.5
   erosionOcclusion:
     m_OverrideState: 0
     m_Value: 0.1
@@ -478,16 +478,16 @@ MonoBehaviour:
     m_Value: 0.95
   ghostingReduction:
     m_OverrideState: 0
-    m_Value: 0
+    m_Value: 1
   perceptualBlending:
     m_OverrideState: 0
     m_Value: 1
   shadows:
-    m_OverrideState: 0
-    m_Value: 0
+    m_OverrideState: 1
+    m_Value: 1
   shadowResolution:
     m_OverrideState: 0
-    m_Value: 256
+    m_Value: 1024
   shadowPlaneHeightOffset:
     m_OverrideState: 0
     m_Value: 0
@@ -568,7 +568,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 953beb541740ddc499d005ee80c9ff29, type: 3}
   m_Name: Fog
   m_EditorClassIdentifier: 
-  active: 0
+  active: 1
   quality:
     m_OverrideState: 1
     m_Value: 1
@@ -586,7 +586,7 @@ MonoBehaviour:
     m_Value: {r: 1, g: 1, b: 1, a: 1}
   maxFogDistance:
     m_OverrideState: 1
-    m_Value: 5000
+    m_Value: 10000
   mipFogMaxMip:
     m_OverrideState: 0
     m_Value: 0.5
@@ -598,16 +598,16 @@ MonoBehaviour:
     m_Value: 1000
   baseHeight:
     m_OverrideState: 1
-    m_Value: 400
+    m_Value: 600
   maximumHeight:
     m_OverrideState: 1
-    m_Value: 1500
+    m_Value: 2500
   meanFreePath:
     m_OverrideState: 1
-    m_Value: 800
+    m_Value: 2500
   enableVolumetricFog:
-    m_OverrideState: 1
-    m_Value: 1
+    m_OverrideState: 0
+    m_Value: 0
   albedo:
     m_OverrideState: 0
     m_Value: {r: 1, g: 1, b: 1, a: 1}
@@ -671,7 +671,7 @@ MonoBehaviour:
     m_Value: 0
   saturation:
     m_OverrideState: 1
-    m_Value: 100
+    m_Value: 40
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -740,8 +740,8 @@ MonoBehaviour:
     m_OverrideState: 1
     m_Value: 2
   sphericalMode:
-    m_OverrideState: 1
-    m_Value: 1
+    m_OverrideState: 0
+    m_Value: 0
   seaLevel:
     m_OverrideState: 0
     m_Value: 0
@@ -750,28 +750,28 @@ MonoBehaviour:
     m_Value: 6378100
   planetCenterPosition:
     m_OverrideState: 1
-    m_Value: {x: 0, y: -6378100, z: 0}
+    m_Value: {x: 0, y: 400, z: 0}
   airDensityR:
     m_OverrideState: 1
-    m_Value: 1
+    m_Value: 0.01
   airDensityG:
     m_OverrideState: 1
-    m_Value: 0.10237241
+    m_Value: 0.01
   airDensityB:
     m_OverrideState: 1
-    m_Value: 0.23264056
+    m_Value: 0.01
   airTint:
     m_OverrideState: 1
-    m_Value: {r: 1, g: 0, b: 0.097877026, a: 1}
+    m_Value: {r: 0.5722232, g: 0.7264151, b: 0.69341093, a: 1}
   airMaximumAltitude:
     m_OverrideState: 1
-    m_Value: 55261.973
+    m_Value: 3000
   aerosolDensity:
     m_OverrideState: 1
     m_Value: 0.01192826
   aerosolTint:
     m_OverrideState: 1
-    m_Value: {r: 0.9, g: 0.9, b: 0.9, a: 1}
+    m_Value: {r: 0.55157524, g: 0.6212221, b: 0.6320754, a: 1}
   aerosolMaximumAltitude:
     m_OverrideState: 1
     m_Value: 8289.296
@@ -783,7 +783,7 @@ MonoBehaviour:
     m_Value: 3
   groundTint:
     m_OverrideState: 1
-    m_Value: {r: 0.4, g: 0.25, b: 0.15, a: 1}
+    m_Value: {r: 0.4515052, g: 0.5943396, b: 0.4513617, a: 1}
   groundColorTexture:
     m_OverrideState: 1
     m_Value: {fileID: 0}
@@ -794,7 +794,7 @@ MonoBehaviour:
     m_OverrideState: 1
     m_Value: 1
   planetRotation:
-    m_OverrideState: 1
+    m_OverrideState: 0
     m_Value: {x: 0, y: 0, z: 0}
   spaceEmissionTexture:
     m_OverrideState: 1
@@ -844,7 +844,7 @@ MonoBehaviour:
     m_OverrideState: 1
     m_Value: 1
   cloudType:
-    m_OverrideState: 0
+    m_OverrideState: 1
     m_Value: 0
   skyAmbientMode:
     m_OverrideState: 0
