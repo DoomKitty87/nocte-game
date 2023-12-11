@@ -7,6 +7,9 @@ using Vector2 = UnityEngine.Vector2;
 using Vector3 = UnityEngine.Vector3;
 using Vector4 = UnityEngine.Vector4;
 using Math = System.Math;
+using Unity.Mathematics;
+using Unity.Jobs;
+using Unity.Burst;
 
 public class WorldGenerator : MonoBehaviour
 {
@@ -890,7 +893,7 @@ public class WorldGenerator : MonoBehaviour
         int[] triangles = targetMesh.triangles;
         Vector3[] normals = new Vector3[vertices.Length];
         int triangleCount = triangles.Length / 3;
-        int sideLength = (int) Mathf.Sqrt(vertices.Length);
+        // int sideLength = (int) Mathf.Sqrt(vertices.Length);
 
         for (int i = 0; i < triangleCount; i++) {
             int normalTriangleIndex = i * 3;
@@ -1237,6 +1240,48 @@ public class WorldGenerator : MonoBehaviour
         targetMesh.triangles = CullTriangles(targetMesh, index);
         //RockPass(targetMesh, index);
         targetMesh.RecalculateBounds();
+    }
+
+    [BurstCompile]
+    private struct NormalJob : IJobParallelFor
+    {
+
+        [ReadOnly] public NativeArray<float3> vertices;
+        [ReadOnly] public NativeArray<int> triangles;
+        [WriteOnly] public NativeArray<float3> normals;
+
+        public void Execute(int index) {
+            int vertexIndexA = triangles[index * 3];
+            int vertexIndexB = triangles[index * 3 + 1];
+            int vertexIndexC = triangles[index * 3 + 2];
+            float3 pointA = vertices[vertexIndexA];
+            float3 normal = cross(vertices[vertexIndexB] - pointA, vertices[vertexIndexC] - pointA);
+            normals[vertexIndexA] += normal;
+            normals[vertexIndexB] += normal;
+            normals[vertexIndexC] += normal;
+        }
+
+    }
+
+    private Vector3[] CalculateNormalsJobs(Mesh targetMesh) {
+        Vector3[] verts = targetMesh.vertices;
+        int[] tris = targetMesh.triangles;
+        NativeArray<float3> vertices = new NativeArray<float3>(verts.Length, Allocator.TempJob);
+        NativeArray<int> triangles = new NativeArray<int>(tris.Length, Allocator.TempJob);
+        NativeArray<float3> normals = new NativeArray<float3>(verts.Length, Allocator.TempJob);
+        vertices.CopyFrom(verts);
+        triangles.CopyFrom(tris);
+        NormalJob job = new NormalJob {
+            vertices = vertices,
+            triangles = triangles,
+            normals = normals
+        };
+        JobHandle handle = job.Schedule(tris.Length / 3, 64);
+        handle.Complete();
+        Vector3[] normalOut = new Vector3[verts.Length];
+        normalOut = normals.Reinterpret().ToArray();
+        for (int i = 0; i < normalOut.Length; i++) normalOut[i].Normalize();
+        return normals;
     }
 
 }
