@@ -87,7 +87,7 @@ public class ModelGrass : MonoBehaviour {
         initializeGrassShader.SetInt("_Scale", chunkDensity);
         initializeGrassShader.SetInt("_NumChunks", numChunks);
         initializeGrassShader.SetTexture(0, "_HeightMap", heightMap);
-        initializeGrassShader.SetFloat("_DisplacementStrength", displacementStrength);
+        // initializeGrassShader.SetFloat("_DisplacementStrength", displacementStrength);
 
         wind = new RenderTexture(1024, 1024, 0, RenderTextureFormat.ARGBFloat, RenderTextureReadWrite.Linear);
         wind.enableRandomWrite = true;

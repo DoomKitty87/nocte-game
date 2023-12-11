@@ -9,12 +9,10 @@ Shader "Custom/Terrain" {
         [NoScaleOffset] _HeightMap ("Height Map", 2D) = "Height Map" {}
         _DisplacementStrength ("Displacement Strength", Range(0.1, 200)) = 5
         _NormalStrength ("Normals Strength", Range(0.0, 10)) = 1
-        _Color ("Color", Color) = (1, 1, 1, 1)
     }
 
-    CGINCLUDE 
+    CGINCLUDE
         #include "UnityCG.cginc"
-        
         float _TessellationEdgeLength;
         float _DisplacementStrength;
 
@@ -70,7 +68,7 @@ Shader "Custom/Terrain" {
             #pragma fragment fp
 
             sampler2D _TerrainTex, _NormalMap;
-            float4 _TerrainTex_TexelSize, _TerrainTex_ST, _Color;
+            float4 _TerrainTex_TexelSize, _TerrainTex_ST;
             float3 _Albedo;
             float _NormalStrength;
 
@@ -190,7 +188,6 @@ Shader "Custom/Terrain" {
             }
 
             float3 fp(g2f f) : SV_TARGET {
-                /*
                 float3 col = tex2D(_TerrainTex, f.data.uv * _TerrainTex_ST.xy).rgb;
                 col = pow(col, 1.5f);
                 
@@ -199,7 +196,7 @@ Shader "Custom/Terrain" {
                 normal.z = sqrt(1 - saturate(dot(normal.xy, normal.xy)));
                 normal = normal.xzy;
 
-                // float3 lightDir = _WorldSpaceLightPos0.xyz;
+                float3 lightDir = _WorldSpaceLightPos0.xyz;
                 float attenuation = tex2D(_ShadowMapTexture, f.data.shadowCoords.xy / f.data.shadowCoords.w);
 
                 float2 du = float2(_HeightMap_TexelSize.x * 0.5, 0);
@@ -217,11 +214,9 @@ Shader "Custom/Terrain" {
                 normal.xz *= _NormalStrength;
                 normal = normalize(float3(normal.x, 1, normal.z));
 
-                // float ndotl = DotClamped(lightDir, normal);
+                float ndotl = DotClamped(lightDir, normal);
                 
-                // return col * _Albedo * attenuation;
-                */  
-                return 0;
+                return col * _Albedo * attenuation * ndotl;
             }
 
             ENDCG
