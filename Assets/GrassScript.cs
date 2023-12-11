@@ -1,38 +1,39 @@
- using System;
- using System.Collections;
-using System.Collections.Generic;
+using System;
 using UnityEngine;
+using Random = UnityEngine.Random;
+
 public class GrassScript : MonoBehaviour
 {
-  public Material material;
-  public Mesh mesh;
-  public float density;
-  private int numInstances;
+ public Material material;
+ public Mesh mesh;
+ public uint _count;
 
-  private Mesh objMesh;
+ GraphicsBuffer commandBuf;
+ GraphicsBuffer.IndirectDrawIndexedArgs[] commandData;
+ const int commandCount = 1;
+ 
+ void Start() {
+  commandBuf = new GraphicsBuffer(
+   GraphicsBuffer.Target.IndirectArguments,
+   commandCount,
+   GraphicsBuffer.IndirectDrawIndexedArgs.size
+  );
+  commandData = new GraphicsBuffer.IndirectDrawIndexedArgs[commandCount];
+ }
 
-  struct MyInstanceData
-  {
-    public Matrix4x4 objectToWorld;
-    public float myOtherData;
-    public uint renderingLayerMask;
-  };
+ void OnDestroy() {
+  commandBuf?.Release();
+  commandBuf = null;
+ }
 
-  private void Start() {
-    objMesh = GetComponent<MeshFilter>().mesh;
-
-    numInstances = objMesh.vertices.Length;
-  }
-
-  void Update()
-  {
-    RenderParams rp = new RenderParams(material);
-    MyInstanceData[] instData = new MyInstanceData[numInstances];
-    for(int i=0; i<numInstances; ++i)
-    {
-      instData[i].objectToWorld = Matrix4x4.Translate(transform.TransformPoint(objMesh.vertices[i]));
-      // instData[i].renderingLayerMask = (i & 2) == 0 ? 1u : 2u;
-    }
-    Graphics.RenderMeshInstanced(rp, mesh, 0, instData);
-  }
+ void Update() {
+  RenderParams rp = new RenderParams(material);
+  rp.worldBounds = new Bounds(Vector3.zero, 10000 * Vector3.one); // use tighter bounds for better FOV culling
+  rp.matProps = new MaterialPropertyBlock();
+  rp.matProps.SetMatrix("_ObjectToWorld", Matrix4x4.Translate(new Vector3(0, 0, 0)));
+  commandData[0].indexCountPerInstance = mesh.GetIndexCount(0);
+  commandData[0].instanceCount = _count;
+  commandBuf.SetData(commandData);
+  Graphics.RenderMeshIndirect(rp, mesh, commandBuf);
+ }
 }

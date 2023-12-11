@@ -217,6 +217,7 @@ public class ModelGrass : MonoBehaviour {
 
             CullGrass(chunks[i], VP, noLOD);
             if (noLOD)
+                // Graphics.RenderMeshIndirect(new RenderParams(chunks[i].material), grassMesh, );
                 Graphics.DrawMeshInstancedIndirect(grassMesh, 0, chunks[i].material, fieldBounds, chunks[i].argsBuffer);
             else
                 Graphics.DrawMeshInstancedIndirect(grassLODMesh, 0, chunks[i].material, fieldBounds, chunks[i].argsBufferLOD);
