@@ -276,6 +276,8 @@ public class WorldGenerator : MonoBehaviour
     [SerializeField] private bool _refreshButton = false;
 
     private List<int> _frameColliderBakeBuffer = new List<int>();
+
+    [SerializeField] private MeshColliderCookingOptions _colliderCookingOptions;
     
     #endregion
 
@@ -993,11 +995,14 @@ public class WorldGenerator : MonoBehaviour
       for (int i = 0; i < indices.Length; i++) {
         if (!_tilePool[indices[i]].meshCollider) _tilePool[indices[i]].meshCollider = _tilePool[indices[i]].obj.AddComponent<MeshCollider>();
         _tilePool[indices[i]].meshCollider.enabled = true;
+        _tilePool[indices[i]].meshCollider.sharedMesh = _tilePool[indices[i]].mesh;
       }
       _frameColliderBakeBuffer.Clear();
     }
 
     private void UpdateCollider(int index) {
+        if (_tilePool[index].meshCollider)
+            _tilePool[index].meshCollider.cookingOptions = _colliderCookingOptions;
         _frameColliderBakeBuffer.Add(index);
     }
 
