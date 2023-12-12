@@ -274,6 +274,8 @@ public class WorldGenerator : MonoBehaviour
     private float _maxPossibleHeight;
 
     [SerializeField] private bool _refreshButton = false;
+
+    private List<int> _frameColliderBakeBuffer = new List<int>();
     
     #endregion
 
@@ -614,6 +616,9 @@ public class WorldGenerator : MonoBehaviour
         //for (int i = 0; i < _positionsBuffer.Length; i++) {
             //Graphics.RenderMeshIndirect(_rp[i], _grassLODLevels[i].mesh, _commandBuf[i], _commandCount);
         //}
+        if (_frameColliderBakeBuffer.Count > 0) {
+            BakeColliders();
+        }
     }
     
     private void UpdateWind() {
@@ -948,10 +953,53 @@ public class WorldGenerator : MonoBehaviour
         return culled;
     }
 
+    private struct BakeColliderJob : IJobParallelFor
+    {
+
+      public NativeArray<int> meshIds;
+
+      public void Execute(int index)
+      {
+
+        Physics.BakeMesh(meshIds[index], false);
+
+      }
+
+    }
+
+    private void BakeMeshColliders(int[] indices) {
+      Mesh[] meshes = new Mesh[indices.Length];
+      for (int i = 0; i < indices.Length; i++) {
+        meshes[i] = _tilePool[indices[i]].mesh;
+      }
+
+      NativeArray<int> meshIds = new NativeArray<int>(meshes.Length, Allocator.TempJob);
+      for (int i = 0; i < meshes.Length; i++) {
+        meshIds[i] = meshes[i].GetInstanceID();
+      }
+
+      BakeColliderJob job = new BakeColliderJob {
+          meshIds = meshIds
+      };
+      
+      JobHandle handle = job.Schedule(meshIds.Length, 1);
+      handle.Complete();
+      meshIds.Dispose();
+
+    }
+
+    private void BakeColliders() {
+      int[] indices = _frameColliderBakeBuffer.ToArray();
+      BakeMeshColliders(indices);
+      for (int i = 0; i < indices.Length; i++) {
+        if (!_tilePool[indices[i]].meshCollider) _tilePool[indices[i]].meshCollider = _tilePool[indices[i]].obj.AddComponent<MeshCollider>();
+        _tilePool[indices[i]].meshCollider.enabled = true;
+      }
+      _frameColliderBakeBuffer.Clear();
+    }
+
     private void UpdateCollider(int index) {
-        if (!_tilePool[index].meshCollider) _tilePool[index].meshCollider = _tilePool[index].obj.AddComponent<MeshCollider>();
-        _tilePool[index].meshCollider.enabled = true;
-        _tilePool[index].meshCollider.sharedMesh = _tilePool[index].mesh;
+        _frameColliderBakeBuffer.Add(index);
     }
 
     private Vector3 CalculateAbsVertex(Vector3 vertex, int index) {
