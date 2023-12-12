@@ -631,6 +631,24 @@ public class WorldGenerator : MonoBehaviour
         }
         _wind.Apply();
     }
+
+    public (Vector3[][], Vector2[]) GetVertices(int distance) {
+        int included = 0;
+        for (int i = 0, j = 0; i < _xTiles * _zTiles; i++) {
+            if (Mathf.Sqrt(Mathf.Pow(_tilePool[i].x, 2) + Mathf.Pow(_tilePool[i].z, 2)) <= distance) included++;
+        }
+        Vector3[][] vertices = new Vector3[included][];
+        Vector2[] positions = new Vector2[included];
+        for (int i = 0, j = 0; i < _xTiles * _zTiles; i++) {
+            if (Mathf.Sqrt(Mathf.Pow(_tilePool[i].x, 2) + Mathf.Pow(_tilePool[i].z, 2)) <= distance) {
+                vertices[j] = _tilePool[i].mesh.vertices;
+                positions[j] = new Vector2(_tilePool[i].obj.transform.position.x, _tilePool[i].obj.transform.position.z);
+                j++;
+            }
+        }
+
+        return (vertices, positions);
+    }
     
     private void OnDestroy() {
         if (_disableGrass) return;
