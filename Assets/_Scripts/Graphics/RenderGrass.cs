@@ -1,8 +1,7 @@
 using System;
 using UnityEngine;
-using Random = UnityEngine.Random;
 
-public class GrassScript : MonoBehaviour
+public class RenderGrass : MonoBehaviour
 {
  public Material material;
  public Mesh mesh;
