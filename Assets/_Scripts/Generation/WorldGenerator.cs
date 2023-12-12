@@ -754,8 +754,7 @@ public class WorldGenerator : MonoBehaviour
         UpdateMesh(msh, index);
         float maxDistance = Mathf.Max(Mathf.Abs(x), Mathf.Abs(z));
         if (_hasColliders && maxDistance <= _colliderRange) {
-            _tilePool[index].meshCollider = go.AddComponent<MeshCollider>();
-            _tilePool[index].meshCollider.sharedMesh = msh;
+            UpdateCollider(index);
         }
         //if (!_useColorGradient) CalculateUVs(msh);
         //else CalculateColors(index);
@@ -817,7 +816,7 @@ public class WorldGenerator : MonoBehaviour
         UpdateMesh(_tilePool[index].mesh, index);
         maxDistance = Mathf.Max(Mathf.Abs(x - _lastPlayerChunkX), Mathf.Abs(z - _lastPlayerChunkZ));
         if (maxDistance <= _colliderRange) UpdateCollider(index);
-        else if (_tilePool[index].meshCollider) _tilePool[index].obj.GetComponent<MeshCollider>().enabled = false;
+        else if (_tilePool[index].meshCollider) _tilePool[index].meshCollider.enabled = false;
 
         if (maxDistance <= _scatterRange) {
             ScatterTile(index);
