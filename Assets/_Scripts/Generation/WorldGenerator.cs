@@ -10,6 +10,7 @@ using Math = System.Math;
 using Unity.Mathematics;
 using Unity.Jobs;
 using Unity.Burst;
+using Unity.Collections;
 
 public class WorldGenerator : MonoBehaviour
 {
@@ -923,7 +924,7 @@ public class WorldGenerator : MonoBehaviour
         int lodFactor = (int) Mathf.Pow(2, _tilePool[index].currentLOD);
         int[] triangles = targetMesh.triangles;
         int sideLength = (int) Mathf.Sqrt(targetMesh.vertices.Length) - 1;
-        int[] culled = new int[sideLength * sideLength - (sideLength * 2 + (sideLength - 2) * 2)];
+        int[] culled = new int[(sideLength * sideLength - (sideLength * 2 + (sideLength - 2) * 2)) * 6];
         for (int i = 0, j = 0; i < sideLength * sideLength; i++) {
             if (i / sideLength == sideLength - 1) continue;
             if (i % sideLength == sideLength - 1) continue;
@@ -1234,7 +1235,7 @@ public class WorldGenerator : MonoBehaviour
     }
 
     private void UpdateMesh(Mesh targetMesh, int index) {
-        targetMesh.normals = CalculateNormals(targetMesh, index);
+        targetMesh.normals = CalculateNormalsJobs(targetMesh);
         RiverPass(targetMesh, index);
         // CavePass(targetMesh, index);
         targetMesh.triangles = CullTriangles(targetMesh, index);
@@ -1246,16 +1247,16 @@ public class WorldGenerator : MonoBehaviour
     private struct NormalJob : IJobParallelFor
     {
 
-        [ReadOnly] public NativeArray<float3> vertices;
-        [ReadOnly] public NativeArray<int> triangles;
-        [WriteOnly] public NativeArray<float3> normals;
+        [NativeDisableParallelForRestriction] [ReadOnly] public NativeArray<float3> vertices;
+        [NativeDisableParallelForRestriction] [ReadOnly] public NativeArray<int> triangles;
+        [NativeDisableParallelForRestriction] public NativeArray<float3> normals;
 
         public void Execute(int index) {
             int vertexIndexA = triangles[index * 3];
             int vertexIndexB = triangles[index * 3 + 1];
             int vertexIndexC = triangles[index * 3 + 2];
             float3 pointA = vertices[vertexIndexA];
-            float3 normal = cross(vertices[vertexIndexB] - pointA, vertices[vertexIndexC] - pointA);
+            float3 normal = math.cross(vertices[vertexIndexB] - pointA, vertices[vertexIndexC] - pointA);
             normals[vertexIndexA] += normal;
             normals[vertexIndexB] += normal;
             normals[vertexIndexC] += normal;
@@ -1269,8 +1270,8 @@ public class WorldGenerator : MonoBehaviour
         NativeArray<float3> vertices = new NativeArray<float3>(verts.Length, Allocator.TempJob);
         NativeArray<int> triangles = new NativeArray<int>(tris.Length, Allocator.TempJob);
         NativeArray<float3> normals = new NativeArray<float3>(verts.Length, Allocator.TempJob);
-        vertices.CopyFrom(verts);
-        triangles.CopyFrom(tris);
+        for (int i = 0; i < verts.Length; i++) vertices[i] = verts[i];
+        for (int i = 0; i < tris.Length; i++) triangles[i] = tris[i];
         NormalJob job = new NormalJob {
             vertices = vertices,
             triangles = triangles,
@@ -1279,9 +1280,12 @@ public class WorldGenerator : MonoBehaviour
         JobHandle handle = job.Schedule(tris.Length / 3, 64);
         handle.Complete();
         Vector3[] normalOut = new Vector3[verts.Length];
-        normalOut = normals.Reinterpret().ToArray();
+        normalOut = normals.Reinterpret<Vector3>().ToArray();
         for (int i = 0; i < normalOut.Length; i++) normalOut[i].Normalize();
-        return normals;
+        vertices.Dispose();
+        triangles.Dispose();
+        normals.Dispose();
+        return normalOut;
     }
 
 }
