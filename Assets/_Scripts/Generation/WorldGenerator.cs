@@ -7,6 +7,10 @@ using Vector2 = UnityEngine.Vector2;
 using Vector3 = UnityEngine.Vector3;
 using Vector4 = UnityEngine.Vector4;
 using Math = System.Math;
+using Unity.Mathematics;
+using Unity.Jobs;
+using Unity.Burst;
+using Unity.Collections;
 
 public class WorldGenerator : MonoBehaviour
 {
@@ -270,6 +274,10 @@ public class WorldGenerator : MonoBehaviour
     private float _maxPossibleHeight;
 
     [SerializeField] private bool _refreshButton = false;
+
+    private List<int> _frameColliderBakeBuffer = new List<int>();
+
+    [SerializeField] private MeshColliderCookingOptions _colliderCookingOptions;
     
     #endregion
 
@@ -610,6 +618,9 @@ public class WorldGenerator : MonoBehaviour
         //for (int i = 0; i < _positionsBuffer.Length; i++) {
             //Graphics.RenderMeshIndirect(_rp[i], _grassLODLevels[i].mesh, _commandBuf[i], _commandCount);
         //}
+        if (_frameColliderBakeBuffer.Count > 0) {
+            BakeColliders();
+        }
     }
     
     private void UpdateWind() {
@@ -619,6 +630,24 @@ public class WorldGenerator : MonoBehaviour
             _wind.SetPixel(i % 128, i / 128, new Color(windData[i], windData[i], windData[i], 1));
         }
         _wind.Apply();
+    }
+
+    public (Vector3[][], Vector2[]) GetVertices(int distance) {
+        int included = 0;
+        for (int i = 0, j = 0; i < _xTiles * _zTiles; i++) {
+            if (Mathf.Sqrt(Mathf.Pow(_tilePool[i].x, 2) + Mathf.Pow(_tilePool[i].z, 2)) <= distance) included++;
+        }
+        Vector3[][] vertices = new Vector3[included][];
+        Vector2[] positions = new Vector2[included];
+        for (int i = 0, j = 0; i < _xTiles * _zTiles; i++) {
+            if (Mathf.Sqrt(Mathf.Pow(_tilePool[i].x, 2) + Mathf.Pow(_tilePool[i].z, 2)) <= distance) {
+                vertices[j] = _tilePool[i].mesh.vertices;
+                positions[j] = new Vector2(_tilePool[i].obj.transform.position.x, _tilePool[i].obj.transform.position.z);
+                j++;
+            }
+        }
+
+        return (vertices, positions);
     }
     
     private void OnDestroy() {
@@ -745,8 +774,7 @@ public class WorldGenerator : MonoBehaviour
         UpdateMesh(msh, index);
         float maxDistance = Mathf.Max(Mathf.Abs(x), Mathf.Abs(z));
         if (_hasColliders && maxDistance <= _colliderRange) {
-            _tilePool[index].meshCollider = go.AddComponent<MeshCollider>();
-            _tilePool[index].meshCollider.sharedMesh = msh;
+            UpdateCollider(index);
         }
         //if (!_useColorGradient) CalculateUVs(msh);
         //else CalculateColors(index);
@@ -808,7 +836,7 @@ public class WorldGenerator : MonoBehaviour
         UpdateMesh(_tilePool[index].mesh, index);
         maxDistance = Mathf.Max(Mathf.Abs(x - _lastPlayerChunkX), Mathf.Abs(z - _lastPlayerChunkZ));
         if (maxDistance <= _colliderRange) UpdateCollider(index);
-        else if (_tilePool[index].meshCollider) _tilePool[index].obj.GetComponent<MeshCollider>().enabled = false;
+        else if (_tilePool[index].meshCollider) _tilePool[index].meshCollider.enabled = false;
 
         if (maxDistance <= _scatterRange) {
             ScatterTile(index);
@@ -890,7 +918,7 @@ public class WorldGenerator : MonoBehaviour
         int[] triangles = targetMesh.triangles;
         Vector3[] normals = new Vector3[vertices.Length];
         int triangleCount = triangles.Length / 3;
-        int sideLength = (int) Mathf.Sqrt(vertices.Length);
+        // int sideLength = (int) Mathf.Sqrt(vertices.Length);
 
         for (int i = 0; i < triangleCount; i++) {
             int normalTriangleIndex = i * 3;
@@ -920,34 +948,80 @@ public class WorldGenerator : MonoBehaviour
         int lodFactor = (int) Mathf.Pow(2, _tilePool[index].currentLOD);
         int[] triangles = targetMesh.triangles;
         int sideLength = (int) Mathf.Sqrt(targetMesh.vertices.Length) - 1;
-        List<int> culled = new List<int>();
-
-        for (int i = 0; i < sideLength * sideLength; i++) {
+        int[] culled = new int[(sideLength * sideLength - (sideLength * 2 + (sideLength - 2) * 2)) * 6];
+        for (int i = 0, j = 0; i < sideLength * sideLength; i++) {
             if (i / sideLength == sideLength - 1) continue;
             if (i % sideLength == sideLength - 1) continue;
             if (i / sideLength == 0) continue;
             if (i % sideLength == 0) continue;
-            culled.Add(triangles[i * 6]);
-            culled.Add(triangles[i * 6 + 1]);
-            culled.Add(triangles[i * 6 + 2]);
-            culled.Add(triangles[i * 6 + 3]);
-            culled.Add(triangles[i * 6 + 4]);
-            culled.Add(triangles[i * 6 + 5]);
+            culled[j] = triangles[i * 6];
+            culled[j + 1] = triangles[i * 6 + 1];
+            culled[j + 2] = triangles[i * 6 + 2];
+            culled[j + 3] = triangles[i * 6 + 3];
+            culled[j + 4] = triangles[i * 6 + 4];
+            culled[j + 5] = triangles[i * 6 + 5];
+            j += 6;
         }
+        // Additional is for subdivision (not used)
+        //List<int> additional = new List<int>();
+        //for (int i = (sideLength + 2) * (sideLength + 2) * 6; i < triangles.Length; i++) {
+        //    additional.Add(triangles[i]);
+        //}
 
-        List<int> additional = new List<int>();
-        for (int i = (sideLength + 2) * (sideLength + 2) * 6; i < triangles.Length; i++) {
-            additional.Add(triangles[i]);
-        }
+        //culled.AddRange(additional);
+        return culled;
+    }
 
-        culled.AddRange(additional);
-        return culled.ToArray();
+    private struct BakeColliderJob : IJobParallelFor
+    {
+
+      public NativeArray<int> meshIds;
+
+      public void Execute(int index)
+      {
+
+        Physics.BakeMesh(meshIds[index], false);
+
+      }
+
+    }
+
+    private void BakeMeshColliders(int[] indices) {
+      Mesh[] meshes = new Mesh[indices.Length];
+      for (int i = 0; i < indices.Length; i++) {
+        meshes[i] = _tilePool[indices[i]].mesh;
+      }
+
+      NativeArray<int> meshIds = new NativeArray<int>(meshes.Length, Allocator.TempJob);
+      for (int i = 0; i < meshes.Length; i++) {
+        meshIds[i] = meshes[i].GetInstanceID();
+      }
+
+      BakeColliderJob job = new BakeColliderJob {
+          meshIds = meshIds
+      };
+      
+      JobHandle handle = job.Schedule(meshIds.Length, 1);
+      handle.Complete();
+      meshIds.Dispose();
+
+    }
+
+    private void BakeColliders() {
+      int[] indices = _frameColliderBakeBuffer.ToArray();
+      BakeMeshColliders(indices);
+      for (int i = 0; i < indices.Length; i++) {
+        if (!_tilePool[indices[i]].meshCollider) _tilePool[indices[i]].meshCollider = _tilePool[indices[i]].obj.AddComponent<MeshCollider>();
+        _tilePool[indices[i]].meshCollider.enabled = true;
+        _tilePool[indices[i]].meshCollider.sharedMesh = _tilePool[indices[i]].mesh;
+      }
+      _frameColliderBakeBuffer.Clear();
     }
 
     private void UpdateCollider(int index) {
-        if (!_tilePool[index].meshCollider) _tilePool[index].meshCollider = _tilePool[index].obj.AddComponent<MeshCollider>();
-        _tilePool[index].meshCollider.enabled = true;
-        _tilePool[index].meshCollider.sharedMesh = _tilePool[index].mesh;
+        if (_tilePool[index].meshCollider)
+            _tilePool[index].meshCollider.cookingOptions = _colliderCookingOptions;
+        _frameColliderBakeBuffer.Add(index);
     }
 
     private Vector3 CalculateAbsVertex(Vector3 vertex, int index) {
@@ -1200,7 +1274,6 @@ public class WorldGenerator : MonoBehaviour
         int waterTriLength = _waterTriangles.Count;
         int[] realIndices = new int[waterVerts.Length];
         Vector3[] verts = new Vector3[waterVerts.Length - ignored];
-        List<int> tris = new List<int>();
         for (int i = 0, j = 0; i < waterVerts.Length; i++) {
             if (!ignoreVerts[i]) {
                 verts[j] = waterVerts[i];
@@ -1208,11 +1281,19 @@ public class WorldGenerator : MonoBehaviour
                 j++;
             }
         }
+        int triCount = 0;
         for (int i = 0; i < triangles.Length; i+= 3) {
             if (!ignoreVerts[triangles[i]] && !ignoreVerts[triangles[i + 1]] && !ignoreVerts[triangles[i + 2]]) {
-                tris.Add(realIndices[triangles[i]] + waterVertsLength);
-                tris.Add(realIndices[triangles[i + 1]] + waterVertsLength);
-                tris.Add(realIndices[triangles[i + 2]] + waterVertsLength);
+                triCount += 3;
+            }
+        }
+        int[] tris = new int[triCount];
+        for (int i = 0, j = 0; i < triangles.Length; i+= 3) {
+            if (!ignoreVerts[triangles[i]] && !ignoreVerts[triangles[i + 1]] && !ignoreVerts[triangles[i + 2]]) {
+                tris[j] = realIndices[triangles[i]] + waterVertsLength;
+                tris[j + 1] = realIndices[triangles[i + 1]] + waterVertsLength;
+                tris[j + 2] = realIndices[triangles[i + 2]] + waterVertsLength;
+                j += 3;
             }
         }
         _waterVertices.AddRange(verts);
@@ -1224,12 +1305,57 @@ public class WorldGenerator : MonoBehaviour
     }
 
     private void UpdateMesh(Mesh targetMesh, int index) {
-        targetMesh.normals = CalculateNormals(targetMesh, index);
+        targetMesh.normals = CalculateNormalsJobs(targetMesh);
         RiverPass(targetMesh, index);
         // CavePass(targetMesh, index);
         targetMesh.triangles = CullTriangles(targetMesh, index);
         //RockPass(targetMesh, index);
         targetMesh.RecalculateBounds();
+    }
+
+    [BurstCompile]
+    private struct NormalJob : IJobParallelFor
+    {
+
+        [NativeDisableParallelForRestriction] [ReadOnly] public NativeArray<float3> vertices;
+        [NativeDisableParallelForRestriction] [ReadOnly] public NativeArray<int> triangles;
+        [NativeDisableParallelForRestriction] public NativeArray<float3> normals;
+
+        public void Execute(int index) {
+            int vertexIndexA = triangles[index * 3];
+            int vertexIndexB = triangles[index * 3 + 1];
+            int vertexIndexC = triangles[index * 3 + 2];
+            float3 pointA = vertices[vertexIndexA];
+            float3 normal = math.cross(vertices[vertexIndexB] - pointA, vertices[vertexIndexC] - pointA);
+            normals[vertexIndexA] += normal;
+            normals[vertexIndexB] += normal;
+            normals[vertexIndexC] += normal;
+        }
+
+    }
+
+    private Vector3[] CalculateNormalsJobs(Mesh targetMesh) {
+        Vector3[] verts = targetMesh.vertices;
+        int[] tris = targetMesh.triangles;
+        NativeArray<float3> vertices = new NativeArray<float3>(verts.Length, Allocator.TempJob);
+        NativeArray<int> triangles = new NativeArray<int>(tris.Length, Allocator.TempJob);
+        NativeArray<float3> normals = new NativeArray<float3>(verts.Length, Allocator.TempJob);
+        for (int i = 0; i < verts.Length; i++) vertices[i] = verts[i];
+        for (int i = 0; i < tris.Length; i++) triangles[i] = tris[i];
+        NormalJob job = new NormalJob {
+            vertices = vertices,
+            triangles = triangles,
+            normals = normals
+        };
+        JobHandle handle = job.Schedule(tris.Length / 3, 64);
+        handle.Complete();
+        Vector3[] normalOut = new Vector3[verts.Length];
+        normalOut = normals.Reinterpret<Vector3>().ToArray();
+        for (int i = 0; i < normalOut.Length; i++) normalOut[i].Normalize();
+        vertices.Dispose();
+        triangles.Dispose();
+        normals.Dispose();
+        return normalOut;
     }
 
 }
