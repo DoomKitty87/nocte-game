@@ -82,24 +82,42 @@ public class WorldGenerator : MonoBehaviour
     private struct AmalgamNoiseParams
     {
 
+        [Tooltip("Iterations of noise layered for final result.")]
         public int octaves;
-        public float lacunarity;
-        public float persistence;
-        public float sharpnessScale;
-        public float sharpnessAmplitude;
-        public float sharpnessMean;
-        public float scaleScale;
-        public float scaleAmplitude;
+        [Tooltip("Scale change factor between octaves.")]
+        public float lacunarity;        
+        [Tooltip("Amplitude change factor between octaves.")]
+        public float persistence;        
+        [Tooltip("Scale of sharpness noise permutation.")]
+        public float sharpnessScale;        
+        [Tooltip("Amplitude of sharpness noise permutation.")]
+        public float sharpnessAmplitude;        
+        [Tooltip("Midpoint value of sharpness.")]
+        public float sharpnessMean;        
+        [Tooltip("Scale of scale noise permutation.")]
+        public float scaleScale;        
+        [Tooltip("Amplitude of scale noise permutation.")]
+        public float scaleAmplitude;        
+        [Tooltip("Midpoint value of scale.")]
         public float scaleMean;
-        public float amplitudeScale;
-        public float amplitudeAmplitude;
-        public float amplitudeMean;
-        public float warpStrengthScale;
-        public float warpStrengthAmplitude;
-        public float warpStrengthMean;
-        public float warpScaleScale;
+        [Tooltip("Scale of amplitude noise permutation.")]
+        public float amplitudeScale;        
+        [Tooltip("Amplitude of amplitude noise permutation.")]
+        public float amplitudeAmplitude;         
+        [Tooltip("Midpoint value of amplitude.")]
+        public float amplitudeMean;       
+        [Tooltip("Scale of warp strength noise permutation.")]
+        public float warpStrengthScale;         
+        [Tooltip("Amplitude of warp strength noise permutation.")]
+        public float warpStrengthAmplitude;       
+        [Tooltip("Midpoint value of warp strength.")]
+        public float warpStrengthMean;        
+        [Tooltip("Scale of warp scale noise permutation.")]
+        public float warpScaleScale;      
+        [Tooltip("Amplitude of warp scale noise permutation.")]
         public float warpScaleAmplitude;
-        public float warpScaleMean;
+        [Tooltip("Midpoint value of warp scale.")]
+        public float warpScaleMean;        
 
     }
 
