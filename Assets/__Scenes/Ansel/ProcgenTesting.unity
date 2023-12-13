@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 1362.4376, g: 1325.5289, b: 1432.4386, a: 1}
+  m_IndirectSpecularColor: {r: 1358.7433, g: 1321.9159, b: 1428.4622, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -1863,18 +1863,6 @@ Canvas:
   m_SortingLayerID: 0
   m_SortingOrder: 0
   m_TargetDisplay: 0
---- !u!114 &1338505935 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257,
-    type: 3}
-  m_PrefabInstance: {fileID: 4258144910533491455}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f6b2c7e3633548c9b3b1efe6042a06cf, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &1401696301
 GameObject:
   m_ObjectHideFlags: 0
@@ -2232,7 +2220,7 @@ MonoBehaviour:
     phase: 0
     spinPhase: 0
     initialRotation: {x: 0, y: 0, z: 0, w: 0}
-  _worldGenerator: {fileID: 1338505935}
+  _worldGenerator: {fileID: 4258144910533491457}
   _orbitVisualizer: {fileID: 1817750032}
 --- !u!1 &1549749201
 GameObject:
@@ -3422,7 +3410,7 @@ PrefabInstance:
         type: 3}
       propertyPath: _worldGeneratorObject
       value: 
-      objectReference: {fileID: 1338505935}
+      objectReference: {fileID: 4258144910533491457}
     - target: {fileID: 7984819392919280737, guid: 807785f75a4cabf4883bf2cc8fe88221,
         type: 3}
       propertyPath: m_CollisionDetection
@@ -3490,7 +3478,7 @@ MonoBehaviour:
   _consoleWindow: {fileID: 730138449}
   _commandInput: {fileID: 1706148190}
   _commandHistory: {fileID: 1793863348}
-  _worldGenerator: {fileID: 1338505935}
+  _worldGenerator: {fileID: 0}
   _fpsDisplay: {fileID: 2127784357}
 --- !u!1 &1849557960
 GameObject:
@@ -3537,7 +3525,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e4396cb65fa4418dbf98bb78547ba73c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _worldGen: {fileID: 1338505935}
+  _worldGen: {fileID: 4258144910533491457}
   _centralStructure: {fileID: 919132149155446097, guid: e30265bac54dc452faabf2f5ef0e78bd,
     type: 3}
   _outerStructures:
@@ -3560,7 +3548,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e181bbb93b7175c439371dc0a21035ca, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _worldGen: {fileID: 1338505935}
+  _worldGen: {fileID: 4258144910533491457}
   _structureRenderDistance: 1500
   _chunkStructureChance: 0.3
   _availableStructures:
@@ -4147,7 +4135,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 100, y: -25}
+  m_AnchoredPosition: {x: 250, y: -25}
   m_SizeDelta: {x: 500, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2127784359
@@ -5874,11 +5862,155 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 7828621975473438852, guid: 862d92a67177d4c7b84ab88d6b6e0257,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 4258144910533491457}
   m_SourcePrefab: {fileID: 100100000, guid: 862d92a67177d4c7b84ab88d6b6e0257, type: 3}
+--- !u!1 &4258144910533491456 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7828621975473438852, guid: 862d92a67177d4c7b84ab88d6b6e0257,
+    type: 3}
+  m_PrefabInstance: {fileID: 4258144910533491455}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &4258144910533491457
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4258144910533491456}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 67c43eb278576c646b814952f91643c8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _seed: 0
+  _tileCount: 51
+  _size: 16
+  _resolution: 12
+  _maxUpdatesPerFrame: 0.1
+  _enableColliders: 1
+  _colliderRange: 5
+  _material: {fileID: 2100000, guid: 9b13907d982f93045a90c3127b8e3ecd, type: 2}
+  _noiseParameters:
+    octaves: 10
+    lacunarity: 2
+    persistence: 0.5
+    sharpnessScale: 2500
+    sharpnessAmplitude: 0.2
+    sharpnessMean: 0.5
+    scaleScale: 500
+    scaleAmplitude: 0
+    scaleMean: 3000
+    amplitudeScale: 5000
+    amplitudeAmplitude: 1400
+    amplitudeMean: 800
+    warpStrengthScale: 2000
+    warpStrengthAmplitude: 0.2
+    warpStrengthMean: 1
+    warpScaleScale: 1200
+    warpScaleAmplitude: 0
+    warpScaleMean: 2500
+  _refreshButton: 0
+  _lodLevels:
+  - distance: 2
+    factor: 2
+  - distance: 3
+    factor: 1
+  _defaultLOD: 0
+  _enableRivers: 1
+  _riverParameters:
+    scale: 2500
+    amplitude: 15
+    octaves: 2
+    lacunarity: 2
+    persistence: 0.5
+    warpScale: 500
+    warpStrength: 0
+    waterLevel: 0
+    noiseCurve:
+      serializedVersion: 2
+      m_Curve:
+      - serializedVersion: 3
+        time: 0
+        value: 1
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0.33333334
+      - serializedVersion: 3
+        time: 0.08
+        value: 0
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    heightCurve:
+      serializedVersion: 2
+      m_Curve:
+      - serializedVersion: 3
+        time: 0
+        value: 1
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      - serializedVersion: 3
+        time: 0.7
+        value: 0
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 2
+        inWeight: 0.33333334
+        outWeight: 0.33333334
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    normalCurve:
+      serializedVersion: 2
+      m_Curve:
+      - serializedVersion: 3
+        time: 0.4
+        value: 0
+        inSlope: 2
+        outSlope: 2
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      - serializedVersion: 3
+        time: 1
+        value: 1
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    obj: {fileID: 1610259047}
+  _lakePlaneHeight: 350
+  _lakeObject: {fileID: 1865415592}
+  _structures: {fileID: 1849557963}
+  _storyStructures: {fileID: 1849557962}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
