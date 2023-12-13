@@ -122,15 +122,13 @@ public class WorldGenerator : MonoBehaviour
   [Tooltip("Vertex spacing of each tile in world (lowest LOD).")]
   [SerializeField] private float _resolution;
   [Tooltip("Maximum chunk updates per frame.")]
-  [SerializeField] private int _maxUpdatesPerFrame;
+  [SerializeField] private float _maxUpdatesPerFrame;
   [Tooltip("Enable or disable colliders.")]
   [SerializeField] private bool _enableColliders;
   [Tooltip("Maximum distance from player with colliders.")]
   [SerializeField] private int _colliderRange;
   [Tooltip("Material for world mesh.")]
   [SerializeField] private Material _material;
-  [Tooltip("Mesh collider cooking options.")]
-  [SerializeField] private MeshColliderCookingOptions _cookingOptions;
   [SerializeField] private AmalgamNoiseParams _noiseParameters;
   [Tooltip("Refresh world generation.")]
 
@@ -245,6 +243,9 @@ public class WorldGenerator : MonoBehaviour
   }
 
   private void Update() {
+    if (_frameColliderBakeBuffer.Count > 0 && _generateQueue.Count == 0) {
+        BakeColliders();
+    }
     while (updatesLeft > 0) {
       if (_updateQueue.Count > 0 && _generateQueue.Count == 0) {
           UpdateTile(_updateQueue[0]);
@@ -261,10 +262,7 @@ public class WorldGenerator : MonoBehaviour
         } else break;
     }
     updatesLeft += _maxUpdatesPerFrame;
-    updatesLeft = Mathf.Min(updatesLeft, 1);
-    if (_frameColliderBakeBuffer.Count > 0) {
-        BakeColliders();
-    }
+    updatesLeft = Mathf.Min(updatesLeft, Mathf.Max(_maxUpdatesPerFrame, 1));
   }
 
   #endregion
@@ -459,11 +457,11 @@ public class WorldGenerator : MonoBehaviour
     int lodFactor = GetLOD(new Vector2(_playerXChunkScale, _playerZChunkScale), new Vector2(x, z));
     tile.currentLOD = lodFactor;
     lodFactor = (int) Mathf.Pow(2, lodFactor);
-    if (_tileCount * lodFactor * _tileCount * lodFactor > 65000) {
+    if (_size * lodFactor * _size * lodFactor > 65000) {
         msh.indexFormat = UnityEngine.Rendering.IndexFormat.UInt32;
     }
     
-    Vector3[] result = AmalgamNoise.GenerateTerrain(_tileCount, lodFactor, x * _tileCount * _resolution + _seed, z * _tileCount * _resolution + _seed, _resolution / lodFactor, _resolution / lodFactor,
+    Vector3[] result = AmalgamNoise.GenerateTerrain(_size, lodFactor, x * _size * _resolution + _seed, z * _size * _resolution + _seed, _resolution / lodFactor, _resolution / lodFactor,
         _noiseParameters.octaves, _noiseParameters.lacunarity, _noiseParameters.persistence, _noiseParameters.sharpnessScale,
         _noiseParameters.sharpnessAmplitude, _noiseParameters.sharpnessMean, _noiseParameters.scaleScale, _noiseParameters.scaleAmplitude,
         _noiseParameters.scaleMean, _noiseParameters.amplitudeScale, _noiseParameters.amplitudeAmplitude, _noiseParameters.amplitudeMean,
@@ -471,13 +469,13 @@ public class WorldGenerator : MonoBehaviour
         _noiseParameters.warpScaleScale, _noiseParameters.warpScaleAmplitude, _noiseParameters.warpScaleMean);
     msh.vertices = result;
     
-    go.transform.position = new Vector3(x * _tileCount * _resolution, 0, z * _tileCount * _resolution);
+    go.transform.position = new Vector3(x * _size * _resolution, 0, z * _size * _resolution);
     go.isStatic = true;
     
     // If you need to put anything else (tag, components, etc) on the tile, do it here. If it needs to change every time the LOD is changed, do it in the UpdateTile function.
     go.tag = "Ground";
     go.layer = 6;
-    _structures.GenerateChunkStructures(new Vector2(x * _tileCount * _resolution, z * _tileCount * _resolution), new Vector2((x + 1) * _tileCount * _resolution, (z + 1) * _tileCount * _resolution));
+    _structures.GenerateChunkStructures(new Vector2(x * _size * _resolution, z * _size * _resolution), new Vector2((x + 1) * _size * _resolution, (z + 1) * _size * _resolution));
     _generatedStructureTiles.Add(new Vector2(x, z));
     tile.mesh = msh;
     tile.obj = go;
@@ -489,9 +487,7 @@ public class WorldGenerator : MonoBehaviour
     WindTriangles(msh, index);
     UpdateMesh(msh, index);
     float maxDistance = Mathf.Max(Mathf.Abs(x), Mathf.Abs(z));
-    if (_enableColliders && maxDistance <= _colliderRange) {
-        UpdateCollider(index);
-    }
+    if (_enableColliders && maxDistance <= _colliderRange) UpdateCollider(index);
 
     if (index == (_tileCount * _tileCount) - 1) UpdateWaterMesh();
   }
@@ -500,11 +496,11 @@ public class WorldGenerator : MonoBehaviour
     int x = _tilePool[index].x;
     int z = _tilePool[index].z;
     int lodFactor = (int) Mathf.Pow(2, _tilePool[index].currentLOD);
-    if (_tileCount * lodFactor * _tileCount * lodFactor > 65000) {
+    if (_size * lodFactor * _size * lodFactor > 65000) {
         _tilePool[index].mesh.indexFormat = UnityEngine.Rendering.IndexFormat.UInt32;
     }
     float maxDistance = Mathf.Sqrt(Mathf.Pow(Mathf.Abs(x - _playerXChunkScale), 2) + Mathf.Pow(Mathf.Abs(z - _playerZChunkScale), 2));
-    Vector3[] result = AmalgamNoise.GenerateTerrain(_tileCount, lodFactor, x * _tileCount * _resolution + _seed, z * _tileCount * _resolution + _seed, _resolution / lodFactor, _resolution / lodFactor,
+    Vector3[] result = AmalgamNoise.GenerateTerrain(_size, lodFactor, x * _size * _resolution + _seed, z * _size * _resolution + _seed, _resolution / lodFactor, _resolution / lodFactor,
         _noiseParameters.octaves, _noiseParameters.lacunarity, _noiseParameters.persistence, _noiseParameters.sharpnessScale,
         _noiseParameters.sharpnessAmplitude, _noiseParameters.sharpnessMean, _noiseParameters.scaleScale, _noiseParameters.scaleAmplitude,
         _noiseParameters.scaleMean, _noiseParameters.amplitudeScale, _noiseParameters.amplitudeAmplitude, _noiseParameters.amplitudeMean,
@@ -515,14 +511,14 @@ public class WorldGenerator : MonoBehaviour
 
     WindTriangles(_tilePool[index].mesh, index);
 
-    _tilePool[index].obj.transform.position = new Vector3(x * _tileCount * _resolution, 0, z * _tileCount * _resolution);
+    _tilePool[index].obj.transform.position = new Vector3(x * _size * _resolution, 0, z * _size * _resolution);
     if (!_generatedStructureTiles.Contains(new Vector2(x, z))) {
-        _structures.GenerateChunkStructures(new Vector2(x * _tileCount * _resolution, z * _tileCount * _resolution), new Vector2((x + 1) * _tileCount * _resolution, (z + 1) * _tileCount * _resolution));
+        _structures.GenerateChunkStructures(new Vector2(x * _size * _resolution, z * _size * _resolution), new Vector2((x + 1) * _size * _resolution, (z + 1) * _size * _resolution));
         _generatedStructureTiles.Add(new Vector2(x, z));
     }
     UpdateMesh(_tilePool[index].mesh, index);
     maxDistance = Mathf.Max(Mathf.Abs(x - _playerXChunkScale), Mathf.Abs(z - _playerZChunkScale));
-    if (maxDistance <= _colliderRange) UpdateCollider(index);
+    if (_enableColliders && maxDistance <= _colliderRange) UpdateCollider(index);
   }
 
   #endregion
@@ -556,8 +552,8 @@ public class WorldGenerator : MonoBehaviour
     Vector3[] vertices = targetMesh.vertices;
     Vector3[] normals = targetMesh.normals;
     int lodFactor = (int) Mathf.Pow(2, _tilePool[index].currentLOD);
-    float[] heightMods = AmalgamNoise.GenerateRivers(_tileCount, lodFactor, _tilePool[index].x * _tileCount * _resolution + _seed % 216812,
-        _tilePool[index].z * _tileCount * _resolution + _seed % 216812, _resolution / lodFactor, _resolution / lodFactor, _riverParameters.scale, _riverParameters.octaves, _riverParameters.lacunarity, _riverParameters.persistence, _riverParameters.warpScale, _riverParameters.warpStrength);
+    float[] heightMods = AmalgamNoise.GenerateRivers(_size, lodFactor, _tilePool[index].x * _size * _resolution + _seed % 216812,
+        _tilePool[index].z * _size * _resolution + _seed % 216812, _resolution / lodFactor, _resolution / lodFactor, _riverParameters.scale, _riverParameters.octaves, _riverParameters.lacunarity, _riverParameters.persistence, _riverParameters.warpScale, _riverParameters.warpStrength);
     Vector3[] waterVerts = new Vector3[vertices.Length];
     bool[] ignoreVerts = new bool[vertices.Length];
     int ignored = 0;
@@ -722,14 +718,12 @@ public class WorldGenerator : MonoBehaviour
   }
 
   private void UpdateCollider(int index) {
-    if (_tilePool[index].meshCollider)
-      _tilePool[index].meshCollider.cookingOptions = _cookingOptions;
     _frameColliderBakeBuffer.Add(index);
   }
 
   private void UpdateMesh(Mesh targetMesh, int index) {
     targetMesh.normals = CalculateNormalsJobs(targetMesh);
-    RiverPass(targetMesh, index);
+    //RiverPass(targetMesh, index);
     targetMesh.triangles = CullTriangles(targetMesh, index);
     targetMesh.RecalculateBounds();
   }

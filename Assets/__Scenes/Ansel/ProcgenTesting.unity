@@ -4135,7 +4135,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 100, y: -25}
+  m_AnchoredPosition: {x: 250, y: -25}
   m_SizeDelta: {x: 500, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2127784359
@@ -5891,14 +5891,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _seed: 0
-  _tileCount: 37
+  _tileCount: 51
   _size: 16
-  _resolution: 20
-  _maxUpdatesPerFrame: 100
+  _resolution: 12
+  _maxUpdatesPerFrame: 0.1
   _enableColliders: 1
   _colliderRange: 5
   _material: {fileID: 2100000, guid: 9b13907d982f93045a90c3127b8e3ecd, type: 2}
-  _cookingOptions: -1
   _noiseParameters:
     octaves: 10
     lacunarity: 2
@@ -5921,10 +5920,8 @@ MonoBehaviour:
   _refreshButton: 0
   _lodLevels:
   - distance: 2
-    factor: 3
-  - distance: 3
     factor: 2
-  - distance: 4
+  - distance: 3
     factor: 1
   _defaultLOD: 0
   _enableRivers: 1
