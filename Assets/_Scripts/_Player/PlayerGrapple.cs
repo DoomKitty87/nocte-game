@@ -6,8 +6,9 @@ using UnityEngine.Serialization;
 
 public class PlayerGrapple : MonoBehaviour
 {
-    
-    [Header("References")] 
+
+    [Header("References")]
+    [SerializeField] private bool _useOutsideScriptControl;
     [SerializeField] private Transform _camera;
     [SerializeField] private Transform _gunEnd;
     [SerializeField] private LayerMask _grapplable;
@@ -51,7 +52,7 @@ public class PlayerGrapple : MonoBehaviour
     {
         if (_grapplingCoolDownTimer > 0)
             _grapplingCoolDownTimer -= Time.deltaTime;
-        
+        if (_useOutsideScriptControl) return;
         if (Input.GetKeyDown(KeyCode.Mouse0)) StartGrapple();
         if (Input.GetKeyUp(KeyCode.Mouse0)) StopGrapple();
     }
@@ -70,7 +71,7 @@ public class PlayerGrapple : MonoBehaviour
         }
     }
 
-    private void StartGrapple()
+    public void StartGrapple()
     {
         if (_grapplingCoolDownTimer > 0) return;
         

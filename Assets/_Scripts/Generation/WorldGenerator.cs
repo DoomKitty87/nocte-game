@@ -166,6 +166,7 @@ public class WorldGenerator : MonoBehaviour
   private List<int[]> _generateQueue = new List<int[]>();
   private List<int> _frameColliderBakeBuffer = new List<int>();
   private float updatesLeft;
+  private bool _bakingColliders;
 
   private float _playerX;
   private float _playerZ;
@@ -247,7 +248,7 @@ public class WorldGenerator : MonoBehaviour
 
   private void Update() {
     if ((_frameColliderBakeBuffer.Count > 0 && _generateQueue.Count == 0) || _frameColliderBakeBuffer.Count > _forceBakeThreshold) {
-      StartCoroutine(BakeColliders());
+      if (!_bakingColliders) StartCoroutine(BakeColliders());
     }
     while (updatesLeft > 0) {
       if (_updateQueue.Count > 0 && _generateQueue.Count == 0) {
@@ -257,7 +258,7 @@ public class WorldGenerator : MonoBehaviour
         updatesLeft--;
       } else break;
     }
-    for (int i = 0; i < _maxUpdatesPerFrame * 20; i++) {
+    for (int i = 0; i < _maxUpdatesPerFrame * 250; i++) {
       if (_generateQueue.Count > 0) {
         GenerateTile(_generateQueue[0][0], _generateQueue[0][1], _generateQueue[0][2]);
         _generateQueue.RemoveAt(0);
@@ -708,6 +709,7 @@ public class WorldGenerator : MonoBehaviour
   }
 
   private IEnumerator BakeColliders() {
+    _bakingColliders = true;
     int[] indices = _frameColliderBakeBuffer.ToArray();
     JobHandle jobHandle = ExecuteBake(indices);
     while (!jobHandle.IsCompleted) {
@@ -720,6 +722,7 @@ public class WorldGenerator : MonoBehaviour
       _tilePool[indices[i]].meshCollider.sharedMesh = _tilePool[indices[i]].mesh;
     }
     _frameColliderBakeBuffer.Clear();
+    _bakingColliders = false;
   }
 
   private void UpdateCollider(int index) {
