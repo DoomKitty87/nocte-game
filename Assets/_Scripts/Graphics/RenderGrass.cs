@@ -10,6 +10,22 @@ public class RenderGrass : MonoBehaviour
     GraphicsBuffer.IndirectDrawIndexedArgs[] commandData;
     const int commandCount = 1;
 
+    private struct GrassData
+    {
+        public Vector4 position;
+        public Vector2 uv;
+        public float displacement;
+    }
+    
+    private struct GrassChunk {
+        public ComputeBuffer argsBuffer;
+        // public ComputeBuffer argsBufferLOD;
+        public ComputeBuffer positionsBuffer;
+        // public ComputeBuffer culledPositionsBuffer;
+        public Bounds bounds;
+        public Material material;
+    }
+    
     void Start()
     {
         commandBuf = new GraphicsBuffer(GraphicsBuffer.Target.IndirectArguments, commandCount, GraphicsBuffer.IndirectDrawIndexedArgs.size);
@@ -20,6 +36,13 @@ public class RenderGrass : MonoBehaviour
     {
         commandBuf?.Release();
         commandBuf = null;
+    }
+
+    private void InitializeChunk() {
+        GrassChunk chunk = new GrassChunk();
+
+        chunk.argsBuffer = new ComputeBuffer(1, 5 * sizeof(uint), ComputeBufferType.IndirectArguments);
+        chunk.argsBuffer.SetData(args);
     }
 
     void Update()
