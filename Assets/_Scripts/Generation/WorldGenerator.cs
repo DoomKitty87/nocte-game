@@ -11,6 +11,7 @@ using Unity.Mathematics;
 using Unity.Jobs;
 using Unity.Burst;
 using Unity.Collections;
+using IEnumerator = System.Collections.IEnumerator;
 
 public class WorldGenerator : MonoBehaviour
 {
@@ -676,7 +677,7 @@ public class WorldGenerator : MonoBehaviour
   private struct BakeColliderJob : IJobParallelFor
   {
 
-    public NativeArray<int> meshIds;
+    [DeallocateOnJobCompletion] public NativeArray<int> meshIds;
 
     public void Execute(int index)
     {
@@ -687,7 +688,7 @@ public class WorldGenerator : MonoBehaviour
 
   }
 
-  private (JobHandle, NativeArray<int>) ExecuteBake(int[] indices) {
+  private JobHandle ExecuteBake(int[] indices) {
     Mesh[] meshes = new Mesh[indices.Length];
     for (int i = 0; i < indices.Length; i++) {
       meshes[i] = _tilePool[indices[i]].mesh;
@@ -703,17 +704,16 @@ public class WorldGenerator : MonoBehaviour
     };
     
     JobHandle handle = job.Schedule(meshIds.Length, 1);
-    return (handle, meshIds);
+    return handle;
   }
 
-  private System.Collections.IEnumerator BakeColliders() {
+  private IEnumerator BakeColliders() {
     int[] indices = _frameColliderBakeBuffer.ToArray();
-    (JobHandle, NativeArray<int>) jobData = ExecuteBake(indices);
-    while (!jobData.Item1.IsCompleted) {
+    JobHandle jobHandle = ExecuteBake(indices);
+    while (!jobHandle.IsCompleted) {
       yield return null;
     }
-    jobData.Item1.Complete();
-    jobData.Item2.Dispose();
+    jobHandle.Complete();
     for (int i = 0; i < indices.Length; i++) {
       if (!_tilePool[indices[i]].meshCollider) _tilePool[indices[i]].meshCollider = _tilePool[indices[i]].obj.AddComponent<MeshCollider>();
       _tilePool[indices[i]].meshCollider.enabled = true;
