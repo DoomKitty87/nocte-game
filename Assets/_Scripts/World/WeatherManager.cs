@@ -1,16 +1,15 @@
 using UnityEngine;
-using System.Collections.Generic;
 
 public class WeatherManager : MonoBehaviour
 {
 
-  [Tooltip("Day/night speed, in seconds per full cycle.")];
+  [Tooltip("Day/night speed, in seconds per full cycle.")]
   [SerializeField] private float _dayNightCycleSpeed;
 
-  [Tooltip("Density of clouds over time.")];
+  [Tooltip("Density of clouds over time.")]
   [SerializeField] private AnimationCurve _cloudDensityCurve;
 
-  [Tooltip("Density of rain over time.")];
+  [Tooltip("Density of rain over time.")]
   [SerializeField] private AnimationCurve _rainDensityCurve;
 
   [SerializeField] private WorldGenerator _worldGenerator;
@@ -24,7 +23,7 @@ public class WeatherManager : MonoBehaviour
   private int _seed;
 
   private void Start() {
-    _seed = _worldGenerator.GetSeedHash();
+    _seed = (int)_worldGenerator.GetSeedHash();
     _weatherPhases = new Vector2(Mathf.PerlinNoise(_seed, _seed), Mathf.PerlinNoise(-_seed, -_seed));
   }
 
