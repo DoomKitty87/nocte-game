@@ -5864,6 +5864,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257, type: 3}
+    - {fileID: 4730771153208786634, guid: 862d92a67177d4c7b84ab88d6b6e0257, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents:
@@ -5894,9 +5895,10 @@ MonoBehaviour:
   _tileCount: 51
   _size: 16
   _resolution: 12
-  _maxUpdatesPerFrame: 0.1
+  _maxUpdatesPerFrame: 0.25
   _enableColliders: 1
   _colliderRange: 5
+  _forceBakeThreshold: 50
   _material: {fileID: 2100000, guid: 9b13907d982f93045a90c3127b8e3ecd, type: 2}
   _noiseParameters:
     octaves: 10
