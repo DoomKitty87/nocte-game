@@ -127,6 +127,8 @@ public class WorldGenerator : MonoBehaviour
   [SerializeField] private bool _enableColliders;
   [Tooltip("Maximum distance from player with colliders.")]
   [SerializeField] private int _colliderRange;
+  [Tooltip("Threshold to force colliders to update.")]
+  [SerializeField] private int _forceBakeThreshold;
   [Tooltip("Material for world mesh.")]
   [SerializeField] private Material _material;
   [SerializeField] private AmalgamNoiseParams _noiseParameters;
@@ -243,23 +245,23 @@ public class WorldGenerator : MonoBehaviour
   }
 
   private void Update() {
-    if (_frameColliderBakeBuffer.Count > 0 && _generateQueue.Count == 0) {
-        BakeColliders();
+    if ((_frameColliderBakeBuffer.Count > 0 && _generateQueue.Count == 0) || _frameColliderBakeBuffer.Count > _forceBakeThreshold) {
+      StartCoroutine(BakeColliders());
     }
     while (updatesLeft > 0) {
       if (_updateQueue.Count > 0 && _generateQueue.Count == 0) {
-          UpdateTile(_updateQueue[0]);
-          _updateQueue.RemoveAt(0);
-          if (_updateQueue.Count == 0) UpdateWaterMesh();
-          updatesLeft--;
+        UpdateTile(_updateQueue[0]);
+        _updateQueue.RemoveAt(0);
+        if (_updateQueue.Count == 0) UpdateWaterMesh();
+        updatesLeft--;
       } else break;
     }
     for (int i = 0; i < _maxUpdatesPerFrame * 20; i++) {
-        if (_generateQueue.Count > 0) {
-            GenerateTile(_generateQueue[0][0], _generateQueue[0][1], _generateQueue[0][2]);
-            _generateQueue.RemoveAt(0);
-            if (Time.timeScale == 0f) Time.timeScale = 1f;
-        } else break;
+      if (_generateQueue.Count > 0) {
+        GenerateTile(_generateQueue[0][0], _generateQueue[0][1], _generateQueue[0][2]);
+        _generateQueue.RemoveAt(0);
+        if (Time.timeScale == 0f) Time.timeScale = 1f;
+      } else break;
     }
     updatesLeft += _maxUpdatesPerFrame;
     updatesLeft = Mathf.Min(updatesLeft, Mathf.Max(_maxUpdatesPerFrame, 1));
@@ -685,7 +687,7 @@ public class WorldGenerator : MonoBehaviour
 
   }
 
-  private void ExecuteBake(int[] indices) {
+  private (JobHandle, NativeArray<int>) ExecuteBake(int[] indices) {
     Mesh[] meshes = new Mesh[indices.Length];
     for (int i = 0; i < indices.Length; i++) {
       meshes[i] = _tilePool[indices[i]].mesh;
@@ -701,14 +703,17 @@ public class WorldGenerator : MonoBehaviour
     };
     
     JobHandle handle = job.Schedule(meshIds.Length, 1);
-    handle.Complete();
-    meshIds.Dispose();
-
+    return (handle, meshIds);
   }
 
-  private void BakeColliders() {
+  private System.Collections.IEnumerator BakeColliders() {
     int[] indices = _frameColliderBakeBuffer.ToArray();
-    ExecuteBake(indices);
+    (JobHandle, NativeArray<int>) jobData = ExecuteBake(indices);
+    while (!jobData.Item1.IsCompleted) {
+      yield return null;
+    }
+    jobData.Item1.Complete();
+    jobData.Item2.Dispose();
     for (int i = 0; i < indices.Length; i++) {
       if (!_tilePool[indices[i]].meshCollider) _tilePool[indices[i]].meshCollider = _tilePool[indices[i]].obj.AddComponent<MeshCollider>();
       _tilePool[indices[i]].meshCollider.enabled = true;
