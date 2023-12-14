@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 1358.7433, g: 1321.9159, b: 1428.4622, a: 1}
+  m_IndirectSpecularColor: {r: 1057.3856, g: 1045.5214, b: 1153.0992, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -1607,7 +1607,7 @@ MonoBehaviour:
   priority: 0
   blendDistance: 0
   weight: 1
-  sharedProfile: {fileID: 11400000, guid: ec45d12b037b943c883d13a45d1e2603, type: 2}
+  sharedProfile: {fileID: 11400000, guid: ed50cdbd5e2854f8abde4770fad595af, type: 2}
 --- !u!4 &1004352485
 Transform:
   m_ObjectHideFlags: 0
@@ -5807,11 +5807,177 @@ PrefabInstance:
       propertyPath: _biomes.Array.data[2].noiseLayers.Array.data[0].primaryEase.m_Curve.Array.data[1].tangentMode
       value: 34
       objectReference: {fileID: 0}
+    - target: {fileID: 7336471431426695701, guid: 862d92a67177d4c7b84ab88d6b6e0257,
+        type: 3}
+      propertyPath: _cloudVolume
+      value: 
+      objectReference: {fileID: 11400000, guid: ed50cdbd5e2854f8abde4770fad595af,
+        type: 2}
+    - target: {fileID: 7336471431426695701, guid: 862d92a67177d4c7b84ab88d6b6e0257,
+        type: 3}
+      propertyPath: _maxWindSpeed
+      value: 250
+      objectReference: {fileID: 0}
+    - target: {fileID: 7336471431426695701, guid: 862d92a67177d4c7b84ab88d6b6e0257,
+        type: 3}
+      propertyPath: _sunTransform
+      value: 
+      objectReference: {fileID: 76653203}
+    - target: {fileID: 7336471431426695701, guid: 862d92a67177d4c7b84ab88d6b6e0257,
+        type: 3}
+      propertyPath: _windCycleSpeed
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7336471431426695701, guid: 862d92a67177d4c7b84ab88d6b6e0257,
+        type: 3}
+      propertyPath: _worldGenerator
+      value: 
+      objectReference: {fileID: 4258144910533491457}
+    - target: {fileID: 7336471431426695701, guid: 862d92a67177d4c7b84ab88d6b6e0257,
+        type: 3}
+      propertyPath: _cloudCycleSpeed
+      value: 0.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7336471431426695701, guid: 862d92a67177d4c7b84ab88d6b6e0257,
+        type: 3}
+      propertyPath: _windSpeedCurve.m_Curve.Array.size
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 7336471431426695701, guid: 862d92a67177d4c7b84ab88d6b6e0257,
+        type: 3}
+      propertyPath: _cloudDensityCurve.m_Curve.Array.size
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 7336471431426695701, guid: 862d92a67177d4c7b84ab88d6b6e0257,
+        type: 3}
+      propertyPath: _windSpeedCurve.m_Curve.Array.data[1].time
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 7336471431426695701, guid: 862d92a67177d4c7b84ab88d6b6e0257,
+        type: 3}
+      propertyPath: _windSpeedCurve.m_Curve.Array.data[2].time
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7336471431426695701, guid: 862d92a67177d4c7b84ab88d6b6e0257,
+        type: 3}
+      propertyPath: _windSpeedCurve.m_Curve.Array.data[0].value
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 7336471431426695701, guid: 862d92a67177d4c7b84ab88d6b6e0257,
+        type: 3}
+      propertyPath: _windSpeedCurve.m_Curve.Array.data[1].value
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7336471431426695701, guid: 862d92a67177d4c7b84ab88d6b6e0257,
+        type: 3}
+      propertyPath: _windSpeedCurve.m_Curve.Array.data[2].value
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 7336471431426695701, guid: 862d92a67177d4c7b84ab88d6b6e0257,
+        type: 3}
+      propertyPath: _cloudDensityCurve.m_Curve.Array.data[1].time
+      value: 0.44314265
+      objectReference: {fileID: 0}
+    - target: {fileID: 7336471431426695701, guid: 862d92a67177d4c7b84ab88d6b6e0257,
+        type: 3}
+      propertyPath: _cloudDensityCurve.m_Curve.Array.data[2].time
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7336471431426695701, guid: 862d92a67177d4c7b84ab88d6b6e0257,
+        type: 3}
+      propertyPath: _windSpeedCurve.m_Curve.Array.data[1].inSlope
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7336471431426695701, guid: 862d92a67177d4c7b84ab88d6b6e0257,
+        type: 3}
+      propertyPath: _windSpeedCurve.m_Curve.Array.data[2].inSlope
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7336471431426695701, guid: 862d92a67177d4c7b84ab88d6b6e0257,
+        type: 3}
+      propertyPath: _cloudDensityCurve.m_Curve.Array.data[1].value
+      value: 0.88882375
+      objectReference: {fileID: 0}
+    - target: {fileID: 7336471431426695701, guid: 862d92a67177d4c7b84ab88d6b6e0257,
+        type: 3}
+      propertyPath: _cloudDensityCurve.m_Curve.Array.data[2].value
+      value: 0.8
+      objectReference: {fileID: 0}
+    - target: {fileID: 7336471431426695701, guid: 862d92a67177d4c7b84ab88d6b6e0257,
+        type: 3}
+      propertyPath: _windSpeedCurve.m_Curve.Array.data[1].inWeight
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7336471431426695701, guid: 862d92a67177d4c7b84ab88d6b6e0257,
+        type: 3}
+      propertyPath: _windSpeedCurve.m_Curve.Array.data[1].outSlope
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7336471431426695701, guid: 862d92a67177d4c7b84ab88d6b6e0257,
+        type: 3}
+      propertyPath: _windSpeedCurve.m_Curve.Array.data[2].inWeight
+      value: 0.33333334
+      objectReference: {fileID: 0}
+    - target: {fileID: 7336471431426695701, guid: 862d92a67177d4c7b84ab88d6b6e0257,
+        type: 3}
+      propertyPath: _windSpeedCurve.m_Curve.Array.data[2].outSlope
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7336471431426695701, guid: 862d92a67177d4c7b84ab88d6b6e0257,
+        type: 3}
+      propertyPath: _windSpeedCurve.m_Curve.Array.data[1].outWeight
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7336471431426695701, guid: 862d92a67177d4c7b84ab88d6b6e0257,
+        type: 3}
+      propertyPath: _windSpeedCurve.m_Curve.Array.data[2].outWeight
+      value: 0.33333334
+      objectReference: {fileID: 0}
+    - target: {fileID: 7336471431426695701, guid: 862d92a67177d4c7b84ab88d6b6e0257,
+        type: 3}
+      propertyPath: _cloudDensityCurve.m_Curve.Array.data[1].inSlope
+      value: 0.011520346
+      objectReference: {fileID: 0}
+    - target: {fileID: 7336471431426695701, guid: 862d92a67177d4c7b84ab88d6b6e0257,
+        type: 3}
+      propertyPath: _cloudDensityCurve.m_Curve.Array.data[1].inWeight
+      value: 0.33333334
+      objectReference: {fileID: 0}
+    - target: {fileID: 7336471431426695701, guid: 862d92a67177d4c7b84ab88d6b6e0257,
+        type: 3}
+      propertyPath: _cloudDensityCurve.m_Curve.Array.data[1].outSlope
+      value: 0.011520346
+      objectReference: {fileID: 0}
+    - target: {fileID: 7336471431426695701, guid: 862d92a67177d4c7b84ab88d6b6e0257,
+        type: 3}
+      propertyPath: _cloudDensityCurve.m_Curve.Array.data[1].outWeight
+      value: 0.3447155
+      objectReference: {fileID: 0}
     - target: {fileID: 7828621975473438852, guid: 862d92a67177d4c7b84ab88d6b6e0257,
         type: 3}
       propertyPath: m_Name
       value: Holder
       objectReference: {fileID: 0}
+    - target: {fileID: 8819276947174590073, guid: 862d92a67177d4c7b84ab88d6b6e0257,
+        type: 3}
+      propertyPath: _lakeObject
+      value: 
+      objectReference: {fileID: 1865415592}
+    - target: {fileID: 8819276947174590073, guid: 862d92a67177d4c7b84ab88d6b6e0257,
+        type: 3}
+      propertyPath: _structures
+      value: 
+      objectReference: {fileID: 1849557963}
+    - target: {fileID: 8819276947174590073, guid: 862d92a67177d4c7b84ab88d6b6e0257,
+        type: 3}
+      propertyPath: _storyStructures
+      value: 
+      objectReference: {fileID: 1849557962}
+    - target: {fileID: 8819276947174590073, guid: 862d92a67177d4c7b84ab88d6b6e0257,
+        type: 3}
+      propertyPath: _riverParameters.obj
+      value: 
+      objectReference: {fileID: 1610259047}
     - target: {fileID: 8951891336655120199, guid: 862d92a67177d4c7b84ab88d6b6e0257,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -5863,156 +6029,23 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents:
-    - {fileID: 959107068463477693, guid: 862d92a67177d4c7b84ab88d6b6e0257, type: 3}
-    - {fileID: 4730771153208786634, guid: 862d92a67177d4c7b84ab88d6b6e0257, type: 3}
+    - {fileID: 0}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 7828621975473438852, guid: 862d92a67177d4c7b84ab88d6b6e0257,
-        type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 4258144910533491457}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 862d92a67177d4c7b84ab88d6b6e0257, type: 3}
---- !u!1 &4258144910533491456 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 7828621975473438852, guid: 862d92a67177d4c7b84ab88d6b6e0257,
+--- !u!114 &4258144910533491457 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8819276947174590073, guid: 862d92a67177d4c7b84ab88d6b6e0257,
     type: 3}
   m_PrefabInstance: {fileID: 4258144910533491455}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &4258144910533491457
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4258144910533491456}
+  m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 67c43eb278576c646b814952f91643c8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _seed: 0
-  _tileCount: 51
-  _size: 16
-  _resolution: 12
-  _maxUpdatesPerFrame: 0.25
-  _enableColliders: 1
-  _colliderRange: 5
-  _forceBakeThreshold: 50
-  _material: {fileID: 2100000, guid: 9b13907d982f93045a90c3127b8e3ecd, type: 2}
-  _noiseParameters:
-    octaves: 10
-    lacunarity: 2
-    persistence: 0.5
-    sharpnessScale: 2500
-    sharpnessAmplitude: 0.2
-    sharpnessMean: 0.5
-    scaleScale: 500
-    scaleAmplitude: 0
-    scaleMean: 3000
-    amplitudeScale: 5000
-    amplitudeAmplitude: 1400
-    amplitudeMean: 800
-    warpStrengthScale: 2000
-    warpStrengthAmplitude: 0.2
-    warpStrengthMean: 1
-    warpScaleScale: 1200
-    warpScaleAmplitude: 0
-    warpScaleMean: 2500
-  _refreshButton: 0
-  _lodLevels:
-  - distance: 2
-    factor: 2
-  - distance: 3
-    factor: 1
-  _defaultLOD: 0
-  _enableRivers: 1
-  _riverParameters:
-    scale: 2500
-    amplitude: 15
-    octaves: 2
-    lacunarity: 2
-    persistence: 0.5
-    warpScale: 500
-    warpStrength: 0
-    waterLevel: 0
-    noiseCurve:
-      serializedVersion: 2
-      m_Curve:
-      - serializedVersion: 3
-        time: 0
-        value: 1
-        inSlope: 0
-        outSlope: 0
-        tangentMode: 0
-        weightedMode: 0
-        inWeight: 0
-        outWeight: 0.33333334
-      - serializedVersion: 3
-        time: 0.08
-        value: 0
-        inSlope: 0
-        outSlope: 0
-        tangentMode: 0
-        weightedMode: 0
-        inWeight: 0.33333334
-        outWeight: 0
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-      m_RotationOrder: 4
-    heightCurve:
-      serializedVersion: 2
-      m_Curve:
-      - serializedVersion: 3
-        time: 0
-        value: 1
-        inSlope: 0
-        outSlope: 0
-        tangentMode: 0
-        weightedMode: 0
-        inWeight: 0
-        outWeight: 0
-      - serializedVersion: 3
-        time: 0.7
-        value: 0
-        inSlope: 0
-        outSlope: 0
-        tangentMode: 0
-        weightedMode: 2
-        inWeight: 0.33333334
-        outWeight: 0.33333334
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-      m_RotationOrder: 4
-    normalCurve:
-      serializedVersion: 2
-      m_Curve:
-      - serializedVersion: 3
-        time: 0.4
-        value: 0
-        inSlope: 2
-        outSlope: 2
-        tangentMode: 0
-        weightedMode: 0
-        inWeight: 0
-        outWeight: 0
-      - serializedVersion: 3
-        time: 1
-        value: 1
-        inSlope: 0
-        outSlope: 0
-        tangentMode: 0
-        weightedMode: 0
-        inWeight: 0
-        outWeight: 0
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-      m_RotationOrder: 4
-    obj: {fileID: 1610259047}
-  _lakePlaneHeight: 350
-  _lakeObject: {fileID: 1865415592}
-  _structures: {fileID: 1849557963}
-  _storyStructures: {fileID: 1849557962}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
