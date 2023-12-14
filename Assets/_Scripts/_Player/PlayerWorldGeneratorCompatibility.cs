@@ -10,8 +10,8 @@ public class PlayerWorldGeneratorCompatibility : MonoBehaviour
     [SerializeField] private float _timeToInitialize;
     private bool _hasInitialized;
 
-    private Rigidbody _rb;
-    private RigidbodyConstraints _rbConstraints;
+    // private Rigidbody _rb;
+    // private RigidbodyConstraints _rbConstraints;
 
     private void Awake() {
         if (enabled && _worldGeneratorObject == null) {
@@ -22,10 +22,6 @@ public class PlayerWorldGeneratorCompatibility : MonoBehaviour
     }
 
     private void Start() {
-        _rb = GetComponent<Rigidbody>();
-        _rbConstraints = _rb.constraints;
-        _rb.constraints = RigidbodyConstraints.FreezeAll;
-        
         // It works so i aint fixing it
         GetComponent<PlayerController>().enabled = false;
     }
@@ -41,7 +37,6 @@ public class PlayerWorldGeneratorCompatibility : MonoBehaviour
             if (Physics.Raycast(Vector3.up * 10000, Vector3.down, out var hit, Mathf.Infinity, _groundMask)) {
                 transform.position = hit.point + Vector3.up * 2f;
                 _hasInitialized = true;
-                _rb.constraints = _rbConstraints;
                 GetComponent<PlayerController>().enabled = true;
             }
         }

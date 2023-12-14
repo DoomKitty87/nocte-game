@@ -254,7 +254,7 @@ public class PlayerMovement : MonoBehaviour
         return Vector3.ProjectOnPlane(direction, slopeHit.normal).normalized;
     }
 
-    private bool enableMovementOnNextTouch;
+    // private bool enableMovementOnNextTouch;
     
     public void JumpToPosition(Vector3 targetPosition, float trajectoryHeight) {
         activeGrapple = true;
@@ -273,7 +273,7 @@ public class PlayerMovement : MonoBehaviour
     
     private Vector3 velocityToSet;
     private void SetVelocity() {
-        enableMovementOnNextTouch = true;
+        // enableMovementOnNextTouch = true;
         rb.velocity = velocityToSet;
     }
     

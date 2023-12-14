@@ -43,7 +43,7 @@ public class PlayerController : MonoBehaviour
     [HideInInspector] public bool _grounded;
     public bool _useGroundFriction = true;
 
-    [SerializeField] private float _centerMovement = 0.175f;
+    // [SerializeField] private float _centerMovement = 0.175f;
     private float _threshold = 0.01f;
     [SerializeField] private float _maxSlopeAngle = 35;
 
