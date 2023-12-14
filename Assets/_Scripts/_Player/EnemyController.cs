@@ -2,13 +2,14 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.ProBuilder.MeshOperations;
 
-public class PlayerController : MonoBehaviour
+public class EnemyController : MonoBehaviour
 {
     public bool CanMove { get; private set; } = true;
 
     [SerializeField] private Transform _orientation;
-    [SerializeField] private Transform _camera;
+    [SerializeField] private GameObject _player;
 
     private Rigidbody _rb;
 
@@ -27,12 +28,6 @@ public class PlayerController : MonoBehaviour
             Physics.gravity = Vector3.down * value;
         }
     }
-    
-    [Space(10)] 
-    [Header("Keybinds")] 
-    [SerializeField] private KeyCode _jumpKey = KeyCode.Space;
-    // [SerializeField] private KeyCode _runKey = KeyCode.LeftShift;
-    [SerializeField] private KeyCode _crouchKey = KeyCode.LeftControl;
     
     [Space(10)]
     [Header("Moving")] 
@@ -62,12 +57,23 @@ public class PlayerController : MonoBehaviour
     
     // Input
     private Vector3 _inputVector;
+    private float _directionXKey, _directionYKey, _directionZKey;
+    private bool _jumpKey, _crouchKey;
     private bool _jumping, _sprinting, _crouching;
 
     // Sliding
     private Vector3 _normalVector = Vector3.up;
     private Vector3 _wallNormalVector;
 
+    private void CreateInput() {
+        transform.LookAt(_player.transform);
+        _directionXKey = 1f;
+        _directionYKey = 0f;
+        _directionZKey = 0f;
+        _jumpKey = false;
+        _crouchKey = false;
+    }
+    
     private Vector2 FindVelRelativeToLook() {
         float lookAngle = _orientation.transform.eulerAngles.y;
         float moveAngle = Mathf.Atan2(_rb.velocity.x, _rb.velocity.z) * Mathf.Rad2Deg;
@@ -135,6 +141,7 @@ public class PlayerController : MonoBehaviour
     }
 
     private void Update() {
+        CreateInput();
         HandleInput();
     }
 
@@ -146,27 +153,9 @@ public class PlayerController : MonoBehaviour
     }
 
     private void HandleInput() {
-        _inputVector = new Vector3(Input.GetAxisRaw("Horizontal"), 0, Input.GetAxisRaw("Vertical")).normalized;
-        _jumping = Input.GetKey(_jumpKey);
-        _crouching = Input.GetKey(_crouchKey);
-
-        if (Input.GetKeyDown(_crouchKey)) StartCrouch();
-        else if (Input.GetKeyUp(_crouchKey)) StopCrouch();
-    }
-
-    private void StartCrouch() {
-        transform.localScale = _crouchScale;
-        
-        // TODO: Fix this translation, possibly import lerp?
-        transform.Translate(Vector3.down * (_playerScale.y / 2));
-        if (_rb.velocity.magnitude > _minimumSlideMomentum && _grounded) {
-            _rb.AddForce(_orientation.forward * _slideForce);
-        }
-    }
-
-    private void StopCrouch() {
-        transform.localScale = _playerScale;
-        transform.Translate(Vector3.up * (_playerScale.y / 2));
+        _inputVector = new Vector3(_directionXKey, _directionYKey, _directionZKey).normalized;
+        _jumping = _jumpKey;
+        _crouching = _crouchKey;
     }
 
     private void HandleMovement() {
@@ -174,7 +163,7 @@ public class PlayerController : MonoBehaviour
         
         Vector2 magnitude = FindVelRelativeToLook();
         
-        CalculateFriction(_inputVector.x, _inputVector.z, magnitude);
+        // CalculateFriction(_inputVector.x, _inputVector.z, magnitude);
         
         if (_grounded && _readyToJump && _jumping) Jump();
         
