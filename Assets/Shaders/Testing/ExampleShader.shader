@@ -19,6 +19,7 @@ Shader "ExampleShader"
             };
 
             uniform float4x4 _ObjectToWorld;
+            int _numberOfInstances;
 
             v2f vert(appdata_base v, uint svInstanceID : SV_InstanceID)
             {
@@ -26,7 +27,7 @@ Shader "ExampleShader"
                 v2f o;
                 uint cmdID = GetCommandID(0);
                 uint instanceID = GetIndirectInstanceID(svInstanceID);
-                float4 wpos = mul(_ObjectToWorld, v.vertex + float4(instanceID, cmdID, 0, 0));
+                float4 wpos = mul(_ObjectToWorld, v.vertex + float4(instanceID % _numberOfInstances * 1.5, floor(instanceID / (_numberOfInstances * _numberOfInstances)) * 1.5, (floor(instanceID / _numberOfInstances) % _numberOfInstances) * 1.5, 0));
                 o.pos = mul(UNITY_MATRIX_VP, wpos);
                 o.color = float4(cmdID & 1 ? 0.0f : 1.0f, cmdID & 1 ? 1.0f : 0.0f, instanceID / float(GetIndirectInstanceCount()), 0.0f);
                 return o;
