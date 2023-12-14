@@ -8,14 +8,23 @@ public class PlayerCombatCore : MonoBehaviour
   [Header("Dependencies")]
   public Camera _mainCamera;
   [SerializeField] private GameObject _weaponContainer;
-  [Header("Info")]
   [SerializeField] private WeaponItem _currentWeaponItem;
+  [Header("Info - Dont change in editor")]
   [SerializeField] private GameObject _weaponInstance;
   [SerializeField] private WeaponScript _instanceScript;
   
   private bool _fire1LastFrame;
   private bool _fire2LastFrame;
 
+
+  public void SetWeaponItem(WeaponItem weaponItem) {
+    _currentWeaponItem = weaponItem;
+    if (_weaponInstance != null) {
+      Destroy(_weaponInstance);
+    }
+    InstanceWeaponItem();
+  }
+  
   private void InstanceWeaponItem() {
     GameObject instance = Instantiate(_currentWeaponItem._weaponPrefab, _weaponContainer.transform);
     _weaponInstance = instance;
