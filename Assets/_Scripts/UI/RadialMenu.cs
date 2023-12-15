@@ -16,13 +16,20 @@ public class RadialMenu : MonoBehaviour
 	[Header("Settings")] 
 	[SerializeField][Range(1, 16)] private int _selectionCount = 4;
 	[SerializeField] private float _separatorOffset = 5f;
-
+	[SerializeField] private SelectionType _selectionType = SelectionType.Step;
+	[Serializable]
+	private enum SelectionType {
+		Instant,
+		Continuous,
+		Step,
+	}
+	[SerializeField] private float _selectDeadZone = 5f;
+	
 	private GameObject[] _separators;
 	
 	private void ConfigureSeparator(GameObject separator, GameObject center, float distanceOffset) {
 		RectTransform rTransform = separator.GetComponent<RectTransform>();
 		rTransform.SetParent(center.GetComponent<RectTransform>());
-		// rTransform.position = new Vector3(0, 0, 0);
 		rTransform.pivot = new Vector2(0.5f, -distanceOffset/rTransform.rect.height);
 		rTransform.anchoredPosition = new Vector3(0, 0, 0);
 		rTransform.rotation = Quaternion.identity;
@@ -54,8 +61,31 @@ public class RadialMenu : MonoBehaviour
 			separator.GetComponent<RectTransform>().Rotate(0, 0, 360f / _selectionCount * i);
 		}
 	}
-
-
+	private void ConfigureSelector(GameObject selector, GameObject center) {
+		RectTransform selectorTransform = selector.GetComponent<RectTransform>();
+		selectorTransform.SetParent(center.GetComponent<RectTransform>());
+		selectorTransform.pivot = new Vector2(0, 0);
+		selectorTransform.anchoredPosition = new Vector3(0, 0, 0);
+		selectorTransform.rotation = Quaternion.identity;
+	}
+	private Vector2 GetMouseUV() {
+		Vector2 mousePosition = Input.mousePosition;
+		Vector2 uv = mousePosition / new Vector2(Screen.width, Screen.height);
+		return uv;
+	}
+	public void UpdateSelector() {
+		Vector2 mouseUV = GetMouseUV();
+		Vector2 mousefromCenter = mouseUV - Vector2.zero;
+		if (mousefromCenter.magnitude < _selectDeadZone) {
+			return;
+		}
+		switch (_selectionType) {
+			case (SelectionType.Instant):
+				// TODO: Oh god i have to review unit circle stuff
+				throw new NotImplementedException();
+		}
+	}
+	
 	private void Start() {
 		if (_menuCenter == null || _separatorGameObject == null || _selectorTransform == null) {
 			Debug.LogError($"{gameObject.name} RadialMenu: Missing references!");
