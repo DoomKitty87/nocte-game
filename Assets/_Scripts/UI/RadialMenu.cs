@@ -27,7 +27,12 @@ public class RadialMenu : MonoBehaviour
 		rTransform.anchoredPosition = new Vector3(0, 0, 0);
 		rTransform.rotation = Quaternion.identity;
 	}
-	
+	public void RemoveOldSeparators() {
+		// Doesn't remove initial separator
+		for (int i = 1; i < _separators.Length; i++) {
+			DestroyImmediate(_separators[i]);
+		}
+	}
 	public void GenerateSeparators() {
 		if (_separators != null) {
 			RemoveOldSeparators();
@@ -49,13 +54,7 @@ public class RadialMenu : MonoBehaviour
 			separator.GetComponent<RectTransform>().Rotate(0, 0, 360f / _selectionCount * i);
 		}
 	}
-	
-	public void RemoveOldSeparators() {
-		// Doesn't remove initial separator
-		for (int i = 1; i < _separators.Length; i++) {
-			DestroyImmediate(_separators[i]);
-		}
-	}
+
 
 	private void Start() {
 		if (_menuCenter == null || _separatorGameObject == null || _selectorTransform == null) {
