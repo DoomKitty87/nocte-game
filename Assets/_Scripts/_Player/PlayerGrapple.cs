@@ -15,7 +15,7 @@ public class PlayerGrapple : MonoBehaviour
     
     private LineRenderer _lineRenderer;
     private PlayerController _playerController;
-    private Rigidbody _rb;
+    public Rigidbody _rb;
     
     [Header("Grappling")]
     [SerializeField] private float _maxGrappleDistance;
@@ -45,7 +45,7 @@ public class PlayerGrapple : MonoBehaviour
     private void Start() {
         _playerController = GetComponent<PlayerController>();
         _lineRenderer = GetComponent<LineRenderer>();
-        _rb = GetComponent<Rigidbody>();
+        //_rb = GetComponent<Rigidbody>();
     }
 
     private void Update()

@@ -147,7 +147,6 @@ public class PlayerController : MonoBehaviour
 
     private void HandleInput() {
         _inputVector = new Vector3(Input.GetAxisRaw("Horizontal"), 0, Input.GetAxisRaw("Vertical")).normalized;
-        
         _jumping = Input.GetKey(_jumpKey);
         _crouching = Input.GetKey(_crouchKey);
 
