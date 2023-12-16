@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEditor.VersionControl;
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 // For now, only MnK support, console could be whenever
@@ -10,20 +11,32 @@ public class RadialMenu : MonoBehaviour
 {
 
 	[Header("References")] 
-	[Tooltip("Will be the parent of separator and selector GameObjects.")][SerializeField] private GameObject _menuCenter;
-	[SerializeField] private GameObject _separatorGameObject;
+	[FormerlySerializedAs("_menuCenter")]
+	[Tooltip("Will also be the parent of separator and selector GameObjects. MUST BE IN SCREEN CENTER")][SerializeField] private GameObject _menuContainer;
+	[Tooltip("Image Object used to denote selection differences")][SerializeField] private GameObject _separatorGameObject;
 	[SerializeField] private RectTransform _selectorTransform;
-	[Header("Settings")] 
+	public enum SeperatorOutwardsDirection {
+		Up,
+		Down,
+		Left,
+		Right,
+	}
+	[Header("Required Settings")] 
+	[SerializeField][Tooltip("Used so that all separators start pointing towards the right direction")] private SeperatorOutwardsDirection _seperatorOutwardsDirection = SeperatorOutwardsDirection.Up;
 	[SerializeField][Range(1, 16)] private int _selectionCount = 4;
-	[SerializeField] private float _separatorOffset = 5f;
+	[Header("Settings")]
+	[SerializeField] private float _separatorOffsetFromCenter = 150f;
 	[SerializeField] private SelectionType _selectionType = SelectionType.Step;
-	[Serializable]
-	private enum SelectionType {
+	public enum SelectionType {
 		Instant,
 		Continuous,
 		Step,
 	}
-	[SerializeField] private float _selectDeadZone = 5f;
+	[SerializeField][Tooltip("Unit is distance from center of menu to closest screen edge.")][Range(0, 1)] private float _selectionDeadZone = 0.2f;
+	[SerializeField][Tooltip("Used for fixing visual issues with the source selector image's rotation.")] private float _selectorRotationOffsetDeg = 45;
+	[Header("For Step Only")]
+	[SerializeField] private float _stepEaseSpeed = 10f;
+
 	
 	private GameObject[] _separators;
 	
@@ -31,6 +44,20 @@ public class RadialMenu : MonoBehaviour
 		RectTransform rTransform = separator.GetComponent<RectTransform>();
 		rTransform.SetParent(center.GetComponent<RectTransform>());
 		rTransform.pivot = new Vector2(0.5f, -distanceOffset/rTransform.rect.height);
+		switch (_seperatorOutwardsDirection) {
+			case SeperatorOutwardsDirection.Up:
+				rTransform.pivot = new Vector2(0.5f, -distanceOffset/rTransform.rect.height);
+				break;
+			case SeperatorOutwardsDirection.Down:
+				rTransform.pivot = new Vector2(0.5f, distanceOffset/rTransform.rect.height);
+				break;
+			case SeperatorOutwardsDirection.Left:
+				rTransform.pivot = new Vector2(distanceOffset/rTransform.rect.width, 0.5f);
+				break;
+			case SeperatorOutwardsDirection.Right:
+				rTransform.pivot = new Vector2(-distanceOffset/rTransform.rect.width, 0.5f);
+				break;
+		}
 		rTransform.anchoredPosition = new Vector3(0, 0, 0);
 		rTransform.rotation = Quaternion.identity;
 	}
@@ -40,6 +67,27 @@ public class RadialMenu : MonoBehaviour
 			DestroyImmediate(_separators[i]);
 		}
 	}
+
+	private void SetSeparatorRotation(int index, GameObject separator) {
+		float stepDegrees = 360f / _selectionCount;
+		float rotation = 0;
+		switch (_seperatorOutwardsDirection) {
+			case SeperatorOutwardsDirection.Up:
+				rotation = stepDegrees * index - 90;
+				break;
+			case SeperatorOutwardsDirection.Down:
+				rotation = stepDegrees * index + 90;
+				break;
+			case SeperatorOutwardsDirection.Left:
+				rotation = stepDegrees * index - 180;
+				break;
+			case SeperatorOutwardsDirection.Right:
+				rotation = stepDegrees * index;
+				break;
+		}
+		separator.GetComponent<RectTransform>().Rotate(0, 0, rotation);
+	}
+	
 	public void GenerateSeparators() {
 		if (_separators != null) {
 			RemoveOldSeparators();
@@ -51,16 +99,17 @@ public class RadialMenu : MonoBehaviour
 			GameObject separator;
 			if (i == 0) {
 				separator = _separatorGameObject;
-				ConfigureSeparator(separator, _menuCenter, _separatorOffset);
+				ConfigureSeparator(separator, _menuContainer, _separatorOffsetFromCenter);
 			}
 			else {
-				separator = Instantiate(_separatorGameObject, _menuCenter.transform);
-				ConfigureSeparator(separator, _menuCenter, _separatorOffset);
+				separator = Instantiate(_separatorGameObject, _menuContainer.transform);
+				ConfigureSeparator(separator, _menuContainer, _separatorOffsetFromCenter);
 			}
 			_separators[i] = separator;
-			separator.GetComponent<RectTransform>().Rotate(0, 0, 360f / _selectionCount * i);
+			SetSeparatorRotation(i, separator);
 		}
 	}
+	
 	private void ConfigureSelector(GameObject selector, GameObject center) {
 		RectTransform selectorTransform = selector.GetComponent<RectTransform>();
 		selectorTransform.SetParent(center.GetComponent<RectTransform>());
@@ -68,30 +117,57 @@ public class RadialMenu : MonoBehaviour
 		selectorTransform.anchoredPosition = new Vector3(0, 0, 0);
 		selectorTransform.rotation = Quaternion.identity;
 	}
+	
 	private Vector2 GetMouseUV() {
 		Vector2 mousePosition = Input.mousePosition;
 		Vector2 uv = mousePosition / new Vector2(Screen.width, Screen.height);
+		uv -= new Vector2(0.5f, 0.5f);
+		uv *= 2;
+		uv = new Vector2(uv.x * Screen.width / Screen.height, uv.y);
 		return uv;
 	}
+	
+	private (float, float) GetCurrentStepBounds(float currentDegrees) {
+		float parentRotation = _menuContainer.GetComponent<RectTransform>().rotation.eulerAngles.z;
+		float stepDegrees = 360f / _selectionCount;
+		float stepsPassed = (currentDegrees - parentRotation) / stepDegrees;
+		(float, float) nearestStepBounds = (Mathf.Floor(stepsPassed) * stepDegrees + parentRotation, Mathf.Ceil(stepsPassed) * stepDegrees + parentRotation);
+		print($"{stepsPassed} | {nearestStepBounds}");
+		return nearestStepBounds;
+	}
+	
 	public void UpdateSelector() {
 		Vector2 mouseUV = GetMouseUV();
-		Vector2 mousefromCenter = mouseUV - Vector2.zero;
-		if (mousefromCenter.magnitude < _selectDeadZone) {
+		Vector2 mousefromCenter = mouseUV.normalized;
+		if (mouseUV.magnitude < _selectionDeadZone) {
 			return;
 		}
+		float rotationDegrees = Mathf.Atan2(mousefromCenter.y, mousefromCenter.x) * Mathf.Rad2Deg;
+		(float lowerBound, float upperBound) = GetCurrentStepBounds(rotationDegrees);
 		switch (_selectionType) {
-			case (SelectionType.Instant):
-				// TODO: Oh god i have to review unit circle stuff
-				throw new NotImplementedException();
+			case SelectionType.Instant:
+				_selectorTransform.rotation = Quaternion.Euler(0, 0, (lowerBound + upperBound) / 2 + _selectorRotationOffsetDeg);
+				break;
+			case SelectionType.Continuous:
+				_selectorTransform.rotation = Quaternion.Euler(0, 0, rotationDegrees);
+				break;
+			case SelectionType.Step:
+				_selectorTransform.rotation = Quaternion.Euler(0, 0, Mathf.LerpAngle(_selectorTransform.rotation.eulerAngles.z, (lowerBound + upperBound) / 2 + _selectorRotationOffsetDeg, Time.deltaTime * _stepEaseSpeed));
+				break;
 		}
+		// print($"{mousefromCenter.ToString()} | {rotationDegrees} | {(lowerBound + upperBound) / 2}");
 	}
 	
 	private void Start() {
-		if (_menuCenter == null || _separatorGameObject == null || _selectorTransform == null) {
+		if (_menuContainer == null || _separatorGameObject == null || _selectorTransform == null) {
 			Debug.LogError($"{gameObject.name} RadialMenu: Missing references!");
 			return;
 		}
 		GenerateSeparators();
+		ConfigureSelector(_selectorTransform.gameObject, _menuContainer);
 	}
 
+	private void Update() {
+		UpdateSelector();
+	}
 }
