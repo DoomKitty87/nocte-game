@@ -1944,6 +1944,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1054616982}
+  - component: {fileID: 1054616983}
   m_Layer: 0
   m_Name: UI ----------
   m_TagString: Untagged
@@ -1967,6 +1968,21 @@ Transform:
   - {fileID: 1642981362}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1054616983
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1054616981}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dfb467873254b8e4bb560b4164f86a2f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _menuActivationKey: 113
+  _menuFadeElement: {fileID: 1642981366}
+  _menuDotsEffect: {fileID: 1755835079}
 --- !u!1 &1077108755
 GameObject:
   m_ObjectHideFlags: 0
@@ -3352,8 +3368,8 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  _inDuration: 0
-  _outDuration: 0
+  _inDuration: 0.1
+  _outDuration: 0.1
   _OnFadeComplete:
     m_PersistentCalls:
       m_Calls: []
@@ -3713,6 +3729,7 @@ GameObject:
   - component: {fileID: 1755835076}
   - component: {fileID: 1755835078}
   - component: {fileID: 1755835077}
+  - component: {fileID: 1755835079}
   m_Layer: 0
   m_Name: Dots
   m_TagString: Untagged
@@ -3766,7 +3783,7 @@ MonoBehaviour:
   m_FillMethod: 1
   m_FillAmount: 1
   m_FillClockwise: 1
-  m_FillOrigin: 0
+  m_FillOrigin: 1
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
 --- !u!222 &1755835078
@@ -3777,6 +3794,44 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1755835075}
   m_CullTransparentMesh: 1
+--- !u!114 &1755835079
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1755835075}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2533f376d6dfedd499ead657b02e750e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _image: {fileID: 1755835077}
+  _fillDuration: 0.4
+  _fillCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 2
+      outSlope: 2
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
 --- !u!1 &1789773842
 GameObject:
   m_ObjectHideFlags: 0
