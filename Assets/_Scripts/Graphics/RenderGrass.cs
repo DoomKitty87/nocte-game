@@ -42,7 +42,7 @@ public class RenderGrass : MonoBehaviour
         GrassChunk chunk = new GrassChunk();
 
         chunk.argsBuffer = new ComputeBuffer(1, 5 * sizeof(uint), ComputeBufferType.IndirectArguments);
-        chunk.argsBuffer.SetData(args);
+        // chunk.argsBuffer.SetData(args);
     }
 
     void Update()
