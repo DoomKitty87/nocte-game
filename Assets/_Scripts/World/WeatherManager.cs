@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.HighDefinition;
+using UnityEngine.VFX;
 
 public class WeatherManager : MonoBehaviour
 {
@@ -11,6 +12,7 @@ public class WeatherManager : MonoBehaviour
   [SerializeField] private float _cloudCycleSpeed;
   [SerializeField] private float _windCycleSpeed;
   [SerializeField] private float _rainCycleSpeed;
+  [SerializeField] private int _rainMaxIntensity;
   [SerializeField] private float _maxWindSpeed;
 
   [Tooltip("Density of clouds over time.")]
@@ -25,6 +27,7 @@ public class WeatherManager : MonoBehaviour
   [SerializeField] private WorldGenerator _worldGenerator;
   [SerializeField] private VolumeProfile _cloudVolume;
   [SerializeField] private Transform _sunTransform;
+  [SerializeField] private VisualEffect _rainEffect;
   
 
   // X value represents day cycle, Y represents cloud density, and Z represents rain density.
@@ -62,5 +65,6 @@ public class WeatherManager : MonoBehaviour
     //_clouds.shapeFactor.value = _weatherState.y;
     _environment.windSpeed.value = _weatherState.z * _maxWindSpeed;
     _sunTransform.localRotation = Quaternion.AngleAxis(_weatherState.x * 360, Vector3.right) * _sunInitRot;
+    _rainEffect.SetInt("RainRate", (int) (_weatherState.z * _rainMaxIntensity));
   }
 }
