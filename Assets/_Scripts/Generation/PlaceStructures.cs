@@ -173,12 +173,12 @@ public class PlaceStructures : MonoBehaviour
       go.transform.parent = transform;
     }
   
-    for (int i = 0; i < _structurePositions.Length; i++) {
-      for (int j = i + 1; j < _structurePositions.Length; j++) {
-        GameObject obj = Instantiate(_roadObject, Vector3.zero, Quaternion.identity);
-        obj.GetComponent<RoadHandler>().SetRoadPositions(_structurePositions[i], _structurePositions[j]);
-      }
-    }
+    //for (int i = 0; i < _structurePositions.Length; i++) {
+    //  for (int j = i + 1; j < _structurePositions.Length; j++) {
+    //    GameObject obj = Instantiate(_roadObject, Vector3.zero, Quaternion.identity);
+    //    obj.GetComponent<RoadHandler>().SetRoadPositions(_structurePositions[i], _structurePositions[j]);
+    //  }
+    //}
   }
 
   private Vector3[] GeneratePillar(Vector3 vertexA, Vector3 vertexB) {
