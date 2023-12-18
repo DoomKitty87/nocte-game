@@ -731,7 +731,7 @@ public class WorldGenerator : MonoBehaviour
 
   private void UpdateMesh(Mesh targetMesh, int index) {
     targetMesh.normals = CalculateNormalsJobs(targetMesh);
-    //RiverPass(targetMesh, index);
+    RiverPass(targetMesh, index);
     targetMesh.triangles = CullTriangles(targetMesh, index);
     targetMesh.RecalculateBounds();
   }

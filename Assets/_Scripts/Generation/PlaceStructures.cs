@@ -14,6 +14,9 @@ public class PlaceStructures : MonoBehaviour
   [SerializeField] private Material _beamMaterial;
   [SerializeField] private float _groundInset;
   [SerializeField] private int _structureRenderDistance = 2500; // [World Units]
+  [SerializeField] private GameObject _roadObject;
+
+  private Vector3[] _structurePositions;
 
   private int[] _beamWindingOrder = {
     1, 2, 0, 1, 3, 2, // Bottom Face
@@ -25,6 +28,7 @@ public class PlaceStructures : MonoBehaviour
   };
 
   private void Start() {
+    _structurePositions = new Vector3[_outerStructures.Length + 1];
     Vector3 mainPosition = new Vector3(0, 0, 0);
     mainPosition.y = _worldGen.GetHeightValue(new Vector2(mainPosition.x, mainPosition.z));
     float heighta = _worldGen.GetHeightValue(new Vector2(mainPosition.x - 1, mainPosition.z));
@@ -35,6 +39,7 @@ public class PlaceStructures : MonoBehaviour
       new Vector3(0, heightd, 1) - new Vector3(0, heightc, -1)).normalized;
     // GameObject go = Instantiate(_centralStructure, mainPosition, Quaternion.FromToRotation(Vector3.up, normal));
     GameObject go = Instantiate(_centralStructure, mainPosition, Quaternion.identity);
+    _structurePositions[0] = mainPosition;
     Vector2 bounds;
     if (go.GetComponent<MeshFilter>()) bounds = go.GetComponent<MeshFilter>().mesh.bounds.size;
     else bounds = new Vector2(50, 50);
@@ -107,6 +112,7 @@ public class PlaceStructures : MonoBehaviour
         new Vector3(0, heightd, 1) - new Vector3(0, heightc, -1)).normalized;
       // go = Instantiate(_outerStructures[nodeChoice], outPosition, Quaternion.FromToRotation(Vector3.up, normal));
       go = Instantiate(_outerStructures[i], outPosition, Quaternion.identity);
+      _structurePositions[i + 1] = outPosition;
       if (go.GetComponent<MeshFilter>()) bounds = go.GetComponent<MeshFilter>().mesh.bounds.size;
       else bounds = new Vector2(50, 50);
       heighte = _worldGen.GetHeightValue(new Vector2(outPosition.x + bounds.x / 2, outPosition.z + bounds.y / 2));
@@ -165,6 +171,13 @@ public class PlaceStructures : MonoBehaviour
       }
 
       go.transform.parent = transform;
+    }
+  
+    for (int i = 0; i < _structurePositions.Length; i++) {
+      for (int j = i + 1; j < _structurePositions.Length; j++) {
+        GameObject obj = Instantiate(_roadObject, Vector3.zero, Quaternion.identity);
+        obj.GetComponent<RoadHandler>().SetRoadPositions(_structurePositions[i], _structurePositions[j]);
+      }
     }
   }
 

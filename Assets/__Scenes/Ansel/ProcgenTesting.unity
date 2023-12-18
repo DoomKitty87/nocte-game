@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 904.73285, g: 905.5595, b: 1012.8253, a: 1}
+  m_IndirectSpecularColor: {r: 907.11, g: 907.91345, b: 1015.46204, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -3408,6 +3408,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6456709365385668066, guid: 807785f75a4cabf4883bf2cc8fe88221,
         type: 3}
+      propertyPath: _rain
+      value: 
+      objectReference: {fileID: 1919250532}
+    - target: {fileID: 6456709365385668066, guid: 807785f75a4cabf4883bf2cc8fe88221,
+        type: 3}
       propertyPath: _timeToInitialize
       value: 1
       objectReference: {fileID: 0}
@@ -3442,10 +3447,6 @@ PrefabInstance:
         type: 3}
       insertIndex: -1
       addedObject: {fileID: 1401696302}
-    - targetCorrespondingSourceObject: {fileID: 2932733126285140160, guid: 807785f75a4cabf4883bf2cc8fe88221,
-        type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1919250530}
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 5364522919904099307, guid: 807785f75a4cabf4883bf2cc8fe88221,
         type: 3}
@@ -3556,6 +3557,8 @@ MonoBehaviour:
     type: 3}
   _groundInset: 5
   _structureRenderDistance: 2500
+  _roadObject: {fileID: 4150674377287508502, guid: 730c5440c1dd74f64a1065e15b475275,
+    type: 3}
 --- !u!114 &1849557963
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3865,10 +3868,10 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 0.8, z: 1}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 1829040277}
+  m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!73398921 &1919250531
 VFXRenderer:
@@ -6275,6 +6278,7 @@ SceneRoots:
   - {fileID: 160538195}
   - {fileID: 1849557961}
   - {fileID: 1829040276}
+  - {fileID: 1919250530}
   - {fileID: 76653203}
   - {fileID: 1610259049}
   - {fileID: 1865415592}
