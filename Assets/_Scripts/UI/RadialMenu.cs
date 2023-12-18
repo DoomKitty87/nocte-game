@@ -132,7 +132,6 @@ public class RadialMenu : MonoBehaviour
 		float stepDegrees = 360f / _selectionCount;
 		float stepsPassed = (currentDegrees - parentRotation) / stepDegrees;
 		(float, float) nearestStepBounds = (Mathf.Floor(stepsPassed) * stepDegrees + parentRotation, Mathf.Ceil(stepsPassed) * stepDegrees + parentRotation);
-		print($"{stepsPassed} | {nearestStepBounds}");
 		return nearestStepBounds;
 	}
 	
