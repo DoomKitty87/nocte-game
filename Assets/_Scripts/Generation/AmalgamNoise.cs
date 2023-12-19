@@ -140,7 +140,7 @@ public static class AmalgamNoise
         float warpValue = snoise(new float2(x * warpScale, z * warpScale)) * warpStrength;
         x += warpValue;
         z += warpValue;
-        value += snoise(new float2(x, z) * octaveAmp);
+        value += snoise(new float2(x, z)) * octaveAmp;
         normalization += octaveAmp;
       }
       
