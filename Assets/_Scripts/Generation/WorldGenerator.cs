@@ -427,6 +427,8 @@ public class WorldGenerator : MonoBehaviour
         }
       }
     }
+
+    _lakeObject.position = new Vector3(playerPos.x, _lakeObject.position.y, playerPos.y);
     
     _lastPlayerChunkX = playerXChunkScale;
     _lastPlayerChunkZ = playerZChunkScale;
