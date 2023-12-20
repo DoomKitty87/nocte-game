@@ -137,9 +137,9 @@ public class ModelGrass : MonoBehaviour {
         
         Vector3 c = new Vector3(0.0f, 0.0f, 0.0f);
         
-        c.y = 0.0f;
-        c.x = (-(chunkDim * 0.5f * numChunks) + chunkDim * xOffset) - transform.position.x;
-        c.z = (-(chunkDim * 0.5f * numChunks) + chunkDim * yOffset) - transform.position.z;
+        c.y = transform.position.y;
+        c.x = (-(chunkDim * 0.5f * numChunks) + chunkDim * xOffset) + transform.position.x;
+        c.z = (-(chunkDim * 0.5f * numChunks) + chunkDim * yOffset) + transform.position.z;
         c.x += chunkDim * 0.5f;
         c.z += chunkDim * 0.5f;
         
