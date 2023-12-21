@@ -427,6 +427,8 @@ public class WorldGenerator : MonoBehaviour
         }
       }
     }
+
+    _lakeObject.position = new Vector3(playerPos.x, _lakeObject.position.y, playerPos.y);
     
     _lastPlayerChunkX = playerXChunkScale;
     _lastPlayerChunkZ = playerZChunkScale;
@@ -731,7 +733,7 @@ public class WorldGenerator : MonoBehaviour
 
   private void UpdateMesh(Mesh targetMesh, int index) {
     targetMesh.normals = CalculateNormalsJobs(targetMesh);
-    //RiverPass(targetMesh, index);
+    RiverPass(targetMesh, index);
     targetMesh.triangles = CullTriangles(targetMesh, index);
     targetMesh.RecalculateBounds();
   }

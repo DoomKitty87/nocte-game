@@ -2,10 +2,12 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.VFX;
 
 public class PlayerWorldGeneratorCompatibility : MonoBehaviour
 {
     [SerializeField] private WorldGenerator _worldGeneratorObject;
+    [SerializeField] private VisualEffect _rain;
     [SerializeField] private LayerMask _groundMask;
     [SerializeField] private float _timeToInitialize;
     private bool _hasInitialized;
@@ -29,6 +31,8 @@ public class PlayerWorldGeneratorCompatibility : MonoBehaviour
     private void Update() {
         _worldGeneratorObject.UpdatePlayerLoadedChunks(transform.position 
             - new Vector3(0, GetComponent<Collider>().bounds.extents.y / 2, 0));
+
+        _rain.SetVector3("PlayerPos", transform.position);
         
         // Delayed start
         if (!_hasInitialized && Time.time > _timeToInitialize && Time.timeScale != 0) {
