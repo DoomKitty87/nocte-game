@@ -1,0 +1,28 @@
+#pragma kernel GrassPositions
+
+#include "Assets/Resources/Simplex.compute"
+
+struct GrassData {
+    float4 position;
+    float2 uv;
+    float displacement;
+};
+
+RWStructuredBuffer<GrassData> _GrassDataBuffer;
+
+int _Scale;
+
+[numthreads(8,8,1)]
+void GrassPositions (uint3 id : SV_DispatchThreadID)
+{
+    // GrassData grass;
+    // float4 pos = 0.0f;
+// 
+    // float scale = float(_Scale);
+    // 
+    // pos.x = id.x;
+    // pos.z = id.z;
+    // pos.xz *= 1.0f / scale;
+
+    
+}

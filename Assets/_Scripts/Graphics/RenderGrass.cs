@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class RenderGrass : MonoBehaviour
+public class RenderOtherGrass : MonoBehaviour
 {
     public Material material;
     public Mesh mesh;
@@ -17,14 +17,14 @@ public class RenderGrass : MonoBehaviour
         public float displacement;
     }
     
-    private struct GrassChunk {
-        public ComputeBuffer argsBuffer;
-        // public ComputeBuffer argsBufferLOD;
-        public ComputeBuffer positionsBuffer;
-        // public ComputeBuffer culledPositionsBuffer;
-        public Bounds bounds;
-        public Material material;
-    }
+    // private struct GrassChunk {
+    //     public ComputeBuffer argsBuffer;
+    //     // public ComputeBuffer argsBufferLOD;
+    //     public ComputeBuffer positionsBuffer;
+    //     // public ComputeBuffer culledPositionsBuffer;
+    //     public Bounds bounds;
+    //     public Material material;
+    // }
     
     void Start()
     {
@@ -38,12 +38,12 @@ public class RenderGrass : MonoBehaviour
         commandBuf = null;
     }
 
-    private void InitializeChunk() {
-        GrassChunk chunk = new GrassChunk();
-
-        chunk.argsBuffer = new ComputeBuffer(1, 5 * sizeof(uint), ComputeBufferType.IndirectArguments);
-        // chunk.argsBuffer.SetData(args);
-    }
+    // private void InitializeChunk() {
+    //     GrassChunk chunk = new GrassChunk();
+// 
+    //     chunk.argsBuffer = new ComputeBuffer(1, 5 * sizeof(uint), ComputeBufferType.IndirectArguments);
+    //     // chunk.argsBuffer.SetData(args);
+    // }
 
     void Update()
     {
