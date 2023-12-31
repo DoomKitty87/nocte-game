@@ -166,13 +166,15 @@ public class RenderGrass : MonoBehaviour
         _computeShader.GetKernelThreadGroupSizes(_kernel, out _threadGroupSize, out _, out _);
         int threadGroups = Mathf.CeilToInt(_terrainTriangleCount * _numberOfBladesPerTri / _threadGroupSize);
         _computeShader.Dispatch(_kernel, threadGroups, 1, 1);
+        
+        Debug.Log(_numberOfBladesPerTri * _terrainTriangleCount);
     }
     
     private void BuildRenderParams() {
         // Set up RenderParams
         _rp = new RenderParams(_material) {
             worldBounds = _bounds,
-            matProps = new MaterialPropertyBlock()
+            matProps = _materialPropertyBlock
         };
         _rp.matProps.SetBuffer(TransformMatrices, _transformMatrixBuffer);
         _rp.matProps.SetBuffer(Positions, _grassVertexBuffer);
@@ -207,7 +209,9 @@ public class RenderGrass : MonoBehaviour
         }
         
         if (!_enableGrass) return;
-
+        
+        BuildRenderParams();
+        
         // Is this slow?
         try {
             Graphics.RenderPrimitivesIndexed(
@@ -217,10 +221,9 @@ public class RenderGrass : MonoBehaviour
                 _grassTriangleBuffer.count,
                 instanceCount: _terrainTriangleCount * _numberOfBladesPerTri
             );
-         }
-         catch {
-             GenerateGrass();
-         }
+        } catch {
+            GenerateGrass();
+        }
     }
     
     #endregion
