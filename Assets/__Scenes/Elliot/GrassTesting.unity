@@ -608,7 +608,7 @@ Camera:
     y: 0
     width: 1
     height: 1
-  near clip plane: 0.3
+  near clip plane: 0.01
   far clip plane: 1000
   field of view: 60
   orthographic: 0
@@ -823,7 +823,6 @@ GameObject:
   - component: {fileID: 1424418025}
   - component: {fileID: 1424418024}
   - component: {fileID: 1424418023}
-  - component: {fileID: 1424418022}
   - component: {fileID: 1424418021}
   m_Layer: 0
   m_Name: Grass
@@ -844,36 +843,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5da125e02a8f58f48b9988e50588d441, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _enableGrass: 0
   _computeShader: {fileID: 0}
+  _terrainMesh: {fileID: 0}
   _grassMesh: {fileID: 0}
   _material: {fileID: 0}
   _minBladeHeight: 0.5
   _maxBladeHeight: 1.5
-  _minOffset: -1
-  _maxOffset: 1
+  _minOffset: 0
+  _maxOffset: 0
   _scale: 0.1
---- !u!64 &1424418022
-MeshCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1424418020}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 5
-  m_Convex: 0
-  m_CookingOptions: 30
-  m_Mesh: {fileID: 10209, guid: 0000000000000000e000000000000000, type: 0}
 --- !u!23 &1424418023
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -923,7 +902,7 @@ MeshFilter:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1424418020}
-  m_Mesh: {fileID: 10209, guid: 0000000000000000e000000000000000, type: 0}
+  m_Mesh: {fileID: -2441658414131813105, guid: f96b7895831c6a644aacbd0129650a44, type: 3}
 --- !u!4 &1424418025
 Transform:
   m_ObjectHideFlags: 0
@@ -971,9 +950,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 262f2629f1852b94a9b212e20004b456, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  material: {fileID: 2100000, guid: 27632ab1c373df54087dc857aea1657e, type: 2}
-  mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
-  _numberOfInstances: 100
 --- !u!64 &1561814660
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -1378,7 +1354,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5da125e02a8f58f48b9988e50588d441, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _enableGrass: 0
   _computeShader: {fileID: 0}
+  _terrainMesh: {fileID: 0}
   _grassMesh: {fileID: 0}
   _material: {fileID: 0}
   _minBladeHeight: 0.2

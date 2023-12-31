@@ -35,37 +35,44 @@ float4x4 rotateY(float angle)
     );
 }
 
-[numthreads(64,8,1)]
+[numthreads(64,1,1)]
 void CalculateBladePositions (uint3 id : SV_DispatchThreadID)
 {
     // Avoid overflow
     if (id.x > _TerrainTriangleCount)
         return;
     
-    int triStart = id.x * 3;
-    float3 posA = _TerrainPositions[_TerrainTriangles[triStart]];
-    float3 posB = _TerrainPositions[_TerrainTriangles[triStart + 1]];
-    float3 posC = _TerrainPositions[_TerrainTriangles[triStart + 2]];
+    const int triStart = id.x * 3;
+    const float3 posA = _TerrainPositions[_TerrainTriangles[triStart]];
+    const float3 posB = _TerrainPositions[_TerrainTriangles[triStart + 1]];
+    const float3 posC = _TerrainPositions[_TerrainTriangles[triStart + 2]];
 
-    float3 triangleCenterPos = (posA + posB + posC) / 3.0f;
+    // float3 triangleCenterPos = (posA + posB + posC) / 3.0f;
 
-    float2 randomSeed1 = float2(id.x, id.y);
-    float2 randomSeed2 = float2(id.y, id.x);
+    const float2 seed1 = float2(id.x, id.y);
+    const float2 seed2 = float2(id.y, id.x);
 
-    float scaleY = _Scale * randomRange(randomSeed1, _MinBladeHeight, _MaxBladeHeight);
+    float scaleY = _Scale * randomRange(seed1, _MinBladeHeight, _MaxBladeHeight);
+    
+    // https://gist.github.com/danieldownes/b1c9bab09cce013cc30a4198bfeda0aa
+    float r1 = randomRange(seed1, 0, 1);
+    float r2 = randomRange(seed2, 0, 1);
+    if (r1 + r2 >= 1)
+    {
+        r1 = 1 - r1;
+        r2 = 1 - r2;
+    }
+    float3 randomPosition = posA + r1 * (posB - posA) + r2 * (posC - posA);
 
-    float offsetX = randomRange(randomSeed1, _MinOffset, _MaxOffset);
-    float offsetZ = randomRange(randomSeed2, _MinOffset, _MaxOffset);
-
-    float4x4 grassTransformMatrix = float4x4
+    const float4x4 grassTransformMatrix = float4x4
     (
-        _Scale,	0,		0,		triangleCenterPos.x + offsetX,
-        0,		scaleY,	0,		triangleCenterPos.y,
-        0,		0,		_Scale,	triangleCenterPos.z + offsetZ,
+        _Scale,	0,		0,		randomPosition.x,
+        0,		scaleY,	0,		randomPosition.y,
+        0,		0,		_Scale,	randomPosition.z,
         0,		0,		0,		1
     );
 
-    float4x4 randomRotationMatrix = rotateY(randomRange(randomSeed1, 0.0f, TWO_PI));
+    const float4x4 randomRotationMatrix = rotateY(randomRange(seed1, 0.0f, TWO_PI));
 
     _TransformMatrices[id.x] = mul(_TerrainObjectToWorld, mul(grassTransformMatrix, randomRotationMatrix));
 }
