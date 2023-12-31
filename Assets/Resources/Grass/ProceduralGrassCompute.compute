@@ -38,17 +38,18 @@ float4x4 rotateY(float angle)
 void CalculateBladePositions (uint3 id : SV_DispatchThreadID)
 {
     // Avoid overflow
-    if (id.x > _TerrainTriangleCount * _NumberOfBladesPerTri)
-        return;
+    // if (id.x > _TerrainTriangleCount * _NumberOfBladesPerTri)
+    //     return;
 
     
-    const int triStart = (id.x / _NumberOfBladesPerTri) * 3;
+    const int triStart = floor(id.x / _NumberOfBladesPerTri) * 3;
     const float3 posA = _TerrainPositions[_TerrainTriangles[triStart]];
     const float3 posB = _TerrainPositions[_TerrainTriangles[triStart + 1]];
     const float3 posC = _TerrainPositions[_TerrainTriangles[triStart + 2]];
-    
-    const float2 seed1 = float2(id.x, id.y);
-    const float2 seed2 = float2(id.y, id.x);
+
+    // Modulo to prevent strange noise
+    const float2 seed1 = float2(id.x % _TerrainTriangleCount, id.y);
+    const float2 seed2 = float2(id.y, id.x % _TerrainTriangleCount);
 
     float scaleY = _Scale * randomRange(seed1, _MinBladeHeight, _MaxBladeHeight);
     

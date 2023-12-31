@@ -675,9 +675,37 @@ MonoBehaviour:
   m_GameObject: {fileID: 1219595222}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6a44431a3cc1dc248b152958ea492ee0, type: 3}
+  m_Script: {fileID: 11500000, guid: 0652f4e697d04d146a4bc9df7edaca2d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  boost: 3.5
+  positionLerpTime: 0.1988099
+  mouseSensitivityCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0.5
+      inSlope: 0
+      outSlope: 5
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 2.5
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  rotationLerpTime: 0.01
+  invertY: 0
 --- !u!1 &1424418020
 GameObject:
   m_ObjectHideFlags: 0
@@ -712,9 +740,9 @@ MonoBehaviour:
   _enableGrass: 1
   _regenerateGrass: 0
   _minBladeHeight: 0.5
-  _maxBladeHeight: 0.2
-  _scale: 0.5
-  _numberOfBladesPerTri: 6
+  _maxBladeHeight: 0.75
+  _scale: 0.225
+  _numberOfBladesPerTri: 300
   _computeShader: {fileID: 0}
   _terrainMesh: {fileID: 0}
   _grassMesh: {fileID: 0}

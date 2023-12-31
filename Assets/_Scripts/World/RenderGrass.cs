@@ -8,8 +8,8 @@ public class RenderGrass : MonoBehaviour
     [SerializeField] bool _regenerateGrass;
     
     [Header("Variables")]
-    [SerializeField, Range(0.1f, 0.5f)] private float _minBladeHeight = 0.2f;
-    [SerializeField, Range(0.1f, 0.2f)] private float _maxBladeHeight = 1.0f;
+    [SerializeField, Range(0.1f, 0.75f)] private float _minBladeHeight = 0.2f;
+    [SerializeField, Range(0.1f, 0.75f)] private float _maxBladeHeight = 1.0f;
     [SerializeField, Range(0.0f, 0.5f)] private float _scale = 1.0f;
     [SerializeField, Min(1), Delayed] private int _numberOfBladesPerTri = 1;
 
@@ -163,6 +163,8 @@ public class RenderGrass : MonoBehaviour
         _computeShader.GetKernelThreadGroupSizes(_kernel, out _threadGroupSize, out _, out _);
         int threadGroups = Mathf.CeilToInt(_terrainTriangleCount * _numberOfBladesPerTri / _threadGroupSize);
         _computeShader.Dispatch(_kernel, threadGroups, 1, 1);
+        
+        Debug.Log("Grass Count " + _numberOfBladesPerTri * _terrainTriangleCount);
     }
     
     private void CleanUpGrass() {
