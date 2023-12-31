@@ -17,12 +17,10 @@ Shader "Custom/ProceduralGrass"
             #pragma fragment frag
             // make fog work
             #pragma multi_compile_fog
-
-            #include "UnityCG.cginc"
-
+            
             struct appdata
             {
-                uint vertexID : SV_VERTEXID;
+                uint vertexID : SV_VertexID;
                 uint instanceID : SV_InstanceID;
             };
 
@@ -35,7 +33,8 @@ Shader "Custom/ProceduralGrass"
 
             sampler2D _BaseTex;
             float4 _BaseColor, _TipColor;
-            StructuredBuffer<float3> _Positions, _Normals;
+            StructuredBuffer<float3> _Positions;
+            StructuredBuffer<float3> _Normals;
             StructuredBuffer<float2> _UVs;
             StructuredBuffer<float4x4> _TransformMatrices;
 
@@ -44,7 +43,7 @@ Shader "Custom/ProceduralGrass"
                 v2f o;
 
                 float4 positionOS = float4(_Positions[v.vertexID], 1.0f);
-                float4x4 objectToWorld = _TransformMatrices[v.vertexID];
+                float4x4 objectToWorld = _TransformMatrices[v.instanceID];
 
                 o.positionWS = mul(objectToWorld, positionOS);
                 o.positionCS = mul(UNITY_MATRIX_VP, o.positionWS);

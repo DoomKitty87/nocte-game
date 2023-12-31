@@ -844,16 +844,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5da125e02a8f58f48b9988e50588d441, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _computeShader: {fileID: 7200000, guid: 0abd93431fefa7b4b842945546ca4c85, type: 3}
-  _terrainMesh: {fileID: 10209, guid: 0000000000000000e000000000000000, type: 0}
-  _grassMesh: {fileID: 2949893962580367973, guid: d71784310172998418784bf34883070a,
-    type: 3}
-  _material: {fileID: 2100000, guid: 98b69bccb1b06f54e85b154cd3c73743, type: 2}
-  _minBladeHeight: 0.2
-  _maxBladeHeight: 1
-  _minOffset: -0.1
-  _maxOffset: 0.1
-  _scale: 1
+  _computeShader: {fileID: 0}
+  _grassMesh: {fileID: 0}
+  _material: {fileID: 0}
+  _minBladeHeight: 0.5
+  _maxBladeHeight: 1.5
+  _minOffset: -1
+  _maxOffset: 1
+  _scale: 0.1
 --- !u!64 &1424418022
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -1380,11 +1378,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5da125e02a8f58f48b9988e50588d441, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _computeShader: {fileID: 7200000, guid: 0abd93431fefa7b4b842945546ca4c85, type: 3}
-  _terrainMesh: {fileID: 10209, guid: 0000000000000000e000000000000000, type: 0}
-  _grassMesh: {fileID: 2949893962580367973, guid: d71784310172998418784bf34883070a,
-    type: 3}
-  _material: {fileID: 2100000, guid: 98b69bccb1b06f54e85b154cd3c73743, type: 2}
+  _computeShader: {fileID: 0}
+  _grassMesh: {fileID: 0}
+  _material: {fileID: 0}
   _minBladeHeight: 0.2
   _maxBladeHeight: 1
   _minOffset: 0.2
