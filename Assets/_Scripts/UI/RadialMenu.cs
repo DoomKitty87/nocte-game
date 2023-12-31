@@ -1,10 +1,5 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEditor.VersionControl;
 using UnityEngine;
 using UnityEngine.Serialization;
-using UnityEngine.UI;
 
 // For now, only MnK support, console could be whenever
 public class RadialMenu : MonoBehaviour

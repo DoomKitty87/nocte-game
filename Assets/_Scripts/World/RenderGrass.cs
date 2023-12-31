@@ -8,8 +8,8 @@ public class RenderGrass : MonoBehaviour
     [SerializeField] bool _regenerateGrass;
     
     [Header("Variables")]
-    [SerializeField, Range(0.1f, 0.5f)] private float _minBladeHeight = 0.2f;
-    [SerializeField, Range(0.1f, 0.2f)] private float _maxBladeHeight = 1.0f;
+    [SerializeField, Range(0.1f, 0.75f)] private float _minBladeHeight = 0.2f;
+    [SerializeField, Range(0.1f, 0.75f)] private float _maxBladeHeight = 1.0f;
     [SerializeField, Range(0.0f, 0.5f)] private float _scale = 1.0f;
     [SerializeField, Min(1), Delayed] private int _numberOfBladesPerTri = 1;
 
@@ -44,6 +44,8 @@ public class RenderGrass : MonoBehaviour
     private uint _threadGroupSize;
     private int _terrainTriangleCount;
     
+    private RenderParams _rp;
+    
     // Cached property index
     private static readonly int TerrainPositions = Shader.PropertyToID("_TerrainPositions");
     private static readonly int TerrainTriangles = Shader.PropertyToID("_TerrainTriangles");
@@ -67,7 +69,7 @@ public class RenderGrass : MonoBehaviour
         _terrainMesh = GetComponent<MeshFilter>().sharedMesh;
         _computeShader = (ComputeShader) Resources.Load("Grass/ProceduralGrassCompute");
         _material = (Material)Resources.Load("Grass/Custom_ProceduralGrass");
-        _grassMesh = ((GameObject)Resources.Load("Grass/GrassBlade(Clone)")).GetComponentInChildren<MeshFilter>().
+        _grassMesh = ((GameObject)Resources.Load("Grass/GrassBlade")).GetComponentInChildren<MeshFilter>().
             sharedMesh; // Is there a better way to load meshes?
         
         _kernel = _computeShader.FindKernel("CalculateBladePositions");
@@ -141,11 +143,17 @@ public class RenderGrass : MonoBehaviour
         _bounds.center += transform.position;
         _bounds.Expand(_maxBladeHeight);
 
-        // Bind buffers to a MaterialPropertyBlock
+        // Creates MaterialPropertyBlock
         _materialPropertyBlock = new MaterialPropertyBlock();
         _materialPropertyBlock.SetBuffer(TransformMatrices, _transformMatrixBuffer);
         _materialPropertyBlock.SetBuffer(Positions, _grassVertexBuffer);
         _materialPropertyBlock.SetBuffer(UVs, _grassUVBuffer);
+        
+        // Binds RenderParams
+        _rp = new RenderParams(_material) {
+            worldBounds = _bounds,
+            matProps = _materialPropertyBlock
+        };
         
         RunComputeShader();
     }
@@ -163,6 +171,8 @@ public class RenderGrass : MonoBehaviour
         _computeShader.GetKernelThreadGroupSizes(_kernel, out _threadGroupSize, out _, out _);
         int threadGroups = Mathf.CeilToInt(_terrainTriangleCount * _numberOfBladesPerTri / _threadGroupSize);
         _computeShader.Dispatch(_kernel, threadGroups, 1, 1);
+        
+        Debug.Log(_terrainTriangleCount);
     }
     
     private void CleanUpGrass() {
@@ -185,36 +195,28 @@ public class RenderGrass : MonoBehaviour
     #region Render Grass
     
     private void Update() {
+        
         if (_regenerateGrass) {
             CleanUpGrass();
             GenerateGrass();
             _regenerateGrass = false;
         }
-
-        if (!_enableGrass) return;
         
-        // Set up RenderParams
-        RenderParams rp = new RenderParams(_material) {
-            worldBounds = _bounds,
-            matProps = new MaterialPropertyBlock()
-        };
-        rp.matProps.SetBuffer(TransformMatrices, _transformMatrixBuffer);
-        rp.matProps.SetBuffer(Positions, _grassVertexBuffer);
-        rp.matProps.SetBuffer(UVs, _grassUVBuffer);
+        if (!_enableGrass) return;
 
         // Is this slow?
         try {
             Graphics.RenderPrimitivesIndexed(
-                rp,
+                _rp,
                 MeshTopology.Triangles,
                 _grassTriangleBuffer,
                 _grassTriangleBuffer.count,
                 instanceCount: _terrainTriangleCount * _numberOfBladesPerTri
             );
-        }
-        catch {
-            GenerateGrass();
-        }
+         }
+         catch {
+             GenerateGrass();
+         }
     }
     
     #endregion
