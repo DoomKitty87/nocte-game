@@ -12,14 +12,6 @@ public class RenderGrass : MonoBehaviour
     [SerializeField] private ComputeShader _computeShader;
     [SerializeField] private Mesh _terrainMesh;
     
-    // [Header("Chunks")]
-    // [Tooltip("Length of one side of each chunk.")]
-    // [SerializeField, Min(1), Delayed] private int _chunkSize = 10;
-    // [Tooltip("Distance from player in any given direction. Equal to (2 * NumberOfChunksRadius - 1)^2.")]
-    // [SerializeField, Min(1), Delayed] private int _numberOfChunksRadius = 3;
-    // [Tooltip("Number of grass blades per chunk.")]
-    // [SerializeField, Min(0), Delayed] private int _grassBladesPerChunk = 1000;
-    
     [Header("Grass")]
     [Tooltip("Mesh to be rendered.")]
     [SerializeField] private Mesh _grassMesh;
@@ -31,10 +23,7 @@ public class RenderGrass : MonoBehaviour
     public float _minOffset = -5f;
     public float _maxOffset = 5f;
     public float _scale = 1.0f;
-
-    // [Header("Target")] 
-    // [Tooltip("Object that grass spawns around. Most likely set to player or active camera.")]
-    // [SerializeField] private Transform _target;
+    [Min(1)] public int _numberOfBladesPerTri = 1;
     
     #endregion
     
@@ -48,7 +37,7 @@ public class RenderGrass : MonoBehaviour
     private GraphicsBuffer _grassTriangleBuffer;
     private GraphicsBuffer _grassVertexBuffer;
     private GraphicsBuffer _grassUVBuffer;
-
+    
     private Bounds _bounds;
     private MaterialPropertyBlock _MPB;
 
@@ -121,7 +110,7 @@ public class RenderGrass : MonoBehaviour
         // Set up buffers for transformation matrices.
         _transformMatrixBuffer = new GraphicsBuffer(
             GraphicsBuffer.Target.Structured,
-            _terrainTriangleCount,
+            _terrainTriangleCount * _numberOfBladesPerTri,
             sizeof(float) * 16
         );
         _computeShader.SetBuffer(_kernel, "_TransformMatrices", _transformMatrixBuffer);
@@ -136,7 +125,7 @@ public class RenderGrass : MonoBehaviour
         _MPB.SetBuffer("_TransformMatricews", _transformMatrixBuffer);
         _MPB.SetBuffer("_Positions", _grassVertexBuffer);
         _MPB.SetBuffer("_UVs", _grassUVBuffer);
-
+        
         RunComputeShader();
     }
 
@@ -149,10 +138,11 @@ public class RenderGrass : MonoBehaviour
         _computeShader.SetFloat("_MinOffset", _minOffset);
         _computeShader.SetFloat("_MaxOffset", _maxOffset);
         _computeShader.SetFloat("_Scale", _scale);
+        _computeShader.SetFloat("_NumberOfBladesPerTri", _numberOfBladesPerTri);
         
         // Run the compute shader.
         _computeShader.GetKernelThreadGroupSizes(_kernel, out _threadGroupSize, out _, out _);
-        int threadGroups = Mathf.CeilToInt(_terrainTriangleCount / _threadGroupSize);
+        int threadGroups = Mathf.CeilToInt((_terrainTriangleCount * _numberOfBladesPerTri) / _threadGroupSize);
         _computeShader.Dispatch(_kernel, threadGroups, 1, 1);
     }
     
@@ -191,7 +181,7 @@ public class RenderGrass : MonoBehaviour
                 MeshTopology.Triangles,
                 _grassTriangleBuffer,
                 _grassTriangleBuffer.count,
-                instanceCount: _terrainTriangleCount
+                instanceCount: _terrainTriangleCount * _numberOfBladesPerTri
             );
         } else if (!_enableGrass && _grassIsEnabled) {
             CleanUpGrass();

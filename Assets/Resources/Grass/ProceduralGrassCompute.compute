@@ -11,13 +11,14 @@ uniform float _MaxBladeHeight;
 uniform float _MinOffset;
 uniform float _MaxOffset;
 uniform float4x4 _TerrainObjectToWorld;
+uniform float _NumberOfBladesPerTri;
 
 #define TWO_PI 6.28318530718f
 
 // Pseudo-random number between min and max
 float randomRange(float2 seed, float min, float max)
 {
-	float randNum = frac(sin(dot(seed, float2(12.9898, 78.233)))*143758.5453);
+	float randNum = frac(sin(dot(seed, float2(12.9898, 78.233)))*43758.5453);
     return lerp(min, max, randNum);
 }
 
@@ -39,16 +40,15 @@ float4x4 rotateY(float angle)
 void CalculateBladePositions (uint3 id : SV_DispatchThreadID)
 {
     // Avoid overflow
-    if (id.x > _TerrainTriangleCount)
+    if (id.x > _TerrainTriangleCount * _NumberOfBladesPerTri)
         return;
+
     
-    const int triStart = id.x * 3;
+    const int triStart = (id.x / _NumberOfBladesPerTri) * 3;
     const float3 posA = _TerrainPositions[_TerrainTriangles[triStart]];
     const float3 posB = _TerrainPositions[_TerrainTriangles[triStart + 1]];
     const float3 posC = _TerrainPositions[_TerrainTriangles[triStart + 2]];
-
-    // float3 triangleCenterPos = (posA + posB + posC) / 3.0f;
-
+    
     const float2 seed1 = float2(id.x, id.y);
     const float2 seed2 = float2(id.y, id.x);
 
