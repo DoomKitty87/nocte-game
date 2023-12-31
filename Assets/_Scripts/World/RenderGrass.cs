@@ -44,6 +44,8 @@ public class RenderGrass : MonoBehaviour
     private uint _threadGroupSize;
     private int _terrainTriangleCount;
     
+    private RenderParams _rp;
+    
     // Cached property index
     private static readonly int TerrainPositions = Shader.PropertyToID("_TerrainPositions");
     private static readonly int TerrainTriangles = Shader.PropertyToID("_TerrainTriangles");
@@ -148,6 +150,7 @@ public class RenderGrass : MonoBehaviour
         _materialPropertyBlock.SetBuffer(UVs, _grassUVBuffer);
         
         RunComputeShader();
+        BuildRenderParams();
     }
 
     private void RunComputeShader() {
@@ -163,8 +166,17 @@ public class RenderGrass : MonoBehaviour
         _computeShader.GetKernelThreadGroupSizes(_kernel, out _threadGroupSize, out _, out _);
         int threadGroups = Mathf.CeilToInt(_terrainTriangleCount * _numberOfBladesPerTri / _threadGroupSize);
         _computeShader.Dispatch(_kernel, threadGroups, 1, 1);
-        
-        Debug.Log("Grass Count " + _numberOfBladesPerTri * _terrainTriangleCount);
+    }
+    
+    private void BuildRenderParams() {
+        // Set up RenderParams
+        _rp = new RenderParams(_material) {
+            worldBounds = _bounds,
+            matProps = new MaterialPropertyBlock()
+        };
+        _rp.matProps.SetBuffer(TransformMatrices, _transformMatrixBuffer);
+        _rp.matProps.SetBuffer(Positions, _grassVertexBuffer);
+        _rp.matProps.SetBuffer(UVs, _grassUVBuffer);
     }
     
     private void CleanUpGrass() {
@@ -187,36 +199,28 @@ public class RenderGrass : MonoBehaviour
     #region Render Grass
     
     private void Update() {
+        
         if (_regenerateGrass) {
             CleanUpGrass();
             GenerateGrass();
             _regenerateGrass = false;
         }
-
-        if (!_enableGrass) return;
         
-        // Set up RenderParams
-        RenderParams rp = new RenderParams(_material) {
-            worldBounds = _bounds,
-            matProps = new MaterialPropertyBlock()
-        };
-        rp.matProps.SetBuffer(TransformMatrices, _transformMatrixBuffer);
-        rp.matProps.SetBuffer(Positions, _grassVertexBuffer);
-        rp.matProps.SetBuffer(UVs, _grassUVBuffer);
+        if (!_enableGrass) return;
 
         // Is this slow?
         try {
             Graphics.RenderPrimitivesIndexed(
-                rp,
+                _rp,
                 MeshTopology.Triangles,
                 _grassTriangleBuffer,
                 _grassTriangleBuffer.count,
                 instanceCount: _terrainTriangleCount * _numberOfBladesPerTri
             );
-        }
-        catch {
-            GenerateGrass();
-        }
+         }
+         catch {
+             GenerateGrass();
+         }
     }
     
     #endregion
