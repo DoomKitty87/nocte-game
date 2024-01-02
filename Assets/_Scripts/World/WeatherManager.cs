@@ -14,6 +14,7 @@ public class WeatherManager : MonoBehaviour
   [SerializeField] private float _rainCycleSpeed;
   [SerializeField] private int _rainMaxIntensity;
   [SerializeField] private float _maxWindSpeed;
+  [SerializeField] private float _maxSpaceIntensity;
 
   [Tooltip("Density of clouds over time.")]
   [SerializeField] private AnimationCurve _cloudDensityCurve;
@@ -40,6 +41,7 @@ public class WeatherManager : MonoBehaviour
   private VolumetricClouds _clouds;
   private VisualEnvironment _environment;
   private Quaternion _sunInitRot;
+  private PhysicallyBasedSky _physicalSky;
 
   private void Start() {
     _sunInitRot = _sunTransform.localRotation;
@@ -47,6 +49,7 @@ public class WeatherManager : MonoBehaviour
     _weatherPhases = new Vector2(Mathf.PerlinNoise(_seed, _seed), Mathf.PerlinNoise(-_seed, -_seed));
     _cloudVolume.TryGet<VolumetricClouds>(out _clouds);
     _cloudVolume.TryGet<VisualEnvironment>(out _environment);
+    _cloudVolume.TryGet<PhysicallyBasedSky>(out _physicalSky);
     _environment.windOrientation.value = Mathf.PerlinNoise(_seed * 10, -_seed * 10) * 360;
   }
 
@@ -66,5 +69,6 @@ public class WeatherManager : MonoBehaviour
     _environment.windSpeed.value = _weatherState.z * _maxWindSpeed;
     _sunTransform.localRotation = Quaternion.AngleAxis(_weatherState.x * 360, Vector3.right) * _sunInitRot;
     _rainEffect.SetInt("RainRate", (int) (_weatherState.z * _rainMaxIntensity));
+    _physicalSky.spaceEmissionMultiplier.value = Mathf.SmoothStep(_maxSpaceIntensity, 0, (_weatherState.x > 0.5f ? 1 - _weatherState.x : _weatherState.x) * 2);
   }
 }

@@ -311,6 +311,8 @@ public class WorldGenerator : MonoBehaviour
 
     _playerXChunkScale = playerXChunkScale;
     _playerZChunkScale = playerZChunkScale;
+    _playerX = playerPos.x;
+    _playerZ = playerPos.z;
 
     if (playerXChunkScale - _lastPlayerChunkX > 1) playerXChunkScale -= playerXChunkScale - _lastPlayerChunkX - 1;
     if (playerZChunkScale - _lastPlayerChunkZ > 1) playerZChunkScale -= playerZChunkScale - _lastPlayerChunkZ - 1;
