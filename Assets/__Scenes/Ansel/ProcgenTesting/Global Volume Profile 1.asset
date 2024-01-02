@@ -15,7 +15,7 @@ MonoBehaviour:
   active: 1
   skyType:
     m_OverrideState: 1
-    m_Value: 1
+    m_Value: 4
   cloudType:
     m_OverrideState: 1
     m_Value: 0
@@ -57,7 +57,7 @@ MonoBehaviour:
     m_OverrideState: 1
     m_Value: 0
   saturation:
-    m_OverrideState: 1
+    m_OverrideState: 0
     m_Value: 40
 --- !u!114 &-2456328700736638316
 MonoBehaviour:
@@ -144,19 +144,19 @@ MonoBehaviour:
     m_Value: 0
   type:
     m_OverrideState: 1
-    m_Value: 0
+    m_Value: 1
   sphericalMode:
-    m_OverrideState: 0
+    m_OverrideState: 1
     m_Value: 0
   seaLevel:
-    m_OverrideState: 0
-    m_Value: 0
+    m_OverrideState: 1
+    m_Value: 350
   planetaryRadius:
     m_OverrideState: 0
     m_Value: 6378100
   planetCenterPosition:
-    m_OverrideState: 1
-    m_Value: {x: 0, y: 400, z: 0}
+    m_OverrideState: 0
+    m_Value: {x: 0, y: 0, z: 0}
   airDensityR:
     m_OverrideState: 1
     m_Value: 0.01
@@ -174,10 +174,10 @@ MonoBehaviour:
     m_Value: 3000
   aerosolDensity:
     m_OverrideState: 1
-    m_Value: 0.01192826
+    m_Value: 0
   aerosolTint:
     m_OverrideState: 1
-    m_Value: {r: 0.55157524, g: 0.6212221, b: 0.6320754, a: 1}
+    m_Value: {r: 0.4478907, g: 0.5087283, b: 0.5188679, a: 1}
   aerosolMaximumAltitude:
     m_OverrideState: 1
     m_Value: 8289.296
@@ -189,7 +189,7 @@ MonoBehaviour:
     m_Value: 3
   groundTint:
     m_OverrideState: 1
-    m_Value: {r: 0.4515052, g: 0.5943396, b: 0.4513617, a: 1}
+    m_Value: {r: 0, g: 0, b: 0, a: 1}
   groundColorTexture:
     m_OverrideState: 1
     m_Value: {fileID: 0}
@@ -204,10 +204,10 @@ MonoBehaviour:
     m_Value: {x: 0, y: 0, z: 0}
   spaceEmissionTexture:
     m_OverrideState: 1
-    m_Value: {fileID: 0}
+    m_Value: {fileID: 8900000, guid: 6a0b0c10aff8ac344b60e6a2f4f23f7c, type: 3}
   spaceEmissionMultiplier:
     m_OverrideState: 1
-    m_Value: 1
+    m_Value: 5000
   spaceRotation:
     m_OverrideState: 1
     m_Value: {x: 0, y: 0, z: 0}
@@ -254,6 +254,7 @@ MonoBehaviour:
   - {fileID: -2456328700736638316}
   - {fileID: 756639205190390437}
   - {fileID: -924958126123348105}
+  - {fileID: 4901719294588945791}
 --- !u!114 &756639205190390437
 MonoBehaviour:
   m_ObjectHideFlags: 3
@@ -386,6 +387,25 @@ MonoBehaviour:
     m_OverrideState: 1
     m_Value: 0.5
   directionalLightsOnly:
+    m_OverrideState: 0
+    m_Value: 0
+--- !u!114 &4901719294588945791
+MonoBehaviour:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b51a78e223a2e504bb88a059b55229ea, type: 3}
+  m_Name: WhiteBalance
+  m_EditorClassIdentifier: 
+  active: 1
+  temperature:
+    m_OverrideState: 1
+    m_Value: -20
+  tint:
     m_OverrideState: 0
     m_Value: 0
 --- !u!114 &7180102010930720875
@@ -817,9 +837,9 @@ MonoBehaviour:
     m_Value: 0
   temporalAccumulationFactor:
     m_OverrideState: 1
-    m_Value: 0.95
+    m_Value: 0.7
   ghostingReduction:
-    m_OverrideState: 0
+    m_OverrideState: 1
     m_Value: 1
   perceptualBlending:
     m_OverrideState: 0
