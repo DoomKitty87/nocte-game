@@ -1574,6 +1574,7 @@ MonoBehaviour:
     type: 3}
   _groundInset: 5
   _structureRenderDistance: 2500
+  _roadObject: {fileID: 0}
 --- !u!1 &950212993 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 5364522919904099307, guid: 807785f75a4cabf4883bf2cc8fe88221,
@@ -4115,7 +4116,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &1808469333
 Transform:
   m_ObjectHideFlags: 0
@@ -4307,6 +4308,11 @@ PrefabInstance:
       propertyPath: far clip plane
       value: 20000
       objectReference: {fileID: 0}
+    - target: {fileID: 6456709365385668066, guid: 807785f75a4cabf4883bf2cc8fe88221,
+        type: 3}
+      propertyPath: _rain
+      value: 
+      objectReference: {fileID: 1919250532}
     - target: {fileID: 6456709365385668066, guid: 807785f75a4cabf4883bf2cc8fe88221,
         type: 3}
       propertyPath: _timeToInitialize
@@ -4599,7 +4605,7 @@ VFXRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1919250529}
-  m_Enabled: 0
+  m_Enabled: 1
   m_CastShadows: 0
   m_ReceiveShadows: 0
   m_DynamicOccludee: 1
@@ -5189,6 +5195,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _text: {fileID: 2127784359}
+  _updateAfterSec: 0.25
 --- !u!1001 &4258144910533491455
 PrefabInstance:
   m_ObjectHideFlags: 0
