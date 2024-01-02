@@ -1,4 +1,4 @@
-using System;
+ using System;
 using UnityEngine;
 using System.Collections.Generic;
 using UnityEngine.Rendering.HighDefinition;
@@ -11,7 +11,8 @@ using Unity.Mathematics;
 using Unity.Jobs;
 using Unity.Burst;
 using Unity.Collections;
-using IEnumerator = System.Collections.IEnumerator;
+ using UnityEditor.ShaderGraph.Internal;
+ using IEnumerator = System.Collections.IEnumerator;
 
 public class WorldGenerator : MonoBehaviour
 {
@@ -154,6 +155,7 @@ public class WorldGenerator : MonoBehaviour
   [Header("Script Connections")]
   [SerializeField] private SecondaryStructures _structures;
   [SerializeField] private PlaceStructures _storyStructures;
+  [SerializeField] private GrassManager _grassManager;
 
   #endregion
 
@@ -204,22 +206,24 @@ public class WorldGenerator : MonoBehaviour
     return _seed;
   }
 
-  public (Vector3[][], Vector2[]) GetVertices(int distance) {
+  public (Vector3[][], int[][]) GetVertices(int distance) {
     int included = 0;
     for (int i = 0; i < _tileCount * _tileCount; i++) {
       if (Mathf.Sqrt(Mathf.Pow(_tilePool[i].x, 2) + Mathf.Pow(_tilePool[i].z, 2)) <= distance) included++;
     }
     Vector3[][] vertices = new Vector3[included][];
+    int[][] tris = new int[included * 3][];
     Vector2[] positions = new Vector2[included];
     for (int i = 0, j = 0; i < _tileCount * _tileCount; i++) {
       if (Mathf.Sqrt(Mathf.Pow(_tilePool[i].x, 2) + Mathf.Pow(_tilePool[i].z, 2)) <= distance) {
-        vertices[j] = _tilePool[i].mesh.vertices;
-        positions[j] = new Vector2(_tilePool[i].obj.transform.position.x, _tilePool[i].obj.transform.position.z);
+        Mesh mesh = _tilePool[i].mesh;
+        vertices[i] = mesh.vertices;
+        tris[i] = mesh.triangles;
         j++;
       }
     }
 
-    return (vertices, positions);
+    return (vertices, tris);
   }
 
   #endregion
@@ -410,8 +414,10 @@ public class WorldGenerator : MonoBehaviour
     }
 
     if (deltaZ != 0 || deltaX != 0) {
-      _structures.CheckStructures(new Vector2(playerPos.x, playerPos.z));
-      _storyStructures.CheckStructures(new Vector2(playerPos.x, playerPos.z));
+      Vector2 playerPosXZ = new Vector2(playerPos.x, playerPos.z);
+      _structures.CheckStructures(playerPosXZ);
+      _storyStructures.CheckStructures(playerPosXZ);
+      _grassManager.GenerateGrass();
       _updateQueue.Sort((c1, c2) => (Mathf.Abs(_tilePool[c1].x - _playerXChunkScale) + Mathf.Abs(_tilePool[c1].z - _playerZChunkScale)).CompareTo(Mathf.Abs(_tilePool[c2].x - _playerXChunkScale) + Mathf.Abs(_tilePool[c2].z - _playerZChunkScale)));
       for (int x = 0; x < _tileCount; x++) {
         for (int z = 0; z < _tileCount; z++) { 

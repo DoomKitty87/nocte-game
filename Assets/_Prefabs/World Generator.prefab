@@ -11,6 +11,8 @@ GameObject:
   - component: {fileID: 8951891336655120199}
   - component: {fileID: 8819276947174590073}
   - component: {fileID: 7336471431426695701}
+  - component: {fileID: 8505195279874202923}
+  - component: {fileID: 3041882864952171724}
   m_Layer: 0
   m_Name: World Generator
   m_TagString: Untagged
@@ -167,6 +169,7 @@ MonoBehaviour:
   _lakeObject: {fileID: 0}
   _structures: {fileID: 0}
   _storyStructures: {fileID: 0}
+  _grassManager: {fileID: 0}
 --- !u!114 &7336471431426695701
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -180,6 +183,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _dayNightCycleSpeed: 5
+  _cloudCycleSpeed: 0
+  _windCycleSpeed: 0
+  _rainCycleSpeed: 0
+  _rainMaxIntensity: 0
+  _maxWindSpeed: 0
   _cloudDensityCurve:
     serializedVersion: 2
     m_Curve:
@@ -201,6 +209,12 @@ MonoBehaviour:
       weightedMode: 0
       inWeight: 0
       outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  _windSpeedCurve:
+    serializedVersion: 2
+    m_Curve: []
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
@@ -230,3 +244,40 @@ MonoBehaviour:
     m_RotationOrder: 4
   _worldGenerator: {fileID: 0}
   _cloudVolume: {fileID: 0}
+  _sunTransform: {fileID: 0}
+  _rainEffect: {fileID: 0}
+--- !u!114 &8505195279874202923
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7828621975473438852}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b516345fd8f7d4d359fb3fc2617ff68f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _distance: 0
+--- !u!114 &3041882864952171724
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7828621975473438852}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5da125e02a8f58f48b9988e50588d441, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _enableGrass: 0
+  _regenerateGrass: 0
+  _minBladeHeight: 0.2
+  _maxBladeHeight: 0.75
+  _scale: 0.5
+  _numberOfBladesPerTri: 1
+  _computeShader: {fileID: 0}
+  _terrainMesh: {fileID: 0}
+  _grassMesh: {fileID: 0}
+  _material: {fileID: 0}

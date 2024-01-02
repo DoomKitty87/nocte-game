@@ -4,6 +4,10 @@ public class RenderGrass : MonoBehaviour
 {
     #region Exposed Variables
 
+    [HideInInspector] public int _numberOfChunks;
+    [HideInInspector] public Vector3[][] _vertices;
+    [HideInInspector] public int[][] _tris;
+    
     [SerializeField] private bool _enableGrass;
     [SerializeField] bool _regenerateGrass;
     
@@ -17,34 +21,33 @@ public class RenderGrass : MonoBehaviour
     // Left as SerializeField for ease of access
     [Header("Resources")]
     [SerializeField, Tooltip("Automatically loaded")] private ComputeShader _computeShader;
-    [SerializeField, Tooltip("Automatically loaded")] private Mesh _terrainMesh;
     [SerializeField, Tooltip("Automatically loaded")] private Mesh _grassMesh;
     [SerializeField, Tooltip("Automatically loaded")] private Material _material;
     
     #endregion
     
     #region Local Variables
-
+    
     private bool _resourcesLoaded;
     private bool _grassIsEnabled;
     
-    private GraphicsBuffer _terrainTriangleBuffer;
-    private GraphicsBuffer _terrainVertexBuffer;
+    private GraphicsBuffer[] _terrainTriangleBuffer;
+    private GraphicsBuffer[] _terrainVertexBuffer;
     
-    private GraphicsBuffer _transformMatrixBuffer;
+    private GraphicsBuffer[] _transformMatrixBuffer;
     
-    private GraphicsBuffer _grassTriangleBuffer;
-    private GraphicsBuffer _grassVertexBuffer;
-    private GraphicsBuffer _grassUVBuffer;
+    private GraphicsBuffer[] _grassTriangleBuffer;
+    private GraphicsBuffer[] _grassVertexBuffer;
+    private GraphicsBuffer[] _grassUVBuffer;
     
-    private Bounds _bounds;
-    private MaterialPropertyBlock _materialPropertyBlock;
+    private Bounds[] _bounds;
+    private MaterialPropertyBlock[] _materialPropertyBlock;
 
-    private int _kernel;
-    private uint _threadGroupSize;
-    private int _terrainTriangleCount;
+    private RenderParams[] _rp;
     
-    private RenderParams _rp;
+    private int _kernel;
+    private uint[] _threadGroupSize;
+    private int[] _terrainTriangleCount;
     
     // Cached property index
     private static readonly int TerrainPositions = Shader.PropertyToID("_TerrainPositions");
@@ -66,13 +69,16 @@ public class RenderGrass : MonoBehaviour
 
     private void LoadResources() {
         // Load from resources
-        _terrainMesh = GetComponent<MeshFilter>().sharedMesh;
         _computeShader = (ComputeShader) Resources.Load("Grass/ProceduralGrassCompute");
         _material = (Material)Resources.Load("Grass/Custom_ProceduralGrass");
         _grassMesh = ((GameObject)Resources.Load("Grass/GrassBlade")).GetComponentInChildren<MeshFilter>().
             sharedMesh; // Is there a better way to load meshes?
         
         _kernel = _computeShader.FindKernel("CalculateBladePositions");
+
+        for (int i = 0; i < _numberOfChunks; i++) {
+            _terrainMeshes[i] += _positions[i];
+        }
     }
     
     private void GenerateGrass() {
@@ -82,107 +88,109 @@ public class RenderGrass : MonoBehaviour
             _resourcesLoaded = true;
         }
 
-        // Get data from terrain mesh
-        Vector3[] terrainVertices = _terrainMesh.vertices;
-        _terrainVertexBuffer = new GraphicsBuffer(
-            GraphicsBuffer.Target.Structured,
-            terrainVertices.Length,
-            sizeof(float) * 3
-        );
-        _terrainVertexBuffer.SetData(terrainVertices);
-        
-        int[] terrainTriangles = _terrainMesh.triangles;
-        _terrainTriangleBuffer = new GraphicsBuffer(
-            GraphicsBuffer.Target.Structured,
-            terrainTriangles.Length,
-            sizeof(int)
-        );
-        _terrainTriangleBuffer.SetData(terrainTriangles);
+        for (int i = 0; i < _numberOfChunks; i++) {
+            // Get data from terrain mesh
+            Vector3[] terrainVertices = _terrainMeshes[i].vertices;
+            _terrainVertexBuffer[i] = new GraphicsBuffer(
+                GraphicsBuffer.Target.Structured,
+                terrainVertices.Length,
+                sizeof(float) * 3
+            );
+            _terrainVertexBuffer[i].SetData(terrainVertices);
 
-        _terrainTriangleCount = terrainTriangles.Length / 3;
-        
-        // Passes data to compute buffer
-        _computeShader.SetBuffer(_kernel, TerrainPositions, _terrainVertexBuffer);
-        _computeShader.SetBuffer(_kernel, TerrainTriangles, _terrainTriangleBuffer);
-        
-        // Data for RenderPrimitivesIndexed
-        Vector3[] grassVertices = _grassMesh.vertices;
-        _grassVertexBuffer = new GraphicsBuffer(
-            GraphicsBuffer.Target.Structured, 
-            grassVertices.Length, 
-            sizeof(float) * 3
-        );
-        _grassVertexBuffer.SetData(grassVertices);
+            int[] terrainTriangles = _terrainMeshes[i].triangles;
+            _terrainTriangleBuffer[i] = new GraphicsBuffer(
+                GraphicsBuffer.Target.Structured,
+                terrainTriangles.Length,
+                sizeof(int)
+            );
+            _terrainTriangleBuffer[i].SetData(terrainTriangles);
 
-        int[] grassTriangles = _grassMesh.triangles;
-        _grassTriangleBuffer = new GraphicsBuffer(
-            GraphicsBuffer.Target.Structured,
-            grassTriangles.Length,
-            sizeof(int)
-        );
-        _grassTriangleBuffer.SetData(grassTriangles);
+            _terrainTriangleCount[i] = terrainTriangles.Length / 3;
 
-        Vector2[] grassUVs = _grassMesh.uv;
-        _grassUVBuffer = new GraphicsBuffer(
-            GraphicsBuffer.Target.Structured,
-            grassUVs.Length,
-            sizeof(float) * 2
-        );
-        _grassUVBuffer.SetData(grassUVs);
-        
-        // Buffer for transformation matrices
-        _transformMatrixBuffer = new GraphicsBuffer(
-            GraphicsBuffer.Target.Structured,
-            _terrainTriangleCount * _numberOfBladesPerTri,
-            sizeof(float) * 16
-        );
-        _computeShader.SetBuffer(_kernel, TransformMatrices, _transformMatrixBuffer);
+            // Passes data to compute buffer
+            _computeShader.SetBuffer(_kernel, TerrainPositions, _terrainVertexBuffer[i]);
+            _computeShader.SetBuffer(_kernel, TerrainTriangles, _terrainTriangleBuffer[i]);
 
-        // Bounds setup
-        _bounds = _terrainMesh.bounds;
-        _bounds.center += transform.position;
-        _bounds.Expand(_maxBladeHeight);
+            // Data for RenderPrimitivesIndexed
+            Vector3[] grassVertices = _grassMesh.vertices;
+            _grassVertexBuffer[i] = new GraphicsBuffer(
+                GraphicsBuffer.Target.Structured,
+                grassVertices.Length,
+                sizeof(float) * 3
+            );
+            _grassVertexBuffer[i].SetData(grassVertices);
 
-        // Creates MaterialPropertyBlock
-        _materialPropertyBlock = new MaterialPropertyBlock();
-        _materialPropertyBlock.SetBuffer(TransformMatrices, _transformMatrixBuffer);
-        _materialPropertyBlock.SetBuffer(Positions, _grassVertexBuffer);
-        _materialPropertyBlock.SetBuffer(UVs, _grassUVBuffer);
-        
-        // Binds RenderParams
-        _rp = new RenderParams(_material) {
-            worldBounds = _bounds,
-            matProps = _materialPropertyBlock
-        };
-        
-        RunComputeShader();
+            int[] grassTriangles = _grassMesh.triangles;
+            _grassTriangleBuffer[i] = new GraphicsBuffer(
+                GraphicsBuffer.Target.Structured,
+                grassTriangles.Length,
+                sizeof(int)
+            );
+            _grassTriangleBuffer[i].SetData(grassTriangles);
+
+            Vector2[] grassUVs = _grassMesh.uv;
+            _grassUVBuffer[i] = new GraphicsBuffer(
+                GraphicsBuffer.Target.Structured,
+                grassUVs.Length,
+                sizeof(float) * 2
+            );
+            _grassUVBuffer[i].SetData(grassUVs);
+
+            // Buffer for transformation matrices
+            _transformMatrixBuffer[i] = new GraphicsBuffer(
+                GraphicsBuffer.Target.Structured,
+                _terrainTriangleCount[i] * _numberOfBladesPerTri,
+                sizeof(float) * 16
+            );
+            _computeShader.SetBuffer(_kernel, TransformMatrices, _transformMatrixBuffer[i]);
+
+            // Bounds setup
+            _bounds[i] = _terrainMeshes[i].bounds;
+            _bounds[i].center += transform.position;
+            _bounds[i].Expand(_maxBladeHeight);
+
+            // Creates MaterialPropertyBlock
+            _materialPropertyBlock[i] = new MaterialPropertyBlock();
+            _materialPropertyBlock[i].SetBuffer(TransformMatrices, _transformMatrixBuffer[i]);
+            _materialPropertyBlock[i].SetBuffer(Positions, _grassVertexBuffer[i]);
+            _materialPropertyBlock[i].SetBuffer(UVs, _grassUVBuffer[i]);
+
+            // Binds RenderParams
+            _rp[i] = new RenderParams(_material) {
+                worldBounds = _bounds[i],
+                matProps = _materialPropertyBlock[i]
+            };
+
+            RunComputeShader(i);
+        }
     }
 
-    private void RunComputeShader() {
+    private void RunComputeShader(int chunkIndex) {
         // Bind variables to compute shader.
         _computeShader.SetMatrix(TerrainObjectToWorld, transform.localToWorldMatrix);
-        _computeShader.SetInt(TerrainTriangleCount, _terrainTriangleCount);
+        _computeShader.SetInt(TerrainTriangleCount, _terrainTriangleCount[chunkIndex]);
         _computeShader.SetFloat(MinBladeHeight, _minBladeHeight);
         _computeShader.SetFloat(MaxBladeHeight, _maxBladeHeight);
         _computeShader.SetFloat(Scale, _scale);
         _computeShader.SetFloat(NumberOfBladesPerTri, _numberOfBladesPerTri);
         
         // Run the compute shader.
-        _computeShader.GetKernelThreadGroupSizes(_kernel, out _threadGroupSize, out _, out _);
-        int threadGroups = Mathf.CeilToInt(_terrainTriangleCount * _numberOfBladesPerTri / _threadGroupSize);
+        _computeShader.GetKernelThreadGroupSizes(_kernel, out _threadGroupSize[chunkIndex], out _, out _);
+        int threadGroups = Mathf.CeilToInt(_terrainTriangleCount[chunkIndex] * _numberOfBladesPerTri / _threadGroupSize[chunkIndex]);
         _computeShader.Dispatch(_kernel, threadGroups, 1, 1);
-        
-        Debug.Log(_terrainTriangleCount);
     }
     
     private void CleanUpGrass() {
-        _terrainTriangleBuffer?.Release();
-        _terrainVertexBuffer?.Release();
-        _transformMatrixBuffer?.Release();
+        for (int i = 0; i < _numberOfChunks; i++) {
+            _terrainTriangleBuffer[i]?.Release();
+            _terrainVertexBuffer[i]?.Release();
+            _transformMatrixBuffer[i]?.Release();
 
-        _grassTriangleBuffer?.Release();
-        _grassVertexBuffer?.Release();
-        _grassUVBuffer?.Release();
+            _grassTriangleBuffer[i]?.Release();
+            _grassVertexBuffer[i]?.Release();
+            _grassUVBuffer[i]?.Release();
+        }
     }
 
     private void OnDestroy()
@@ -204,19 +212,15 @@ public class RenderGrass : MonoBehaviour
         
         if (!_enableGrass) return;
 
-        // Is this slow?
-        try {
+        for (int i = 0; i < _numberOfChunks; i++) {
             Graphics.RenderPrimitivesIndexed(
-                _rp,
+                _rp[i],
                 MeshTopology.Triangles,
-                _grassTriangleBuffer,
-                _grassTriangleBuffer.count,
-                instanceCount: _terrainTriangleCount * _numberOfBladesPerTri
+                _grassTriangleBuffer[i],
+                _grassTriangleBuffer[i].count,
+                instanceCount: _terrainTriangleCount[i] * _numberOfBladesPerTri
             );
-         }
-         catch {
-             GenerateGrass();
-         }
+        }
     }
     
     #endregion
