@@ -3,21 +3,21 @@ using _Scripts._BehaviorTree;
 
 namespace _Scripts._Entities.Creatures.CreatureAI
 {
-	public class DistanceToPlayerLessThan : TreeNode
+	public class DistanceTransformLessThan : TreeNode
 	{
 		private Transform _transform;
-		private Transform _playerTransform;
+		private Transform _secondTransform;
 		private float _distance;
 
-		public DistanceToPlayerLessThan(Transform transform, Transform playerTransform, float distance) {
+		public DistanceTransformLessThan(Transform transform, Transform secondTransform, float distance) {
 			_transform = transform;
-			_playerTransform = playerTransform;
+			_secondTransform = secondTransform;
 			_distance = distance;
 		}
 
 		public override TreeNodeState Evaluate() {
 			Vector3 position = _transform.position;
-			Vector3 playerPosition = _playerTransform.position;
+			Vector3 playerPosition = _secondTransform.position;
 			_nodeState = Vector3.Distance(position, playerPosition) < _distance ? TreeNodeState.SUCCESS : TreeNodeState.FAILED;
 			return _nodeState;
 		}

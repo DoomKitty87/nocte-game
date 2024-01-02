@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Numerics;
 using System.Runtime.CompilerServices;
 using _Scripts._BehaviorTree;
 using UnityEngine;
@@ -24,6 +25,9 @@ namespace _Scripts._Entities.Creatures.CreatureAI
 		[Header("Settings")]
 		[SerializeField] private float _distanceChase;
 		[SerializeField] private float _distanceAttack;
+		[SerializeField] private float _distanceRoam;
+		[SerializeField] private float _distanceGoal;
+		[SerializeField] private float _range;
 		[SerializeField] private List<CreatureAttack> _attacks;
 
 		protected override TreeNode SetupTree() {
@@ -32,16 +36,28 @@ namespace _Scripts._Entities.Creatures.CreatureAI
 			_creatureCombat = gameObject.GetComponent<CreatureCombat>();
 			return new Selector(new List<TreeNode> {
 				new Sequencer(new List<TreeNode> {
-					new DistanceToPlayerLessThan(_transform, _playerTransform, _distanceAttack),
+					new DistanceTransformLessThan(_transform, _playerTransform, _distanceAttack),
 					new FaceTransform(_transform, _playerTransform, true, false, true),
 					// new Succeder(
 					// 	new AttackWithCreatureCombat(_creatureCombat, _attacks[Random.Range(0, 1)])
 					// )
 				}),
 				new Sequencer(new List<TreeNode> {
-					new DistanceToPlayerLessThan(transform, _playerTransform, _distanceChase),
+					new DistanceTransformLessThan(_transform, _playerTransform, _distanceChase),
 					new FaceTransform(_transform, _playerTransform, true, false, true),
-					new SetMovementToChaseTransform(_transform, _playerTransform, _controller)
+					new SetMovementToDirection(_transform.forward, _controller)
+				}),
+				new Sequencer(new List<TreeNode> {
+					new Invertor(new DistanceTransformLessThan(_transform, _playerTransform, _distanceRoam)),
+					new PlaceRandomGoal(_controller, _transform, _range),
+					new FaceGoal(_transform, _controller._goal.transform, true, false, true),
+					new SetMovementToDirection(_transform.forward, _controller)
+				}),
+				new Sequencer( new List<TreeNode> {
+					new DistanceTransformLessThan(_transform, , _distanceGoal),
+					new PlaceRandomGoal(_controller, _transform, _range),
+					new FaceGoal()
+					new SetMovementToDirection(_transform.forward, _controller)
 				})
 			});
 		}
