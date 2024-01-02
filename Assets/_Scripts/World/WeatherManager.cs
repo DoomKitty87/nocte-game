@@ -42,11 +42,18 @@ public class WeatherManager : MonoBehaviour
   private VisualEnvironment _environment;
   private Quaternion _sunInitRot;
   private PhysicallyBasedSky _physicalSky;
+  private Vector3 _spaceRotationAxis;
+  private float _spacePhase;
 
   private void Start() {
     _sunInitRot = _sunTransform.localRotation;
     _seed = (int)_worldGenerator.GetSeedHash();
     _weatherPhases = new Vector2(Mathf.PerlinNoise(_seed, _seed), Mathf.PerlinNoise(-_seed, -_seed));
+    _spaceRotationAxis = new Vector3(
+      Mathf.PerlinNoise(_seed % 250, _seed % 250),
+      Mathf.PerlinNoise(_seed % 1235, _seed % 1235),
+      Mathf.PerlinNoise(_seed % 9523, _seed % 9523)
+    ).normalized;
     _cloudVolume.TryGet<VolumetricClouds>(out _clouds);
     _cloudVolume.TryGet<VisualEnvironment>(out _environment);
     _cloudVolume.TryGet<PhysicallyBasedSky>(out _physicalSky);
@@ -59,9 +66,11 @@ public class WeatherManager : MonoBehaviour
     _weatherPhases.x += Mathf.PerlinNoise(_seed + Time.time, _seed + Time.time) * _cloudCycleSpeed * Time.deltaTime;
     _weatherPhases.y += Mathf.PerlinNoise(-_seed - Time.time, -_seed - Time.time) * _rainCycleSpeed * Time.deltaTime;
     _weatherPhases.z += Mathf.PerlinNoise(_seed - Time.time, -_seed + Time.time) * _windCycleSpeed * Time.deltaTime;
+    _spacePhase += Time.deltaTime / _dayNightCycleSpeed;
     _weatherPhases.x %= 1;
     _weatherPhases.y %= 1;
     _weatherPhases.z %= 1;
+    _spacePhase %= 1;
     _weatherState.y = _cloudDensityCurve.Evaluate(_weatherPhases.x);
     _weatherState.z = _rainDensityCurve.Evaluate(_weatherPhases.y);
     _weatherState.w = _windSpeedCurve.Evaluate(_weatherPhases.z);
@@ -70,5 +79,6 @@ public class WeatherManager : MonoBehaviour
     _sunTransform.localRotation = Quaternion.AngleAxis(_weatherState.x * 360, Vector3.right) * _sunInitRot;
     _rainEffect.SetInt("RainRate", (int) (_weatherState.z * _rainMaxIntensity));
     _physicalSky.spaceEmissionMultiplier.value = Mathf.SmoothStep(_maxSpaceIntensity, 0, (_weatherState.x > 0.5f ? 1 - _weatherState.x : _weatherState.x) * 2);
+    _physicalSky.spaceRotation.value = Quaternion.AngleAxis(_spacePhase * 360, _spaceRotationAxis).eulerAngles;
   }
 }
