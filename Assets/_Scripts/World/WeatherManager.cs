@@ -80,9 +80,9 @@ public class WeatherManager : MonoBehaviour
     _environment.windSpeed.value = _weatherState.z * _maxWindSpeed;
     _sunTransform.localRotation = Quaternion.AngleAxis(_weatherState.x * 360, Vector3.right) * _sunInitRot;
     _rainEffect.SetInt("RainRate", (int) (_weatherState.z * _rainMaxIntensity));
-    float nightFactor = Mathf.SmoothStep(1, 0, Mathf.Pow(_weatherState.x > 0.5f ? 1 - _weatherState.x : _weatherState.x, 3) * 4);
+    float nightFactor = Mathf.SmoothStep(1, 0, Mathf.Pow(_weatherState.x > 0.5f ? 1 - _weatherState.x : _weatherState.x, 1.25f) * 4);
     _physicalSky.spaceEmissionMultiplier.value = nightFactor * _maxSpaceIntensity;
     _physicalSky.spaceRotation.value = Quaternion.AngleAxis(_spacePhase * 360, _spaceRotationAxis).eulerAngles;
-    //_asteroidEffect.SetFloat("SpawnRate", nightFactor * _maxAsteroidRate);
+    _asteroidEffect.SetFloat("SpawnRate", nightFactor * _maxAsteroidRate);
   }
 }
