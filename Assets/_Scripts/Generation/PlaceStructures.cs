@@ -15,6 +15,7 @@ public class PlaceStructures : MonoBehaviour
   [SerializeField] private float _groundInset;
   [SerializeField] private int _structureRenderDistance = 2500; // [World Units]
   [SerializeField] private GameObject _roadObject;
+  [SerializeField] private float _centerOffsetRadiusAmplitude;
 
   private Vector3[] _structurePositions;
 
@@ -28,8 +29,10 @@ public class PlaceStructures : MonoBehaviour
   };
 
   private void Start() {
+    float offsetAngle = Mathf.PerlinNoise(_worldGen._seed % 681, _worldGen._seed % 918) * Mathf.PI * 2;
+    Vector3 positionOffset = new Vector3(Mathf.Cos(offsetAngle), 0, Mathf.Sin(offsetAngle)) * (Mathf.PerlinNoise(_worldGen._seed % 6913, _worldGen._seed % 1052) - 0.5f) * _centerOffsetRadiusAmplitude;
     _structurePositions = new Vector3[_outerStructures.Length + 1];
-    Vector3 mainPosition = new Vector3(0, 0, 0);
+    Vector3 mainPosition = new Vector3(0, 0, 0) + positionOffset;
     mainPosition.y = _worldGen.GetHeightValue(new Vector2(mainPosition.x, mainPosition.z));
     float heighta = _worldGen.GetHeightValue(new Vector2(mainPosition.x - 1, mainPosition.z));
     float heightb = _worldGen.GetHeightValue(new Vector2(mainPosition.x + 1, mainPosition.z));
@@ -102,7 +105,7 @@ public class PlaceStructures : MonoBehaviour
     for (int i = 0; i < _outerStructures.Length; i++) {
       float nodeRotation = (_worldGen.GetSeedHash() % 25000 * (i + 1)) % 1000 / 1000 * 2 * Mathf.PI;
       float nodeRadius = _nodeDistance * (_worldGen.GetSeedHash() % 28921 * 91.62f * (i + i) % 10618 / 10618 + 0.5f);
-      Vector3 outPosition = new Vector3(nodeRadius * Mathf.Cos(nodeRotation), 0, nodeRadius * Mathf.Sin(nodeRotation));
+      Vector3 outPosition = new Vector3(nodeRadius * Mathf.Cos(nodeRotation), 0, nodeRadius * Mathf.Sin(nodeRotation)) + positionOffset;
       outPosition.y = _worldGen.GetHeightValue(new Vector2(outPosition.x, outPosition.z));
       heighta = _worldGen.GetHeightValue(new Vector2(outPosition.x - 1, outPosition.z));
       heightb = _worldGen.GetHeightValue(new Vector2(outPosition.x + 1, outPosition.z));
