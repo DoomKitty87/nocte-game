@@ -31,6 +31,8 @@ public class WeatherManager : MonoBehaviour
   [SerializeField] private Transform _sunTransform;
   [SerializeField] private VisualEffect _rainEffect;
   [SerializeField] private VisualEffect _asteroidEffect;
+  [SerializeField] private int _frameUpdateDelay;
+  [SerializeField] private int _frameUpdateDelay2;
   
 
   // X value represents day cycle, Y represents cloud density, and Z represents rain density.
@@ -46,6 +48,8 @@ public class WeatherManager : MonoBehaviour
   private PhysicallyBasedSky _physicalSky;
   private Vector3 _spaceRotationAxis;
   private float _spacePhase;
+  private int _updateCounter;
+  private int _updateCounter2;
 
   private void Start() {
     _sunInitRot = _sunTransform.localRotation;
@@ -73,16 +77,27 @@ public class WeatherManager : MonoBehaviour
     _weatherPhases.y %= 1;
     _weatherPhases.z %= 1;
     _spacePhase %= 1;
+    float nightFactor = Mathf.SmoothStep(1, 0, Mathf.Pow(_weatherState.x > 0.5f ? 1 - _weatherState.x : _weatherState.x, 1.25f) * 4);
+    if (_updateCounter2 < _frameUpdateDelay2) {
+      _updateCounter2++;
+    } else {
+      _updateCounter2 = 0;
+      _sunTransform.localRotation = Quaternion.AngleAxis(_weatherState.x * 360, Vector3.right) * _sunInitRot;
+      _physicalSky.spaceRotation.value = Quaternion.AngleAxis(_spacePhase * 360, _spaceRotationAxis).eulerAngles;
+    }
+    if (_updateCounter < _frameUpdateDelay) {
+      _updateCounter++;
+      return;
+    } else {
+      _updateCounter = 0;
+    }
     _weatherState.y = _cloudDensityCurve.Evaluate(_weatherPhases.x);
     _weatherState.z = _rainDensityCurve.Evaluate(_weatherPhases.y);
     _weatherState.w = _windSpeedCurve.Evaluate(_weatherPhases.z);
     //_clouds.shapeFactor.value = _weatherState.y;
     _environment.windSpeed.value = _weatherState.z * _maxWindSpeed;
-    _sunTransform.localRotation = Quaternion.AngleAxis(_weatherState.x * 360, Vector3.right) * _sunInitRot;
     _rainEffect.SetInt("RainRate", (int) (_weatherState.z * _rainMaxIntensity));
-    float nightFactor = Mathf.SmoothStep(1, 0, Mathf.Pow(_weatherState.x > 0.5f ? 1 - _weatherState.x : _weatherState.x, 1.25f) * 4);
     _physicalSky.spaceEmissionMultiplier.value = nightFactor * _maxSpaceIntensity;
-    _physicalSky.spaceRotation.value = Quaternion.AngleAxis(_spacePhase * 360, _spaceRotationAxis).eulerAngles;
     _asteroidEffect.SetFloat("SpawnRate", nightFactor * _maxAsteroidRate);
   }
 }
