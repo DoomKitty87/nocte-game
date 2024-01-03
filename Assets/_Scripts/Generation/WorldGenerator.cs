@@ -78,7 +78,33 @@ public class WorldGenerator : MonoBehaviour
     [Tooltip("Amplitude of warp scale noise permutation.")]
     public float warpScaleAmplitude;
     [Tooltip("Midpoint value of warp scale.")]
-    public float warpScaleMean;        
+    public float warpScaleMean;
+    public float amplitudePower;
+
+    [Header("Parameters for seed-based perturbation.")]
+    public float sharpnessScaleAmplitude; 
+    public float sharpnessAmplitudeAmplitude;
+    public float sharpnessMeanAmplitude;
+    public float amplitudeScaleAmplitude;
+    public float amplitudeAmplitudeAmplitude;
+    public float amplitudeMeanAmplitude;
+    public float warpStrengthAmplitudeAmplitude; 
+    public float warpStrengthMeanAmplitude;
+    public float warpScaleMeanAmplitude;
+    public float amplitudePowerAmplitude;
+
+    public void Perturb(float seed) {
+      sharpnessScale += (Mathf.PerlinNoise(seed % 75192, seed % 60193) - 0.5f) * sharpnessScaleAmplitude;
+      sharpnessAmplitude += (Mathf.PerlinNoise(seed % 96801, seed % 98124) - 0.5f) * sharpnessAmplitudeAmplitude;
+      sharpnessMean += (Mathf.PerlinNoise(seed % 21425, seed % 59185) - 0.5f) * sharpnessMeanAmplitude;
+      amplitudeScale += (Mathf.PerlinNoise(seed % 17282, seed % 91896) - 0.5f) * amplitudeScaleAmplitude;
+      amplitudeAmplitude += (Mathf.PerlinNoise(seed % 61934, seed % 72914) - 0.5f) * amplitudeAmplitudeAmplitude;
+      amplitudeMean += (Mathf.PerlinNoise(seed % 48183, seed % 38906) - 0.5f) * amplitudeMeanAmplitude;
+      warpStrengthAmplitude += (Mathf.PerlinNoise(seed % 19512, seed % 70218) - 0.5f) * warpStrengthAmplitudeAmplitude;
+      warpStrengthMean += (Mathf.PerlinNoise(seed % 81053, seed % 10952) - 0.5f) * warpStrengthMeanAmplitude;
+      warpScaleMeanAmplitude += (Mathf.PerlinNoise(seed % 63914, seed % 56192) - 0.5f) * warpScaleMeanAmplitude;
+      amplitudePower += (Mathf.PerlinNoise(seed % 59103, seed % 32951) - 0.5f) * amplitudePowerAmplitude;
+    } 
 
   }
 
@@ -189,7 +215,7 @@ public class WorldGenerator : MonoBehaviour
       _noiseParameters.sharpnessAmplitude, _noiseParameters.sharpnessMean, _noiseParameters.scaleScale, _noiseParameters.scaleAmplitude,
       _noiseParameters.scaleMean, _noiseParameters.amplitudeScale, _noiseParameters.amplitudeAmplitude, _noiseParameters.amplitudeMean,
       _noiseParameters.warpStrengthScale, _noiseParameters.warpStrengthAmplitude, _noiseParameters.warpStrengthMean,
-      _noiseParameters.warpScaleScale, _noiseParameters.warpScaleAmplitude, _noiseParameters.warpScaleMean)[0].y;
+      _noiseParameters.warpScaleScale, _noiseParameters.warpScaleAmplitude, _noiseParameters.warpScaleMean, _noiseParameters.amplitudePower)[0].y;
     heightVal -= _riverParameters.heightCurve.Evaluate(heightVal / _maxPossibleHeight) * (_riverParameters.noiseCurve.Evaluate(AmalgamNoise.GenerateRivers(
         0, 1, worldPosition.x + _seed % 216812, worldPosition.y + _seed % 216812, 0, 0, _riverParameters.scale, _riverParameters.octaves, _riverParameters.lacunarity, _riverParameters.persistence, _riverParameters.warpScale, _riverParameters.warpStrength)[0]) * _riverParameters.amplitude);
     return heightVal;
@@ -239,6 +265,8 @@ public class WorldGenerator : MonoBehaviour
     _waterMesh.indexFormat = UnityEngine.Rendering.IndexFormat.UInt32;
     _riverParameters.obj.GetComponent<WaterSurface>().mesh = _waterMesh;
     _seed = int.Parse(Hash128.Compute(_seed).ToString().Substring(0, 6), System.Globalization.NumberStyles.HexNumber);
+    // Seed-based terrain parameter changes
+    _noiseParameters.Perturb(_seed);
     _lakeObject.position = new Vector3(0, _lakePlaneHeight, 0);
   }
 
@@ -474,7 +502,7 @@ public class WorldGenerator : MonoBehaviour
         _noiseParameters.sharpnessAmplitude, _noiseParameters.sharpnessMean, _noiseParameters.scaleScale, _noiseParameters.scaleAmplitude,
         _noiseParameters.scaleMean, _noiseParameters.amplitudeScale, _noiseParameters.amplitudeAmplitude, _noiseParameters.amplitudeMean,
         _noiseParameters.warpStrengthScale, _noiseParameters.warpStrengthAmplitude, _noiseParameters.warpStrengthMean,
-        _noiseParameters.warpScaleScale, _noiseParameters.warpScaleAmplitude, _noiseParameters.warpScaleMean);
+        _noiseParameters.warpScaleScale, _noiseParameters.warpScaleAmplitude, _noiseParameters.warpScaleMean, _noiseParameters.amplitudePower);
     msh.vertices = result;
     
     go.transform.position = new Vector3(x * _size * _resolution, 0, z * _size * _resolution);
@@ -513,7 +541,7 @@ public class WorldGenerator : MonoBehaviour
         _noiseParameters.sharpnessAmplitude, _noiseParameters.sharpnessMean, _noiseParameters.scaleScale, _noiseParameters.scaleAmplitude,
         _noiseParameters.scaleMean, _noiseParameters.amplitudeScale, _noiseParameters.amplitudeAmplitude, _noiseParameters.amplitudeMean,
         _noiseParameters.warpStrengthScale, _noiseParameters.warpStrengthAmplitude, _noiseParameters.warpStrengthMean,
-        _noiseParameters.warpScaleScale, _noiseParameters.warpScaleAmplitude, _noiseParameters.warpScaleMean);
+        _noiseParameters.warpScaleScale, _noiseParameters.warpScaleAmplitude, _noiseParameters.warpScaleMean, _noiseParameters.amplitudePower);
     _tilePool[index].mesh.triangles = null;
     _tilePool[index].mesh.vertices = result;
 
