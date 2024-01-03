@@ -60,7 +60,7 @@ public static class AmalgamNoise
       sharpnessValue += secondarySharpness;
       float scaleValue = scaleMean + scaleAmplitude * snoise(new float2((sampleX * xResolution + xOffset) * scaleScale, (sampleZ * zResolution + zOffset) * scaleScale));
       float amplitudeValue = snoise(new float2((sampleX * xResolution + xOffset) * amplitudeScale, (sampleZ * zResolution + zOffset) * amplitudeScale));
-      amplitudeValue = Mathf.Pow(Mathf.Max(amplitudeValue, 0), 2);
+      amplitudeValue = Mathf.Pow(amplitudeValue, 2);
       float amplitudeValue0 = amplitudeValue;
       amplitudeValue = amplitudeMean + amplitudeAmplitude * amplitudeValue;
       float warpStrengthValue = warpStrengthMean + warpStrengthAmplitude * snoise(new float2((sampleX * xResolution + xOffset) * warpStrengthScale, (sampleZ * zResolution + zOffset) * warpStrengthScale));

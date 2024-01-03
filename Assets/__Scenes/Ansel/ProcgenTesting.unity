@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 94.54753, g: 22.39184, b: 75.444084, a: 1}
+  m_IndirectSpecularColor: {r: 13.723147, g: 3.3984468, b: 9.693244, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -6817,6 +6817,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8819276947174590073, guid: 862d92a67177d4c7b84ab88d6b6e0257,
         type: 3}
+      propertyPath: _seed
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8819276947174590073, guid: 862d92a67177d4c7b84ab88d6b6e0257,
+        type: 3}
       propertyPath: _lakeObject
       value: 
       objectReference: {fileID: 1865415592}
@@ -6849,6 +6854,16 @@ PrefabInstance:
         type: 3}
       propertyPath: _noiseParameters.sharpnessMean
       value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 8819276947174590073, guid: 862d92a67177d4c7b84ab88d6b6e0257,
+        type: 3}
+      propertyPath: _noiseParameters.sharpnessScale
+      value: 3500
+      objectReference: {fileID: 0}
+    - target: {fileID: 8819276947174590073, guid: 862d92a67177d4c7b84ab88d6b6e0257,
+        type: 3}
+      propertyPath: _noiseParameters.sharpnessAmplitude
+      value: 0.2
       objectReference: {fileID: 0}
     - target: {fileID: 8951891336655120199, guid: 862d92a67177d4c7b84ab88d6b6e0257,
         type: 3}
