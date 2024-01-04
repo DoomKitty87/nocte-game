@@ -206,21 +206,25 @@ public class WorldGenerator : MonoBehaviour
     return _seed;
   }
 
-  public (Vector3[][], int[][]) GetVertices(int distance) {
-    int numberOfChunks = (distance * 2 - 1) * (distance * 2 - 1);
+  public (Vector3[][], int[][], Bounds[], Vector3[]) GetVertices(int distance, int numberOfChunks) {
     Vector3[][] vertices = new Vector3[numberOfChunks][];
     int[][] tris = new int[numberOfChunks][];
-    for (int i = 0; i < distance) {
-      for (int j = 0; j < )
-      //if (Mathf.Sqrt(Mathf.Pow(_tilePool[i].x, 2) + Mathf.Pow(_tilePool[i].z, 2)) <= distance) {
-      //  Mesh mesh = _tilePool[i].mesh;
-      //  vertices[i] = mesh.vertices;
-      //  tris[i] = mesh.triangles;
-      //  j++;
-      //}
+    Bounds[] bounds = new Bounds[numberOfChunks];
+    Vector3[] positions = new Vector3[numberOfChunks];
+    int currentTile = 0;
+    for (int i = 0; i < distance * 2 - 1; i++) {
+      for (int j = 0; j < distance * 2 - 1; j++) {
+        WorldTile tile = _tilePool[_tilePositions[((_tileCount - 1) / 2) - distance + i, ((_tileCount - 1) / 2) - distance + j]];
+        Mesh mesh = tile.mesh;
+        vertices[currentTile] = mesh.vertices;
+        tris[currentTile] = mesh.triangles;
+        bounds[currentTile] = mesh.bounds;
+        positions[currentTile] = new Vector3(tile.obj.transform.position.x, 0, tile.obj.transform.position.z);
+        currentTile++;
+      }
     }
 
-    return (vertices, tris);
+    return (vertices, tris, bounds, positions);
   }
 
   #endregion
@@ -498,7 +502,10 @@ public class WorldGenerator : MonoBehaviour
     float maxDistance = Mathf.Max(Mathf.Abs(x), Mathf.Abs(z));
     if (_enableColliders && maxDistance <= _colliderRange) UpdateCollider(index);
 
-    if (index == (_tileCount * _tileCount) - 1) UpdateWaterMesh();
+    if (index == (_tileCount * _tileCount) - 1) {
+      UpdateWaterMesh();
+      _grassManager.GenerateGrass();
+    }
   }
 
   private void UpdateTile(int index) {

@@ -7,6 +7,7 @@ public class RenderGrass : MonoBehaviour
     [HideInInspector] public int _numberOfChunks;
     [HideInInspector] public Vector3[][] _vertices;
     [HideInInspector] public int[][] _tris;
+    [HideInInspector] public Bounds[] _bounds;
     
     [SerializeField] public bool _enableGrass;
     [SerializeField] public bool _regenerateGrass;
@@ -40,7 +41,6 @@ public class RenderGrass : MonoBehaviour
     private GraphicsBuffer[] _grassVertexBuffer;
     private GraphicsBuffer[] _grassUVBuffer;
     
-    private Bounds[] _bounds;
     private MaterialPropertyBlock[] _materialPropertyBlock;
 
     private RenderParams[] _rp;
@@ -75,10 +75,23 @@ public class RenderGrass : MonoBehaviour
             sharedMesh; // Is there a better way to load meshes?
         
         _kernel = _computeShader.FindKernel("CalculateBladePositions");
+
+        _terrainVertexBuffer = new GraphicsBuffer[_numberOfChunks];
+        _terrainTriangleBuffer = new GraphicsBuffer[_numberOfChunks];
+        _terrainTriangleCount = new int[_numberOfChunks];
+        _grassVertexBuffer = new GraphicsBuffer[_numberOfChunks];
+        _grassTriangleBuffer = new GraphicsBuffer[_numberOfChunks];
+        _grassUVBuffer = new GraphicsBuffer[_numberOfChunks];
+        _transformMatrixBuffer = new GraphicsBuffer[_numberOfChunks];
+        _bounds = new Bounds[_numberOfChunks];
+        _materialPropertyBlock = new MaterialPropertyBlock[_numberOfChunks];
+        _rp = new RenderParams[_numberOfChunks];
+
+        _threadGroupSize = new uint[_numberOfChunks];
     }
     
     private void GenerateGrass() {
-
+        
         if (!_resourcesLoaded) {
             LoadResources();
             _resourcesLoaded = true;
@@ -203,7 +216,7 @@ public class RenderGrass : MonoBehaviour
         if (!_enableGrass) return;
         
         if (_regenerateGrass) {
-            CleanUpGrass();
+            // CleanUpGrass();
             GenerateGrass();
             _regenerateGrass = false;
         }

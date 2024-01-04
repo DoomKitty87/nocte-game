@@ -16,7 +16,7 @@ uniform float _NumberOfBladesPerTri;
 // Pseudo-random number between min and max
 float randomRange(float2 seed, float min, float max)
 {
-	float randNum = frac(sin(dot(seed, float2(12.9898, 78.233)))*43758.5453);
+	const float randNum = frac(sin(dot(seed, float2(12.9898, 78.233)))*143758.5453);
     return lerp(min, max, randNum);
 }
 
