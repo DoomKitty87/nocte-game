@@ -29,6 +29,7 @@ public class MoonManager : MonoBehaviour
   [SerializeField] public Moon[] _moons;
   [SerializeField] private WorldGenerator _worldGenerator;
   [SerializeField] private OrbitVisualizer _orbitVisualizer;
+  public float _distanceMultiplier = 1.0f; // Used to scale the distance of the moons from the planet
 
   void Start()
   {
@@ -53,7 +54,7 @@ public class MoonManager : MonoBehaviour
       _moons[i].spinPhase += Time.deltaTime * _moons[i].spinSpeed;
       _moons[i].spinPhase %= 2 * Mathf.PI;
       Vector3 tmpOrbitAxis = Quaternion.AngleAxis(_moons[i].orbitAdjustPhase / (2 * Mathf.PI) * 360, Vector3.Cross(_moons[i].orbitAxis, Vector3.up)) * _moons[i].orbitAxis;
-      _moons[i].moon.localPosition = Quaternion.LookRotation(tmpOrbitAxis, Vector3.Cross(tmpOrbitAxis, Vector3.right)) * new Vector3(Mathf.Cos(_moons[i].phase), Mathf.Sin(_moons[i].phase), 0) * (_moons[i].distance / transform.localScale.x);
+      _moons[i].moon.localPosition = Quaternion.LookRotation(tmpOrbitAxis, Vector3.Cross(tmpOrbitAxis, Vector3.right)) * new Vector3(Mathf.Cos(_moons[i].phase), Mathf.Sin(_moons[i].phase), 0) * (_moons[i].distance / transform.localScale.x) * _distanceMultiplier;
       _moons[i].moon.localRotation = Quaternion.AngleAxis(_moons[i].spinPhase / (2 * Mathf.PI) * 360, Quaternion.Euler(_moons[i].spinAxis.x, _moons[i].spinAxis.y, _moons[i].spinAxis.z) * tmpOrbitAxis) * _moons[i].initialRotation;
       _moons[i].visibility = _moons[i].visibilityCurve.Evaluate(_moons[i].moon.localPosition.y / _moons[i].distance * transform.localScale.x);
       _orbitVisualizer.UpdateMoon(i);

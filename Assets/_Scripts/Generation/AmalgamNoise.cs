@@ -4,6 +4,7 @@ using Unity.Jobs;
 using Unity.Collections;
 using static Unity.Mathematics.noise;
 using Unity.Mathematics;
+using System;
 
 public static class AmalgamNoise
 {
@@ -49,6 +50,8 @@ public static class AmalgamNoise
     [ReadOnly] public float warpScaleAmplitude;
     [ReadOnly] public float warpScaleMean;
 
+    [ReadOnly] public float amplitudePower;
+
     [WriteOnly] public NativeArray<float> output;
 
     public void Execute(int index) {
@@ -60,8 +63,11 @@ public static class AmalgamNoise
       sharpnessValue += secondarySharpness;
       float scaleValue = scaleMean + scaleAmplitude * snoise(new float2((sampleX * xResolution + xOffset) * scaleScale, (sampleZ * zResolution + zOffset) * scaleScale));
       float amplitudeValue = snoise(new float2((sampleX * xResolution + xOffset) * amplitudeScale, (sampleZ * zResolution + zOffset) * amplitudeScale));
-      amplitudeValue = Mathf.Pow(Mathf.Max(amplitudeValue, 0), 2);
+      if (amplitudeValue < 0) amplitudeValue = Mathf.Abs(amplitudeValue) * 0.3f;
+      amplitudeValue = Mathf.Pow(amplitudeValue, amplitudePower);
       float amplitudeValue0 = amplitudeValue;
+      //sharpnessValue += (Mathf.Max(0, amplitudeValue0 - 0.6f));
+      //sharpnessValue = Mathf.Min(sharpnessValue, 1);
       amplitudeValue = amplitudeMean + amplitudeAmplitude * amplitudeValue;
       float warpStrengthValue = warpStrengthMean + warpStrengthAmplitude * snoise(new float2((sampleX * xResolution + xOffset) * warpStrengthScale, (sampleZ * zResolution + zOffset) * warpStrengthScale));
       float warpScaleValue = warpScaleMean + warpScaleAmplitude * snoise(new float2((sampleX * xResolution + xOffset) * warpScaleScale, (sampleZ * zResolution + zOffset) * warpScaleScale));
@@ -150,7 +156,7 @@ public static class AmalgamNoise
     
   }
 
-  public static Vector3[] GenerateTerrain(int size, int lodFactor, float xOffset, float zOffset, float xResolution, float zResolution, int octaves, float lacunarity, float persistence, float sharpnessScale, float sharpnessAmplitude, float sharpnessMean, float scaleScale, float scaleAmplitude, float scaleMean, float amplitudeScale, float amplitudeAmplitude, float amplitudeMean, float warpStrengthScale, float warpStrengthAmplitude, float warpStrengthMean, float warpScaleScale, float warpScaleAmplitude, float warpScaleMean) {
+  public static Vector3[] GenerateTerrain(int size, int lodFactor, float xOffset, float zOffset, float xResolution, float zResolution, int octaves, float lacunarity, float persistence, float sharpnessScale, float sharpnessAmplitude, float sharpnessMean, float scaleScale, float scaleAmplitude, float scaleMean, float amplitudeScale, float amplitudeAmplitude, float amplitudeMean, float warpStrengthScale, float warpStrengthAmplitude, float warpStrengthMean, float warpScaleScale, float warpScaleAmplitude, float warpScaleMean, float amplitudePower) {
     size = size * lodFactor + 5;
     NativeArray<float> output = new NativeArray<float>(size * size, Allocator.TempJob);
     NoiseJob job = new NoiseJob {
@@ -178,6 +184,7 @@ public static class AmalgamNoise
       warpScaleScale = 1f / warpScaleScale,
       warpScaleAmplitude = warpScaleAmplitude,
       warpScaleMean = warpScaleMean,
+      amplitudePower = amplitudePower,
       output = output
     };
     JobHandle handle = job.Schedule(size * size, 64);

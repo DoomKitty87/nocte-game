@@ -17,10 +17,10 @@ MonoBehaviour:
     m_OverrideState: 1
     m_Value: 4
   cloudType:
-    m_OverrideState: 1
+    m_OverrideState: 0
     m_Value: 0
   skyAmbientMode:
-    m_OverrideState: 0
+    m_OverrideState: 1
     m_Value: 1
   windOrientation:
     m_OverrideState: 1
@@ -31,34 +31,6 @@ MonoBehaviour:
   fogType:
     m_OverrideState: 0
     m_Value: 0
---- !u!114 &-7502640372973092711
-MonoBehaviour:
-  m_ObjectHideFlags: 3
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4b8bcdf71d7fafa419fca1ed162f5fc9, type: 3}
-  m_Name: ColorAdjustments
-  m_EditorClassIdentifier: 
-  active: 0
-  postExposure:
-    m_OverrideState: 1
-    m_Value: 0
-  contrast:
-    m_OverrideState: 1
-    m_Value: 0
-  colorFilter:
-    m_OverrideState: 1
-    m_Value: {r: 1, g: 1, b: 1, a: 1}
-  hueShift:
-    m_OverrideState: 1
-    m_Value: 0
-  saturation:
-    m_OverrideState: 0
-    m_Value: 40
 --- !u!114 &-2456328700736638316
 MonoBehaviour:
   m_ObjectHideFlags: 3
@@ -150,7 +122,7 @@ MonoBehaviour:
     m_Value: 0
   seaLevel:
     m_OverrideState: 1
-    m_Value: 350
+    m_Value: 400
   planetaryRadius:
     m_OverrideState: 0
     m_Value: 6378100
@@ -189,7 +161,7 @@ MonoBehaviour:
     m_Value: 3
   groundTint:
     m_OverrideState: 1
-    m_Value: {r: 0, g: 0, b: 0, a: 1}
+    m_Value: {r: 0.2264151, g: 0.2264151, b: 0.2264151, a: 1}
   groundColorTexture:
     m_OverrideState: 1
     m_Value: {fileID: 0}
@@ -198,7 +170,7 @@ MonoBehaviour:
     m_Value: {fileID: 0}
   groundEmissionMultiplier:
     m_OverrideState: 1
-    m_Value: 1
+    m_Value: 0
   planetRotation:
     m_OverrideState: 0
     m_Value: {x: 0, y: 0, z: 0}
@@ -207,10 +179,10 @@ MonoBehaviour:
     m_Value: {fileID: 8900000, guid: 6a0b0c10aff8ac344b60e6a2f4f23f7c, type: 3}
   spaceEmissionMultiplier:
     m_OverrideState: 1
-    m_Value: 5000
+    m_Value: 0
   spaceRotation:
     m_OverrideState: 1
-    m_Value: {x: 0, y: 0, z: 0}
+    m_Value: {x: 331.94443, y: 109.88692, z: 109.88692}
   colorSaturation:
     m_OverrideState: 1
     m_Value: 1
@@ -250,7 +222,6 @@ MonoBehaviour:
   - {fileID: 2866897175335590759}
   - {fileID: 9043663583824782264}
   - {fileID: -8495402153577771012}
-  - {fileID: -7502640372973092711}
   - {fileID: -2456328700736638316}
   - {fileID: 756639205190390437}
   - {fileID: -924958126123348105}
@@ -267,7 +238,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 24f077503be6ae942a1e1245dbd53ea9, type: 3}
   m_Name: Bloom
   m_EditorClassIdentifier: 
-  active: 0
+  active: 1
   quality:
     m_OverrideState: 1
     m_Value: 2
@@ -343,15 +314,15 @@ MonoBehaviour:
     m_Value: 1000
   baseHeight:
     m_OverrideState: 1
-    m_Value: 600
+    m_Value: 1000
   maximumHeight:
     m_OverrideState: 1
     m_Value: 5000
   meanFreePath:
     m_OverrideState: 1
-    m_Value: 2000
+    m_Value: 2500
   enableVolumetricFog:
-    m_OverrideState: 0
+    m_OverrideState: 1
     m_Value: 0
   albedo:
     m_OverrideState: 0
@@ -423,10 +394,10 @@ MonoBehaviour:
   active: 1
   mode:
     m_OverrideState: 1
-    m_Value: 0
+    m_Value: 1
   meteringMode:
     m_OverrideState: 1
-    m_Value: 4
+    m_Value: 0
   luminanceSource:
     m_OverrideState: 1
     m_Value: 1
@@ -438,10 +409,10 @@ MonoBehaviour:
     m_Value: 0
   limitMin:
     m_OverrideState: 1
-    m_Value: -1
+    m_Value: 11
   limitMax:
     m_OverrideState: 1
-    m_Value: 14
+    m_Value: 13
   curveMap:
     m_OverrideState: 1
     m_Value:
@@ -589,10 +560,10 @@ MonoBehaviour:
     m_Value: {x: 0, y: 0}
   bottomAltitude:
     m_OverrideState: 1
-    m_Value: 900
+    m_Value: 1400
   altitudeRange:
     m_OverrideState: 1
-    m_Value: 300
+    m_Value: 1200
   fadeInMode:
     m_OverrideState: 0
     m_Value: 0
@@ -775,13 +746,13 @@ MonoBehaviour:
     m_Value: 0.5
   densityMultiplier:
     m_OverrideState: 1
-    m_Value: 0.5
+    m_Value: 0.7
   shapeFactor:
     m_OverrideState: 1
-    m_Value: 0.75
+    m_Value: 0.8023802
   shapeScale:
     m_OverrideState: 1
-    m_Value: 15
+    m_Value: 8
   shapeOffset:
     m_OverrideState: 0
     m_Value: {x: 0, y: 0, z: 0}
@@ -790,7 +761,7 @@ MonoBehaviour:
     m_Value: 0.9
   erosionScale:
     m_OverrideState: 1
-    m_Value: 250
+    m_Value: 100
   erosionNoiseType:
     m_OverrideState: 1
     m_Value: 1
@@ -799,7 +770,7 @@ MonoBehaviour:
     m_Value: 1
   sunLightDimmer:
     m_OverrideState: 1
-    m_Value: 0.5
+    m_Value: 0
   erosionOcclusion:
     m_OverrideState: 0
     m_Value: 0.1
