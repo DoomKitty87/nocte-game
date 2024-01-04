@@ -94,18 +94,18 @@ public class WorldGenerator : MonoBehaviour
     public float warpScaleMeanAmplitude;
     public float amplitudePowerAmplitude;
 
-    public void Perturb(float seed) {
-      scaleMean += (Mathf.PerlinNoise(seed % 29613, seed % 90613)) * scaleMeanAmplitude;
-      sharpnessScale += (Mathf.PerlinNoise(seed % 75192, seed % 60193)) * sharpnessScaleAmplitude;
-      sharpnessAmplitude += (Mathf.PerlinNoise(seed % 96801, seed % 98124) - 0.5f) * sharpnessAmplitudeAmplitude;
-      sharpnessMean += (Mathf.PerlinNoise(seed % 21425, seed % 59185)) * sharpnessMeanAmplitude;
-      amplitudeScale += (Mathf.PerlinNoise(seed % 17282, seed % 91896)) * amplitudeScaleAmplitude;
-      amplitudeAmplitude += (Mathf.PerlinNoise(seed % 61934, seed % 72914) - 0.5f) * amplitudeAmplitudeAmplitude;
-      amplitudeMean += (Mathf.PerlinNoise(seed % 48183, seed % 38906)) * amplitudeMeanAmplitude;
-      warpStrengthAmplitude += (Mathf.PerlinNoise(seed % 19512, seed % 70218) - 0.5f) * warpStrengthAmplitudeAmplitude;
-      warpStrengthMean += (Mathf.PerlinNoise(seed % 81053, seed % 10952) - 0.5f) * warpStrengthMeanAmplitude;
-      warpScaleMeanAmplitude += (Mathf.PerlinNoise(seed % 63914, seed % 56192)) * warpScaleMeanAmplitude;
-      amplitudePower += (Mathf.PerlinNoise(seed % 59103, seed % 32951) - 0.5f) * amplitudePowerAmplitude;
+    public void Perturb(int seed) {
+      scaleMean += (Mathf.PerlinNoise(seed % 296.13f, seed % 906.13f)) * scaleMeanAmplitude;
+      sharpnessScale += (Mathf.PerlinNoise(seed % 751.92f, seed % 601.93f)) * sharpnessScaleAmplitude;
+      sharpnessAmplitude += (Mathf.PerlinNoise(seed % 968.01f, seed % 981.24f) - 0.5f) * sharpnessAmplitudeAmplitude;
+      sharpnessMean += (Mathf.PerlinNoise(seed % 214.25f, seed % 591.85f)) * sharpnessMeanAmplitude;
+      amplitudeScale += (Mathf.PerlinNoise(seed % 172.82f, seed % 918.96f)) * amplitudeScaleAmplitude;
+      amplitudeAmplitude += (Mathf.PerlinNoise(seed % 619.34f, seed % 729.14f) - 0.5f) * amplitudeAmplitudeAmplitude;
+      amplitudeMean += (Mathf.PerlinNoise(seed % 481.83f, seed % 389.06f)) * amplitudeMeanAmplitude;
+      warpStrengthAmplitude += (Mathf.PerlinNoise(seed % 195.12f, seed % 702.18f) - 0.5f) * warpStrengthAmplitudeAmplitude;
+      warpStrengthMean += (Mathf.PerlinNoise(seed % 810.53f, seed % 109.52f) - 0.5f) * warpStrengthMeanAmplitude;
+      warpScaleMeanAmplitude += (Mathf.PerlinNoise(seed % 639.14f, seed % 561.92f)) * warpScaleMeanAmplitude;
+      amplitudePower += (Mathf.PerlinNoise(seed % 591.03f, seed % 329.51f) - 0.5f) * amplitudePowerAmplitude;
     }
 
   }
@@ -267,6 +267,7 @@ public class WorldGenerator : MonoBehaviour
     _waterMesh.indexFormat = UnityEngine.Rendering.IndexFormat.UInt32;
     _riverParameters.obj.GetComponent<WaterSurface>().mesh = _waterMesh;
     _seed = int.Parse(Hash128.Compute(_seed).ToString().Substring(0, 6), System.Globalization.NumberStyles.HexNumber);
+    Debug.Log(_seed);
     // Seed-based terrain parameter changes
     _noiseParameters.Perturb(_seed);
     _lakeObject.position = new Vector3(0, _lakePlaneHeight, 0);
