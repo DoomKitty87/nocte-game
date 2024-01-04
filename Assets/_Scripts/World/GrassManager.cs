@@ -24,6 +24,8 @@ public class GrassManager : MonoBehaviour
         _renderGrass._numberOfChunks = (2 * _distance - 1) * (2 * _distance - 1);
         _renderGrass._vertices = _vertices;
         _renderGrass._tris = _tris;
+
+        _renderGrass._regenerateGrass = true;
     }
 
     

@@ -8,8 +8,8 @@ public class RenderGrass : MonoBehaviour
     [HideInInspector] public Vector3[][] _vertices;
     [HideInInspector] public int[][] _tris;
     
-    [SerializeField] private bool _enableGrass;
-    [SerializeField] bool _regenerateGrass;
+    [SerializeField] public bool _enableGrass;
+    [SerializeField] public bool _regenerateGrass;
     
     [Header("Variables")]
     [SerializeField, Range(0.1f, 0.75f)] private float _minBladeHeight = 0.2f;
@@ -75,10 +75,6 @@ public class RenderGrass : MonoBehaviour
             sharedMesh; // Is there a better way to load meshes?
         
         _kernel = _computeShader.FindKernel("CalculateBladePositions");
-
-        for (int i = 0; i < _numberOfChunks; i++) {
-            _terrainMeshes[i] += _positions[i];
-        }
     }
     
     private void GenerateGrass() {
@@ -90,7 +86,7 @@ public class RenderGrass : MonoBehaviour
 
         for (int i = 0; i < _numberOfChunks; i++) {
             // Get data from terrain mesh
-            Vector3[] terrainVertices = _terrainMeshes[i].vertices;
+            Vector3[] terrainVertices = _vertices[i];
             _terrainVertexBuffer[i] = new GraphicsBuffer(
                 GraphicsBuffer.Target.Structured,
                 terrainVertices.Length,
@@ -98,7 +94,7 @@ public class RenderGrass : MonoBehaviour
             );
             _terrainVertexBuffer[i].SetData(terrainVertices);
 
-            int[] terrainTriangles = _terrainMeshes[i].triangles;
+            int[] terrainTriangles = _tris[i];
             _terrainTriangleBuffer[i] = new GraphicsBuffer(
                 GraphicsBuffer.Target.Structured,
                 terrainTriangles.Length,
@@ -146,7 +142,7 @@ public class RenderGrass : MonoBehaviour
             _computeShader.SetBuffer(_kernel, TransformMatrices, _transformMatrixBuffer[i]);
 
             // Bounds setup
-            _bounds[i] = _terrainMeshes[i].bounds;
+            _bounds[i] = _bounds[i];
             _bounds[i].center += transform.position;
             _bounds[i].Expand(_maxBladeHeight);
 
@@ -204,13 +200,13 @@ public class RenderGrass : MonoBehaviour
     
     private void Update() {
         
+        if (!_enableGrass) return;
+        
         if (_regenerateGrass) {
             CleanUpGrass();
             GenerateGrass();
             _regenerateGrass = false;
         }
-        
-        if (!_enableGrass) return;
 
         for (int i = 0; i < _numberOfChunks; i++) {
             Graphics.RenderPrimitivesIndexed(

@@ -11,8 +11,8 @@ using Unity.Mathematics;
 using Unity.Jobs;
 using Unity.Burst;
 using Unity.Collections;
- using UnityEditor.ShaderGraph.Internal;
- using IEnumerator = System.Collections.IEnumerator;
+using UnityEditor.ShaderGraph.Internal;
+using IEnumerator = System.Collections.IEnumerator;
 
 public class WorldGenerator : MonoBehaviour
 {
@@ -207,20 +207,17 @@ public class WorldGenerator : MonoBehaviour
   }
 
   public (Vector3[][], int[][]) GetVertices(int distance) {
-    int included = 0;
-    for (int i = 0; i < _tileCount * _tileCount; i++) {
-      if (Mathf.Sqrt(Mathf.Pow(_tilePool[i].x, 2) + Mathf.Pow(_tilePool[i].z, 2)) <= distance) included++;
-    }
-    Vector3[][] vertices = new Vector3[included][];
-    int[][] tris = new int[included * 3][];
-    Vector2[] positions = new Vector2[included];
-    for (int i = 0, j = 0; i < _tileCount * _tileCount; i++) {
-      if (Mathf.Sqrt(Mathf.Pow(_tilePool[i].x, 2) + Mathf.Pow(_tilePool[i].z, 2)) <= distance) {
-        Mesh mesh = _tilePool[i].mesh;
-        vertices[i] = mesh.vertices;
-        tris[i] = mesh.triangles;
-        j++;
-      }
+    int numberOfChunks = (distance * 2 - 1) * (distance * 2 - 1);
+    Vector3[][] vertices = new Vector3[numberOfChunks][];
+    int[][] tris = new int[numberOfChunks][];
+    for (int i = 0; i < distance) {
+      for (int j = 0; j < )
+      //if (Mathf.Sqrt(Mathf.Pow(_tilePool[i].x, 2) + Mathf.Pow(_tilePool[i].z, 2)) <= distance) {
+      //  Mesh mesh = _tilePool[i].mesh;
+      //  vertices[i] = mesh.vertices;
+      //  tris[i] = mesh.triangles;
+      //  j++;
+      //}
     }
 
     return (vertices, tris);
