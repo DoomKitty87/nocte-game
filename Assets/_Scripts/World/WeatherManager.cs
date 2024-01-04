@@ -16,6 +16,8 @@ public class WeatherManager : MonoBehaviour
   [SerializeField] private float _maxWindSpeed;
   [SerializeField] private float _maxSpaceIntensity;
   [SerializeField] private float _maxAsteroidRate;
+  [SerializeField] private float _spaceCycleSpeed;
+  [SerializeField] private AnimationCurve _spaceCycleCurve;
 
   [Tooltip("Density of clouds over time.")]
   [SerializeField] private AnimationCurve _cloudDensityCurve;
@@ -48,6 +50,7 @@ public class WeatherManager : MonoBehaviour
   private PhysicallyBasedSky _physicalSky;
   private Vector3 _spaceRotationAxis;
   private float _spacePhase;
+  private float _spacePhaseMajor;
   private int _updateCounter;
   private int _updateCounter2;
 
@@ -73,10 +76,12 @@ public class WeatherManager : MonoBehaviour
     _weatherPhases.y += Mathf.PerlinNoise(-_seed - Time.time, -_seed - Time.time) * _rainCycleSpeed * Time.deltaTime;
     _weatherPhases.z += Mathf.PerlinNoise(_seed - Time.time, -_seed + Time.time) * _windCycleSpeed * Time.deltaTime;
     _spacePhase += Time.deltaTime / _dayNightCycleSpeed;
+    _spacePhaseMajor += Time.deltaTime / _spaceCycleSpeed;
     _weatherPhases.x %= 1;
     _weatherPhases.y %= 1;
     _weatherPhases.z %= 1;
     _spacePhase %= 1;
+    _spacePhaseMajor %= 1;
     float nightFactor = Mathf.SmoothStep(1, 0, Mathf.Pow(_weatherState.x > 0.5f ? 1 - _weatherState.x : _weatherState.x, 1.25f) * 4);
     if (_updateCounter2 < _frameUpdateDelay2) {
       _updateCounter2++;
@@ -97,7 +102,7 @@ public class WeatherManager : MonoBehaviour
     _clouds.shapeFactor.value = _weatherState.y;
     _environment.windSpeed.value = _weatherState.z * _maxWindSpeed;
     _rainEffect.SetInt("RainRate", (int) (_weatherState.z * _rainMaxIntensity));
-    _physicalSky.spaceEmissionMultiplier.value = nightFactor * _maxSpaceIntensity;
+    _physicalSky.spaceEmissionMultiplier.value = nightFactor * _maxSpaceIntensity * _spaceCycleCurve.Evaluate(_spacePhaseMajor);
     _asteroidEffect.SetFloat("SpawnRate", nightFactor * _maxAsteroidRate);
   }
 }
