@@ -82,6 +82,7 @@ public class WorldGenerator : MonoBehaviour
     public float amplitudePower;
 
     [Header("Parameters for seed-based perturbation.")]
+    public float scaleMeanAmplitude;
     public float sharpnessScaleAmplitude; 
     public float sharpnessAmplitudeAmplitude;
     public float sharpnessMeanAmplitude;
@@ -94,17 +95,18 @@ public class WorldGenerator : MonoBehaviour
     public float amplitudePowerAmplitude;
 
     public void Perturb(float seed) {
-      sharpnessScale += (Mathf.PerlinNoise(seed % 75192, seed % 60193) - 0.5f) * sharpnessScaleAmplitude;
+      scaleMean += (Mathf.PerlinNoise(seed % 29613, seed % 90613)) * scaleMeanAmplitude;
+      sharpnessScale += (Mathf.PerlinNoise(seed % 75192, seed % 60193)) * sharpnessScaleAmplitude;
       sharpnessAmplitude += (Mathf.PerlinNoise(seed % 96801, seed % 98124) - 0.5f) * sharpnessAmplitudeAmplitude;
-      sharpnessMean += (Mathf.PerlinNoise(seed % 21425, seed % 59185) - 0.5f) * sharpnessMeanAmplitude;
-      amplitudeScale += (Mathf.PerlinNoise(seed % 17282, seed % 91896) - 0.5f) * amplitudeScaleAmplitude;
+      sharpnessMean += (Mathf.PerlinNoise(seed % 21425, seed % 59185)) * sharpnessMeanAmplitude;
+      amplitudeScale += (Mathf.PerlinNoise(seed % 17282, seed % 91896)) * amplitudeScaleAmplitude;
       amplitudeAmplitude += (Mathf.PerlinNoise(seed % 61934, seed % 72914) - 0.5f) * amplitudeAmplitudeAmplitude;
-      amplitudeMean += (Mathf.PerlinNoise(seed % 48183, seed % 38906) - 0.5f) * amplitudeMeanAmplitude;
+      amplitudeMean += (Mathf.PerlinNoise(seed % 48183, seed % 38906)) * amplitudeMeanAmplitude;
       warpStrengthAmplitude += (Mathf.PerlinNoise(seed % 19512, seed % 70218) - 0.5f) * warpStrengthAmplitudeAmplitude;
       warpStrengthMean += (Mathf.PerlinNoise(seed % 81053, seed % 10952) - 0.5f) * warpStrengthMeanAmplitude;
-      warpScaleMeanAmplitude += (Mathf.PerlinNoise(seed % 63914, seed % 56192) - 0.5f) * warpScaleMeanAmplitude;
+      warpScaleMeanAmplitude += (Mathf.PerlinNoise(seed % 63914, seed % 56192)) * warpScaleMeanAmplitude;
       amplitudePower += (Mathf.PerlinNoise(seed % 59103, seed % 32951) - 0.5f) * amplitudePowerAmplitude;
-    } 
+    }
 
   }
 

@@ -94,7 +94,7 @@ public class WeatherManager : MonoBehaviour
     _weatherState.y = _cloudDensityCurve.Evaluate(_weatherPhases.x);
     _weatherState.z = _rainDensityCurve.Evaluate(_weatherPhases.y);
     _weatherState.w = _windSpeedCurve.Evaluate(_weatherPhases.z);
-    //_clouds.shapeFactor.value = _weatherState.y;
+    _clouds.shapeFactor.value = _weatherState.y;
     _environment.windSpeed.value = _weatherState.z * _maxWindSpeed;
     _rainEffect.SetInt("RainRate", (int) (_weatherState.z * _rainMaxIntensity));
     _physicalSky.spaceEmissionMultiplier.value = nightFactor * _maxSpaceIntensity;
