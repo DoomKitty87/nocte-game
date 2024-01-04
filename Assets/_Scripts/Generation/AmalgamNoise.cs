@@ -4,6 +4,7 @@ using Unity.Jobs;
 using Unity.Collections;
 using static Unity.Mathematics.noise;
 using Unity.Mathematics;
+using System;
 
 public static class AmalgamNoise
 {
@@ -62,9 +63,11 @@ public static class AmalgamNoise
       sharpnessValue += secondarySharpness;
       float scaleValue = scaleMean + scaleAmplitude * snoise(new float2((sampleX * xResolution + xOffset) * scaleScale, (sampleZ * zResolution + zOffset) * scaleScale));
       float amplitudeValue = snoise(new float2((sampleX * xResolution + xOffset) * amplitudeScale, (sampleZ * zResolution + zOffset) * amplitudeScale));
+      if (amplitudeValue < 0) amplitudeValue = Mathf.Abs(amplitudeValue) * 0.3f;
       amplitudeValue = Mathf.Pow(amplitudeValue, amplitudePower);
       float amplitudeValue0 = amplitudeValue;
-      sharpnessValue += (Mathf.Max(0, amplitudeValue0 - 0.6f));
+      //sharpnessValue += (Mathf.Max(0, amplitudeValue0 - 0.6f));
+      //sharpnessValue = Mathf.Min(sharpnessValue, 1);
       amplitudeValue = amplitudeMean + amplitudeAmplitude * amplitudeValue;
       float warpStrengthValue = warpStrengthMean + warpStrengthAmplitude * snoise(new float2((sampleX * xResolution + xOffset) * warpStrengthScale, (sampleZ * zResolution + zOffset) * warpStrengthScale));
       float warpScaleValue = warpScaleMean + warpScaleAmplitude * snoise(new float2((sampleX * xResolution + xOffset) * warpScaleScale, (sampleZ * zResolution + zOffset) * warpScaleScale));
