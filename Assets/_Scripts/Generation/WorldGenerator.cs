@@ -265,9 +265,9 @@ public class WorldGenerator : MonoBehaviour
     _maxPossibleHeight = _noiseParameters.amplitudeMean + _noiseParameters.amplitudeAmplitude;
     _waterMesh = new Mesh();
     _waterMesh.indexFormat = UnityEngine.Rendering.IndexFormat.UInt32;
-    _riverParameters.obj.GetComponent<WaterSurface>().mesh = _waterMesh;
+    _riverParameters.obj.GetComponent<MeshFilter>().mesh = _waterMesh;
     _seed = int.Parse(Hash128.Compute(_seed).ToString().Substring(0, 6), System.Globalization.NumberStyles.HexNumber);
-    Debug.Log(_seed);
+    // Debug.Log(_seed);
     // Seed-based terrain parameter changes
     _noiseParameters.Perturb(_seed);
     _lakeObject.position = new Vector3(0, _lakePlaneHeight, 0);
@@ -461,8 +461,6 @@ public class WorldGenerator : MonoBehaviour
       }
     }
 
-    _lakeObject.position = new Vector3(playerPos.x, _lakeObject.position.y, playerPos.y);
-    
     _lastPlayerChunkX = playerXChunkScale;
     _lastPlayerChunkZ = playerZChunkScale;
   }
