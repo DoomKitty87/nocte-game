@@ -532,7 +532,7 @@ public class WorldGenerator : MonoBehaviour
 
     if (index == (_tileCount * _tileCount) - 1) {
       UpdateWaterMesh();
-      _grassManager.GenerateGrass();
+      if (_grassManager) _grassManager.GenerateGrass();
     }
   }
 
