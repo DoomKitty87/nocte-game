@@ -5,6 +5,7 @@ using _Scripts._BehaviorTree;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.AI;
+using Debug = UnityEngine.Debug;
 using Random = UnityEngine.Random;
 using Vector3 = System.Numerics.Vector3;
 
@@ -27,7 +28,6 @@ namespace _Scripts._Entities.Creatures.CreatureAI
       float theta = Random.value * 2 * Mathf.PI;
       float x = _transform.position.x + r * Mathf.Cos(theta);
       float z = _transform.position.z + r * Mathf.Sin(theta);
-      
       SetData(1, "goal", new List<float> {x, z});
       
       _nodeState = TreeNodeState.SUCCESS;

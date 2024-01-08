@@ -22,6 +22,9 @@ namespace _Scripts._Entities.Creatures.CreatureAI
       Quaternion originalRot = _transform.rotation;
       Vector3 originalRotEuler = originalRot.eulerAngles;
       List<float> goalPosition = (List<float>) GetData("goal");
+      if (goalPosition == null) {
+        return TreeNodeState.FAILED;
+      }
       Vector3 directionToTarget = new Vector3(goalPosition[0], 0, goalPosition[1])  - _transform.position;
       Quaternion targetRot = Quaternion.LookRotation(directionToTarget, Vector3.up);
       Vector3 targetRotEuler = targetRot.eulerAngles;

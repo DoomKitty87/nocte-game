@@ -17,10 +17,10 @@ namespace _Scripts._Entities.Creatures.CreatureAI
 		public override TreeNodeState Evaluate() {
 			Vector3 position = _transform.position;
 			List<float> goalPosition = (List<float>) GetData("goal");
-			Debug.Log(goalPosition);
-			float xDiff = position.x - goalPosition[0];
-			float zDiff = position.z - goalPosition[1];
-			float dist = Mathf.Sqrt((xDiff * xDiff) + (zDiff * zDiff));
+			Vector2 goalPosVec = new Vector2(goalPosition[0], goalPosition[1]);
+			Debug.Log(goalPosVec);
+			Vector2 enemyPosVec = new Vector2(_transform.position.x, _transform.position.z);
+			float dist = Vector2.Distance(goalPosVec, enemyPosVec);
 			_nodeState = dist < _distance ? TreeNodeState.SUCCESS : TreeNodeState.FAILED;
 			return _nodeState;
 		}

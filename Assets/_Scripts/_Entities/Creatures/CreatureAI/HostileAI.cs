@@ -6,6 +6,7 @@ using _Scripts._BehaviorTree;
 using UnityEngine;
 using UnityEngine.AI;
 using Random = UnityEngine.Random;
+using Vector3 = System.Numerics.Vector3;
 
 namespace _Scripts._Entities.Creatures.CreatureAI
 {
@@ -42,13 +43,16 @@ namespace _Scripts._Entities.Creatures.CreatureAI
 				}), 
 				new Sequencer(new List<TreeNode> { // checks if the enemy is far from the player and starts roaming
 					new Invertor(new DistanceTransformLessThan(_transform, _playerTransform, _distanceRoam)),
-					new PlaceRandomGoal(_controller, _transform, _range),
-					new FaceGoal(_transform, true, false, true),
-					new SetMovementToDirection(_transform.forward, _controller)
+					new Invertor(new CheckGoalExists()),
+					new PlaceRandomGoal(_controller, _transform, _range)
 				}), 
 				new Sequencer(new List<TreeNode> { // checks if the enemy is close to the goal and makes a new one
+					new CheckGoalExists(),
 					new DistanceGoalLessThan(_transform, _distanceGoal),
-					new PlaceRandomGoal(_controller, _transform, _range),
+					new PlaceRandomGoal(_controller, _transform, _range)
+				}),
+				new Sequencer(new List<TreeNode> { // checks if the enemy is far from the goal and makes him move closer
+					new CheckGoalExists(),
 					new FaceGoal(_transform, true, false, true),
 					new SetMovementToDirection(_transform.forward, _controller)
 				})

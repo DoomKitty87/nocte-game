@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 608.0728, g: 537.1668, b: 598.4007, a: 1}
+  m_IndirectSpecularColor: {r: 609.72626, g: 538.6125, b: 599.9421, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -2380,7 +2380,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &1563905646
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2395,7 +2395,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _orientation: {fileID: 1563905652}
   _gravity: 15
-  _friction: 0.2
+  _friction: 0
   _useGravity: 1
   _moveSpeed: 4500
   _maxGroundedSpeed: 5
@@ -2425,8 +2425,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _updateType: 0
   _playerTransform: {fileID: 1829040277}
-  _distanceChase: 50
-  _distanceAttack: 1
+  _distanceChase: 0
+  _distanceAttack: 0
+  _distanceRoam: 1
+  _distanceGoal: 0.1
+  _range: 50
   _attacks: []
 --- !u!114 &1563905648
 MonoBehaviour:
@@ -6300,7 +6303,7 @@ PrefabInstance:
     - target: {fileID: 7336471431426695701, guid: 862d92a67177d4c7b84ab88d6b6e0257,
         type: 3}
       propertyPath: _dayNightCycleSpeed
-      value: 10
+      value: 10000
       objectReference: {fileID: 0}
     - target: {fileID: 7336471431426695701, guid: 862d92a67177d4c7b84ab88d6b6e0257,
         type: 3}
