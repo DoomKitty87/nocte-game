@@ -2,6 +2,7 @@ using System;
 using Unity.VisualScripting;
 using UnityEngine;
 using System.Collections.Generic;
+using Unity.Mathematics;
 
 public class PlaceStructures : MonoBehaviour
 {
@@ -16,6 +17,7 @@ public class PlaceStructures : MonoBehaviour
   [SerializeField] private int _structureRenderDistance = 2500; // [World Units]
   [SerializeField] private GameObject _roadObject;
   [SerializeField] private float _centerOffsetRadiusAmplitude;
+  [SerializeField] private float _heightCutoff;
 
   private Vector3[] _structurePositions;
 
@@ -32,8 +34,16 @@ public class PlaceStructures : MonoBehaviour
     float offsetAngle = Mathf.PerlinNoise(_worldGen._seed % 681, _worldGen._seed % 918) * Mathf.PI * 2;
     Vector3 positionOffset = new Vector3(Mathf.Cos(offsetAngle), 0, Mathf.Sin(offsetAngle)) * (Mathf.PerlinNoise(_worldGen._seed % 6913, _worldGen._seed % 1052) - 0.5f) * _centerOffsetRadiusAmplitude;
     _structurePositions = new Vector3[_outerStructures.Length + 1];
-    Vector3 mainPosition = new Vector3(0, 0, 0) + positionOffset;
+    Vector3 mainPosition = positionOffset;
     mainPosition.y = _worldGen.GetHeightValue(new Vector2(mainPosition.x, mainPosition.z));
+    int s = 1;
+    while (mainPosition.y > _heightCutoff) {
+      offsetAngle = Mathf.PerlinNoise(_worldGen._seed % (s * 32.5619f), _worldGen._seed % (s * 81.3229f)) * Mathf.PI * 2;
+      positionOffset = new Vector3(Mathf.Cos(offsetAngle), 0, Mathf.Sin(offsetAngle)) * (Mathf.PerlinNoise(_worldGen._seed % (s * 91.5619f), _worldGen._seed % (s * 81.3229f)) - 0.5f) * _centerOffsetRadiusAmplitude;
+      mainPosition = positionOffset;
+      mainPosition.y = _worldGen.GetHeightValue(new Vector2(mainPosition.x, mainPosition.z));
+      s++;
+    }
     float heighta = _worldGen.GetHeightValue(new Vector2(mainPosition.x - 1, mainPosition.z));
     float heightb = _worldGen.GetHeightValue(new Vector2(mainPosition.x + 1, mainPosition.z));
     float heightc = _worldGen.GetHeightValue(new Vector2(mainPosition.x, mainPosition.z - 1));
@@ -103,10 +113,18 @@ public class PlaceStructures : MonoBehaviour
     }
 
     for (int i = 0; i < _outerStructures.Length; i++) {
-      float nodeRotation = (_worldGen.GetSeedHash() % 25000 * (i + 1)) % 1000 / 1000 * 2 * Mathf.PI;
-      float nodeRadius = _nodeDistance * (_worldGen.GetSeedHash() % 28921 * 91.62f * (i + i) % 10618 / 10618 + 0.5f);
+      float nodeRotation = Mathf.PerlinNoise(_worldGen._seed % (395.956f * (i + 1)), _worldGen._seed % (928.132f * (i + 1))) * Mathf.PI * 2;
+      float nodeRadius = _nodeDistance * (Mathf.PerlinNoise(_worldGen._seed % (156.292f * (i + 1)), _worldGen._seed % (613.671f * (i + 1))) + 0.5f);
       Vector3 outPosition = new Vector3(nodeRadius * Mathf.Cos(nodeRotation), 0, nodeRadius * Mathf.Sin(nodeRotation)) + positionOffset;
       outPosition.y = _worldGen.GetHeightValue(new Vector2(outPosition.x, outPosition.z));
+      s = 1;
+      while (outPosition.y > _heightCutoff) {
+        nodeRotation = Mathf.PerlinNoise(_worldGen._seed % (891.623f * (i + 1) * s), _worldGen._seed % (476.193f * (i + 1) * s)) * Mathf.PI * 2;
+        nodeRadius = _nodeDistance * (Mathf.PerlinNoise(_worldGen._seed % (998.132f * (i + 1) * s), _worldGen._seed % (319.254f * (i + 1) * s)) + 0.5f);
+        outPosition = new Vector3(nodeRadius * Mathf.Cos(nodeRotation), 0, nodeRadius * Mathf.Sin(nodeRotation)) + positionOffset;
+        outPosition.y = _worldGen.GetHeightValue(new Vector2(outPosition.x, outPosition.z));
+        s++;
+      }
       heighta = _worldGen.GetHeightValue(new Vector2(outPosition.x - 1, outPosition.z));
       heightb = _worldGen.GetHeightValue(new Vector2(outPosition.x + 1, outPosition.z));
       heightc = _worldGen.GetHeightValue(new Vector2(outPosition.x, outPosition.z - 1));
