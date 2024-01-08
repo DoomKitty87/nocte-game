@@ -176,8 +176,6 @@ public class WorldGenerator : MonoBehaviour
   [SerializeField] private RiverParams _riverParameters;
   [Tooltip("Lake plane height.")]
   [SerializeField] private float _lakePlaneHeight;
-  [Tooltip("Lake transform.")]
-  [SerializeField] private Transform _lakeObject;
 
   [Header("Script Connections")]
   [SerializeField] private SecondaryStructures _structures;
@@ -270,7 +268,6 @@ public class WorldGenerator : MonoBehaviour
     // Debug.Log(_seed);
     // Seed-based terrain parameter changes
     _noiseParameters.Perturb(_seed);
-    _lakeObject.position = new Vector3(0, _lakePlaneHeight, 0);
   }
 
   private void Start()  {
@@ -566,6 +563,7 @@ public class WorldGenerator : MonoBehaviour
     _waterMesh.triangles = null;
     _waterMesh.vertices = _waterVertices.ToArray();
     _waterMesh.triangles = _waterTriangles.ToArray();
+    _waterMesh.RecalculateNormals();
   }
 
   private void RiverPass(Mesh targetMesh, int index) {
@@ -596,15 +594,20 @@ public class WorldGenerator : MonoBehaviour
     int ignored = 0;
     for (int i = 0; i < heightMods.Length; i++) {
       heightMods[i] = _riverParameters.noiseCurve.Evaluate(heightMods[i]) * _riverParameters.heightCurve.Evaluate(vertices[i].y / _maxPossibleHeight) * _riverParameters.normalCurve.Evaluate(Mathf.Abs(normals[i].y));
-      waterVerts[i] = vertices[i] - new Vector3(0, _riverParameters.waterLevel, 0);
-      if (heightMods[i] == 0) {
-        waterVerts[i] -= new Vector3(0, _riverParameters.amplitude / 10, 0);
-        ignoreVerts[i] = true;
-        ignored++;
+      if (vertices[i].y <= _lakePlaneHeight) {
+        if (heightMods[i] != 0) vertices[i] -= new Vector3(0, heightMods[i] * _riverParameters.amplitude, 0);
+        waterVerts[i] = new Vector3(vertices[i].x, _lakePlaneHeight - _riverParameters.waterLevel, vertices[i].z);
+        waterVerts[i] += _tilePool[index].obj.transform.position;
         continue;
       }
-      vertices[i] -= new Vector3(0, heightMods[i] * _riverParameters.amplitude, 0);
+      waterVerts[i] = vertices[i] - new Vector3(0, _riverParameters.waterLevel, 0);
       waterVerts[i] += _tilePool[index].obj.transform.position;
+      if (heightMods[i] == 0) {
+        ignoreVerts[i] = true;
+        ignored++;
+      } else {
+        vertices[i] -= new Vector3(0, heightMods[i] * _riverParameters.amplitude, 0);
+      }
     }
 
     int sideLength = (int) Mathf.Sqrt(vertices.Length);
