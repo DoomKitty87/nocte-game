@@ -17,8 +17,8 @@ namespace _Scripts._Entities.Creatures.CreatureAI
 
 		public override TreeNodeState Evaluate() {
 			Vector3 position = _transform.position;
-			Vector3 playerPosition = _secondTransform.position;
-			_nodeState = Vector3.Distance(position, playerPosition) < _distance ? TreeNodeState.SUCCESS : TreeNodeState.FAILED;
+			Vector3 secondPosition = _secondTransform.position;
+			_nodeState = Vector3.Distance(position, secondPosition) < _distance ? TreeNodeState.SUCCESS : TreeNodeState.FAILED;
 			return _nodeState;
 		}
 	}

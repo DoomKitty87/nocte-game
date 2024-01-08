@@ -25,7 +25,7 @@ namespace _Scripts._Entities.Creatures.CreatureAI
 			_navMeshAgent = gameObject.GetComponent<NavMeshAgent>();
 			return new Selector(new List<TreeNode> {
 				new Sequencer(new List<TreeNode> {
-					new DistanceToPlayerLessThan(transform, _playerTransform, _distanceEvade),
+					new DistanceTransformLessThan(transform, _playerTransform, _distanceEvade),
 					new SetAgentToEvadeTransform(_navMeshAgent, transform, _playerTransform, _distanceEvadeTo)
 				})
 			});
