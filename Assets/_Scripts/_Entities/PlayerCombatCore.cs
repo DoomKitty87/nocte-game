@@ -12,6 +12,7 @@ public class PlayerCombatCore : MonoBehaviour
   [Header("Info - Dont change in editor")]
   [SerializeField] private GameObject _weaponInstance;
   [SerializeField] private WeaponScript _instanceScript;
+  [SerializeField] private WeaponUI _weaponUI;
   
   private bool _fire1LastFrame;
   private bool _fire2LastFrame;
@@ -39,30 +40,36 @@ public class PlayerCombatCore : MonoBehaviour
     if (Input.GetAxisRaw("Fire1") > 0) {
       if (_fire1LastFrame == false) {
         _instanceScript.FireDown();
+        _weaponUI.UpdateAmmoCount(_instanceScript.GetAmmo);
       }
       else {
         _instanceScript.FireHold();
+        _weaponUI.UpdateAmmoCount(_instanceScript.GetAmmo);
       }
       _fire1LastFrame = true;
     }
     else {
       if (_fire1LastFrame) {
         _instanceScript.FireUp();
+        _weaponUI.UpdateAmmoCount(_instanceScript.GetAmmo);
       }
       _fire1LastFrame = false;
     }
     if (Input.GetAxisRaw("Fire2") > 0) {
       if (_fire2LastFrame == false) {
         _instanceScript.Fire2Down();
+        _weaponUI.UpdateAmmoCount(_instanceScript.GetAmmo);
       }
       else {
         _instanceScript.Fire2Hold();
+        _weaponUI.UpdateAmmoCount(_instanceScript.GetAmmo);
       }
       _fire2LastFrame = true;
     }
     else {
       if (_fire2LastFrame) {
         _instanceScript.Fire2Up();
+        _weaponUI.UpdateAmmoCount(_instanceScript.GetAmmo);
       }
       _fire2LastFrame = false;
     }
