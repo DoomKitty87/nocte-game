@@ -260,7 +260,7 @@
     "m_VertexContext": {
         "m_Position": {
             "x": 260.9999694824219,
-            "y": 0.0000050067901611328129
+            "y": 0.0000050067901611328128
         },
         "m_Blocks": [
             {
@@ -1107,6 +1107,7 @@
     "m_BackThenFrontRendering": false,
     "m_TransparentDepthPrepass": false,
     "m_TransparentDepthPostpass": false,
+    "m_TransparentPerPixelSorting": false,
     "m_SupportLodCrossFade": false
 }
 
@@ -1508,7 +1509,7 @@
     ],
     "m_CustomEditorGUI": "",
     "m_SupportVFX": false,
-    "m_SupportComputeForVertexSetup": false
+    "m_SupportLineRendering": false
 }
 
 {
@@ -2073,6 +2074,7 @@
     "m_ObjectId": "c06df0de60d14214907df2058745c9b6",
     "m_RayTracing": false,
     "m_MaterialType": 0,
+    "m_MaterialTypeMask": 2,
     "m_RefractionModel": 0,
     "m_SSSTransmission": true,
     "m_EnergyConservingSpecular": true,
@@ -2098,9 +2100,9 @@
             "a": 1.0
         },
         "key1": {
-            "r": 0.49528300762176516,
+            "r": 0.7122641801834106,
             "g": 1.0,
-            "b": 0.9359089732170105,
+            "b": 0.9643118381500244,
             "a": 1.0
         },
         "key2": {
@@ -2414,7 +2416,7 @@
     "m_SGVersion": 0,
     "m_Type": "UnityEditor.Rendering.HighDefinition.ShaderGraph.SystemData",
     "m_ObjectId": "e579c2e5bf1e491e968aa46cc413730f",
-    "m_MaterialNeedsUpdateHash": 529,
+    "m_MaterialNeedsUpdateHash": 0,
     "m_SurfaceType": 1,
     "m_RenderingPass": 4,
     "m_BlendMode": 0,
@@ -2424,6 +2426,7 @@
     "m_OpaqueCullMode": 2,
     "m_SortPriority": 0,
     "m_AlphaTest": false,
+    "m_ExcludeFromTUAndAA": false,
     "m_TransparentDepthPrepass": false,
     "m_TransparentDepthPostpass": false,
     "m_SupportLodCrossFade": false,
@@ -2438,7 +2441,8 @@
     "m_TessellationShapeFactor": 0.75,
     "m_TessellationBackFaceCullEpsilon": -0.25,
     "m_TessellationMaxDisplacement": 0.009999999776482582,
-    "m_Version": 1,
+    "m_DebugSymbols": false,
+    "m_Version": 2,
     "inspectorFoldoutMask": 1
 }
 
