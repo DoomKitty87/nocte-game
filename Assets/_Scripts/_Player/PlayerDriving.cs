@@ -38,6 +38,8 @@ public class PlayerDriving : MonoBehaviour
     for (int i = 0; i < _toDisable.Length; i++) {
       _toDisable[i].enabled = false;
     }
+
+    _playerRigidbody.collisionDetectionMode = CollisionDetectionMode.Discrete;
     _playerRigidbody.isKinematic = true;
     _playerCollider.enabled = false;
     _inVehicle = true;
@@ -51,8 +53,9 @@ public class PlayerDriving : MonoBehaviour
     for (int i = 0; i < _toDisable.Length; i++) {
       _toDisable[i].enabled = true;
     }
-
+  
     _playerRigidbody.isKinematic = false;
+    _playerRigidbody.collisionDetectionMode = CollisionDetectionMode.Continuous;
     _playerCollider.enabled = true;
     _inVehicle = false;
     _player.parent = _playerParent;
