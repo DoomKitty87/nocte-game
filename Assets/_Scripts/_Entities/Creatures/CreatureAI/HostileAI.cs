@@ -34,11 +34,12 @@ namespace _Scripts._Entities.Creatures.CreatureAI
 				new Sequencer(new List<TreeNode> {  // checks if the enemy is close to the player and starts chasing
 					new DistanceTransformLessThan(_transform, _playerTransform, _distanceChase),
 					new FaceTransform(_transform, _playerTransform, true, false, true),
-					new SetMovementToDirection(_transform.forward, _controller)
+					new SetMovementToDirection(_transform.forward, _controller),
+					new SetSpeed(_controller, 3000)
 				}), 
 				new Sequencer(new List<TreeNode> { // checks if the enemy is far from the player and starts roaming
 					new Invertor(new DistanceTransformLessThan(_transform, _playerTransform, _distanceRoam)),
-					new Invertor(new CheckGoalExists(_controller)),
+					new SetSpeed(_controller, 1000),
 					new PlaceRandomGoal(_controller, _transform, _range)
 				}), 
 				new Sequencer(new List<TreeNode> { // checks if the enemy is close to the goal and makes a new one
@@ -50,6 +51,10 @@ namespace _Scripts._Entities.Creatures.CreatureAI
 					new CheckGoalExists(_controller),
 					new FaceGoal(_controller, _transform, true, false, true),
 					new SetMovementToDirection(_transform.forward, _controller)
+				}),
+				new Sequencer(new List<TreeNode> { // checks if the enemy is stuck and makes a new goal
+					//new CheckStuck(_controller),
+					new PlaceRandomGoal(_controller, _transform, _range)
 				})
 			});
 		}

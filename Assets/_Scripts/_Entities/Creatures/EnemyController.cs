@@ -133,6 +133,10 @@ namespace _Scripts._Entities.Creatures
         public void SetInputVector(Vector3 inputVector) {
             _inputVector = inputVector;
         }
+
+        public void SetMoveSpeed(int speed) {
+            _moveSpeed = speed;
+        }
         
         private void FixedUpdate() {
             HandleMovement();
@@ -143,7 +147,6 @@ namespace _Scripts._Entities.Creatures
 
         private void HandleMovement() {
             if (_useGravity) _rb.AddForce(Physics.gravity, ForceMode.Acceleration);
-            Debug.Log("Goal position:" + _goalPos);
             Vector2 magnitude = FindVelRelativeToLook();
             
             // CalculateFriction(_inputVector.x, _inputVector.z, magnitude);
@@ -157,14 +160,12 @@ namespace _Scripts._Entities.Creatures
             
             // If speed is larger than maxspeed, cancel out the input so you don't go over max speed
             // ClampMaximumVelocity(ref _inputVector);
-            Debug.Log("Input vector: " + _inputVector);
             // Movement in air
             if (!_grounded) {
                 AirMovement(ref _inputVector);
             } else {        
                 CorrectForSlope(ref _inputVector);
             }
-            Debug.Log("Post-modification: " + _inputVector);
             //Apply forces to move player
             _rb.AddForce(_moveSpeed * Time.deltaTime * (_orientation.transform.rotation * _inputVector));
         }
