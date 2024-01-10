@@ -24,11 +24,11 @@ namespace _Scripts._Entities.Creatures.CreatureAI
     }
 
     public override TreeNodeState Evaluate() {
-      float r = _range * Mathf.Sqrt(Random.value);
+      float r = Mathf.Abs(_range * Mathf.Sqrt(Random.value));
       float theta = Random.value * 2 * Mathf.PI;
       float x = _transform.position.x + r * Mathf.Cos(theta);
-      float z = _transform.position.z + r * Mathf.Sin(theta);
-      SetData(1, "goal", new List<float> {x, z});
+      float z = _transform.position.z + r * Mathf.Sin(theta); 
+      _controller.SetGoalPos(new Vector2(x, z));
       
       _nodeState = TreeNodeState.SUCCESS;
       return _nodeState;

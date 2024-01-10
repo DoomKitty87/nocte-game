@@ -8,10 +8,12 @@ namespace _Scripts._Entities.Creatures.CreatureAI
 {
   public class FaceGoal : TreeNode
   {
+    private EnemyController _controller;
     private Transform _transform;
     private bool _lockX, _lockY, _lockZ;
 
-    public FaceGoal(Transform transform, bool lockX = false, bool lockY = false, bool lockZ = false) {
+    public FaceGoal(EnemyController controller, Transform transform, bool lockX = false, bool lockY = false, bool lockZ = false) {
+      _controller = controller;
       _transform = transform;
       _lockX = lockX;
       _lockY = lockY;
@@ -21,11 +23,8 @@ namespace _Scripts._Entities.Creatures.CreatureAI
     public override TreeNodeState Evaluate() {
       Quaternion originalRot = _transform.rotation;
       Vector3 originalRotEuler = originalRot.eulerAngles;
-      List<float> goalPosition = (List<float>) GetData("goal");
-      if (goalPosition == null) {
-        return TreeNodeState.FAILED;
-      }
-      Vector3 directionToTarget = new Vector3(goalPosition[0], 0, goalPosition[1])  - _transform.position;
+      Vector2 goalPosition = _controller.GetGoalPos();
+      Vector3 directionToTarget = new Vector3(goalPosition.x, 0, goalPosition.y)  - _transform.position;
       Quaternion targetRot = Quaternion.LookRotation(directionToTarget, Vector3.up);
       Vector3 targetRotEuler = targetRot.eulerAngles;
 

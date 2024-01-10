@@ -6,15 +6,14 @@ namespace _Scripts._Entities.Creatures.CreatureAI
 {
   public class CheckGoalExists : TreeNode
   {
-    private Transform _transform;
-    private float _distance;
+    private EnemyController _controller;
 
-    public CheckGoalExists() {
-      // :)
+    public CheckGoalExists(EnemyController controller) {
+      _controller = controller;
     }
 
     public override TreeNodeState Evaluate() {
-      _nodeState = GetData("goal") == null ? TreeNodeState.FAILED : TreeNodeState.SUCCESS;
+      _nodeState = _controller.GetGoalPos() != null ? TreeNodeState.SUCCESS : TreeNodeState.FAILED;
       return _nodeState;
     }
   }

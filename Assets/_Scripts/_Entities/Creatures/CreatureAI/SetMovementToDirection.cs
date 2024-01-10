@@ -15,6 +15,7 @@ namespace _Scripts._Entities.Creatures.CreatureAI
 		}
 
 		public override TreeNodeState Evaluate() {
+			Debug.Log(_vector);
 			_controller.SetInputVector(_vector);
 			_nodeState = TreeNodeState.SUCCESS;
 			return _nodeState;

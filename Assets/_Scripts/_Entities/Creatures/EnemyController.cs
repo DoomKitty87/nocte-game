@@ -56,16 +56,13 @@ namespace _Scripts._Entities.Creatures
         
         // Input
         private Vector3 _inputVector;
+        private Vector2 _goalPos;
         private bool _jumpKey, _crouchKey;
         private bool _jumping, _sprinting, _crouching;
 
         // Sliding
         private Vector3 _normalVector = Vector3.up;
         private Vector3 _wallNormalVector;
-
-        public void CreateInput(Vector3 vector) {
-            _inputVector = vector;
-        }
         
         private Vector2 FindVelRelativeToLook() {
             float lookAngle = _orientation.transform.eulerAngles.y;
@@ -146,7 +143,7 @@ namespace _Scripts._Entities.Creatures
 
         private void HandleMovement() {
             if (_useGravity) _rb.AddForce(Physics.gravity, ForceMode.Acceleration);
-            
+            Debug.Log("Goal position:" + _goalPos);
             Vector2 magnitude = FindVelRelativeToLook();
             
             // CalculateFriction(_inputVector.x, _inputVector.z, magnitude);
@@ -160,14 +157,14 @@ namespace _Scripts._Entities.Creatures
             
             // If speed is larger than maxspeed, cancel out the input so you don't go over max speed
             // ClampMaximumVelocity(ref _inputVector);
-            
+            Debug.Log("Input vector: " + _inputVector);
             // Movement in air
             if (!_grounded) {
                 AirMovement(ref _inputVector);
             } else {        
                 CorrectForSlope(ref _inputVector);
             }
-            
+            Debug.Log("Post-modification: " + _inputVector);
             //Apply forces to move player
             _rb.AddForce(_moveSpeed * Time.deltaTime * (_orientation.transform.rotation * _inputVector));
         }
@@ -189,6 +186,14 @@ namespace _Scripts._Entities.Creatures
             }
         }
 
+        public void SetGoalPos(Vector2 goalPos) {
+            _goalPos = goalPos;
+        }
+        
+        public Vector2 GetGoalPos() {
+            return _goalPos;
+        }
+        
         private void Jump() {
             _readyToJump = false;
 
