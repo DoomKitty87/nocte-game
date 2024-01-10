@@ -3274,7 +3274,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &1563905646
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3289,7 +3289,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _orientation: {fileID: 1563905652}
   _gravity: 15
-  _friction: 0.2
+  _friction: 0
   _useGravity: 1
   _moveSpeed: 4500
   _maxGroundedSpeed: 5
@@ -3319,8 +3319,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _updateType: 0
   _playerTransform: {fileID: 1829040277}
-  _distanceChase: 50
-  _distanceAttack: 1
+  _distanceChase: 0
+  _distanceAttack: 0
+  _distanceRoam: 1
+  _distanceGoal: 0.1
+  _range: 50
   _attacks: []
 --- !u!114 &1563905648
 MonoBehaviour:
