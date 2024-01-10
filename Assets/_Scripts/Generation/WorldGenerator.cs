@@ -78,7 +78,35 @@ public class WorldGenerator : MonoBehaviour
     [Tooltip("Amplitude of warp scale noise permutation.")]
     public float warpScaleAmplitude;
     [Tooltip("Midpoint value of warp scale.")]
-    public float warpScaleMean;        
+    public float warpScaleMean;
+    public float amplitudePower;
+
+    [Header("Parameters for seed-based perturbation.")]
+    public float scaleMeanAmplitude;
+    public float sharpnessScaleAmplitude; 
+    public float sharpnessAmplitudeAmplitude;
+    public float sharpnessMeanAmplitude;
+    public float amplitudeScaleAmplitude;
+    public float amplitudeAmplitudeAmplitude;
+    public float amplitudeMeanAmplitude;
+    public float warpStrengthAmplitudeAmplitude; 
+    public float warpStrengthMeanAmplitude;
+    public float warpScaleMeanAmplitude;
+    public float amplitudePowerAmplitude;
+
+    public void Perturb(int seed) {
+      scaleMean += (Mathf.PerlinNoise(seed % 296.13f, seed % 906.13f)) * scaleMeanAmplitude;
+      sharpnessScale += (Mathf.PerlinNoise(seed % 751.92f, seed % 601.93f)) * sharpnessScaleAmplitude;
+      sharpnessAmplitude += (Mathf.PerlinNoise(seed % 968.01f, seed % 981.24f) - 0.5f) * sharpnessAmplitudeAmplitude;
+      sharpnessMean += (Mathf.PerlinNoise(seed % 214.25f, seed % 591.85f)) * sharpnessMeanAmplitude;
+      amplitudeScale += (Mathf.PerlinNoise(seed % 172.82f, seed % 918.96f)) * amplitudeScaleAmplitude;
+      amplitudeAmplitude += (Mathf.PerlinNoise(seed % 619.34f, seed % 729.14f) - 0.5f) * amplitudeAmplitudeAmplitude;
+      amplitudeMean += (Mathf.PerlinNoise(seed % 481.83f, seed % 389.06f)) * amplitudeMeanAmplitude;
+      warpStrengthAmplitude += (Mathf.PerlinNoise(seed % 195.12f, seed % 702.18f) - 0.5f) * warpStrengthAmplitudeAmplitude;
+      warpStrengthMean += (Mathf.PerlinNoise(seed % 810.53f, seed % 109.52f) - 0.5f) * warpStrengthMeanAmplitude;
+      warpScaleMeanAmplitude += (Mathf.PerlinNoise(seed % 639.14f, seed % 561.92f)) * warpScaleMeanAmplitude;
+      amplitudePower += (Mathf.PerlinNoise(seed % 591.03f, seed % 329.51f) - 0.5f) * amplitudePowerAmplitude;
+    }
 
   }
 
@@ -148,8 +176,6 @@ public class WorldGenerator : MonoBehaviour
   [SerializeField] private RiverParams _riverParameters;
   [Tooltip("Lake plane height.")]
   [SerializeField] private float _lakePlaneHeight;
-  [Tooltip("Lake transform.")]
-  [SerializeField] private Transform _lakeObject;
 
   [Header("Script Connections")]
   [SerializeField] private SecondaryStructures _structures;
@@ -189,7 +215,7 @@ public class WorldGenerator : MonoBehaviour
       _noiseParameters.sharpnessAmplitude, _noiseParameters.sharpnessMean, _noiseParameters.scaleScale, _noiseParameters.scaleAmplitude,
       _noiseParameters.scaleMean, _noiseParameters.amplitudeScale, _noiseParameters.amplitudeAmplitude, _noiseParameters.amplitudeMean,
       _noiseParameters.warpStrengthScale, _noiseParameters.warpStrengthAmplitude, _noiseParameters.warpStrengthMean,
-      _noiseParameters.warpScaleScale, _noiseParameters.warpScaleAmplitude, _noiseParameters.warpScaleMean)[0].y;
+      _noiseParameters.warpScaleScale, _noiseParameters.warpScaleAmplitude, _noiseParameters.warpScaleMean, _noiseParameters.amplitudePower)[0].y;
     heightVal -= _riverParameters.heightCurve.Evaluate(heightVal / _maxPossibleHeight) * (_riverParameters.noiseCurve.Evaluate(AmalgamNoise.GenerateRivers(
         0, 1, worldPosition.x + _seed % 216812, worldPosition.y + _seed % 216812, 0, 0, _riverParameters.scale, _riverParameters.octaves, _riverParameters.lacunarity, _riverParameters.persistence, _riverParameters.warpScale, _riverParameters.warpStrength)[0]) * _riverParameters.amplitude);
     return heightVal;
@@ -237,9 +263,11 @@ public class WorldGenerator : MonoBehaviour
     _maxPossibleHeight = _noiseParameters.amplitudeMean + _noiseParameters.amplitudeAmplitude;
     _waterMesh = new Mesh();
     _waterMesh.indexFormat = UnityEngine.Rendering.IndexFormat.UInt32;
-    _riverParameters.obj.GetComponent<WaterSurface>().mesh = _waterMesh;
+    _riverParameters.obj.GetComponent<MeshFilter>().mesh = _waterMesh;
     _seed = int.Parse(Hash128.Compute(_seed).ToString().Substring(0, 6), System.Globalization.NumberStyles.HexNumber);
-    _lakeObject.position = new Vector3(0, _lakePlaneHeight, 0);
+    // Debug.Log(_seed);
+    // Seed-based terrain parameter changes
+    _noiseParameters.Perturb(_seed);
   }
 
   private void Start()  {
@@ -311,6 +339,8 @@ public class WorldGenerator : MonoBehaviour
 
     _playerXChunkScale = playerXChunkScale;
     _playerZChunkScale = playerZChunkScale;
+    _playerX = playerPos.x;
+    _playerZ = playerPos.z;
 
     if (playerXChunkScale - _lastPlayerChunkX > 1) playerXChunkScale -= playerXChunkScale - _lastPlayerChunkX - 1;
     if (playerZChunkScale - _lastPlayerChunkZ > 1) playerZChunkScale -= playerZChunkScale - _lastPlayerChunkZ - 1;
@@ -428,8 +458,6 @@ public class WorldGenerator : MonoBehaviour
       }
     }
 
-    _lakeObject.position = new Vector3(playerPos.x, _lakeObject.position.y, playerPos.y);
-    
     _lastPlayerChunkX = playerXChunkScale;
     _lastPlayerChunkZ = playerZChunkScale;
   }
@@ -472,7 +500,7 @@ public class WorldGenerator : MonoBehaviour
         _noiseParameters.sharpnessAmplitude, _noiseParameters.sharpnessMean, _noiseParameters.scaleScale, _noiseParameters.scaleAmplitude,
         _noiseParameters.scaleMean, _noiseParameters.amplitudeScale, _noiseParameters.amplitudeAmplitude, _noiseParameters.amplitudeMean,
         _noiseParameters.warpStrengthScale, _noiseParameters.warpStrengthAmplitude, _noiseParameters.warpStrengthMean,
-        _noiseParameters.warpScaleScale, _noiseParameters.warpScaleAmplitude, _noiseParameters.warpScaleMean);
+        _noiseParameters.warpScaleScale, _noiseParameters.warpScaleAmplitude, _noiseParameters.warpScaleMean, _noiseParameters.amplitudePower);
     msh.vertices = result;
     
     go.transform.position = new Vector3(x * _size * _resolution, 0, z * _size * _resolution);
@@ -511,7 +539,7 @@ public class WorldGenerator : MonoBehaviour
         _noiseParameters.sharpnessAmplitude, _noiseParameters.sharpnessMean, _noiseParameters.scaleScale, _noiseParameters.scaleAmplitude,
         _noiseParameters.scaleMean, _noiseParameters.amplitudeScale, _noiseParameters.amplitudeAmplitude, _noiseParameters.amplitudeMean,
         _noiseParameters.warpStrengthScale, _noiseParameters.warpStrengthAmplitude, _noiseParameters.warpStrengthMean,
-        _noiseParameters.warpScaleScale, _noiseParameters.warpScaleAmplitude, _noiseParameters.warpScaleMean);
+        _noiseParameters.warpScaleScale, _noiseParameters.warpScaleAmplitude, _noiseParameters.warpScaleMean, _noiseParameters.amplitudePower);
     _tilePool[index].mesh.triangles = null;
     _tilePool[index].mesh.vertices = result;
 
@@ -535,6 +563,7 @@ public class WorldGenerator : MonoBehaviour
     _waterMesh.triangles = null;
     _waterMesh.vertices = _waterVertices.ToArray();
     _waterMesh.triangles = _waterTriangles.ToArray();
+    _waterMesh.RecalculateNormals();
   }
 
   private void RiverPass(Mesh targetMesh, int index) {
@@ -565,15 +594,20 @@ public class WorldGenerator : MonoBehaviour
     int ignored = 0;
     for (int i = 0; i < heightMods.Length; i++) {
       heightMods[i] = _riverParameters.noiseCurve.Evaluate(heightMods[i]) * _riverParameters.heightCurve.Evaluate(vertices[i].y / _maxPossibleHeight) * _riverParameters.normalCurve.Evaluate(Mathf.Abs(normals[i].y));
-      waterVerts[i] = vertices[i] - new Vector3(0, _riverParameters.waterLevel, 0);
-      if (heightMods[i] == 0) {
-        waterVerts[i] -= new Vector3(0, _riverParameters.amplitude / 10, 0);
-        ignoreVerts[i] = true;
-        ignored++;
+      if (vertices[i].y <= _lakePlaneHeight) {
+        if (heightMods[i] != 0) vertices[i] -= new Vector3(0, heightMods[i] * _riverParameters.amplitude, 0);
+        waterVerts[i] = new Vector3(vertices[i].x, _lakePlaneHeight - _riverParameters.waterLevel, vertices[i].z);
+        waterVerts[i] += _tilePool[index].obj.transform.position;
         continue;
       }
-      vertices[i] -= new Vector3(0, heightMods[i] * _riverParameters.amplitude, 0);
+      waterVerts[i] = vertices[i] - new Vector3(0, _riverParameters.waterLevel, 0);
       waterVerts[i] += _tilePool[index].obj.transform.position;
+      if (heightMods[i] == 0) {
+        ignoreVerts[i] = true;
+        ignored++;
+      } else {
+        vertices[i] -= new Vector3(0, heightMods[i] * _riverParameters.amplitude, 0);
+      }
     }
 
     int sideLength = (int) Mathf.Sqrt(vertices.Length);
