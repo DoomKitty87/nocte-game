@@ -240,8 +240,8 @@ public class WorldGenerator : MonoBehaviour
     int currentTile = 0;
     for (int i = 0; i < distance * 2 - 1; i++) {
       for (int j = 0; j < distance * 2 - 1; j++) {
-        WorldTile tile = _tilePool[_tilePositions[((_tileCount + 1) / 2) - Mathf.FloorToInt(distance / 2) + i, ((_tileCount + 1) / 2) - Mathf.FloorToInt(distance / 2) + j]];
-        Debug.Log(((_tileCount - 1) / 2) - distance + i);
+        WorldTile tile = _tilePool[_tilePositions[((_tileCount + 1) / 2) - (distance - 1) + i, ((_tileCount + 1) / 2) - (distance - 1) + j]];
+        Debug.Log(((_tileCount + 1) / 2) - (distance - 1) + i);
         Mesh mesh = tile.mesh;
         vertices[currentTile] = mesh.vertices;
         tris[currentTile] = mesh.triangles;
