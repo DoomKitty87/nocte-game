@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class CarControl : MonoBehaviour
+public class VehicleControl : MonoBehaviour
 {
     public float motorTorque = 2000;
     public float brakeTorque = 2000;
@@ -11,6 +11,10 @@ public class CarControl : MonoBehaviour
 
     WheelControl[] wheels;
     Rigidbody rigidBody;
+
+    public Transform _playerSeat;
+
+    private bool _inUse = false;
 
     // Start is called before the first frame update
     void Start()
@@ -24,13 +28,24 @@ public class CarControl : MonoBehaviour
         wheels = GetComponentsInChildren<WheelControl>();
     }
 
+    public void EnterVehicle() {
+        _inUse = true;
+    }
+
+    public void ExitVehicle() {
+        _inUse = false;
+    }
+
     // Update is called once per frame
     void Update()
     {
 
         float vInput = Input.GetAxis("Vertical");
         float hInput = Input.GetAxis("Horizontal");
-
+        if (!_inUse) {
+            vInput = 0;
+            hInput = 0;
+        }
         // Calculate current speed in relation to the forward direction of the car
         // (this returns a negative number when traveling backwards)
         float forwardSpeed = Vector3.Dot(transform.forward, rigidBody.velocity);
