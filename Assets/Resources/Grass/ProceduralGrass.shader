@@ -8,7 +8,7 @@ Shader "Custom/ProceduralGrass"
     }
     SubShader
     {
-        Tags { "RenderType"="Opaque" "Queue" = "Geometry"}
+        Tags { "RenderType"="Opaque" "Queue" = "Transparent"}
 
         Pass
         {

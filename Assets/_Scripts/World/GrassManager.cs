@@ -31,7 +31,6 @@ public class GrassManager : MonoBehaviour
             int numberOfVertices = _vertices[i].Length;
             for (int j = 0; j < numberOfVertices; j++) {
                 _vertices[i][j] += _positions[i];
-                _bounds[i].center = _positions[i];
             }
         }
         
