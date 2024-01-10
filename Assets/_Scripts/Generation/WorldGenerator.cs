@@ -240,12 +240,13 @@ public class WorldGenerator : MonoBehaviour
     int currentTile = 0;
     for (int i = 0; i < distance * 2 - 1; i++) {
       for (int j = 0; j < distance * 2 - 1; j++) {
-        WorldTile tile = _tilePool[_tilePositions[((_tileCount - 1) / 2) - distance + i, ((_tileCount - 1) / 2) - distance + j]];
+        WorldTile tile = _tilePool[_tilePositions[((_tileCount + 1) / 2) - Mathf.FloorToInt(distance / 2) + i, ((_tileCount + 1) / 2) - Mathf.FloorToInt(distance / 2) + j]];
+        Debug.Log(((_tileCount - 1) / 2) - distance + i);
         Mesh mesh = tile.mesh;
         vertices[currentTile] = mesh.vertices;
         tris[currentTile] = mesh.triangles;
         bounds[currentTile] = mesh.bounds;
-        positions[currentTile] = new Vector3(tile.obj.transform.position.x, 0, tile.obj.transform.position.z);
+        positions[currentTile] = tile.obj.transform.position;
         currentTile++;
       }
     }
@@ -448,7 +449,7 @@ public class WorldGenerator : MonoBehaviour
       Vector2 playerPosXZ = new Vector2(playerPos.x, playerPos.z);
       _structures.CheckStructures(playerPosXZ);
       _storyStructures.CheckStructures(playerPosXZ);
-      _grassManager.GenerateGrass();
+      if (_grassManager) _grassManager.GenerateGrass();
       _updateQueue.Sort((c1, c2) => (Mathf.Abs(_tilePool[c1].x - _playerXChunkScale) + Mathf.Abs(_tilePool[c1].z - _playerZChunkScale)).CompareTo(Mathf.Abs(_tilePool[c2].x - _playerXChunkScale) + Mathf.Abs(_tilePool[c2].z - _playerZChunkScale)));
       for (int x = 0; x < _tileCount; x++) {
         for (int z = 0; z < _tileCount; z++) { 

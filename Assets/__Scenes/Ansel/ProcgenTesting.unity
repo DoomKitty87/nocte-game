@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 2147.7786, g: 1879.4702, b: 1868.6907, a: 1}
+  m_IndirectSpecularColor: {r: 1399.3983, g: 1220.5012, b: 1141.1909, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -6513,7 +6513,7 @@ PrefabInstance:
     - target: {fileID: 3041882864952171724, guid: 862d92a67177d4c7b84ab88d6b6e0257,
         type: 3}
       propertyPath: _numberOfBladesPerTri
-      value: 10
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 7336471431426695701, guid: 862d92a67177d4c7b84ab88d6b6e0257,
         type: 3}
@@ -6864,7 +6864,7 @@ PrefabInstance:
     - target: {fileID: 8505195279874202923, guid: 862d92a67177d4c7b84ab88d6b6e0257,
         type: 3}
       propertyPath: _distance
-      value: 5
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8819276947174590073, guid: 862d92a67177d4c7b84ab88d6b6e0257,
         type: 3}
@@ -6884,7 +6884,7 @@ PrefabInstance:
     - target: {fileID: 8819276947174590073, guid: 862d92a67177d4c7b84ab88d6b6e0257,
         type: 3}
       propertyPath: _tileCount
-      value: 37
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 8819276947174590073, guid: 862d92a67177d4c7b84ab88d6b6e0257,
         type: 3}
@@ -6906,6 +6906,11 @@ PrefabInstance:
       propertyPath: _structures
       value: 
       objectReference: {fileID: 1849557963}
+    - target: {fileID: 8819276947174590073, guid: 862d92a67177d4c7b84ab88d6b6e0257,
+        type: 3}
+      propertyPath: _grassManager
+      value: 
+      objectReference: {fileID: 4258144910533491459}
     - target: {fileID: 8819276947174590073, guid: 862d92a67177d4c7b84ab88d6b6e0257,
         type: 3}
       propertyPath: _refreshButton
