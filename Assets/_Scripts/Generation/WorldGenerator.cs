@@ -510,6 +510,8 @@ public class WorldGenerator : MonoBehaviour
     tile.waterRenderer = water.AddComponent<MeshRenderer>();
     tile.waterRenderer.enabled = false;
     tile.waterMesh = new Mesh();
+    water.layer = LayerMask.NameToLayer("Water");
+    // Note: When raycasting to check for water, make sure to pass true for queryTriggerInteraction into the raycast.
     water.AddComponent<MeshFilter>().mesh = tile.waterMesh;
     _structures.GenerateChunkStructures(new Vector2(x * _size * _resolution, z * _size * _resolution), new Vector2((x + 1) * _size * _resolution, (z + 1) * _size * _resolution));
     _generatedStructureTiles.Add(new Vector2(x, z));
@@ -733,7 +735,10 @@ public class WorldGenerator : MonoBehaviour
       if (!_tilePool[indices[i]].meshCollider) _tilePool[indices[i]].meshCollider = _tilePool[indices[i]].obj.AddComponent<MeshCollider>();
       _tilePool[indices[i]].meshCollider.enabled = true;
       _tilePool[indices[i]].meshCollider.sharedMesh = _tilePool[indices[i]].mesh;
-      if (!_tilePool[indices[i]].waterCollider) _tilePool[indices[i]].waterCollider = _tilePool[indices[i]].waterRenderer.gameObject.AddComponent<MeshCollider>();
+      if (!_tilePool[indices[i]].waterCollider) {
+        _tilePool[indices[i]].waterCollider = _tilePool[indices[i]].waterRenderer.gameObject.AddComponent<MeshCollider>();
+        _tilePool[indices[i]].waterCollider.isTrigger = true;
+      }
       _tilePool[indices[i]].waterCollider.enabled = true;
       _tilePool[indices[i]].meshCollider.sharedMesh = _tilePool[indices[i]].waterMesh;
     }
