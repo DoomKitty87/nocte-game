@@ -20,6 +20,7 @@ public class PlayerDriving : MonoBehaviour
   private void Update() {
     if (Input.GetKeyDown(_vehicleKey) && _hasVehicle && !_inVehicle) EnterVehicle(_availableVehicles[0]);
     else if (Input.GetKeyDown(_vehicleKey) && _inVehicle) ExitVehicle();
+    if (_inVehicle) _player.localPosition = Vector3.zero;
   }
 
   private void OnTriggerEnter(Collider other) {
