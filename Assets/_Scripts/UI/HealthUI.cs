@@ -1,7 +1,7 @@
 using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
-using System.Collections.Generic;
+using System.Collections;
 
 public class HealthUI : MonoBehaviour
 {
@@ -22,12 +22,12 @@ public class HealthUI : MonoBehaviour
     _changingHealth = true;
     float time = 0;
     while (time < _healthAnimateTime) {
-      _healthNumber.text = Mathf.SmoothStep(initialHealth, currentHealth, time / _healthAnimateTime);
+      _healthNumber.text = Mathf.SmoothStep(initialHealth, currentHealth, time / _healthAnimateTime).ToString();
       _healthBar.fillAmount = Mathf.SmoothStep(initialHealth / maxHealth, currentHealth / maxHealth, time / _healthAnimateTime);
       time += Time.deltaTime;
       yield return null;
     }
-    _healthNumber.text = currentHealth;
+    _healthNumber.text = currentHealth.ToString();
     _healthBar.fillAmount = currentHealth / maxHealth;
     _changingHealth = false;
   }

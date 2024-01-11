@@ -9,8 +9,8 @@ public class WeaponUI : MonoBehaviour
   [SerializeField] private TextMeshProUGUI _ammoMax;
 
   public void UpdateAmmoCount((float, float) ammoData) {
-    _ammoCurrent.text = ammoData.Item1;
-    _ammoMax.text = ammoData.Item2;
+    _ammoCurrent.text = ammoData.Item1.ToString();
+    _ammoMax.text = ammoData.Item2.ToString();
   }
 
 }

@@ -59,6 +59,7 @@ public class PlayerDriving : MonoBehaviour
     _playerCollider.enabled = true;
     _inVehicle = false;
     _player.parent = _playerParent;
+    _player.localRotation = Quaternion.identity;
     _currentVehicle.GetComponent<VehicleControl>().ExitVehicle();
   }
 }

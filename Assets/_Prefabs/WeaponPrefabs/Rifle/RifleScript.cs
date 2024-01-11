@@ -32,8 +32,8 @@ public class RifleScript : WeaponScript
     return Vector3.zero;
   }
 
-  public (float, float) GetAmmo() {
-    return (_ammo, _maxAmmo);
+  public override (float, float) GetAmmo {
+    get { return (_ammo, _maxAmmo); }
   }
   
   private void RaycastBullet() {

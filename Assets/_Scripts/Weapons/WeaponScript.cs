@@ -17,4 +17,5 @@ public abstract class WeaponScript : MonoBehaviour
   public abstract void Fire2Hold();
   // vice versa of FireDown()
   public abstract void Fire2Up();
+  public virtual (float, float) GetAmmo { get {return (-1, -1);} }
 }
