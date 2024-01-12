@@ -6,7 +6,7 @@ using UnityEngine;
 public class GrassManager : MonoBehaviour
 {
     [SerializeField] private int _distance;
-
+    
     private Vector3[][] _vertices;
     private int[][] _tris;
     private Bounds[] _bounds;
@@ -21,22 +21,21 @@ public class GrassManager : MonoBehaviour
 
     public void GenerateGrass() {
         int numberOfChunks = (2 * _distance - 1) * (2 * _distance - 1);
-        var tileMesh = _worldGenerator.GetVertices(_distance, numberOfChunks);
-        _vertices = tileMesh.Item1;
-        _tris = tileMesh.Item2;
-        _bounds = tileMesh.Item3;
-        _positions = tileMesh.Item4;
-
+        var tileMesh = _worldGenerator.GetVertices(_distance);
+        int numberOfVertices = tileMesh.Item1[0].vertexCount;
         for (int i = 0; i < numberOfChunks; i++) {
-            int numberOfVertices = _vertices[i].Length;
+            Mesh currentMesh = tileMesh.Item1[i];
+            _tris[i] = currentMesh.triangles;
+            _vertices[i] = currentMesh.vertices;
+            
             for (int j = 0; j < numberOfVertices; j++) {
                 _vertices[i][j] += _positions[i];
             }
         }
         
         _renderGrass._numberOfChunks = numberOfChunks;
-        _renderGrass._vertices = _vertices;
         _renderGrass._tris = _tris;
+        _renderGrass._vertices = _vertices;
         _renderGrass._bounds = _bounds;
 
         _renderGrass._regenerateGrass = true;

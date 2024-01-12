@@ -232,27 +232,24 @@ public class WorldGenerator : MonoBehaviour
     return _seed;
   }
 
-  public (Vector3[][], int[][], Bounds[], Vector3[]) GetVertices(int distance, int numberOfChunks) {
-    Vector3[][] vertices = new Vector3[numberOfChunks][];
-    int[][] tris = new int[numberOfChunks][];
-    Bounds[] bounds = new Bounds[numberOfChunks];
+  public (Mesh[], Vector3[]) GetVertices(int distance) {
+    int numberOfChunks = (2 * distance - 1) * (2 * distance - 1);
+
+    Mesh[] meshes = new Mesh[numberOfChunks];
     Vector3[] positions = new Vector3[numberOfChunks];
     int currentTile = 0;
+
+    Vector3 offsetFromCornerOfChunk = (((_size - 1) / 2) * _resolution) * new Vector3(1, 0, 1);
     for (int i = 0; i < distance * 2 - 1; i++) {
       for (int j = 0; j < distance * 2 - 1; j++) {
         WorldTile tile = _tilePool[_tilePositions[((_tileCount - 1) / 2) - (distance - 1) + i, ((_tileCount - 1) / 2) - (distance - 1) + j]];
-        Debug.Log(((_tileCount + 1) / 2) - (distance - 1) + i);
-        Mesh mesh = tile.mesh;
-        vertices[currentTile] = mesh.vertices;
-        tris[currentTile] = mesh.triangles;
-        bounds[currentTile] = mesh.bounds;
-        positions[currentTile] = tile.obj.transform.position;
-        bounds[currentTile].center = positions[currentTile] + (((_size - 1) / 2) * _resolution) * new Vector3(1, 0, 1);
+        meshes[currentTile] = tile.mesh;
+        positions[currentTile] = tile.obj.transform.position + offsetFromCornerOfChunk;
         currentTile++;
       }
     }
 
-    return (vertices, tris, bounds, positions);
+    return (meshes, positions);
   }
 
   #endregion
