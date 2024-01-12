@@ -12,6 +12,7 @@ using Unity.Jobs;
 using Unity.Burst;
 using Unity.Collections;
 using IEnumerator = System.Collections.IEnumerator;
+using System.Linq;
 
 public class WorldGenerator : MonoBehaviour
 {
@@ -275,7 +276,6 @@ public class WorldGenerator : MonoBehaviour
       if (_updateQueue.Count > 0 && _generateQueue.Count == 0) {
         UpdateTile(_updateQueue[0]);
         _updateQueue.RemoveAt(0);
-        if (_updateQueue.Count == 0) UpdateWaterMesh();
         updatesLeft--;
       } else break;
     }
@@ -284,6 +284,13 @@ public class WorldGenerator : MonoBehaviour
         GenerateTile(_generateQueue[0][0], _generateQueue[0][1], _generateQueue[0][2]);
         _generateQueue.RemoveAt(0);
         if (Time.timeScale == 0f) Time.timeScale = 1f;
+        if (_generateQueue.Count == 0) {
+          List<MeshRenderer> renderers = new List<MeshRenderer>();
+          for (int j = 0; j < _tilePool.Length; j++) {
+            renderers.Add(_tilePool[j].waterRenderer);
+          }
+          _riverParameters.obj.GetComponent<WaterSurface>().meshRenderers = renderers;
+        }
       } else break;
     }
     updatesLeft += _maxUpdatesPerFrame;
@@ -305,17 +312,15 @@ public class WorldGenerator : MonoBehaviour
     Time.timeScale = 0f;
     _tilePool = new WorldTile[_tileCount * _tileCount];
     _tilePositions = new int[_tileCount, _tileCount];
-    MeshRenderer renderers = new MeshRenderer[_tileCount * _tileCount]; 
+    
     for (int x = -(_tileCount - 1) / 2, i = 0; x <= (_tileCount - 1) / 2; x++)
     {
       for (int z = -(_tileCount - 1) / 2; z <= (_tileCount - 1) / 2; z++) {
         QueueTileGen(x, z, i);
-        renderers[i] = _tilePool[i].waterRenderer;
         i++;
       }
     }
     _generateQueue.Sort((c1, c2) => (Mathf.Abs(c1[0]) + Mathf.Abs(c1[1])).CompareTo(Mathf.Abs(c2[0]) + Mathf.Abs(c2[1])));
-    _riverParameters.obj.GetComponent<WaterSurface>().meshRenderers = renderers;
   }
 
   private void QueueTileUpdate(int index) {
@@ -510,6 +515,9 @@ public class WorldGenerator : MonoBehaviour
     tile.waterRenderer = water.AddComponent<MeshRenderer>();
     tile.waterRenderer.enabled = false;
     tile.waterMesh = new Mesh();
+    if (_size * lodFactor * _size * lodFactor > 65000) {
+        tile.waterMesh.indexFormat = UnityEngine.Rendering.IndexFormat.UInt32;
+    }
     water.layer = LayerMask.NameToLayer("Water");
     // Note: When raycasting to check for water, make sure to pass true for queryTriggerInteraction into the raycast.
     water.AddComponent<MeshFilter>().mesh = tile.waterMesh;
@@ -526,8 +534,6 @@ public class WorldGenerator : MonoBehaviour
     UpdateMesh(msh, index);
     float maxDistance = Mathf.Max(Mathf.Abs(x), Mathf.Abs(z));
     if (_enableColliders && maxDistance <= _colliderRange) UpdateCollider(index);
-
-    if (index == (_tileCount * _tileCount) - 1) UpdateWaterMesh();
   }
 
   private void UpdateTile(int index) {
@@ -535,7 +541,12 @@ public class WorldGenerator : MonoBehaviour
     int z = _tilePool[index].z;
     int lodFactor = (int) Mathf.Pow(2, _tilePool[index].currentLOD);
     if (_size * lodFactor * _size * lodFactor > 65000) {
-        _tilePool[index].mesh.indexFormat = UnityEngine.Rendering.IndexFormat.UInt32;
+      _tilePool[index].mesh.indexFormat = UnityEngine.Rendering.IndexFormat.UInt32;
+      _tilePool[index].waterMesh.indexFormat = UnityEngine.Rendering.IndexFormat.UInt32;
+    }
+    else {
+      _tilePool[index].mesh.indexFormat = UnityEngine.Rendering.IndexFormat.UInt16;
+      _tilePool[index].waterMesh.indexFormat = UnityEngine.Rendering.IndexFormat.UInt16;
     }
     float maxDistance = Mathf.Sqrt(Mathf.Pow(Mathf.Abs(x - _playerXChunkScale), 2) + Mathf.Pow(Mathf.Abs(z - _playerZChunkScale), 2));
     Vector3[] result = AmalgamNoise.GenerateTerrain(_size, lodFactor, x * _size * _resolution + _seed, z * _size * _resolution + _seed, _resolution / lodFactor, _resolution / lodFactor,
@@ -606,8 +617,6 @@ public class WorldGenerator : MonoBehaviour
       j++;
     }
     targetMesh.vertices = vertices;
-    int waterVertsLength = _waterVertices.Count;
-    int waterTriLength = _waterTriangles.Count;
     int[] realIndices = new int[waterVerts.Length];
     Vector3[] verts = new Vector3[waterVerts.Length - ignored];
     for (int i = 0, j = 0; i < waterVerts.Length; i++) {
@@ -626,9 +635,9 @@ public class WorldGenerator : MonoBehaviour
     int[] tris = new int[triCount];
     for (int i = 0, j = 0; i < triangles.Length; i+= 3) {
       if (!ignoreVerts[triangles[i]] && !ignoreVerts[triangles[i + 1]] && !ignoreVerts[triangles[i + 2]]) {
-        tris[j] = realIndices[triangles[i]] + waterVertsLength;
-        tris[j + 1] = realIndices[triangles[i + 1]] + waterVertsLength;
-        tris[j + 2] = realIndices[triangles[i + 2]] + waterVertsLength;
+        tris[j] = realIndices[triangles[i]];
+        tris[j + 1] = realIndices[triangles[i + 1]];
+        tris[j + 2] = realIndices[triangles[i + 2]];
         j += 3;
       }
     }
@@ -705,9 +714,9 @@ public class WorldGenerator : MonoBehaviour
 
   private JobHandle ExecuteBake(int[] indices) {
     Mesh[] meshes = new Mesh[indices.Length * 2];
-    for (int i = 0; i < indices.Length * 2; i += 2) {
-      meshes[i] = _tilePool[indices[i]].mesh;
-      meshes[i + 1] = _tilePool[indices[i]].waterMesh;
+    for (int i = 0; i < indices.Length; i++) {
+      meshes[i * 2] = _tilePool[indices[i]].mesh;
+      meshes[i * 2 + 1] = _tilePool[indices[i]].waterMesh;
     }
 
     NativeArray<int> meshIds = new NativeArray<int>(meshes.Length, Allocator.TempJob);
@@ -737,10 +746,11 @@ public class WorldGenerator : MonoBehaviour
       _tilePool[indices[i]].meshCollider.sharedMesh = _tilePool[indices[i]].mesh;
       if (!_tilePool[indices[i]].waterCollider) {
         _tilePool[indices[i]].waterCollider = _tilePool[indices[i]].waterRenderer.gameObject.AddComponent<MeshCollider>();
+        _tilePool[indices[i]].waterCollider.convex = true;
         _tilePool[indices[i]].waterCollider.isTrigger = true;
       }
       _tilePool[indices[i]].waterCollider.enabled = true;
-      _tilePool[indices[i]].meshCollider.sharedMesh = _tilePool[indices[i]].waterMesh;
+      _tilePool[indices[i]].waterCollider.sharedMesh = _tilePool[indices[i]].waterMesh;
     }
     _frameColliderBakeBuffer.Clear();
     _bakingColliders = false;
