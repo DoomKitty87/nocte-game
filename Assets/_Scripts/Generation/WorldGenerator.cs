@@ -12,7 +12,6 @@ using Unity.Jobs;
 using Unity.Burst;
 using Unity.Collections;
 using IEnumerator = System.Collections.IEnumerator;
-using System.Linq;
 
 public class WorldGenerator : MonoBehaviour
 {
@@ -24,11 +23,12 @@ public class WorldGenerator : MonoBehaviour
     public GameObject obj;
     public Mesh mesh;
     public MeshCollider meshCollider;
-    public MeshRenderer waterRenderer;
-    public Mesh waterMesh;
-    public MeshCollider waterCollider;
     public int x;
     public int z;
+    public int waterVertIndex;
+    public int waterVertCount;
+    public int waterTriIndex;
+    public int waterTriCount;
     public int currentLOD;
 
   }
@@ -202,6 +202,9 @@ public class WorldGenerator : MonoBehaviour
   private int _playerZChunkScale;
 
   private float _maxPossibleHeight;
+  private Mesh _waterMesh;
+  private List<Vector3> _waterVertices = new List<Vector3>();
+  private List<int> _waterTriangles = new List<int>();
 
   #endregion
 
@@ -221,6 +224,17 @@ public class WorldGenerator : MonoBehaviour
   public float GetRiverValue(Vector2 worldPosition) {
     return _riverParameters.heightCurve.Evaluate(worldPosition.y / _maxPossibleHeight) * _riverParameters.noiseCurve.Evaluate(AmalgamNoise.GenerateRivers(
       0, 1, worldPosition.x + _seed % 216812, worldPosition.y + _seed % 216812, 0, 0, _riverParameters.scale, _riverParameters.octaves, _riverParameters.lacunarity, _riverParameters.persistence, _riverParameters.warpScale, _riverParameters.warpStrength)[0]);
+  }
+
+  public float GetWaterHeight(Vector2 worldPosition) {
+    float heightVal = AmalgamNoise.GenerateTerrain(0, 1, worldPosition.x + _seed, worldPosition.y + _seed, 0, 0, _noiseParameters.octaves, _noiseParameters.lacunarity, _noiseParameters.persistence, _noiseParameters.sharpnessScale,
+      _noiseParameters.sharpnessAmplitude, _noiseParameters.sharpnessMean, _noiseParameters.scaleScale, _noiseParameters.scaleAmplitude,
+      _noiseParameters.scaleMean, _noiseParameters.amplitudeScale, _noiseParameters.amplitudeAmplitude, _noiseParameters.amplitudeMean,
+      _noiseParameters.warpStrengthScale, _noiseParameters.warpStrengthAmplitude, _noiseParameters.warpStrengthMean,
+      _noiseParameters.warpScaleScale, _noiseParameters.warpScaleAmplitude, _noiseParameters.warpScaleMean, _noiseParameters.amplitudePower)[0].y;
+    float waterFactor = _riverParameters.heightCurve.Evaluate(heightVal / _maxPossibleHeight) * _riverParameters.noiseCurve.Evaluate(AmalgamNoise.GenerateRivers(
+        0, 1, worldPosition.x + _seed % 216812, worldPosition.y + _seed % 216812, 0, 0, _riverParameters.scale, _riverParameters.octaves, _riverParameters.lacunarity, _riverParameters.persistence, _riverParameters.warpScale, _riverParameters.warpStrength)[0]);
+    return waterFactor == 0 ? -1 : (heightVal - _riverParameters.waterLevel);
   }
 
   public float GetSeedHash() {
@@ -258,6 +272,9 @@ public class WorldGenerator : MonoBehaviour
 
   private void Awake() {
     _maxPossibleHeight = _noiseParameters.amplitudeMean + _noiseParameters.amplitudeAmplitude;
+    _waterMesh = new Mesh();
+    _waterMesh.indexFormat = UnityEngine.Rendering.IndexFormat.UInt32;
+    _riverParameters.obj.GetComponent<MeshFilter>().mesh = _waterMesh;
     _seed = int.Parse(Hash128.Compute(_seed).ToString().Substring(0, 6), System.Globalization.NumberStyles.HexNumber);
     // Debug.Log(_seed);
     // Seed-based terrain parameter changes
@@ -276,6 +293,7 @@ public class WorldGenerator : MonoBehaviour
       if (_updateQueue.Count > 0 && _generateQueue.Count == 0) {
         UpdateTile(_updateQueue[0]);
         _updateQueue.RemoveAt(0);
+        if (_updateQueue.Count == 0) UpdateWaterMesh();
         updatesLeft--;
       } else break;
     }
@@ -284,13 +302,6 @@ public class WorldGenerator : MonoBehaviour
         GenerateTile(_generateQueue[0][0], _generateQueue[0][1], _generateQueue[0][2]);
         _generateQueue.RemoveAt(0);
         if (Time.timeScale == 0f) Time.timeScale = 1f;
-        if (_generateQueue.Count == 0) {
-          List<MeshRenderer> renderers = new List<MeshRenderer>();
-          for (int j = 0; j < _tilePool.Length; j++) {
-            renderers.Add(_tilePool[j].waterRenderer);
-          }
-          _riverParameters.obj.GetComponent<WaterSurface>().meshRenderers = renderers;
-        }
       } else break;
     }
     updatesLeft += _maxUpdatesPerFrame;
@@ -312,7 +323,6 @@ public class WorldGenerator : MonoBehaviour
     Time.timeScale = 0f;
     _tilePool = new WorldTile[_tileCount * _tileCount];
     _tilePositions = new int[_tileCount, _tileCount];
-    
     for (int x = -(_tileCount - 1) / 2, i = 0; x <= (_tileCount - 1) / 2; x++)
     {
       for (int z = -(_tileCount - 1) / 2; z <= (_tileCount - 1) / 2; z++) {
@@ -510,17 +520,6 @@ public class WorldGenerator : MonoBehaviour
     // If you need to put anything else (tag, components, etc) on the tile, do it here. If it needs to change every time the LOD is changed, do it in the UpdateTile function.
     go.tag = "Ground";
     go.layer = 6;
-    GameObject water = new GameObject();
-    water.transform.parent = go.transform;
-    tile.waterRenderer = water.AddComponent<MeshRenderer>();
-    tile.waterRenderer.enabled = false;
-    tile.waterMesh = new Mesh();
-    if (_size * lodFactor * _size * lodFactor > 65000) {
-        tile.waterMesh.indexFormat = UnityEngine.Rendering.IndexFormat.UInt32;
-    }
-    water.layer = LayerMask.NameToLayer("Water");
-    // Note: When raycasting to check for water, make sure to pass true for queryTriggerInteraction into the raycast.
-    water.AddComponent<MeshFilter>().mesh = tile.waterMesh;
     _structures.GenerateChunkStructures(new Vector2(x * _size * _resolution, z * _size * _resolution), new Vector2((x + 1) * _size * _resolution, (z + 1) * _size * _resolution));
     _generatedStructureTiles.Add(new Vector2(x, z));
     tile.mesh = msh;
@@ -534,6 +533,8 @@ public class WorldGenerator : MonoBehaviour
     UpdateMesh(msh, index);
     float maxDistance = Mathf.Max(Mathf.Abs(x), Mathf.Abs(z));
     if (_enableColliders && maxDistance <= _colliderRange) UpdateCollider(index);
+
+    if (index == (_tileCount * _tileCount) - 1) UpdateWaterMesh();
   }
 
   private void UpdateTile(int index) {
@@ -541,12 +542,7 @@ public class WorldGenerator : MonoBehaviour
     int z = _tilePool[index].z;
     int lodFactor = (int) Mathf.Pow(2, _tilePool[index].currentLOD);
     if (_size * lodFactor * _size * lodFactor > 65000) {
-      _tilePool[index].mesh.indexFormat = UnityEngine.Rendering.IndexFormat.UInt32;
-      _tilePool[index].waterMesh.indexFormat = UnityEngine.Rendering.IndexFormat.UInt32;
-    }
-    else {
-      _tilePool[index].mesh.indexFormat = UnityEngine.Rendering.IndexFormat.UInt16;
-      _tilePool[index].waterMesh.indexFormat = UnityEngine.Rendering.IndexFormat.UInt16;
+        _tilePool[index].mesh.indexFormat = UnityEngine.Rendering.IndexFormat.UInt32;
     }
     float maxDistance = Mathf.Sqrt(Mathf.Pow(Mathf.Abs(x - _playerXChunkScale), 2) + Mathf.Pow(Mathf.Abs(z - _playerZChunkScale), 2));
     Vector3[] result = AmalgamNoise.GenerateTerrain(_size, lodFactor, x * _size * _resolution + _seed, z * _size * _resolution + _seed, _resolution / lodFactor, _resolution / lodFactor,
@@ -574,7 +570,31 @@ public class WorldGenerator : MonoBehaviour
 
   #region Water Management Functions
 
+  private void UpdateWaterMesh() {
+    _waterMesh.triangles = null;
+    _waterMesh.vertices = _waterVertices.ToArray();
+    _waterMesh.triangles = _waterTriangles.ToArray();
+    _waterMesh.RecalculateNormals();
+  }
+
   private void RiverPass(Mesh targetMesh, int index) {
+    if (_tilePool[index].waterVertCount > 0) {
+      _waterVertices.RemoveRange(_tilePool[index].waterVertIndex, _tilePool[index].waterVertCount);
+      _waterTriangles.RemoveRange(_tilePool[index].waterTriIndex, _tilePool[index].waterTriCount);
+      for (int i = 0; i < _waterTriangles.Count; i++) {
+        if (_waterTriangles[i] >= _tilePool[index].waterVertIndex) _waterTriangles[i] -= _tilePool[index].waterVertCount;
+      }
+      for (int i = 0; i < _tileCount * _tileCount; i++) {
+        if (_tilePool[i].waterVertIndex > _tilePool[index].waterVertIndex) {
+          _tilePool[i].waterVertIndex -= _tilePool[index].waterVertCount;
+        }
+        if (_tilePool[i].waterTriIndex > _tilePool[index].waterTriIndex) {
+          _tilePool[i].waterTriIndex -= _tilePool[index].waterTriCount;
+        }
+      }
+    }
+    _tilePool[index].waterVertCount = 0;
+    float maxDistance = Mathf.Max(Mathf.Abs(_tilePool[index].x - _playerXChunkScale), Mathf.Abs(_tilePool[index].z - _playerZChunkScale));
     Vector3[] vertices = targetMesh.vertices;
     Vector3[] normals = targetMesh.normals;
     int lodFactor = (int) Mathf.Pow(2, _tilePool[index].currentLOD);
@@ -617,6 +637,8 @@ public class WorldGenerator : MonoBehaviour
       j++;
     }
     targetMesh.vertices = vertices;
+    int waterVertsLength = _waterVertices.Count;
+    int waterTriLength = _waterTriangles.Count;
     int[] realIndices = new int[waterVerts.Length];
     Vector3[] verts = new Vector3[waterVerts.Length - ignored];
     for (int i = 0, j = 0; i < waterVerts.Length; i++) {
@@ -635,17 +657,19 @@ public class WorldGenerator : MonoBehaviour
     int[] tris = new int[triCount];
     for (int i = 0, j = 0; i < triangles.Length; i+= 3) {
       if (!ignoreVerts[triangles[i]] && !ignoreVerts[triangles[i + 1]] && !ignoreVerts[triangles[i + 2]]) {
-        tris[j] = realIndices[triangles[i]];
-        tris[j + 1] = realIndices[triangles[i + 1]];
-        tris[j + 2] = realIndices[triangles[i + 2]];
+        tris[j] = realIndices[triangles[i]] + waterVertsLength;
+        tris[j + 1] = realIndices[triangles[i + 1]] + waterVertsLength;
+        tris[j + 2] = realIndices[triangles[i + 2]] + waterVertsLength;
         j += 3;
       }
     }
-    _tilePool[index].waterMesh.triangles = null;
-    _tilePool[index].waterMesh.vertices = verts;
-    _tilePool[index].waterMesh.triangles = tris;
-    _tilePool[index].waterMesh.normals = CalculateNormalsJobs(_tilePool[index].waterMesh);
-    }
+    _waterVertices.AddRange(verts);
+    _waterTriangles.AddRange(tris);
+    _tilePool[index].waterVertIndex = waterVertsLength;
+    _tilePool[index].waterVertCount = waterVerts.Length - ignored;
+    _tilePool[index].waterTriIndex = waterTriLength;
+    _tilePool[index].waterTriCount = _waterTriangles.Count - waterTriLength;
+  }
 
   #endregion
 
@@ -713,10 +737,9 @@ public class WorldGenerator : MonoBehaviour
   }
 
   private JobHandle ExecuteBake(int[] indices) {
-    Mesh[] meshes = new Mesh[indices.Length * 2];
+    Mesh[] meshes = new Mesh[indices.Length];
     for (int i = 0; i < indices.Length; i++) {
-      meshes[i * 2] = _tilePool[indices[i]].mesh;
-      meshes[i * 2 + 1] = _tilePool[indices[i]].waterMesh;
+      meshes[i] = _tilePool[indices[i]].mesh;
     }
 
     NativeArray<int> meshIds = new NativeArray<int>(meshes.Length, Allocator.TempJob);
@@ -744,13 +767,6 @@ public class WorldGenerator : MonoBehaviour
       if (!_tilePool[indices[i]].meshCollider) _tilePool[indices[i]].meshCollider = _tilePool[indices[i]].obj.AddComponent<MeshCollider>();
       _tilePool[indices[i]].meshCollider.enabled = true;
       _tilePool[indices[i]].meshCollider.sharedMesh = _tilePool[indices[i]].mesh;
-      if (!_tilePool[indices[i]].waterCollider) {
-        _tilePool[indices[i]].waterCollider = _tilePool[indices[i]].waterRenderer.gameObject.AddComponent<MeshCollider>();
-        _tilePool[indices[i]].waterCollider.convex = true;
-        _tilePool[indices[i]].waterCollider.isTrigger = true;
-      }
-      _tilePool[indices[i]].waterCollider.enabled = true;
-      _tilePool[indices[i]].waterCollider.sharedMesh = _tilePool[indices[i]].waterMesh;
     }
     _frameColliderBakeBuffer.Clear();
     _bakingColliders = false;
