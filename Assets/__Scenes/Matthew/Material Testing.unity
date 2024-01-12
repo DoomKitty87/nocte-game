@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 4425.6445, g: 2872.01, b: 2112.5945, a: 1}
+  m_IndirectSpecularColor: {r: 4427.444, g: 2874.9653, b: 2114.9143, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -120,34 +120,6 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
---- !u!1 &17801168 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 1505098132421396537, guid: 5f3dc5d183dd3cf43b98a421b09a95bc,
-    type: 3}
-  m_PrefabInstance: {fileID: 1291792402}
-  m_PrefabAsset: {fileID: 0}
---- !u!64 &17801172
-MeshCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 17801168}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 5
-  m_Convex: 0
-  m_CookingOptions: 30
-  m_Mesh: {fileID: -8766363013348628419, guid: 5f3dc5d183dd3cf43b98a421b09a95bc, type: 3}
 --- !u!1 &197155011
 GameObject:
   m_ObjectHideFlags: 0
@@ -773,6 +745,11 @@ PrefabInstance:
       propertyPath: m_LocalPosition.y
       value: -0.202
       objectReference: {fileID: 0}
+    - target: {fileID: 7918261996171272667, guid: 807785f75a4cabf4883bf2cc8fe88221,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8068054904556309019, guid: 807785f75a4cabf4883bf2cc8fe88221,
         type: 3}
       propertyPath: m_Name
@@ -1227,14 +1204,6 @@ PrefabInstance:
         type: 3}
       insertIndex: -1
       addedObject: {fileID: 207629447}
-    - targetCorrespondingSourceObject: {fileID: -1443401634650157898, guid: 5f3dc5d183dd3cf43b98a421b09a95bc,
-        type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1706058110}
-    - targetCorrespondingSourceObject: {fileID: 1505098132421396537, guid: 5f3dc5d183dd3cf43b98a421b09a95bc,
-        type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 17801172}
   m_SourcePrefab: {fileID: 100100000, guid: 5f3dc5d183dd3cf43b98a421b09a95bc, type: 3}
 --- !u!1001 &1650719129
 PrefabInstance:
@@ -1341,34 +1310,6 @@ Transform:
   - {fileID: 1957678543}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &1706058106 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: -1443401634650157898, guid: 5f3dc5d183dd3cf43b98a421b09a95bc,
-    type: 3}
-  m_PrefabInstance: {fileID: 1291792402}
-  m_PrefabAsset: {fileID: 0}
---- !u!64 &1706058110
-MeshCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1706058106}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 5
-  m_Convex: 0
-  m_CookingOptions: 30
-  m_Mesh: {fileID: 1402403895231123078, guid: 5f3dc5d183dd3cf43b98a421b09a95bc, type: 3}
 --- !u!1 &1957678542
 GameObject:
   m_ObjectHideFlags: 0
