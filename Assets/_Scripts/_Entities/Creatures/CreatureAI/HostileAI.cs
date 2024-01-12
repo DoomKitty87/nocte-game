@@ -53,7 +53,7 @@ namespace _Scripts._Entities.Creatures.CreatureAI
 					new SetMovementToDirection(_transform.forward, _controller)
 				}),
 				new Sequencer(new List<TreeNode> { // checks if the enemy is stuck and makes a new goal
-					//new CheckStuck(_controller),
+					new CheckStuck(_transform),
 					new PlaceRandomGoal(_controller, _transform, _range)
 				})
 			});
