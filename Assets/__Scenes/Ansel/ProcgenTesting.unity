@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 1463.3717, g: 1322.7003, b: 1426.0839, a: 1}
+  m_IndirectSpecularColor: {r: 243.36995, g: 126.17341, b: 77.92849, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -435,14 +435,14 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 76653200}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 686105580}
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &82234627
 GameObject:
   m_ObjectHideFlags: 0
@@ -3014,7 +3014,7 @@ MonoBehaviour:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
-    speed: 0.1
+    speed: 0.02
     distance: 15000
     orbitAxis: {x: 1, y: 0, z: 0}
     orbitAdjustSpeed: 0.1
@@ -3035,14 +3035,14 @@ MonoBehaviour:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
-    speed: 0.1
+    speed: 0.04
     distance: 14500
     orbitAxis: {x: 1, y: 0, z: 0}
     orbitAdjustSpeed: 0
     orbitAdjustPhase: 0
     offsetAmplitude: 1
     spinOffsetAmplitude: 0
-    spinSpeed: 1
+    spinSpeed: 0.08
     spinAxis: {x: 0, y: 0, z: 0}
     yBias: 0.1
     phase: 0
@@ -3056,14 +3056,14 @@ MonoBehaviour:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
-    speed: 0.1
+    speed: 0.07
     distance: 14000
     orbitAxis: {x: 1, y: 0, z: 0}
     orbitAdjustSpeed: 0
     orbitAdjustPhase: 0
     offsetAmplitude: 1
     spinOffsetAmplitude: 0
-    spinSpeed: 1
+    spinSpeed: 0.12
     spinAxis: {x: 0, y: 0, z: 0}
     yBias: 0.1
     phase: 0
@@ -3077,14 +3077,14 @@ MonoBehaviour:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
-    speed: 0.1
+    speed: 0.01
     distance: 13500
     orbitAxis: {x: 1, y: 0, z: 0}
     orbitAdjustSpeed: 0
     orbitAdjustPhase: 0
     offsetAmplitude: 1
     spinOffsetAmplitude: 0
-    spinSpeed: 1
+    spinSpeed: 0.2
     spinAxis: {x: 0, y: 0, z: 0}
     yBias: 0.1
     phase: 0
@@ -3098,14 +3098,14 @@ MonoBehaviour:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
-    speed: 0.1
+    speed: 0.03
     distance: 13000
     orbitAxis: {x: 1, y: 0, z: 0}
     orbitAdjustSpeed: 0
     orbitAdjustPhase: 0
     offsetAmplitude: 1
     spinOffsetAmplitude: 0
-    spinSpeed: 1
+    spinSpeed: 0.06
     spinAxis: {x: 0, y: 0, z: 0}
     yBias: 0.1
     phase: 0
@@ -7524,6 +7524,16 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7336471431426695701, guid: 862d92a67177d4c7b84ab88d6b6e0257,
         type: 3}
+      propertyPath: _sunAxis.x
+      value: 0.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 7336471431426695701, guid: 862d92a67177d4c7b84ab88d6b6e0257,
+        type: 3}
+      propertyPath: _sunAxis.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7336471431426695701, guid: 862d92a67177d4c7b84ab88d6b6e0257,
+        type: 3}
       propertyPath: _rainEffect
       value: 
       objectReference: {fileID: 1919250532}
@@ -7596,7 +7606,12 @@ PrefabInstance:
     - target: {fileID: 7336471431426695701, guid: 862d92a67177d4c7b84ab88d6b6e0257,
         type: 3}
       propertyPath: _dayNightCycleSpeed
-      value: 6000
+      value: 600
+      objectReference: {fileID: 0}
+    - target: {fileID: 7336471431426695701, guid: 862d92a67177d4c7b84ab88d6b6e0257,
+        type: 3}
+      propertyPath: _spaceFactorInitial
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 7336471431426695701, guid: 862d92a67177d4c7b84ab88d6b6e0257,
         type: 3}
@@ -8036,7 +8051,7 @@ PrefabInstance:
     - target: {fileID: 8819276947174590073, guid: 862d92a67177d4c7b84ab88d6b6e0257,
         type: 3}
       propertyPath: _lodLevels.Array.data[3].distance
-      value: 12
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 8819276947174590073, guid: 862d92a67177d4c7b84ab88d6b6e0257,
         type: 3}
