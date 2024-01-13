@@ -30,7 +30,7 @@ namespace _Scripts._Entities.Creatures.CreatureAI
 			_transform = transform;
 			_controller = gameObject.GetComponent<EnemyController>();
 			_creatureCombat = gameObject.GetComponent<CreatureCombat>();
-			return new Selector(new List<TreeNode> {
+			return new Noder(new List<TreeNode> {
 				new Sequencer(new List<TreeNode> {  // checks if the enemy is close to the player and starts chasing
 					new DistanceTransformLessThan(_transform, _playerTransform, _distanceChase),
 					new FaceTransform(_transform, _playerTransform, true, false, true),
@@ -48,11 +48,12 @@ namespace _Scripts._Entities.Creatures.CreatureAI
 					new PlaceRandomGoal(_controller, _transform, _range)
 				}),
 				new Sequencer(new List<TreeNode> { // checks if the enemy is far from the goal and makes him move closer
+					new SetSpeed(_controller, 1000),
 					new CheckGoalExists(_controller),
 					new FaceGoal(_controller, _transform, true, false, true),
 					new SetMovementToDirection(_transform.forward, _controller)
 				}),
-				new Sequencer(new List<TreeNode> { // checks if the enemy is stuck and makes a new goal
+				new Sequencer(new List<TreeNode> { // checks if stuck and moves goal
 					new CheckStuck(_transform),
 					new PlaceRandomGoal(_controller, _transform, _range)
 				})
