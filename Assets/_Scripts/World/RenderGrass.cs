@@ -4,10 +4,8 @@ public class RenderGrass : MonoBehaviour
 {
     #region Exposed Variables
 
-    [HideInInspector] public int _numberOfChunks;
-    [HideInInspector] public Vector3[][] _vertices;
-    [HideInInspector] public int[][] _tris;
-    [HideInInspector] public Bounds[] _bounds;
+    [HideInInspector] public Mesh[] _meshes;
+    [HideInInspector] public Vector3[] _positions;
     
     [SerializeField] public bool _enableGrass;
     [SerializeField] public bool _regenerateGrass;
@@ -28,6 +26,11 @@ public class RenderGrass : MonoBehaviour
     #endregion
     
     #region Local Variables
+    
+    private int _numberOfChunks;
+    private Vector3[][] _vertices;
+    private int[][] _tris;
+    private Bounds[] _bounds;
     
     private bool _resourcesLoaded;
     private bool _grassIsEnabled;
@@ -52,6 +55,7 @@ public class RenderGrass : MonoBehaviour
     // Cached property index
     private static readonly int TerrainPositions = Shader.PropertyToID("_TerrainPositions");
     private static readonly int TerrainTriangles = Shader.PropertyToID("_TerrainTriangles");
+    private static readonly int ChunkPosition = Shader.PropertyToID("_ChunkPosition");
     private static readonly int TransformMatrices = Shader.PropertyToID("_TransformMatrices");
     private static readonly int Positions = Shader.PropertyToID("_Positions");
     private static readonly int UVs = Shader.PropertyToID("_UVs");
@@ -88,14 +92,32 @@ public class RenderGrass : MonoBehaviour
         _rp = new RenderParams[_numberOfChunks];
 
         _threadGroupSize = new uint[_numberOfChunks];
+
+        _vertices = new Vector3[_numberOfChunks][];
+        _tris = new int[_numberOfChunks][];
+        _bounds = new Bounds[_numberOfChunks];
+    }
+
+    private void LoadArrays() {
+        for (int i = 0; i < _numberOfChunks; i++) {
+            Mesh currentMesh = _meshes[i];
+            _vertices[i] = currentMesh.vertices;
+            _tris[i] = currentMesh.triangles;
+            _bounds[i] = currentMesh.bounds;
+            _bounds[i].center = _positions[i];
+        }
     }
     
     private void GenerateGrass() {
+        
+        _numberOfChunks = _meshes.Length;
         
         if (!_resourcesLoaded) {
             LoadResources();
             _resourcesLoaded = true;
         }
+        
+        LoadArrays();
 
         for (int i = 0; i < _numberOfChunks; i++) {
             // Get data from terrain mesh
@@ -178,6 +200,7 @@ public class RenderGrass : MonoBehaviour
     private void RunComputeShader(int chunkIndex) {
         // Bind variables to compute shader.
         _computeShader.SetMatrix(TerrainObjectToWorld, transform.localToWorldMatrix);
+        _computeShader.SetMatrix(ChunkPosition, Matrix4x4.Translate(_positions[chunkIndex]));
         _computeShader.SetInt(TerrainTriangleCount, _terrainTriangleCount[chunkIndex]);
         _computeShader.SetFloat(MinBladeHeight, _minBladeHeight);
         _computeShader.SetFloat(MaxBladeHeight, _maxBladeHeight);

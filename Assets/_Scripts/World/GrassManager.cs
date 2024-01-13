@@ -1,6 +1,3 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class GrassManager : MonoBehaviour
@@ -21,23 +18,13 @@ public class GrassManager : MonoBehaviour
 
     public void GenerateGrass() {
         if (_distance == 0) return;
-        int numberOfChunks = (2 * _distance - 1) * (2 * _distance - 1);
-        var tileMesh = _worldGenerator.GetVertices(_distance);
-        for (int i = 0; i < numberOfChunks; i++) {
-            Mesh currentMesh = tileMesh.Item1[i];
-            _tris[i] = currentMesh.triangles;
-            _vertices[i] = currentMesh.vertices;
-            int numberOfVertices = tileMesh.Item1[i].vertexCount;
-            for (int j = 0; j < numberOfVertices; j++) {
-                _vertices[i][j] += _positions[i];
-            }
-        }
-        
-        _renderGrass._numberOfChunks = numberOfChunks;
-        _renderGrass._tris = _tris;
-        _renderGrass._vertices = _vertices;
-        _renderGrass._bounds = _bounds;
+        var worldTiles = _worldGenerator.GetVertices(_distance);
 
+        _renderGrass._meshes = worldTiles.Item1;
+        for (int i = 0; i < worldTiles.Item2.Length; i++)
+            worldTiles.Item2[i] += (((_worldGenerator.Size - 1) / 2) * _worldGenerator.Resolution) * new Vector3(1, 0, 1);
+        _renderGrass._positions = worldTiles.Item2;
+        
         _renderGrass._regenerateGrass = true;
         _renderGrass._enableGrass = true;
     }

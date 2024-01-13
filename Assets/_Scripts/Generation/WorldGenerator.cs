@@ -144,7 +144,7 @@ public class WorldGenerator : MonoBehaviour
 
   [Header("World Generation")]
   [Tooltip("Seed for world generation.")]
-  public int _seed;
+  [SerializeField] private int _seed;
   [Tooltip("Size of world in tiles.")]
   [SerializeField] private int _tileCount;
   [Tooltip("Vertices of each tile in world (lowest LOD).")]
@@ -183,6 +183,10 @@ public class WorldGenerator : MonoBehaviour
   [SerializeField] private PlaceStructures _storyStructures;
   [SerializeField] private GrassManager _grassManager;
 
+  public int Seed { get; }
+  public int Size { get; }
+  public float Resolution { get; }
+  
   #endregion
 
   #region Internal Variables
@@ -239,12 +243,11 @@ public class WorldGenerator : MonoBehaviour
     Vector3[] positions = new Vector3[numberOfChunks];
     int currentTile = 0;
 
-    Vector3 offsetFromCornerOfChunk = (((_size - 1) / 2) * _resolution) * new Vector3(1, 0, 1);
     for (int i = 0; i < distance * 2 - 1; i++) {
       for (int j = 0; j < distance * 2 - 1; j++) {
         WorldTile tile = _tilePool[_tilePositions[((_tileCount - 1) / 2) - (distance - 1) + i, ((_tileCount - 1) / 2) - (distance - 1) + j]];
         meshes[currentTile] = tile.mesh;
-        positions[currentTile] = tile.obj.transform.position + offsetFromCornerOfChunk;
+        positions[currentTile] = tile.obj.transform.position;
         currentTile++;
       }
     }
