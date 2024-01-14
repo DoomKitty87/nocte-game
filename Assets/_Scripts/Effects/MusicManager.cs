@@ -24,6 +24,14 @@ public class MusicManager : MonoBehaviour
     StartCoroutine(SongInfo(newSong.name, newSong.artist));
   }
 
+  public void PauseMusic() {
+    _audioSource.Pause();
+  }
+
+  public void ResumeMusic() {
+    _audioSource.Resume();
+  }
+
   private IEnumerator SongInfo(string name, string artist) {
     _songText.text = name + "\n" + artist;
     _songText.vertexColor.alpha = 0;

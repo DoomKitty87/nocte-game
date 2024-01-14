@@ -14,6 +14,7 @@ public class InGameMenus : MonoBehaviour
   }
 
   [SerializeField] private Menu[] _menus;
+  [SerializeField] private MusicManager _music;
 
   private void Update() {
     for (int i = 0; i < _menus.Lengths; i++) {
@@ -26,7 +27,14 @@ public class InGameMenus : MonoBehaviour
       if (i == index) continue;
       _menus[i].object.SetActive(false);
     }
-    _menus[index].object.SetActive(true);
+    if (_menus[index].object.activeSelf) {
+      _menus[index].object.SetActive(false);
+      _music.ResumeMusic();
+    }
+    else {
+      _menus[index].object.SetActive(true);
+      _music.PauseMusic();
+    }
   }
 
   public void SetKeybind(int index, KeyCode keybind) {
