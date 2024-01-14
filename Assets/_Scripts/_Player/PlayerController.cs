@@ -183,9 +183,6 @@ public class PlayerController : MonoBehaviour
             return;
         }
         
-        // If speed is larger than maxspeed, cancel out the input so you don't go over max speed
-        // ClampMaximumVelocity(ref _inputVector);
-        
         // Movement in air
         if (!_grounded) {
             AirMovement(ref _inputVector);
@@ -198,6 +195,8 @@ public class PlayerController : MonoBehaviour
     }
     
     private void AirMovement(ref Vector3 moveVector) {
+        moveVector = Vector3.zero;
+        return;
         Vector3 vector = new Vector3(moveVector.x, 0, moveVector.y);
         Vector3 projVel = Vector3.Project(_rb.velocity, vector);
         bool isAway = Vector3.Dot(vector, projVel) <= 0f;
