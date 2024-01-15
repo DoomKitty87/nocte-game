@@ -6,14 +6,17 @@ namespace _Scripts._Entities.Creatures.CreatureAI
 {
   public class CheckStuck : TreeNode
   {
-    private EnemyController _controller;
+    private Transform _transform;
 
-    public CheckStuck(EnemyController controller) {
-      _controller = controller;
+    public CheckStuck(Transform transform) {
+      _transform = transform;
     }
 
     public override TreeNodeState Evaluate() {
-      _nodeState = TreeNodeState.SUCCESS;
+      Physics.Raycast(_transform.position, _transform.forward, out RaycastHit hit, 10f);
+      float angle = Mathf.Atan(hit.distance / 2) * Mathf.Rad2Deg;
+//       Debug.Log(angle);
+      _nodeState = angle > 30 ? TreeNodeState.SUCCESS : TreeNodeState.FAILED;
       return _nodeState;
     }
   }

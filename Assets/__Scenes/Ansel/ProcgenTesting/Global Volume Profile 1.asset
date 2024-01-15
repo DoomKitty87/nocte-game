@@ -149,7 +149,7 @@ MonoBehaviour:
     m_Value: 3
   groundTint:
     m_OverrideState: 1
-    m_Value: {r: 0, g: 0, b: 0, a: 1}
+    m_Value: {r: 0.20754719, g: 0.20754719, b: 0.20754719, a: 1}
   groundColorTexture:
     m_OverrideState: 0
     m_Value: {fileID: 0}
@@ -167,10 +167,10 @@ MonoBehaviour:
     m_Value: {fileID: 8900000, guid: 6a0b0c10aff8ac344b60e6a2f4f23f7c, type: 3}
   spaceEmissionMultiplier:
     m_OverrideState: 1
-    m_Value: 1201.0203
+    m_Value: 1829.6082
   spaceRotation:
     m_OverrideState: 1
-    m_Value: {x: 1.2047008, y: 1.230861, z: 1.230861}
+    m_Value: {x: 3.5440867, y: 3.7862096, z: 3.7862096}
   colorSaturation:
     m_OverrideState: 0
     m_Value: 1
@@ -290,7 +290,7 @@ MonoBehaviour:
     m_Value: {r: 1, g: 1, b: 1, a: 1}
   maxFogDistance:
     m_OverrideState: 1
-    m_Value: 10000
+    m_Value: 20000
   mipFogMaxMip:
     m_OverrideState: 0
     m_Value: 0.5
@@ -302,13 +302,13 @@ MonoBehaviour:
     m_Value: 1000
   baseHeight:
     m_OverrideState: 1
-    m_Value: 1000
+    m_Value: 0
   maximumHeight:
     m_OverrideState: 1
-    m_Value: 5000
+    m_Value: 50000
   meanFreePath:
     m_OverrideState: 1
-    m_Value: 2500
+    m_Value: 7000
   enableVolumetricFog:
     m_OverrideState: 0
     m_Value: 0
@@ -319,7 +319,7 @@ MonoBehaviour:
     m_OverrideState: 0
     m_Value: 1
   depthExtent:
-    m_OverrideState: 1
+    m_OverrideState: 0
     m_Value: 64
   denoisingMode:
     m_OverrideState: 1
@@ -548,10 +548,10 @@ MonoBehaviour:
     m_Value: {x: 0, y: 0}
   bottomAltitude:
     m_OverrideState: 1
-    m_Value: 1200
+    m_Value: 1000
   altitudeRange:
     m_OverrideState: 1
-    m_Value: 2000
+    m_Value: 5000
   fadeInMode:
     m_OverrideState: 0
     m_Value: 0
@@ -627,7 +627,16 @@ MonoBehaviour:
         inWeight: 0
         outWeight: 0
       - serializedVersion: 3
-        time: 0.15
+        time: 0.037
+        value: 1
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      - serializedVersion: 3
+        time: 0.6
         value: 1
         inSlope: 0
         outSlope: 0
@@ -637,7 +646,7 @@ MonoBehaviour:
         outWeight: 0
       - serializedVersion: 3
         time: 1
-        value: 0.1
+        value: 0
         inSlope: 0
         outSlope: 0
         tangentMode: 0
@@ -662,8 +671,35 @@ MonoBehaviour:
         inWeight: 0
         outWeight: 0
       - serializedVersion: 3
-        time: 0.1
-        value: 0.9
+        time: 0.05
+        value: 0.8
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      - serializedVersion: 3
+        time: 0.2438
+        value: 0.9498
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      - serializedVersion: 3
+        time: 0.5
+        value: 1
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      - serializedVersion: 3
+        time: 0.93
+        value: 0.9268
         inSlope: 0
         outSlope: 0
         tangentMode: 0
@@ -697,7 +733,7 @@ MonoBehaviour:
         inWeight: 0
         outWeight: 0
       - serializedVersion: 3
-        time: 0.25
+        time: 0.1
         value: 0.4
         inSlope: 0
         outSlope: 0
@@ -731,7 +767,7 @@ MonoBehaviour:
     m_Value: 0.2
   shapeFactor:
     m_OverrideState: 1
-    m_Value: 0.8885686
+    m_Value: 0.87938434
   shapeScale:
     m_OverrideState: 1
     m_Value: 5
@@ -752,7 +788,7 @@ MonoBehaviour:
     m_Value: 0
   microErosionFactor:
     m_OverrideState: 1
-    m_Value: 0.65
+    m_Value: 0.6
   microErosionScale:
     m_OverrideState: 1
     m_Value: 300
