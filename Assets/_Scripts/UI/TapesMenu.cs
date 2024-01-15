@@ -1,3 +1,4 @@
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -14,7 +15,7 @@ public class TapesMenu : MonoBehaviour
   private void OnEnable() {
     _tapeAudioSource.Stop();
     _tapes = _inventory.GetOwnedTapes();
-    for (int i = _tapeHolder.ChildCount(); i >= 0; i--) {
+    for (int i = _tapeHolder.childCount; i >= 0; i--) {
       Destroy(_tapeHolder.GetChild(i));
     }
     for (int i = 0; i < _tapes.Length; i++) {

@@ -5,8 +5,10 @@ using TMPro;
 
 public class MusicManager : MonoBehaviour
 {
+}
+/*
 
-  [SerializeField] private AudioClip[] _baseMusic;
+[SerializeField] private AudioClip[] _baseMusic;
   [SerializeField] private AudioSource _audioSource;
   [SerializeField] private TextMeshProUGUI _songText;
   [SerializeField] private float _songInfoFadeInTime;
@@ -63,3 +65,4 @@ public class MusicManager : MonoBehaviour
     UpdateCurrentSector();
   }
 }
+*/
