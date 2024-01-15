@@ -1,0 +1,239 @@
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class NewPlayerController : MonoBehaviour
+{
+    public Rigidbody _rb;
+    
+    [SerializeField] private Transform _orientation;
+    
+    public bool _canMove = true;
+    public bool _jumping;
+
+    public float _moveSpeed;
+    public float _airMoveSpeed;
+    public float _jumpForce;
+    public float _gravity;
+    public float _frictionCoefficient;
+    public float _maxSlopeAngle;
+    public float _airSpeedCutoff; // Speed at which the player can no longer accelerate in the air.
+    
+    public bool _grounded;
+    private Vector3 _inputVectorNormalized;
+
+    public Vector3 _position;
+    public Vector3 _velocity;
+    public Vector3 _acceleration;
+    
+    public Vector3 _normalVector;
+    
+    private Vector3 _horizontalVelocity;
+    private Vector3 _horizontalAcceleration;
+
+    public LayerMask _groundMask;
+    
+    public enum State
+    {
+        Idle,
+        Moving,
+        Air,
+        Grappling,
+        Frozen,
+        Noclip
+    }
+    public State _state;
+
+    public KeyCode _jumpKey = KeyCode.Space;
+
+    private void Awake() {
+        _rb = GetComponent<Rigidbody>();
+    }
+
+    #region State Machine
+    
+    private void SetState(State newState) {
+        
+        // Handle exiting state
+        switch (_state) {
+            case State.Grappling:
+                // CancelGrapple();
+            break;
+        }
+
+        _state = newState;
+
+        // Handle entering new state
+        switch (_state) {
+            case State.Grappling:
+                // StartGrapple();
+            break;
+        }
+    }
+
+    private void UpdateStates() {
+        if (!_grounded)
+            SetState(State.Air);
+        else if (_inputVectorNormalized != Vector3.zero)
+            SetState(State.Moving);
+        else
+            SetState(State.Idle);
+    }
+    
+    #endregion
+    
+    #region Input
+
+    private void GetInput() {
+        _inputVectorNormalized = new Vector3(Input.GetAxisRaw("Horizontal"), 0, Input.GetAxisRaw("Vertical")).normalized;
+        if (Input.GetKeyDown(_jumpKey)) _jumping = true;
+    }
+    
+    #endregion
+    
+    #region Collisions
+
+    private bool _cancellingGrounded;
+    private void OnCollisionStay(Collision other) {
+        // Make sure we are only checking for walkable layers
+        int layer = other.gameObject.layer;
+        if (_groundMask != (_groundMask | (1 << layer))) return;
+        
+        // Iterate through every collision in a physics update
+        for (int i = 0; i < other.contactCount; i++) {
+            Vector3 normal = other.contacts[i].normal;
+            if (IsFloor(normal)) {
+                _grounded = true;
+                _cancellingGrounded = false;
+                _normalVector = normal;
+                CancelInvoke(nameof(StopGrounded));
+            }
+        }
+        
+        // Invoke ground/wall cancel, since we can't check normals with CollisionExit
+        float delay = 3f;
+        if (!_cancellingGrounded) {
+            _cancellingGrounded = true;
+            Invoke(nameof(StopGrounded), Time.deltaTime * delay);
+        }
+    }
+    
+    private bool IsFloor(Vector3 v) {
+        float angle = Vector3.Angle(Vector3.up, v);
+        return angle < _maxSlopeAngle;
+    }
+    
+    #endregion
+
+    #region Update
+
+    private void Update() {
+        GetInput();
+        UpdateStates();
+    }
+
+    private void FixedUpdate() {
+        Move();
+    }
+    
+    #endregion
+
+    private void Move() {
+        _position = transform.position;
+        _velocity = _rb.velocity;
+        _horizontalVelocity = new Vector3(_velocity.x, 0, _velocity.z);
+
+        _acceleration = Vector3.zero;
+        _horizontalAcceleration = Vector3.zero;
+
+        Vector3 forwardDirection = _orientation.forward;
+        Vector3 rightDirection = _orientation.right;
+
+        switch (_state) {
+            case State.Moving: {
+                // Transform the input vector to the orientation's forward and right directions
+                Vector3 inputDirection =
+                    (_inputVectorNormalized.x * rightDirection + _inputVectorNormalized.z * forwardDirection).
+                    normalized;
+
+                // Fixed movement for slope                
+                Vector3 fixedVector = Vector3.ProjectOnPlane(inputDirection, _normalVector).normalized;
+
+                _acceleration += fixedVector * _moveSpeed;
+
+                // Friction
+                _acceleration -= Vector3.ProjectOnPlane(_velocity, _normalVector) * _frictionCoefficient;
+
+                if (_jumping) {
+                    _acceleration += _jumpForce * Vector3.up;
+                    _jumping = false;
+                }
+
+                break;
+            }
+
+            case State.Idle: {
+
+                // Friction
+                _acceleration -= Vector3.ProjectOnPlane(_velocity, _normalVector) * _frictionCoefficient;
+
+                if (_jumping) {
+                    _acceleration += _jumpForce * Vector3.up;
+                    _jumping = false;
+                }
+
+                break;
+            }
+
+            case State.Air: {
+                // Transform the input vector to the orientation's forward and right directions
+                Vector3 inputDirection =
+                    (_inputVectorNormalized.x * rightDirection + _inputVectorNormalized.z * forwardDirection).
+                    normalized;
+
+                // Gravity
+                _acceleration += _gravity * Time.fixedDeltaTime * Vector3.down;
+
+                // 4 different cases:
+                if (_horizontalVelocity.magnitude < _airSpeedCutoff) {
+                    if ((_horizontalVelocity + inputDirection * _airMoveSpeed).magnitude > _airSpeedCutoff) {
+                        // Case 1: Previous velocity is less then cutoff and new velocity is less then cutoff.
+                        // New velocity is calculated normally
+                        _acceleration += inputDirection * _airMoveSpeed;
+                    }
+                    else {
+                        // Case 2: Previous velocity is less then cutoff and new velocity is more then cutoff.
+                        // New velocity capped at cutoff
+                        Vector3 newVelocity = _horizontalVelocity + inputDirection * _airMoveSpeed;
+                        Vector3 cappedNewVelocity = Vector3.ClampMagnitude(newVelocity, _airSpeedCutoff);
+                        Vector3 acceleration = cappedNewVelocity - _horizontalVelocity;
+                        _acceleration += acceleration;
+                    }
+                }
+                else {
+                    if ((_horizontalVelocity + inputDirection * _airMoveSpeed).magnitude < _airSpeedCutoff) {
+                        // Case 3: Previous velocity is more then cutoff and new velocity is less then cutoff.
+                        // New velocity is calculated normally
+                        _acceleration += inputDirection * _airMoveSpeed;
+                    }
+                    else {
+                        // Case 4: Previous velocity is more then cutoff and new velocity ism ore then cutoff.
+                        // New velocity is capped at previous velocity magnitude
+                        Vector3 newVelocity = _horizontalVelocity + inputDirection * _airMoveSpeed;
+                        Vector3 cappedNewVelocity = Vector3.ClampMagnitude(newVelocity, _horizontalVelocity.magnitude);
+                        Vector3 acceleration = cappedNewVelocity - _horizontalVelocity;
+                        _acceleration += acceleration;
+                    }
+                }
+                break;
+            }
+        }
+    
+        // Apply forces
+        _rb.velocity = _velocity + _acceleration;
+    }
+
+    
+    private void StopGrounded() { _grounded = false; }
+}
