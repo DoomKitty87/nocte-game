@@ -463,7 +463,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &321583190
 Transform:
   m_ObjectHideFlags: 0
@@ -497,7 +497,9 @@ MonoBehaviour:
   _orientation: {fileID: 55081661}
   _canMove: 1
   _jumping: 0
+  _sprinting: 0
   _moveSpeed: 5
+  _sprintSpeed: 8
   _airMoveSpeed: 0.4
   _jumpForce: 5
   _gravity: 15
@@ -514,6 +516,7 @@ MonoBehaviour:
     m_Bits: 64
   _state: 0
   _jumpKey: 32
+  _sprintKey: 304
 --- !u!114 &321583192
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1209,7 +1212,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &567000425
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1667,7 +1670,9 @@ MonoBehaviour:
   _orientation: {fileID: 0}
   _canMove: 1
   _jumping: 0
+  _sprinting: 0
   _moveSpeed: 5
+  _sprintSpeed: 0
   _airMoveSpeed: 0
   _jumpForce: 5
   _gravity: 15
@@ -1684,6 +1689,7 @@ MonoBehaviour:
     m_Bits: 64
   _state: 0
   _jumpKey: 32
+  _sprintKey: 304
 --- !u!65 &1458366759
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -2257,7 +2263,7 @@ PrefabInstance:
     - target: {fileID: 8068054904556309019, guid: 807785f75a4cabf4883bf2cc8fe88221,
         type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 0}

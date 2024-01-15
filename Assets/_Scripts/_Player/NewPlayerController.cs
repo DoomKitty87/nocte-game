@@ -11,8 +11,10 @@ public class NewPlayerController : MonoBehaviour
     
     public bool _canMove = true;
     public bool _jumping;
+    public bool _sprinting;
 
     public float _moveSpeed;
+    public float _sprintSpeed;
     public float _airMoveSpeed;
     public float _jumpForce;
     public float _gravity;
@@ -46,6 +48,7 @@ public class NewPlayerController : MonoBehaviour
     public State _state;
 
     public KeyCode _jumpKey = KeyCode.Space;
+    public KeyCode _sprintKey = KeyCode.LeftShift;
 
     private void Awake() {
         _rb = GetComponent<Rigidbody>();
@@ -88,6 +91,7 @@ public class NewPlayerController : MonoBehaviour
     private void GetInput() {
         _inputVectorNormalized = new Vector3(Input.GetAxisRaw("Horizontal"), 0, Input.GetAxisRaw("Vertical")).normalized;
         if (Input.GetKeyDown(_jumpKey)) _jumping = true;
+        _sprinting = Input.GetKey(_sprintKey);
     }
     
     #endregion
@@ -160,7 +164,7 @@ public class NewPlayerController : MonoBehaviour
                 // Fixed movement for slope                
                 Vector3 fixedVector = Vector3.ProjectOnPlane(inputDirection, _normalVector).normalized;
 
-                _acceleration += fixedVector * _moveSpeed;
+                _acceleration += fixedVector * (_sprinting ? _sprintSpeed : _moveSpeed);
 
                 // Friction
                 _acceleration -= Vector3.ProjectOnPlane(_velocity, _normalVector) * _frictionCoefficient;
