@@ -493,20 +493,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b0d396825884f43d688fed0871979456, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _rb: {fileID: 321583196}
+  _state: 0
   _orientation: {fileID: 55081661}
-  _canMove: 1
-  _jumping: 0
-  _sprinting: 0
   _moveSpeed: 5
-  _sprintSpeed: 8
-  _airMoveSpeed: 0.4
+  _sprintSpeed: 7
+  _airMoveSpeed: 1
+  _airSpeedCutoff: 5
   _jumpForce: 5
   _gravity: 15
   _frictionCoefficient: 0.4
   _maxSlopeAngle: 60
-  _airSpeedCutoff: 5
-  _grounded: 0
   _position: {x: 0, y: 0, z: 0}
   _velocity: {x: 0, y: 0, z: 0}
   _acceleration: {x: 0, y: 0, z: 0}
@@ -514,7 +510,6 @@ MonoBehaviour:
   _groundMask:
     serializedVersion: 2
     m_Bits: 64
-  _state: 0
   _jumpKey: 32
   _sprintKey: 304
 --- !u!114 &321583192
@@ -1666,20 +1661,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b0d396825884f43d688fed0871979456, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _rb: {fileID: 0}
+  _state: 0
   _orientation: {fileID: 0}
-  _canMove: 1
-  _jumping: 0
-  _sprinting: 0
   _moveSpeed: 5
   _sprintSpeed: 0
   _airMoveSpeed: 0
+  _airSpeedCutoff: 0
   _jumpForce: 5
   _gravity: 15
   _frictionCoefficient: 0.4
   _maxSlopeAngle: 60
-  _airSpeedCutoff: 0
-  _grounded: 0
   _position: {x: 0, y: 0, z: 0}
   _velocity: {x: 0, y: 0, z: 0}
   _acceleration: {x: 0, y: 0, z: 0}
@@ -1687,7 +1678,6 @@ MonoBehaviour:
   _groundMask:
     serializedVersion: 2
     m_Bits: 64
-  _state: 0
   _jumpKey: 32
   _sprintKey: 304
 --- !u!65 &1458366759

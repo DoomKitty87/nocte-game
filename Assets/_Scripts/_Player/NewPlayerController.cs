@@ -5,38 +5,55 @@ using UnityEngine;
 
 public class NewPlayerController : MonoBehaviour
 {
-    public Rigidbody _rb;
+    #region Exposed Variables
     
-    [SerializeField] private Transform _orientation;
+    [Header("State")]
+    [SerializeField, Tooltip("Player's current state")] private State _state;
     
-    public bool _canMove = true;
-    public bool _jumping;
-    public bool _sprinting;
+    [Header("References")]
+    [SerializeField, Tooltip("Player's local")] private Transform _orientation;
+    
+    [Header("Movement")]
+    [SerializeField, Tooltip("Default move speed on ground")] private float _moveSpeed;
+    [SerializeField, Tooltip("Sprint speed on ground")] private float _sprintSpeed;
+    [SerializeField, Tooltip("Air speed")] private float _airMoveSpeed;
+    [SerializeField, Tooltip("Velocity at which player can accelerate towards")] private float _airSpeedCutoff;
+    [SerializeField, Tooltip("Jump force")] private float _jumpForce;
+    [SerializeField, Tooltip("Gravity, positive is downwards")] private float _gravity;
+    [SerializeField, Tooltip("Friction force")] private float _frictionCoefficient;
+    [SerializeField, Tooltip("Max angle at which ground is recognized as walkable")] private float _maxSlopeAngle;
+    
+    [Header("Vectors")]
+    [SerializeField, Tooltip("Current position")] private Vector3 _position;
+    [SerializeField, Tooltip("Current velocity")] private Vector3 _velocity;
+    [SerializeField, Tooltip("Current acceleration")] private Vector3 _acceleration;
+    [SerializeField, Tooltip("Normal of ground")] private Vector3 _normalVector;
+    
+    [Header("Ground")]
+    [SerializeField, Tooltip("Layer for ground")] private LayerMask _groundMask;
+    
+    [Header("Keybinds")]
+    public KeyCode _jumpKey = KeyCode.Space;
+    public KeyCode _sprintKey = KeyCode.LeftShift;
+    
+    #endregion
+    
+    #region Hidden Variables
 
-    public float _moveSpeed;
-    public float _sprintSpeed;
-    public float _airMoveSpeed;
-    public float _jumpForce;
-    public float _gravity;
-    public float _frictionCoefficient;
-    public float _maxSlopeAngle;
-    public float _airSpeedCutoff; // Speed at which the player can no longer accelerate in the air.
+    private Rigidbody _rb;
+
+    private bool _canMove;
+    private bool _jumping;
+    private bool _resetJump;
+    private bool _sprinting;
+    private bool _grounded;
     
-    public bool _grounded;
     private Vector3 _inputVectorNormalized;
-
-    public Vector3 _position;
-    public Vector3 _velocity;
-    public Vector3 _acceleration;
-    
-    public Vector3 _normalVector;
     
     private Vector3 _horizontalVelocity;
     private Vector3 _horizontalAcceleration;
-
-    public LayerMask _groundMask;
     
-    public enum State
+    private enum State
     {
         Idle,
         Moving,
@@ -45,14 +62,8 @@ public class NewPlayerController : MonoBehaviour
         Frozen,
         Noclip
     }
-    public State _state;
 
-    public KeyCode _jumpKey = KeyCode.Space;
-    public KeyCode _sprintKey = KeyCode.LeftShift;
-
-    private void Awake() {
-        _rb = GetComponent<Rigidbody>();
-    }
+    #endregion
 
     #region State Machine
     
@@ -60,8 +71,8 @@ public class NewPlayerController : MonoBehaviour
         
         // Handle exiting state
         switch (_state) {
-            case State.Grappling:
-                // CancelGrapple();
+            case State.Air:
+                _resetJump = true;
             break;
         }
 
@@ -90,7 +101,7 @@ public class NewPlayerController : MonoBehaviour
 
     private void GetInput() {
         _inputVectorNormalized = new Vector3(Input.GetAxisRaw("Horizontal"), 0, Input.GetAxisRaw("Vertical")).normalized;
-        if (Input.GetKeyDown(_jumpKey)) _jumping = true;
+        _jumping = Input.GetKey(_jumpKey);
         _sprinting = Input.GetKey(_sprintKey);
     }
     
@@ -143,6 +154,10 @@ public class NewPlayerController : MonoBehaviour
     
     #endregion
 
+    private void Awake() {
+        _rb = GetComponent<Rigidbody>();
+    }
+    
     private void Move() {
         _position = transform.position;
         _velocity = _rb.velocity;
@@ -169,9 +184,10 @@ public class NewPlayerController : MonoBehaviour
                 // Friction
                 _acceleration -= Vector3.ProjectOnPlane(_velocity, _normalVector) * _frictionCoefficient;
 
-                if (_jumping) {
+                if (_jumping && _resetJump) {
                     _acceleration += _jumpForce * Vector3.up;
                     _jumping = false;
+                    _resetJump = false;
                 }
 
                 break;
@@ -182,9 +198,10 @@ public class NewPlayerController : MonoBehaviour
                 // Friction
                 _acceleration -= Vector3.ProjectOnPlane(_velocity, _normalVector) * _frictionCoefficient;
 
-                if (_jumping) {
+                if (_jumping && _resetJump) {
                     _acceleration += _jumpForce * Vector3.up;
                     _jumping = false;
+                    _resetJump = false;
                 }
 
                 break;
