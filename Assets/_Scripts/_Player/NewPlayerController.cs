@@ -8,8 +8,12 @@ public class NewPlayerController : MonoBehaviour
     #region Exposed Variables
     
     [Header("State")]
-    [SerializeField, Tooltip("Player's current state")] private State _state;
-    
+    [SerializeField, Tooltip("Player's current state")] private PlayerStates _state;
+    public PlayerStates State {
+        get => _state;
+        set => SetState(value);
+    }
+
     [Header("References")]
     [SerializeField, Tooltip("Player's local")] private Transform _orientation;
     
@@ -53,7 +57,7 @@ public class NewPlayerController : MonoBehaviour
     private Vector3 _horizontalVelocity;
     private Vector3 _horizontalAcceleration;
     
-    private enum State
+    public enum PlayerStates
     {
         Idle,
         Moving,
@@ -67,11 +71,11 @@ public class NewPlayerController : MonoBehaviour
 
     #region State Machine
     
-    private void SetState(State newState) {
+    private void SetState(PlayerStates newState) {
         
         // Handle exiting state
         switch (_state) {
-            case State.Air:
+            case PlayerStates.Air:
                 _resetJump = true;
             break;
         }
@@ -80,19 +84,22 @@ public class NewPlayerController : MonoBehaviour
 
         // Handle entering new state
         switch (_state) {
-            case State.Grappling:
+            case PlayerStates.Grappling:
                 // StartGrapple();
             break;
         }
     }
 
     private void UpdateStates() {
+        if (State is PlayerStates.Frozen or PlayerStates.Noclip or PlayerStates.Grappling)
+            return;
+        
         if (!_grounded)
-            SetState(State.Air);
+            SetState(PlayerStates.Air);
         else if (_inputVectorNormalized != Vector3.zero)
-            SetState(State.Moving);
+            SetState(PlayerStates.Moving);
         else
-            SetState(State.Idle);
+            SetState(PlayerStates.Idle);
     }
     
     #endregion
@@ -127,7 +134,7 @@ public class NewPlayerController : MonoBehaviour
         }
         
         // Invoke ground/wall cancel, since we can't check normals with CollisionExit
-        float delay = 3f;
+        const float delay = 3f;
         if (!_cancellingGrounded) {
             _cancellingGrounded = true;
             Invoke(nameof(StopGrounded), Time.deltaTime * delay);
@@ -169,8 +176,8 @@ public class NewPlayerController : MonoBehaviour
         Vector3 forwardDirection = _orientation.forward;
         Vector3 rightDirection = _orientation.right;
 
-        switch (_state) {
-            case State.Moving: {
+        switch (State) {
+            case PlayerStates.Moving: {
                 // Transform the input vector to the orientation's forward and right directions
                 Vector3 inputDirection =
                     (_inputVectorNormalized.x * rightDirection + _inputVectorNormalized.z * forwardDirection).
@@ -193,7 +200,7 @@ public class NewPlayerController : MonoBehaviour
                 break;
             }
 
-            case State.Idle: {
+            case PlayerStates.Idle: {
 
                 // Friction
                 _acceleration -= Vector3.ProjectOnPlane(_velocity, _normalVector) * _frictionCoefficient;
@@ -207,7 +214,7 @@ public class NewPlayerController : MonoBehaviour
                 break;
             }
 
-            case State.Air: {
+            case PlayerStates.Air: {
                 // Transform the input vector to the orientation's forward and right directions
                 Vector3 inputDirection =
                     (_inputVectorNormalized.x * rightDirection + _inputVectorNormalized.z * forwardDirection).
@@ -247,6 +254,10 @@ public class NewPlayerController : MonoBehaviour
                         _acceleration += acceleration;
                     }
                 }
+                break;
+            }
+
+            case PlayerStates.Grappling: {
                 break;
             }
         }
