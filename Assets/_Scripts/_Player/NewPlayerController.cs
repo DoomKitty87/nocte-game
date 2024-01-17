@@ -51,6 +51,8 @@ public class NewPlayerController : MonoBehaviour
     private bool _resetJump;
     private bool _sprinting;
     private bool _grounded;
+    private bool _useForce;
+    private bool _useGravity;
     
     private Vector3 _inputVectorNormalized;
     
@@ -64,7 +66,7 @@ public class NewPlayerController : MonoBehaviour
         Air,
         Grappling,
         Frozen,
-        Noclip
+        NoClip
     }
 
     #endregion
@@ -73,25 +75,34 @@ public class NewPlayerController : MonoBehaviour
     
     private void SetState(PlayerStates newState) {
         
-        // Handle exiting state
+        // HExiting state
         switch (_state) {
             case PlayerStates.Air:
                 _resetJump = true;
-            break;
+                _useGravity = false;
+                break; 
+            
+            case PlayerStates.Grappling:
+                _useForce = false;
+                break;
         }
 
         _state = newState;
 
-        // Handle entering new state
+        // Entering new state
         switch (_state) {
+            case PlayerStates.Air:
+                _useGravity = true;
+                break;
+            
             case PlayerStates.Grappling:
-                // StartGrapple();
-            break;
+                _useForce = true;
+                break;
         }
     }
 
     private void UpdateStates() {
-        if (State is PlayerStates.Frozen or PlayerStates.Noclip or PlayerStates.Grappling)
+        if (State is PlayerStates.Frozen or PlayerStates.NoClip or PlayerStates.Grappling)
             return;
         
         if (!_grounded)
@@ -219,10 +230,7 @@ public class NewPlayerController : MonoBehaviour
                 Vector3 inputDirection =
                     (_inputVectorNormalized.x * rightDirection + _inputVectorNormalized.z * forwardDirection).
                     normalized;
-
-                // Gravity
-                _acceleration += _gravity * Time.fixedDeltaTime * Vector3.down;
-
+                
                 // 4 different cases:
                 if (_horizontalVelocity.magnitude < _airSpeedCutoff) {
                     if ((_horizontalVelocity + inputDirection * _airMoveSpeed).magnitude > _airSpeedCutoff) {
@@ -262,8 +270,14 @@ public class NewPlayerController : MonoBehaviour
             }
         }
     
+        // Apply gravity
+        if (_useGravity)
+            _acceleration += _gravity * Time.fixedDeltaTime * Vector3.down;
+        
         // Apply forces
-        _rb.velocity = _velocity + _acceleration;
+        // Boolean used for cases when rb.AddForce is required
+        if (!_useForce)
+            _rb.velocity = _velocity + _acceleration;
     }
 
     

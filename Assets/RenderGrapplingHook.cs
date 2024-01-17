@@ -1,29 +1,30 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
+// Many thanks to:
+// https://www.youtube.com/watch?v=8nENcDnxeVE
+// https://github.com/affaxltd/rope-tutorial
+
 using UnityEngine;
 
 public class RenderGrapplingHook : MonoBehaviour
 {
     public PlayerGrapple _playerGrapple;
 
-    private Spring spring;
-    private LineRenderer lr;
-    private Vector3 currentGrapplePosition;
-    public int quality;
-    public float damper;
-    public float strength;
-    public float velocity;
-    public float waveCount;
-    public float waveHeight;
-    public AnimationCurve affectCurve;
+    private Spring _spring;
+    private LineRenderer _lineRenderer;
+    private Vector3 _currentGrapplePosition;
+    public int _quality;
+    public float _damper;
+    public float _strength;
+    public float _velocity;
+    public float _waveCount;
+    public float _waveHeight;
+    public AnimationCurve _affectCurve;
 
     private bool _grappling;
         
     void Awake() {
-        lr = GetComponent<LineRenderer>();
-        spring = new Spring();
-        spring.SetTarget(0);
+        _lineRenderer = GetComponent<LineRenderer>();
+        _spring = new Spring();
+        _spring.SetTarget(0);
     }
     
     private void LateUpdate() {
@@ -32,79 +33,82 @@ public class RenderGrapplingHook : MonoBehaviour
 
     private void DrawGrapple() {
         if (!_playerGrapple._renderGrapple) {
+            // Cancel grapple
             if (_grappling) {
-                lr.positionCount = 0;
+                _lineRenderer.positionCount = 0;
+                _lineRenderer.enabled = false;
                 _grappling = false;
-            }
+            }   
 
             return;
         }
 
-        _grappling = true;
-        
-        if (lr.positionCount == 0) {
-            spring.SetVelocity(velocity);
-            lr.positionCount = quality + 1;
+        // Initiate grapple
+        if (!_grappling) {
+            _currentGrapplePosition = _playerGrapple._gunEnd.position;
+            _spring.SetVelocity(_velocity);
+            _lineRenderer.positionCount = _quality + 1;
+            _lineRenderer.enabled = true;
+            _grappling = true;
         }
         
-        spring.SetDamper(damper);
-        spring.SetStrength(strength);
-        spring.Update(Time.deltaTime);
+        _spring.SetDamper(_damper);
+        _spring.SetStrength(_strength);
+        _spring.Update(Time.deltaTime);
 
         var grapplePoint = _playerGrapple._grapplePoint;
         var gunTipPosition = _playerGrapple._gunEnd.position;
         var up = Quaternion.LookRotation((grapplePoint - gunTipPosition).normalized) * Vector3.up;
 
-        currentGrapplePosition = Vector3.Lerp(currentGrapplePosition, grapplePoint, Time.deltaTime * 12f);
+        _currentGrapplePosition = Vector3.Lerp(_currentGrapplePosition, grapplePoint, Time.deltaTime * 12f);
 
-        for (var i = 0; i < quality + 1; i++) {
-            var delta = i / (float) quality;
-            var offset = waveHeight * Mathf.Sin(delta * waveCount * Mathf.PI) * spring.Value *
-                         affectCurve.Evaluate(delta) * up;
-            
-            lr.SetPosition(i, Vector3.Lerp(gunTipPosition, currentGrapplePosition, delta) + offset);
+        for (var i = 0; i < _quality + 1; i++) {
+            var delta = i / (float) _quality;
+            var offset = _waveHeight * Mathf.Sin(delta * _waveCount * Mathf.PI) * _spring.Value *
+                         _affectCurve.Evaluate(delta) * up;
+            _lineRenderer.SetPosition(i, Vector3.Lerp(gunTipPosition, _currentGrapplePosition, delta) + offset);
         }
     }
 }
 
 public class Spring {
-    private float strength;
-    private float damper;
-    private float target;
-    private float velocity;
-    private float value;
+    private float _strength;
+    private float _damper;
+    private float _target;
+    private float _velocity;
+    private float _value;
 
     public void Update(float deltaTime) {
-        var direction = target - value >= 0 ? 1f : -1f;
-        var force = Mathf.Abs(target - value) * strength;
-        velocity += (force * direction - velocity * damper) * deltaTime;
-        value += velocity * deltaTime;
+        var direction = _target - _value >= 0 ? 1f : -1f;
+        var force = Mathf.Abs(_target - _value) * _strength;
+        _velocity += (force * direction - _velocity * _damper) * deltaTime;
+        _value += _velocity * deltaTime;
     }
 
     public void Reset() {
-        velocity = 0f;
-        value = 0f;
+        _velocity = 0f;
+        _value = 0f;
     }
         
     public void SetValue(float value) {
-        this.value = value;
+        this._value = value;
     }
         
     public void SetTarget(float target) {
-        this.target = target;
+        this._target = target;
     }
 
     public void SetDamper(float damper) {
-        this.damper = damper;
+        this._damper = damper;
     }
         
     public void SetStrength(float strength) {
-        this.strength = strength;
+        this._strength = strength;
     }
 
     public void SetVelocity(float velocity) {
-        this.velocity = velocity;
+        this._velocity = velocity;
     }
         
-    public float Value => value;
+    public float Value => _value;
 }

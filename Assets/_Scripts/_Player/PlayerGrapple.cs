@@ -41,7 +41,11 @@ public class PlayerGrapple : MonoBehaviour
     public bool _renderGrapple;
     
     public bool _currentlyGrappling;
-    
+
+    private void Awake() {
+        _rb = GetComponent<Rigidbody>();
+    }
+
     private void Start() {
         _playerController = GetComponent<NewPlayerController>();
     }
@@ -65,7 +69,6 @@ public class PlayerGrapple : MonoBehaviour
     public void StartGrapple()
     {
         if (_grapplingCoolDownTimer > 0) return;
-        Debug.Log("Started Grapple");
         
         RaycastHit hit;
         if(Physics.Raycast(_camera.position, _camera.forward, out hit, _maxGrappleDistance, _grapplable))
@@ -82,7 +85,6 @@ public class PlayerGrapple : MonoBehaviour
     
     private void ExecuteGrapple() {
         if (!Input.GetKey(_grappleButton)) return;
-        Debug.Log("Executed Grapple");
         _currentlyGrappling = true;
         _playerController.State = NewPlayerController.PlayerStates.Grappling;
         _time = 0;
@@ -118,7 +120,6 @@ public class PlayerGrapple : MonoBehaviour
         if (_currentlyGrappling) {
             _currentlyGrappling = false;
             _grapplingCoolDownTimer = _grapplingCoolDown;
-            Debug.Log("Stopping Grapple");
         }
 
         _renderGrapple = false;
