@@ -27,6 +27,11 @@ public class PlayerCombatCore : MonoBehaviour
   }
   
   private void InstanceWeaponItem() {
+    if (_weaponContainer == null) {
+      Debug.LogWarning("The variable _weaponContainer of PlayerCombatCore has not been assigned. PlayerCombatCore has been disabled.");
+      enabled = false;
+      return;
+    }
     GameObject instance = Instantiate(_currentWeaponItem._weaponPrefab, _weaponContainer.transform);
     _weaponInstance = instance;
     _instanceScript = instance.GetComponent<WeaponScript>();
