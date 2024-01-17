@@ -285,6 +285,8 @@ public class NewPlayerController : MonoBehaviour
             }
 
             case PlayerStates.Sliding: {
+                // Note that gravity applies some friction to movement already
+                
                 _acceleration -= Vector3.ProjectOnPlane(_velocity, _normalVector) * _slidingFrictionCoefficient;
                 
                 if (_jumping && _resetJump) {
