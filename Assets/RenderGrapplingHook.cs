@@ -6,7 +6,7 @@ using UnityEngine;
 
 public class RenderGrapplingHook : MonoBehaviour
 {
-    public PlayerGrapple _playerGrapple;
+    private PlayerGrapple _playerGrapple;
 
     private Spring _spring;
     private LineRenderer _lineRenderer;
@@ -22,6 +22,7 @@ public class RenderGrapplingHook : MonoBehaviour
     private bool _grappling;
         
     void Awake() {
+        _playerGrapple = GetComponent<PlayerGrapple>();
         _lineRenderer = GetComponent<LineRenderer>();
         _spring = new Spring();
         _spring.SetTarget(0);

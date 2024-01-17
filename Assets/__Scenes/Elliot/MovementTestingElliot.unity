@@ -457,8 +457,8 @@ GameObject:
   - component: {fileID: 321583192}
   - component: {fileID: 321583191}
   - component: {fileID: 321583197}
-  - component: {fileID: 321583198}
   - component: {fileID: 321583199}
+  - component: {fileID: 321583198}
   m_Layer: 0
   m_Name: Player_1
   m_TagString: Untagged
@@ -495,25 +495,34 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b0d396825884f43d688fed0871979456, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _cameraPosition: {fileID: 1059514285}
+  _crouchingCameraPosition: {x: 0, y: -0.2, z: 0}
+  _disableMovement: 0
   _state: 0
   _orientation: {fileID: 55081661}
-  _moveSpeed: 4
+  _walkSpeed: 4
   _sprintSpeed: 6
+  _crouchSpeed: 2
   _airMoveSpeed: 0.4
-  _airSpeedCutoff: 5
+  _slideThreshold: 7
+  _airSpeedThreshold: 0.5
   _jumpForce: 5
   _gravity: 15
   _frictionCoefficient: 0.4
+  _slidingFrictionCoefficient: 0
   _maxSlopeAngle: 60
   _position: {x: 0, y: 0, z: 0}
   _velocity: {x: 0, y: 0, z: 0}
   _acceleration: {x: 0, y: 0, z: 0}
   _normalVector: {x: 0, y: 1, z: 0}
+  _velocityMagnitude: 0
+  _horizontalVelocityMagnitude: 0
   _groundMask:
     serializedVersion: 2
     m_Bits: 64
   _jumpKey: 32
   _sprintKey: 304
+  _crouchKey: 306
 --- !u!114 &321583192
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -819,7 +828,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 75214164f14f540dfb6d09031204243a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _playerGrapple: {fileID: 321583197}
   _quality: 500
   _damper: 14
   _strength: 800
@@ -859,7 +867,6 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  _grappling: 0
 --- !u!1 &456849028
 GameObject:
   m_ObjectHideFlags: 0

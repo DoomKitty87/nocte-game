@@ -1,11 +1,15 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class NewPlayerController : MonoBehaviour
 {
+    // Temporary fix for visualizing crouching - See HandleCrouchingCameraPosition()
+    [SerializeField] private Transform _cameraPosition;
+    private Vector3 _defaultCameraPosition;
+    [SerializeField] Vector3 _crouchingCameraPosition;
+    
     #region Exposed Variables
+    
+    [HideInInspector] public bool _disableMovement;
     
     [Header("State")]
     [SerializeField, Tooltip("Player's current state")] private PlayerStates _state;
@@ -18,13 +22,16 @@ public class NewPlayerController : MonoBehaviour
     [SerializeField, Tooltip("Player's local")] private Transform _orientation;
     
     [Header("Movement")]
-    [SerializeField, Tooltip("Default move speed on ground")] private float _moveSpeed;
+    [SerializeField, Tooltip("Default walk speed on ground")] private float _walkSpeed;
     [SerializeField, Tooltip("Sprint speed on ground")] private float _sprintSpeed;
+    [SerializeField, Tooltip("Crouching speed on ground")] private float _crouchSpeed;
     [SerializeField, Tooltip("Air speed")] private float _airMoveSpeed;
-    [SerializeField, Tooltip("Velocity at which player can accelerate towards")] private float _airSpeedCutoff;
+    [SerializeField, Tooltip("Slide/Crouch threshold")] private float _slideThreshold;
+    [SerializeField, Tooltip("Velocity at which player can accelerate towards")] private float _airSpeedThreshold;
     [SerializeField, Tooltip("Jump force")] private float _jumpForce;
     [SerializeField, Tooltip("Gravity, positive is downwards")] private float _gravity;
     [SerializeField, Tooltip("Friction force")] private float _frictionCoefficient;
+    [SerializeField, Tooltip("Friction force while sliding")] private float _slidingFrictionCoefficient;
     [SerializeField, Tooltip("Max angle at which ground is recognized as walkable")] private float _maxSlopeAngle;
     
     [Header("Vectors")]
@@ -32,6 +39,8 @@ public class NewPlayerController : MonoBehaviour
     [SerializeField, Tooltip("Current velocity")] private Vector3 _velocity;
     [SerializeField, Tooltip("Current acceleration")] private Vector3 _acceleration;
     [SerializeField, Tooltip("Normal of ground")] private Vector3 _normalVector;
+    [SerializeField] private float _velocityMagnitude;
+    [SerializeField] private float _horizontalVelocityMagnitude;
     
     [Header("Ground")]
     [SerializeField, Tooltip("Layer for ground")] private LayerMask _groundMask;
@@ -39,20 +48,21 @@ public class NewPlayerController : MonoBehaviour
     [Header("Keybinds")]
     public KeyCode _jumpKey = KeyCode.Space;
     public KeyCode _sprintKey = KeyCode.LeftShift;
+    public KeyCode _crouchKey = KeyCode.LeftControl;
     
     #endregion
     
     #region Hidden Variables
 
     private Rigidbody _rb;
-
-    private bool _canMove;
+    
     private bool _jumping;
     private bool _resetJump;
     private bool _sprinting;
+    private bool _crouching;
     private bool _grounded;
     private bool _useForce;
-    private bool _useGravity;
+    private bool _useGravity = true;
     
     private Vector3 _inputVectorNormalized;
     
@@ -62,7 +72,10 @@ public class NewPlayerController : MonoBehaviour
     public enum PlayerStates
     {
         Idle,
-        Moving,
+        Walking,
+        Sprinting,
+        Crouching,
+        Sliding,
         Air,
         Grappling,
         Frozen,
@@ -71,15 +84,20 @@ public class NewPlayerController : MonoBehaviour
 
     #endregion
 
+    private void Awake() {
+        _rb = GetComponent<Rigidbody>();
+
+        _defaultCameraPosition = _cameraPosition.localPosition;
+    }
+    
     #region State Machine
     
     private void SetState(PlayerStates newState) {
         
-        // HExiting state
+        // Exiting state
         switch (_state) {
             case PlayerStates.Air:
                 _resetJump = true;
-                _useGravity = false;
                 break; 
             
             case PlayerStates.Grappling:
@@ -91,10 +109,6 @@ public class NewPlayerController : MonoBehaviour
 
         // Entering new state
         switch (_state) {
-            case PlayerStates.Air:
-                _useGravity = true;
-                break;
-            
             case PlayerStates.Grappling:
                 _useForce = true;
                 break;
@@ -107,10 +121,18 @@ public class NewPlayerController : MonoBehaviour
         
         if (!_grounded)
             SetState(PlayerStates.Air);
-        else if (_inputVectorNormalized != Vector3.zero)
-            SetState(PlayerStates.Moving);
-        else
+        else if (Vector3.Distance(_velocity, Vector3.zero) < 0.1f && _inputVectorNormalized == Vector3.zero)
             SetState(PlayerStates.Idle);
+        else if (_crouching) {
+            if (_horizontalVelocityMagnitude < _slideThreshold)
+                SetState(PlayerStates.Crouching);
+            else
+                SetState(PlayerStates.Sliding);
+        }
+        else if (_sprinting)
+            SetState(PlayerStates.Sprinting);
+        else
+            SetState(PlayerStates.Walking);
     }
     
     #endregion
@@ -121,6 +143,7 @@ public class NewPlayerController : MonoBehaviour
         _inputVectorNormalized = new Vector3(Input.GetAxisRaw("Horizontal"), 0, Input.GetAxisRaw("Vertical")).normalized;
         _jumping = Input.GetKey(_jumpKey);
         _sprinting = Input.GetKey(_sprintKey);
+        _crouching = Input.GetKey(_crouchKey);
     }
     
     #endregion
@@ -171,12 +194,13 @@ public class NewPlayerController : MonoBehaviour
     }
     
     #endregion
-
-    private void Awake() {
-        _rb = GetComponent<Rigidbody>();
-    }
     
+    #region Movement
     private void Move() {
+        if (_disableMovement) return;
+
+        HandleCrouchingCameraPosition();
+        
         _position = transform.position;
         _velocity = _rb.velocity;
         _horizontalVelocity = new Vector3(_velocity.x, 0, _velocity.z);
@@ -184,11 +208,14 @@ public class NewPlayerController : MonoBehaviour
         _acceleration = Vector3.zero;
         _horizontalAcceleration = Vector3.zero;
 
+        _velocityMagnitude = _velocity.magnitude;
+        _horizontalVelocityMagnitude = _horizontalVelocity.magnitude;
+
         Vector3 forwardDirection = _orientation.forward;
         Vector3 rightDirection = _orientation.right;
 
         switch (State) {
-            case PlayerStates.Moving: {
+            case PlayerStates.Walking: {
                 // Transform the input vector to the orientation's forward and right directions
                 Vector3 inputDirection =
                     (_inputVectorNormalized.x * rightDirection + _inputVectorNormalized.z * forwardDirection).
@@ -197,7 +224,53 @@ public class NewPlayerController : MonoBehaviour
                 // Fixed movement for slope                
                 Vector3 fixedVector = Vector3.ProjectOnPlane(inputDirection, _normalVector).normalized;
 
-                _acceleration += fixedVector * (_sprinting ? _sprintSpeed : _moveSpeed);
+                _acceleration += fixedVector * _walkSpeed;
+
+                // Friction
+                _acceleration -= Vector3.ProjectOnPlane(_velocity, _normalVector) * _frictionCoefficient;
+
+                if (_jumping && _resetJump) {
+                    _acceleration += _jumpForce * Vector3.up;
+                    _jumping = false;
+                    _resetJump = false;
+                }
+
+                break;
+            }
+            
+            case PlayerStates.Sprinting: {
+                // Transform the input vector to the orientation's forward and right directions
+                Vector3 inputDirection =
+                    (_inputVectorNormalized.x * rightDirection + _inputVectorNormalized.z * forwardDirection).
+                    normalized;
+
+                // Fixed movement for slope                
+                Vector3 fixedVector = Vector3.ProjectOnPlane(inputDirection, _normalVector).normalized;
+
+                _acceleration += fixedVector * _sprintSpeed;
+
+                // Friction
+                _acceleration -= Vector3.ProjectOnPlane(_velocity, _normalVector) * _frictionCoefficient;
+
+                if (_jumping && _resetJump) {
+                    _acceleration += _jumpForce * Vector3.up;
+                    _jumping = false;
+                    _resetJump = false;
+                }
+
+                break;
+            }
+            
+            case PlayerStates.Crouching: {
+                // Transform the input vector to the orientation's forward and right directions
+                Vector3 inputDirection =
+                    (_inputVectorNormalized.x * rightDirection + _inputVectorNormalized.z * forwardDirection).
+                    normalized;
+
+                // Fixed movement for slope                
+                Vector3 fixedVector = Vector3.ProjectOnPlane(inputDirection, _normalVector).normalized;
+
+                _acceleration += fixedVector * _crouchSpeed;
 
                 // Friction
                 _acceleration -= Vector3.ProjectOnPlane(_velocity, _normalVector) * _frictionCoefficient;
@@ -211,6 +284,18 @@ public class NewPlayerController : MonoBehaviour
                 break;
             }
 
+            case PlayerStates.Sliding: {
+                _acceleration -= Vector3.ProjectOnPlane(_velocity, _normalVector) * _slidingFrictionCoefficient;
+                
+                if (_jumping && _resetJump) {
+                    _acceleration += _jumpForce * Vector3.up;
+                    _jumping = false;
+                    _resetJump = false;
+                }
+                
+                break;
+            }
+            
             case PlayerStates.Idle: {
 
                 // Friction
@@ -232,8 +317,8 @@ public class NewPlayerController : MonoBehaviour
                     normalized;
                 
                 // 4 different cases:
-                if (_horizontalVelocity.magnitude < _airSpeedCutoff) {
-                    if ((_horizontalVelocity + inputDirection * _airMoveSpeed).magnitude > _airSpeedCutoff) {
+                if (_horizontalVelocityMagnitude < _airSpeedThreshold) {
+                    if ((_horizontalVelocity + inputDirection * _airMoveSpeed).magnitude > _airSpeedThreshold) {
                         // Case 1: Previous velocity is less then cutoff and new velocity is less then cutoff.
                         // New velocity is calculated normally
                         _acceleration += inputDirection * _airMoveSpeed;
@@ -242,13 +327,13 @@ public class NewPlayerController : MonoBehaviour
                         // Case 2: Previous velocity is less then cutoff and new velocity is more then cutoff.
                         // New velocity capped at cutoff
                         Vector3 newVelocity = _horizontalVelocity + inputDirection * _airMoveSpeed;
-                        Vector3 cappedNewVelocity = Vector3.ClampMagnitude(newVelocity, _airSpeedCutoff);
+                        Vector3 cappedNewVelocity = Vector3.ClampMagnitude(newVelocity, _airSpeedThreshold);
                         Vector3 acceleration = cappedNewVelocity - _horizontalVelocity;
                         _acceleration += acceleration;
                     }
                 }
                 else {
-                    if ((_horizontalVelocity + inputDirection * _airMoveSpeed).magnitude < _airSpeedCutoff) {
+                    if ((_horizontalVelocity + inputDirection * _airMoveSpeed).magnitude < _airSpeedThreshold) {
                         // Case 3: Previous velocity is more then cutoff and new velocity is less then cutoff.
                         // New velocity is calculated normally
                         _acceleration += inputDirection * _airMoveSpeed;
@@ -257,7 +342,7 @@ public class NewPlayerController : MonoBehaviour
                         // Case 4: Previous velocity is more then cutoff and new velocity ism ore then cutoff.
                         // New velocity is capped at previous velocity magnitude
                         Vector3 newVelocity = _horizontalVelocity + inputDirection * _airMoveSpeed;
-                        Vector3 cappedNewVelocity = Vector3.ClampMagnitude(newVelocity, _horizontalVelocity.magnitude);
+                        Vector3 cappedNewVelocity = Vector3.ClampMagnitude(newVelocity, _horizontalVelocityMagnitude);
                         Vector3 acceleration = cappedNewVelocity - _horizontalVelocity;
                         _acceleration += acceleration;
                     }
@@ -280,6 +365,12 @@ public class NewPlayerController : MonoBehaviour
             _rb.velocity = _velocity + _acceleration;
     }
 
+    private void HandleCrouchingCameraPosition() {
+        // TEMPORARY FIX
+        _cameraPosition.localPosition = _crouching ? _crouchingCameraPosition : _defaultCameraPosition;
+    }
+    
+    #endregion
     
     private void StopGrounded() { _grounded = false; }
 }
