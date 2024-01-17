@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 176.22432, g: 68.47721, b: 34.01288, a: 1}
+  m_IndirectSpecularColor: {r: 175.80962, g: 68.70756, b: 33.94505, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -3846,10 +3846,10 @@ MonoBehaviour:
   refractionColor: {r: 0.10196079, g: 0.41928276, b: 0.5019608, a: 1}
   maxRefractionDistance: 3.5
   absorptionDistance: 15
-  scatteringColor: {r: 0, g: 0.4, b: 0.4, a: 1}
-  ambientScattering: 0.2
-  heightScattering: 0.1
-  displacementScattering: 0.1
+  scatteringColor: {r: 0, g: 0.40197787, b: 0.29825655, a: 1}
+  ambientScattering: 1
+  heightScattering: 1
+  displacementScattering: 1
   directLightTipScattering: 0.6
   directLightBodyScattering: 0.5
   maximumHeightOverride: 0
@@ -3858,7 +3858,7 @@ MonoBehaviour:
   causticsPlaneBlendDistance: 1
   causticsResolution: 256
   causticsBand: 1
-  virtualPlaneDistance: 4
+  virtualPlaneDistance: 2.5
   causticsTilingFactor: 5
   causticsDirectionalShadow: 0
   causticsDirectionalShadowDimmer: 0.25
@@ -3902,7 +3902,7 @@ MonoBehaviour:
   foamTextureTiling: 0.15
   foamSmoothness: 0.3
   simulationFoam: 1
-  simulationFoamAmount: 0.697
+  simulationFoamAmount: 1
   simulationFoamMask: {fileID: 0}
   simulationFoamMaskExtent: {x: 100, y: 100}
   simulationFoamMaskOffset: {x: 0, y: 0}
@@ -3950,9 +3950,9 @@ MonoBehaviour:
     m_RotationOrder: 4
   repetitionSize: 150
   largeOrientationValue: 0
-  largeWindSpeed: 100
+  largeWindSpeed: 15
   largeChaos: 1
-  largeBand0Multiplier: 1
+  largeBand0Multiplier: 0.3
   largeBand0FadeMode: 2
   largeBand0FadeStart: 1500
   largeBand0FadeDistance: 3000
