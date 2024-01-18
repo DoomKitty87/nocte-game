@@ -21,6 +21,10 @@ public class InventoryManager : MonoBehaviour
   
   private List<AudioTape> _audioTapes = new List<AudioTape>();
 
+  public AudioTape[] GetOwnedTapes() {
+    return _audioTapes.ToArray();
+  }
+
   public void PickupAudioTape(string name, AudioClip clip, Sprite icon) {
     AudioTape tape = new AudioTape();
     tape.name = name;
