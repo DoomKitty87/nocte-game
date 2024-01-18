@@ -367,6 +367,10 @@ public class NewPlayerController : MonoBehaviour
             _rb.velocity = _velocity + _acceleration;
     }
 
+    public void SetPosition(Vector3 position) {
+        transform.position = position;
+    }
+    
     private void HandleCrouchingCameraPosition() {
         // TEMPORARY FIX
         _cameraPosition.localPosition = _crouching ? _crouchingCameraPosition : _defaultCameraPosition;

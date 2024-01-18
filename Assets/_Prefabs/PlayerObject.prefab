@@ -157,6 +157,7 @@ GameObject:
   - component: {fileID: 1652764659241275410}
   - component: {fileID: 1286559563203328310}
   - component: {fileID: 6593095799223836431}
+  - component: {fileID: 3974697467346745686}
   - component: {fileID: 6773045848981137360}
   m_Layer: 0
   m_Name: Player
@@ -460,6 +461,24 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!114 &3974697467346745686
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2827087983080206208}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d9910d30d3bd94377ad0ca092aa3decf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _worldGeneratorObject: {fileID: 0}
+  _rain: {fileID: 0}
+  _groundMask:
+    serializedVersion: 2
+    m_Bits: 64
+  _timeToInitialize: 1
 --- !u!120 &6773045848981137360
 LineRenderer:
   serializedVersion: 2
