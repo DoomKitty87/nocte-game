@@ -6,7 +6,7 @@ using UnityEngine.VFX;
 
 public class PlayerWorldGeneratorCompatibility : MonoBehaviour
 {
-    private NewPlayerController _playerController;
+    private PlayerController _playerController;
     [SerializeField] private WorldGenerator _worldGeneratorObject;
     [SerializeField] private VisualEffect _rain;
     [SerializeField] private LayerMask _groundMask;
@@ -22,7 +22,7 @@ public class PlayerWorldGeneratorCompatibility : MonoBehaviour
             enabled = false;
         }
 
-        _playerController = GetComponent<NewPlayerController>();
+        _playerController = GetComponent<PlayerController>();
     }
 
     private void Start() {

@@ -16,6 +16,7 @@ public class InteractHandler : MonoBehaviour
     if (Input.GetKeyDown(_interactKey) && _interactibles.Count > 0) {
       _interactibles[0].GetComponent<Interactible>()._onInteract.Invoke();
       _interactibles.RemoveAt(0);
+      if (_promptText == null) return;
       if (_interactibles.Count > 0) _promptText.text = "Press " + _interactKey.ToString() + " to interact with " + _interactibles[0].name;
       else _promptText.text = "";
     }
@@ -24,13 +25,14 @@ public class InteractHandler : MonoBehaviour
   private void OnTriggerEnter(Collider other) {
     if (other.CompareTag("Interactible")) {
       _interactibles.Add(other.gameObject);
-      _promptText.text = "Press " + _interactKey.ToString() + " to interact with " + other.gameObject.name;
+      if (_promptText != null) _promptText.text = "Press " + _interactKey.ToString() + " to interact with " + other.gameObject.name;
     }
   }
 
   private void OnTriggerExit(Collider other) {
     if (other.CompareTag("Interactible")) {
       _interactibles.Remove(other.gameObject);
+      if (_promptText == null) return;
       if (_interactibles.Count > 0) _promptText.text = "Press " + _interactKey.ToString() + " to interact with " + _interactibles[0].name;
       else _promptText.text = "";
     }

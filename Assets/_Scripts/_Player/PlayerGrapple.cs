@@ -10,7 +10,7 @@ public class PlayerGrapple : MonoBehaviour
     public Transform _gunEnd;
     [SerializeField] private LayerMask _grapplable;
     
-    private NewPlayerController _playerController;
+    private PlayerController _playerController;
     public Rigidbody _rb;
     
     [Header("Grappling")]
@@ -43,7 +43,7 @@ public class PlayerGrapple : MonoBehaviour
     }
 
     private void Start() {
-        _playerController = GetComponent<NewPlayerController>();
+        _playerController = GetComponent<PlayerController>();
     }
 
     private void Update()
@@ -82,7 +82,7 @@ public class PlayerGrapple : MonoBehaviour
     private void ExecuteGrapple() {
         if (!Input.GetKey(_grappleButton)) return;
         _currentlyGrappling = true;
-        _playerController.State = NewPlayerController.PlayerStates.Grappling;
+        _playerController.State = PlayerController.PlayerStates.Grappling;
         _time = 0;
     }
 
@@ -120,6 +120,6 @@ public class PlayerGrapple : MonoBehaviour
 
         _renderGrapple = false;
 
-        _playerController.State = NewPlayerController.PlayerStates.Air;
+        _playerController.State = PlayerController.PlayerStates.Air;
     }
 }

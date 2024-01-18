@@ -5,17 +5,23 @@ using UnityEngine;
 public class PlayerDriving : MonoBehaviour
 {
 
-  [SerializeField] private MonoBehaviour[] _toDisable;
-  [SerializeField] private Rigidbody _playerRigidbody;
-  [SerializeField] private Collider _playerCollider;
-  [SerializeField] private Transform _player;
-  [SerializeField] private Transform _playerParent;
-
+  [SerializeField] private MonoBehaviour[] _toDisable; 
+  
+  private Collider _playerCollider;
+  private Rigidbody _rb;
+  private PlayerController _playerController;
+  
   public KeyCode _vehicleKey;
   private bool _hasVehicle;
   private List<GameObject> _availableVehicles = new List<GameObject>();
-  private bool _inVehicle = false;
+  private bool _inVehicle;
   private GameObject _currentVehicle;
+
+  private void Awake() {
+    _playerCollider = GetComponent<Collider>();
+    _rb = GetComponent<Rigidbody>();
+    _playerController = GetComponent<PlayerController>();
+  }
 
   private void Update() {
     if (Input.GetKeyDown(_vehicleKey) && _hasVehicle && !_inVehicle) EnterVehicle(_availableVehicles[0]);
@@ -39,13 +45,14 @@ public class PlayerDriving : MonoBehaviour
       _toDisable[i].enabled = false;
     }
 
-    _playerRigidbody.collisionDetectionMode = CollisionDetectionMode.Discrete;
-    _playerRigidbody.isKinematic = true;
+    _playerController.State = PlayerController.PlayerStates.Driving;
+    
+    _rb.collisionDetectionMode = CollisionDetectionMode.Discrete;
+    _rb.isKinematic = true;
     _playerCollider.enabled = false;
     _inVehicle = true;
     _currentVehicle = toEnter;
-    _player.parent = toEnter.GetComponent<VehicleControl>()._playerSeat;
-    _player.localPosition = Vector3.zero;
+    _playerController.SetParent(toEnter.GetComponent<VehicleControl>()._playerSeat.transform);
     toEnter.GetComponent<VehicleControl>().EnterVehicle();
   }
 
@@ -54,12 +61,13 @@ public class PlayerDriving : MonoBehaviour
       _toDisable[i].enabled = true;
     }
   
-    _playerRigidbody.isKinematic = false;
-    _playerRigidbody.collisionDetectionMode = CollisionDetectionMode.Continuous;
+    _rb.isKinematic = false;
+    _rb.collisionDetectionMode = CollisionDetectionMode.Continuous;
     _playerCollider.enabled = true;
     _inVehicle = false;
-    _player.parent = _playerParent;
-    _player.localRotation = Quaternion.identity;
     _currentVehicle.GetComponent<VehicleControl>().ExitVehicle();
+    // _playerController.SetPosition(_currentVehicle.GetComponent<VehicleControl>()._playerSeat.transform.position + Vector3.up * 3);
+
+    _playerController.State = PlayerController.PlayerStates.Idle;
   }
 }
