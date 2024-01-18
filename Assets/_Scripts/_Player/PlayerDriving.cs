@@ -14,7 +14,7 @@ public class PlayerDriving : MonoBehaviour
   
   public KeyCode _vehicleKey;
   private bool _hasVehicle;
-  private List<GameObject> _availableVehicles;
+  private List<GameObject> _availableVehicles = new List<GameObject>();
   private bool _inVehicle;
   private GameObject _currentVehicle;
 

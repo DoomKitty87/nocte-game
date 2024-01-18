@@ -34,8 +34,8 @@ public class VehicleControl : MonoBehaviour
   }
 
   public void ExitVehicle() {
-    rigidBody.isKinematic = true;
     rigidBody.velocity = Vector3.zero;
+    rigidBody.isKinematic = true;
     _inUse = false;
   }
 
