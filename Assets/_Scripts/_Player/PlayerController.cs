@@ -402,5 +402,10 @@ public class PlayerController : MonoBehaviour
     
     #endregion
     
-    private void StopGrounded() { _grounded = false; }
+    #region Helper functions
+    
+    private void  StopGrounded() { _grounded = false; }
+    
+    #endregion
+    
 }

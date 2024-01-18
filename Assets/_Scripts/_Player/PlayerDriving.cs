@@ -10,10 +10,11 @@ public class PlayerDriving : MonoBehaviour
   private Collider _playerCollider;
   private Rigidbody _rb;
   private PlayerController _playerController;
+  private PlayerCameraController _playerCameraController;
   
   public KeyCode _vehicleKey;
   private bool _hasVehicle;
-  private List<GameObject> _availableVehicles = new List<GameObject>();
+  private List<GameObject> _availableVehicles;
   private bool _inVehicle;
   private GameObject _currentVehicle;
 
@@ -21,6 +22,7 @@ public class PlayerDriving : MonoBehaviour
     _playerCollider = GetComponent<Collider>();
     _rb = GetComponent<Rigidbody>();
     _playerController = GetComponent<PlayerController>();
+    _playerCameraController = GetComponent<PlayerCameraController>();
   }
 
   private void Update() {
@@ -30,13 +32,18 @@ public class PlayerDriving : MonoBehaviour
 
   private void OnTriggerEnter(Collider other) {
     if (other.gameObject.CompareTag("Vehicle")) {
-      _hasVehicle = true;
-      _availableVehicles.Add(other.gameObject);
+      // Prevents re-adding vehicle to list when exiting vehicle
+      if (!_availableVehicles.Contains(other.gameObject)) {
+        _hasVehicle = true;
+        _availableVehicles.Add(other.gameObject);
+      }
     }
   }
 
   private void OnTriggerExit(Collider other) {
-    if (_availableVehicles.Contains(other.gameObject)) _availableVehicles.Remove(other.gameObject);
+    if (_availableVehicles.Contains(other.gameObject)) {
+      _availableVehicles.Remove(other.gameObject);
+    }
     if (_availableVehicles.Count == 0) _hasVehicle = false;
   }
 
@@ -53,6 +60,9 @@ public class PlayerDriving : MonoBehaviour
     _inVehicle = true;
     _currentVehicle = toEnter;
     _playerController.SetParent(toEnter.GetComponent<VehicleControl>()._playerSeat.transform);
+    _playerCameraController.SetParent(toEnter.GetComponent<VehicleControl>()._playerSeat.transform);
+    _playerCameraController.ResetRotation();
+    _playerCameraController.UseClamp(90);
     toEnter.GetComponent<VehicleControl>().EnterVehicle();
   }
 
@@ -66,7 +76,9 @@ public class PlayerDriving : MonoBehaviour
     _playerCollider.enabled = true;
     _inVehicle = false;
     _currentVehicle.GetComponent<VehicleControl>().ExitVehicle();
-    // _playerController.SetPosition(_currentVehicle.GetComponent<VehicleControl>()._playerSeat.transform.position + Vector3.up * 3);
+    _playerCameraController.ResetParent();
+    _playerCameraController.ResetRotation();
+    _playerCameraController.ResetClamp();
 
     _playerController.State = PlayerController.PlayerStates.Idle;
   }
