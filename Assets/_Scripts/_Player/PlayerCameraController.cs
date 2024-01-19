@@ -5,6 +5,10 @@ using UnityEngine.Serialization;
 public class PlayerCameraController : MonoBehaviour
 {
 
+    [SerializeField] private bool _freezeOnTimescale0;
+
+    [HideInInspector] public bool _playerFreeze;
+    
     [SerializeField] private Transform _camera;
     [SerializeField] private Transform _orientation;
     
@@ -25,11 +29,15 @@ public class PlayerCameraController : MonoBehaviour
     private float _clampAngle;
     
     private void Start() {
+        PlayerController.Freeze += CameraFreeze;
+        PlayerController.UnFreeze += CameraUnFreeze;
+
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
     }
 
     private void Update() {
+        if (_freezeOnTimescale0 && Time.timeScale == 0 || _playerFreeze) return;
         Look();
     }
 
@@ -82,7 +90,12 @@ public class PlayerCameraController : MonoBehaviour
         _clampAngle = angle;
     }
 
-    public void ResetClamp() {
+    public void ResetClamp() =>
         _useXClamp = false;
-    }
+
+    private void CameraFreeze() =>
+        _playerFreeze = true;
+
+    private void CameraUnFreeze() =>
+        _playerFreeze = false;
 }

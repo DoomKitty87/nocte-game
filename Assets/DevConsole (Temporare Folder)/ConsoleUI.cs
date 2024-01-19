@@ -69,7 +69,8 @@ namespace Console
         }
 
         private void LogText(string message) {
-            if (string.IsNullOrWhiteSpace(message)) return;
+            if (string.IsNullOrWhiteSpace(message)) 
+                return;
 
             _logArea.text += message + "<br>";
             _scroller.MoveDown();
@@ -83,7 +84,8 @@ namespace Console
         private void ResetInputField() {
             ClearInput();
 
-            if (!_isClosing) StartCoroutine(SelectInputField());
+            if (!_isClosing) 
+                StartCoroutine(SelectInputField());
         }
         
         private void ClearInput() =>

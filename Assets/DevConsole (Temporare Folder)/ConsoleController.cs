@@ -46,6 +46,9 @@ namespace Console
 
         private void Start() {
             CloseConsole();
+
+            ConsoleOpened += ShowMouse;
+            ConsoleClosed += HideMouse;
         }
 
         private void Update() {
@@ -86,12 +89,30 @@ namespace Console
         private void CloseConsole() {
             _console.SetActive(false);
             _consoleClosed?.Invoke();
-            if (ConsoleOpened != null)
+            if (ConsoleClosed != null)
                 ConsoleClosed();
         }
 
-        public void Action() {
-             
+        public static void ResumeGame() {
+            _consoleClosed?.Invoke();
+            if (ConsoleClosed != null)
+                ConsoleClosed();
+        }
+
+        public static void PauseGame() {
+            _consoleOpen?.Invoke();
+            if (ConsoleOpened != null)
+                ConsoleOpened();
+        }
+
+        private void ShowMouse() {
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
+        }
+
+        private void HideMouse() {
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
         }
     }
 }

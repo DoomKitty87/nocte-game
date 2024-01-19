@@ -6,7 +6,7 @@ using UnityEngine.UI;
 public class ConsoleScroller : MonoBehaviour
 {
     private Scrollbar _scrollbar;
-    private readonly WaitForEndOfFrame _waitForEndOfFrame = new WaitForEndOfFrame();
+    private readonly WaitForEndOfFrame _waitForEndOfFrame;
 
     private bool _isClosing;
 
@@ -17,7 +17,7 @@ public class ConsoleScroller : MonoBehaviour
     private void OnDisable() => _isClosing = true;
 
     public void MoveDown() {
-        if (_isClosing) {
+        if (!_isClosing) {
             StartCoroutine(ResetScroll());
         }
     }

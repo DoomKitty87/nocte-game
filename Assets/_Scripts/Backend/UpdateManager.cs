@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class UpdateManager : MonoBehaviour
@@ -27,7 +29,7 @@ public class UpdateManager : MonoBehaviour
       if (_subscribers[i].enabled) active++;
     }
     _activeSubscribers = new Subscriber[active];
-    for (int i, j = 0; i < _subscribers.Count; i++) {
+    for (int i = 0, j = 0; i < _subscribers.Count; i++) {
       if (!_subscribers[i].enabled) continue;
       _activeSubscribers[j] = _subscribers[i];
       j++;
@@ -45,11 +47,11 @@ public class UpdateManager : MonoBehaviour
   }
 
   public void Deactivate(int index) {
-    _subscribers[index].enabled = false;
+    // _subscribers[index].enabled = false;
     UpdateActive();
   }
 
   public void UpdateInterval(int index, int interval) {
-    _subscribers[index].interval = interval;
+    // _subscribers[index].interval = interval;
   }
 }
