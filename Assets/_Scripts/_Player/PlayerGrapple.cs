@@ -38,16 +38,21 @@ public class PlayerGrapple : MonoBehaviour
     
     public bool _currentlyGrappling;
 
+    private bool _frozen;
+
     private void Awake() {
         _rb = GetComponent<Rigidbody>();
     }
 
     private void Start() {
         _playerController = GetComponent<PlayerController>();
+
+        PlayerController.Freeze += FreezeGrapple;
+        PlayerController.UnFreeze += UnFreezeGrapple;
     }
 
-    private void Update()
-    {
+    private void Update() {
+        if (_frozen) return;
         if (_grapplingCoolDownTimer > 0)
             _grapplingCoolDownTimer -= Time.deltaTime;
         if (Input.GetKeyDown(_grappleButton)) StartGrapple();
@@ -55,6 +60,7 @@ public class PlayerGrapple : MonoBehaviour
     }
 
     private void FixedUpdate() {
+        if (_frozen) return;
         if (_currentlyGrappling) {
             _rb.AddForce(GetGrappleForce(), ForceMode.Acceleration);
             _rb.AddForce(GetFrictionForce(), ForceMode.Force);
@@ -111,7 +117,7 @@ public class PlayerGrapple : MonoBehaviour
         return direction * magnitude;
     }
     
-    public void StopGrapple()
+    private void StopGrapple()
     {
         if (_currentlyGrappling) {
             _currentlyGrappling = false;
@@ -121,5 +127,13 @@ public class PlayerGrapple : MonoBehaviour
         _renderGrapple = false;
 
         _playerController.State = PlayerController.PlayerStates.Air;
+    }
+
+    private void FreezeGrapple() {
+        _frozen = true;
+    }
+
+    private void UnFreezeGrapple() {
+        _frozen = false;
     }
 }

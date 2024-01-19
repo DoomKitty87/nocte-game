@@ -1,3 +1,4 @@
+using Console;
 using UnityEngine;
 
 public class PlayerController : MonoBehaviour
@@ -52,6 +53,15 @@ public class PlayerController : MonoBehaviour
     
     #endregion
     
+    #region Events
+    public delegate void OnFreeze();
+    public delegate void OnUnFreeze();
+    
+    public static event OnFreeze Freeze;
+    public static event OnUnFreeze UnFreeze;
+    
+    #endregion
+    
     #region Hidden Variables
 
     private Rigidbody _rb;
@@ -89,10 +99,18 @@ public class PlayerController : MonoBehaviour
 
     private void Awake() {
         _rb = GetComponent<Rigidbody>();
-
         _defaultCameraPosition = _cameraPosition.localPosition;
     }
-    
+
+    private void OnEnable() {
+        _rb = GetComponent<Rigidbody>();
+        
+        if (TryGetComponent(out ConsoleController controller)) {
+            ConsoleController.ConsoleOpened += EnableFreeze;
+            ConsoleController.ConsoleClosed += DisableFreeze;
+        }
+    }
+
     #region State Machine
     
     private void SetState(PlayerStates newState) {
@@ -111,6 +129,15 @@ public class PlayerController : MonoBehaviour
                 _useVelocity = true;
                 _useGravity = true;
                 break;
+            
+            case PlayerStates.Frozen:
+                if (_rb != null)
+                    _rb.velocity = _velocity;
+                
+                if (UnFreeze != null)
+                    UnFreeze();
+                
+                break;
         }
 
         _state = newState;
@@ -124,6 +151,14 @@ public class PlayerController : MonoBehaviour
             case PlayerStates.Driving:
                 _useVelocity = false;
                 _useGravity = false;
+                break;
+            
+            case PlayerStates.Frozen:
+                if (_rb != null)
+                    _rb.velocity = Vector3.zero;
+
+                if (Freeze != null) 
+                    Freeze();
                 break;
         }
     }
@@ -212,6 +247,8 @@ public class PlayerController : MonoBehaviour
     private void Move() {
         if (_disableMovement) return;
 
+        if (State is PlayerStates.Frozen) return;
+        
         HandleCrouchingCameraPosition();
         
         _position = transform.position;
@@ -403,6 +440,10 @@ public class PlayerController : MonoBehaviour
     #endregion
     
     #region Helper functions
+
+    private void EnableFreeze() { State = PlayerStates.Frozen; }
+
+    private void DisableFreeze() { State = PlayerStates.Idle; }
     
     private void  StopGrounded() { _grounded = false; }
     

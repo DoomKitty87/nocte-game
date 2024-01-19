@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
+using Console.Commands;
 using UnityEngine;
-// using Console.Commands;
 
 namespace Console
 {
@@ -9,16 +9,29 @@ namespace Console
     {
         [SerializeField] private GameObject _console;
 
-        public KeyCode _consoleKey = KeyCode.Tilde;
+        public KeyCode _consoleKey = KeyCode.BackQuote;
 
         private static Action _consoleOpen;
         private static Action _consoleClosed;
+
+        public delegate void OnConsoleOpen();
+        public delegate void OnConsoleClose();
+        
+        public static event OnConsoleOpen ConsoleOpened;
+        public static event OnConsoleClose ConsoleClosed;
 
         private static Action _exitConsole;
         public static void RaiseExitConsole() => _exitConsole?.Invoke();
 
         List<IConsoleCommand> GetCommands() {
             return new List<IConsoleCommand> {
+                new HelpCommand(),
+                new QuitCommand(),
+                new CloseCommand(),
+                new ClearCommand(),
+                new ReloadCommand(),
+                new LoadSceneCommand(),
+                new TimeScaleCommand()
                 // Commands here
             };
         }
@@ -55,7 +68,7 @@ namespace Console
         
         private void SwapConsoleState() {
             if (_console == null) throw new NullReferenceException("No console object set in ConsoleController.");
-
+            
             bool isOpen = _console.activeInHierarchy;
             if (isOpen)
                 CloseConsole();
@@ -66,11 +79,19 @@ namespace Console
         private void OpenConsole() {
             _console.SetActive(true);
             _consoleOpen?.Invoke();
+            if (ConsoleOpened != null)
+                ConsoleOpened();
         }
 
         private void CloseConsole() {
             _console.SetActive(false);
             _consoleClosed?.Invoke();
+            if (ConsoleOpened != null)
+                ConsoleClosed();
+        }
+
+        public void Action() {
+             
         }
     }
 }

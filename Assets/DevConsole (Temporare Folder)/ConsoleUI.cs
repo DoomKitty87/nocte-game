@@ -90,7 +90,9 @@ namespace Console
             _inputArea.text = "";
 
         private void PrintInitialInfo() {
-            LogText($"This is \"<color=\"red\"example text");
+            LogText($"Type <color=green>help</color> to get a list of commands.");
+            LogText($"Type <color=red>close</color> to close developer menu.");
+            // Put start code here
         }
 
         private void PrintConsoleHelp() {
@@ -126,6 +128,6 @@ namespace Console
         }
 
         string GetFormattedUserInput(string userInput) =>
-            $"{_console.Prefix} <color=\"yellow\">{userInput}</color>";
+            $"<color=#808080>{_console.Prefix}</color> <color=white>{userInput}</color>";
     }
 }
