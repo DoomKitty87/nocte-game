@@ -529,7 +529,7 @@ public class WorldGenerator : MonoBehaviour
     _tilePool[index] = tile;
     _tilePositions[index / _tileCount, index % _tileCount] = index;
 
-    WindTriangles(msh, index);
+    WindTriangles(msh);
     UpdateMesh(msh, index);
     ScatterTile(index);
     float maxDistance = Mathf.Max(Mathf.Abs(x), Mathf.Abs(z));
@@ -555,7 +555,7 @@ public class WorldGenerator : MonoBehaviour
     _tilePool[index].mesh.triangles = null;
     _tilePool[index].mesh.vertices = result;
 
-    WindTriangles(_tilePool[index].mesh, index);
+    WindTriangles(_tilePool[index].mesh);
 
     _tilePool[index].obj.transform.position = new Vector3(x * _size * _resolution, 0, z * _size * _resolution);
     if (!_generatedStructureTiles.Contains(new Vector2(x, z))) {
@@ -600,7 +600,6 @@ public class WorldGenerator : MonoBehaviour
       }
     }
     _tilePool[index].waterVertCount = 0;
-    float maxDistance = Mathf.Max(Mathf.Abs(_tilePool[index].x - _playerXChunkScale), Mathf.Abs(_tilePool[index].z - _playerZChunkScale));
     Vector3[] vertices = targetMesh.vertices;
     Vector3[] normals = targetMesh.normals;
     int lodFactor = (int) Mathf.Pow(2, _tilePool[index].currentLOD);
@@ -681,8 +680,7 @@ public class WorldGenerator : MonoBehaviour
 
   #region Mesh Operation Functions
 
-  private void WindTriangles(Mesh targetMesh, int index) {
-    int lodFactor = (int) Mathf.Pow(2, _tilePool[index].currentLOD);
+  private void WindTriangles(Mesh targetMesh) {
     int sideLength = (int) Mathf.Sqrt(targetMesh.vertices.Length) - 1;
     int[] triangles = new int[sideLength * sideLength * 6];
     int vert = 0;
@@ -706,8 +704,7 @@ public class WorldGenerator : MonoBehaviour
     targetMesh.triangles = triangles;
   }
 
-  private int[] CullTriangles(Mesh targetMesh, int index) {
-    int lodFactor = (int) Mathf.Pow(2, _tilePool[index].currentLOD);
+  private int[] CullTriangles(Mesh targetMesh) {
     int[] triangles = targetMesh.triangles;
     int sideLength = (int) Mathf.Sqrt(targetMesh.vertices.Length) - 1;
     int[] culled = new int[(sideLength * sideLength - (sideLength * 2 + (sideLength - 2) * 2)) * 6];
@@ -785,7 +782,7 @@ public class WorldGenerator : MonoBehaviour
   private void UpdateMesh(Mesh targetMesh, int index) {
     targetMesh.normals = CalculateNormalsJobs(targetMesh);
     RiverPass(targetMesh, index);
-    targetMesh.triangles = CullTriangles(targetMesh, index);
+    targetMesh.triangles = CullTriangles(targetMesh);
     targetMesh.RecalculateBounds();
   }
 
