@@ -4,18 +4,18 @@ using _Scripts._BehaviorTree;
 
 namespace _Scripts._Entities.Creatures.CreatureAI
 {
-  public class SetSpeed : TreeNode
+  public class SetState : TreeNode
   {
     private EnemyController _controller;
-    private int _speed;
+    private EnemyController.PlayerStates _playerState;
 
-    public SetSpeed(EnemyController controller, int speed) {
+    public SetState(EnemyController controller, EnemyController.PlayerStates playerState) {
       _controller = controller;
-      _speed = speed;
+      _playerState = playerState;
     }
 
     public override TreeNodeState Evaluate() {
-      _controller.SetMoveSpeed(_speed);
+      _controller.SetState(_playerState);
       _nodeState = TreeNodeState.SUCCESS;
       return _nodeState;
     }

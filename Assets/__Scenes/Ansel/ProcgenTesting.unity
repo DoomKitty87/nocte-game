@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 173.92471, g: 64.50611, b: 28.765385, a: 1}
+  m_IndirectSpecularColor: {r: 183.99904, g: 70.83332, b: 35.342747, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -3283,24 +3283,32 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 283d384372cfa47d381606ef766e7cd4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _disableMovement: 0
+  _state: 0
   _orientation: {fileID: 1563905652}
+  _walkSpeed: 4
+  _sprintSpeed: 6
+  _crouchSpeed: 2
+  _airMoveSpeed: 0.4
+  _slideThreshold: 7
+  _airSpeedThreshold: 0.5
+  _jumpForce: 5
   _gravity: 15
-  _friction: 0
-  _useGravity: 1
-  _moveSpeed: 4500
-  _maxGroundedSpeed: 5
-  _maxAirSpeed: 30
-  _ground:
+  _frictionCoefficient: 0.4
+  _slidingFrictionCoefficient: 0
+  _maxSlopeAngle: 60
+  _position: {x: 0, y: 0, z: 0}
+  _velocity: {x: 0, y: 0, z: 0}
+  _acceleration: {x: 0, y: 0, z: 0}
+  _normalVector: {x: 0, y: 1, z: 0}
+  _velocityMagnitude: 0
+  _horizontalVelocityMagnitude: 0
+  _groundMask:
     serializedVersion: 2
-    m_Bits: 64
-  _grounded: 0
-  _useGroundFriction: 1
-  _centerMovement: 0.175
-  _maxSlopeAngle: 35
-  _slideForce: 400
-  _minimumSlideMomentum: 0.5
-  _jumpForce: 550
-  _jumpCooldown: 0.25
+    m_Bits: 0
+  _jumpKey: 0
+  _sprintKey: 304
+  _crouchKey: 0
 --- !u!114 &1563905647
 MonoBehaviour:
   m_ObjectHideFlags: 0
