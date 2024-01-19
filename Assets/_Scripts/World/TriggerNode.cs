@@ -7,6 +7,6 @@ public class TriggerNode : MonoBehaviour
   [SerializeField] private int _index;
 
   private void OnTriggerEnter(Collider other) {
-    if (other.gameObject.CompareTag("Player")) _manager.Activate(index);
+    if (other.gameObject.CompareTag("Player")) _manager.Activate(_index);
   }
 }

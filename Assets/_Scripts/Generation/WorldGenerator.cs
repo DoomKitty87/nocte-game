@@ -211,29 +211,29 @@ public class WorldGenerator : MonoBehaviour
   #region Public Fetch Functions
 
   public float GetHeightValue(Vector2 worldPosition) {
-    float heightVal = AmalgamNoise.GenerateTerrain(0, 1, worldPosition.x + _seed, worldPosition.y + _seed, 0, 0, _noiseParameters.octaves, _noiseParameters.lacunarity, _noiseParameters.persistence, _noiseParameters.sharpnessScale,
+    float heightVal = AmalgamNoise.GetPosition(worldPosition.x + _seed, worldPosition.y + _seed, _noiseParameters.octaves, _noiseParameters.lacunarity, _noiseParameters.persistence, _noiseParameters.sharpnessScale,
       _noiseParameters.sharpnessAmplitude, _noiseParameters.sharpnessMean, _noiseParameters.scaleScale, _noiseParameters.scaleAmplitude,
       _noiseParameters.scaleMean, _noiseParameters.amplitudeScale, _noiseParameters.amplitudeAmplitude, _noiseParameters.amplitudeMean,
       _noiseParameters.warpStrengthScale, _noiseParameters.warpStrengthAmplitude, _noiseParameters.warpStrengthMean,
-      _noiseParameters.warpScaleScale, _noiseParameters.warpScaleAmplitude, _noiseParameters.warpScaleMean, _noiseParameters.amplitudePower)[0].y;
-    heightVal -= _riverParameters.heightCurve.Evaluate(heightVal / _maxPossibleHeight) * (_riverParameters.noiseCurve.Evaluate(AmalgamNoise.GenerateRivers(
-        0, 1, worldPosition.x + _seed % 216812, worldPosition.y + _seed % 216812, 0, 0, _riverParameters.scale, _riverParameters.octaves, _riverParameters.lacunarity, _riverParameters.persistence, _riverParameters.warpScale, _riverParameters.warpStrength)[0]) * _riverParameters.amplitude);
+      _noiseParameters.warpScaleScale, _noiseParameters.warpScaleAmplitude, _noiseParameters.warpScaleMean, _noiseParameters.amplitudePower);
+    heightVal -= _riverParameters.heightCurve.Evaluate(heightVal / _maxPossibleHeight) * (_riverParameters.noiseCurve.Evaluate(AmalgamNoise.GetRiverValue(
+        worldPosition.x + _seed % 216812, worldPosition.y + _seed % 216812, _riverParameters.scale, _riverParameters.octaves, _riverParameters.lacunarity, _riverParameters.persistence, _riverParameters.warpScale, _riverParameters.warpStrength)) * _riverParameters.amplitude);
     return heightVal;
   }
 
   public float GetRiverValue(Vector2 worldPosition) {
-    return _riverParameters.heightCurve.Evaluate(worldPosition.y / _maxPossibleHeight) * _riverParameters.noiseCurve.Evaluate(AmalgamNoise.GenerateRivers(
-      0, 1, worldPosition.x + _seed % 216812, worldPosition.y + _seed % 216812, 0, 0, _riverParameters.scale, _riverParameters.octaves, _riverParameters.lacunarity, _riverParameters.persistence, _riverParameters.warpScale, _riverParameters.warpStrength)[0]);
+    return _riverParameters.heightCurve.Evaluate(worldPosition.y / _maxPossibleHeight) * _riverParameters.noiseCurve.Evaluate(AmalgamNoise.GetRiverValue(
+      worldPosition.x + _seed % 216812, worldPosition.y + _seed % 216812, _riverParameters.scale, _riverParameters.octaves, _riverParameters.lacunarity, _riverParameters.persistence, _riverParameters.warpScale, _riverParameters.warpStrength));
   }
 
   public float GetWaterHeight(Vector2 worldPosition) {
-    float heightVal = AmalgamNoise.GenerateTerrain(0, 1, worldPosition.x + _seed, worldPosition.y + _seed, 0, 0, _noiseParameters.octaves, _noiseParameters.lacunarity, _noiseParameters.persistence, _noiseParameters.sharpnessScale,
+    float heightVal = AmalgamNoise.GetPosition(worldPosition.x + _seed, worldPosition.y + _seed, _noiseParameters.octaves, _noiseParameters.lacunarity, _noiseParameters.persistence, _noiseParameters.sharpnessScale,
       _noiseParameters.sharpnessAmplitude, _noiseParameters.sharpnessMean, _noiseParameters.scaleScale, _noiseParameters.scaleAmplitude,
       _noiseParameters.scaleMean, _noiseParameters.amplitudeScale, _noiseParameters.amplitudeAmplitude, _noiseParameters.amplitudeMean,
       _noiseParameters.warpStrengthScale, _noiseParameters.warpStrengthAmplitude, _noiseParameters.warpStrengthMean,
-      _noiseParameters.warpScaleScale, _noiseParameters.warpScaleAmplitude, _noiseParameters.warpScaleMean, _noiseParameters.amplitudePower)[0].y;
-    float waterFactor = _riverParameters.heightCurve.Evaluate(heightVal / _maxPossibleHeight) * _riverParameters.noiseCurve.Evaluate(AmalgamNoise.GenerateRivers(
-        0, 1, worldPosition.x + _seed % 216812, worldPosition.y + _seed % 216812, 0, 0, _riverParameters.scale, _riverParameters.octaves, _riverParameters.lacunarity, _riverParameters.persistence, _riverParameters.warpScale, _riverParameters.warpStrength)[0]);
+      _noiseParameters.warpScaleScale, _noiseParameters.warpScaleAmplitude, _noiseParameters.warpScaleMean, _noiseParameters.amplitudePower);
+    float waterFactor = _riverParameters.heightCurve.Evaluate(heightVal / _maxPossibleHeight) * _riverParameters.noiseCurve.Evaluate(AmalgamNoise.GetRiverValue(
+        worldPosition.x + _seed % 216812, worldPosition.y + _seed % 216812, _riverParameters.scale, _riverParameters.octaves, _riverParameters.lacunarity, _riverParameters.persistence, _riverParameters.warpScale, _riverParameters.warpStrength));
     return waterFactor == 0 ? -1 : (heightVal - _riverParameters.waterLevel);
   }
 
@@ -529,8 +529,9 @@ public class WorldGenerator : MonoBehaviour
     _tilePool[index] = tile;
     _tilePositions[index / _tileCount, index % _tileCount] = index;
 
-    WindTriangles(msh, index);
+    WindTriangles(msh);
     UpdateMesh(msh, index);
+    ScatterTile(index);
     float maxDistance = Mathf.Max(Mathf.Abs(x), Mathf.Abs(z));
     if (_enableColliders && maxDistance <= _colliderRange) UpdateCollider(index);
 
@@ -554,7 +555,7 @@ public class WorldGenerator : MonoBehaviour
     _tilePool[index].mesh.triangles = null;
     _tilePool[index].mesh.vertices = result;
 
-    WindTriangles(_tilePool[index].mesh, index);
+    WindTriangles(_tilePool[index].mesh);
 
     _tilePool[index].obj.transform.position = new Vector3(x * _size * _resolution, 0, z * _size * _resolution);
     if (!_generatedStructureTiles.Contains(new Vector2(x, z))) {
@@ -562,8 +563,13 @@ public class WorldGenerator : MonoBehaviour
         _generatedStructureTiles.Add(new Vector2(x, z));
     }
     UpdateMesh(_tilePool[index].mesh, index);
+    ScatterTile(index);
     maxDistance = Mathf.Max(Mathf.Abs(x - _playerXChunkScale), Mathf.Abs(z - _playerZChunkScale));
     if (_enableColliders && maxDistance <= _colliderRange) UpdateCollider(index);
+  }
+
+  private void ScatterTile(int index) {
+    // Implement idk
   }
 
   #endregion
@@ -594,7 +600,6 @@ public class WorldGenerator : MonoBehaviour
       }
     }
     _tilePool[index].waterVertCount = 0;
-    float maxDistance = Mathf.Max(Mathf.Abs(_tilePool[index].x - _playerXChunkScale), Mathf.Abs(_tilePool[index].z - _playerZChunkScale));
     Vector3[] vertices = targetMesh.vertices;
     Vector3[] normals = targetMesh.normals;
     int lodFactor = (int) Mathf.Pow(2, _tilePool[index].currentLOD);
@@ -675,8 +680,7 @@ public class WorldGenerator : MonoBehaviour
 
   #region Mesh Operation Functions
 
-  private void WindTriangles(Mesh targetMesh, int index) {
-    int lodFactor = (int) Mathf.Pow(2, _tilePool[index].currentLOD);
+  private void WindTriangles(Mesh targetMesh) {
     int sideLength = (int) Mathf.Sqrt(targetMesh.vertices.Length) - 1;
     int[] triangles = new int[sideLength * sideLength * 6];
     int vert = 0;
@@ -700,8 +704,7 @@ public class WorldGenerator : MonoBehaviour
     targetMesh.triangles = triangles;
   }
 
-  private int[] CullTriangles(Mesh targetMesh, int index) {
-    int lodFactor = (int) Mathf.Pow(2, _tilePool[index].currentLOD);
+  private int[] CullTriangles(Mesh targetMesh) {
     int[] triangles = targetMesh.triangles;
     int sideLength = (int) Mathf.Sqrt(targetMesh.vertices.Length) - 1;
     int[] culled = new int[(sideLength * sideLength - (sideLength * 2 + (sideLength - 2) * 2)) * 6];
@@ -779,7 +782,7 @@ public class WorldGenerator : MonoBehaviour
   private void UpdateMesh(Mesh targetMesh, int index) {
     targetMesh.normals = CalculateNormalsJobs(targetMesh);
     RiverPass(targetMesh, index);
-    targetMesh.triangles = CullTriangles(targetMesh, index);
+    targetMesh.triangles = CullTriangles(targetMesh);
     targetMesh.RecalculateBounds();
   }
 

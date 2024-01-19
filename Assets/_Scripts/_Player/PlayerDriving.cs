@@ -5,17 +5,25 @@ using UnityEngine;
 public class PlayerDriving : MonoBehaviour
 {
 
-  [SerializeField] private MonoBehaviour[] _toDisable;
-  [SerializeField] private Rigidbody _playerRigidbody;
-  [SerializeField] private Collider _playerCollider;
-  [SerializeField] private Transform _player;
-  [SerializeField] private Transform _playerParent;
-
+  [SerializeField] private MonoBehaviour[] _toDisable; 
+  
+  private Collider _playerCollider;
+  private Rigidbody _rb;
+  private PlayerController _playerController;
+  private PlayerCameraController _playerCameraController;
+  
   public KeyCode _vehicleKey;
   private bool _hasVehicle;
   private List<GameObject> _availableVehicles = new List<GameObject>();
-  private bool _inVehicle = false;
+  private bool _inVehicle;
   private GameObject _currentVehicle;
+
+  private void Awake() {
+    _playerCollider = GetComponent<Collider>();
+    _rb = GetComponent<Rigidbody>();
+    _playerController = GetComponent<PlayerController>();
+    _playerCameraController = GetComponent<PlayerCameraController>();
+  }
 
   private void Update() {
     if (Input.GetKeyDown(_vehicleKey) && _hasVehicle && !_inVehicle) EnterVehicle(_availableVehicles[0]);
@@ -24,13 +32,18 @@ public class PlayerDriving : MonoBehaviour
 
   private void OnTriggerEnter(Collider other) {
     if (other.gameObject.CompareTag("Vehicle")) {
-      _hasVehicle = true;
-      _availableVehicles.Add(other.gameObject);
+      // Prevents re-adding vehicle to list when exiting vehicle
+      if (!_availableVehicles.Contains(other.gameObject)) {
+        _hasVehicle = true;
+        _availableVehicles.Add(other.gameObject);
+      }
     }
   }
 
   private void OnTriggerExit(Collider other) {
-    if (_availableVehicles.Contains(other.gameObject)) _availableVehicles.Remove(other.gameObject);
+    if (_availableVehicles.Contains(other.gameObject)) {
+      _availableVehicles.Remove(other.gameObject);
+    }
     if (_availableVehicles.Count == 0) _hasVehicle = false;
   }
 
@@ -39,13 +52,17 @@ public class PlayerDriving : MonoBehaviour
       _toDisable[i].enabled = false;
     }
 
-    _playerRigidbody.collisionDetectionMode = CollisionDetectionMode.Discrete;
-    _playerRigidbody.isKinematic = true;
+    _playerController.State = PlayerController.PlayerStates.Driving;
+    
+    _rb.collisionDetectionMode = CollisionDetectionMode.Discrete;
+    _rb.isKinematic = true;
     _playerCollider.enabled = false;
     _inVehicle = true;
     _currentVehicle = toEnter;
-    _player.parent = toEnter.GetComponent<VehicleControl>()._playerSeat;
-    _player.localPosition = Vector3.zero;
+    _playerController.SetParent(toEnter.GetComponent<VehicleControl>()._playerSeat.transform);
+    _playerCameraController.SetParent(toEnter.GetComponent<VehicleControl>()._playerSeat.transform);
+    _playerCameraController.ResetRotation();
+    _playerCameraController.UseClamp(90);
     toEnter.GetComponent<VehicleControl>().EnterVehicle();
   }
 
@@ -54,12 +71,15 @@ public class PlayerDriving : MonoBehaviour
       _toDisable[i].enabled = true;
     }
   
-    _playerRigidbody.isKinematic = false;
-    _playerRigidbody.collisionDetectionMode = CollisionDetectionMode.Continuous;
+    _rb.isKinematic = false;
+    _rb.collisionDetectionMode = CollisionDetectionMode.Continuous;
     _playerCollider.enabled = true;
     _inVehicle = false;
-    _player.parent = _playerParent;
-    _player.localRotation = Quaternion.identity;
     _currentVehicle.GetComponent<VehicleControl>().ExitVehicle();
+    _playerCameraController.ResetParent();
+    _playerCameraController.ResetRotation();
+    _playerCameraController.ResetClamp();
+
+    _playerController.State = PlayerController.PlayerStates.Idle;
   }
 }
