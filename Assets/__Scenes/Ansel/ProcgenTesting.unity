@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 183.99904, g: 70.83332, b: 35.342747, a: 1}
+  m_IndirectSpecularColor: {r: 183.82423, g: 71.02076, b: 35.299137, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -3323,11 +3323,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _updateType: 0
   _playerTransform: {fileID: 108523971}
-  _distanceChase: 0
-  _distanceAttack: 0
-  _distanceRoam: 0
-  _distanceGoal: 0
-  _range: 0
+  _distanceChase: 75
+  _distanceGoal: 2
+  _range: 100
   _attacks: []
 --- !u!114 &1563905648
 MonoBehaviour:
