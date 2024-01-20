@@ -117,7 +117,7 @@ namespace Console
                     builder.Append(commandWord + "<br>");
                 }
                 else {
-                    int fillingSpaceAmount = 20 - commandWord.Length;
+                    int fillingSpaceAmount = 15 - commandWord.Length;
                     builder.Append(commandWord + GetFillingSpace(fillingSpaceAmount));
                 }
             }
