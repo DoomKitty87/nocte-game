@@ -1,15 +1,15 @@
 namespace Console.Commands
 {
 
-  public class MaxUpdatesCommand : ConsoleCommand
+  public class CheatsCommand : ConsoleCommand
   {
     private const string _wrongAmountMsg = "This command takes one input.";
-    private const string _wrongInputMsg = "Must be a positive float.";
+    private const string _wrongInputMsg = "Must be a value of either 1 or 0.";
 
     private string _currentWrongMsg = "";
     private string _currentSuccessMessage = "";
 
-    public override string Command => "maxupdates";
+    public override string Command => "cheats";
 
     public override string WrongInputMessage => _currentWrongMsg;
 
@@ -21,44 +21,56 @@ namespace Console.Commands
         return true;
       }
       if (args.Length != 1) {
-                _currentWrongMsg = _wrongAmountMsg;
+          _currentWrongMsg = _wrongAmountMsg;
         return false;
-      }           
+      }
+      
       string arg = args[0];
+      
       if (!TryType(arg)) {
         _currentWrongMsg = _wrongInputMsg;
         return false;
       }
-      float value = float.Parse(arg);
+      
+      int value = int.Parse(arg);
+      
       if (TryValue(value)) {
-                _currentSuccessMessage = BuildSuccessMessage(value.ToString());
-                WorldGenInfo._maxUpdatesPerFrame = value;
-                return true;
-            }
-            else {
-                _currentWrongMsg = _wrongInputMsg;
-                return false;
-            }
+        if (value == 1) {
+          _currentSuccessMessage = BuildSuccessMessage("Enabled");
+          BackgroundInfo._enableCheats = true;
+        }
+        else {
+          _currentSuccessMessage = BuildSuccessMessage("Disabled");
+          BackgroundInfo._enableCheats = false;
+        }
+
+        return true;
+      }
+      else {
+          _currentWrongMsg = _wrongInputMsg;
+          return false;
+      }
     }
 
     private bool TryType(string input) {
-      if (float.TryParse(input, out float value)) 
+      if (int.TryParse(input, out int value)) 
           return true;
 
       return false;
     }
 
     private bool TryValue(float value) {
-      if (value > 0) 
+      if (value is 0 or 1) 
           return true;
       else
           return false;
     }
 
     private string BuildCallbackMessage() =>
-      $"Showfps -> {WorldGenInfo._maxUpdatesPerFrame}";
+      $"Cheats -> {(BackgroundInfo._enableCheats ? 1 : 0)}";
     
     private string BuildSuccessMessage(string arg) =>
-      $"Max updates per frame set to {arg}.";
+      $"{arg} cheats.";
+    
   }
 }

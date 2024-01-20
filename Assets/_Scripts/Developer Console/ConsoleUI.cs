@@ -16,6 +16,8 @@ namespace Console
         public static Action _consoleClear;
         public static Action _consoleHelp;
 
+        public static Action _reloadCommands;
+
         private ConsoleMain _console;
 
         private ConsoleScroller _scroller;
@@ -68,16 +70,18 @@ namespace Console
         private void ProcessInput(string userInput) {
             LogText(GetFormattedUserInput(userInput));
 
+            bool cheats = BackgroundInfo._enableCheats;
+            
             string processedMessage = _console.ProcessInput(userInput);
             LogText(processedMessage);
+
+            if (cheats != BackgroundInfo._enableCheats) 
+                _reloadCommands?.Invoke();
 
             ResetInputField();
         }
 
         private void LogText(string message) {
-            if (string.IsNullOrWhiteSpace(message)) 
-                return;
-
             _logArea.text += message + "<br>";
             _scroller.MoveDown();
         }

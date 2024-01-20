@@ -20,24 +20,36 @@ namespace Console
         public static event OnConsoleOpen ConsoleOpened;
         public static event OnConsoleClose ConsoleClosed;
 
+        public bool _enableCheats;
+
         private static Action _exitConsole;
         public static void RaiseExitConsole() => _exitConsole?.Invoke();
 
         List<IConsoleCommand> GetCommands() {
-            return new List<IConsoleCommand> {
+            List<IConsoleCommand> commands = new List<IConsoleCommand> {
                 new HelpCommand(),
                 new QuitCommand(),
                 new CloseCommand(),
                 new ClearCommand(),
-                new ReloadCommand(),
-                new LoadSceneCommand(),
-                new TimeScaleCommand(),
-                new NoclipCommand(),
                 new SeedCommand(),
                 new ShowFPSCommand(),
-                new MaxUpdatesCommand(),
+                new CheatsCommand() // Comment out this script to disable player cheats
                 // Commands here
             };
+
+            List<IConsoleCommand> cheatCommands = new List<IConsoleCommand>() {
+                new _ReloadCommand(),
+                new _LoadSceneCommand(),
+                new _TimeScaleCommand(),
+                new _MaxUpdatesCommand(),
+                new _NoclipCommand()
+                // Cheat commands here
+            };
+            
+            if (BackgroundInfo._enableCheats) 
+                commands.AddRange(cheatCommands);
+
+            return commands;
         }
 
         private void Awake() {
@@ -51,6 +63,8 @@ namespace Console
         private void Start() {
             CloseConsole();
 
+            ConsoleUI._reloadCommands += SetupConsoleComponents;
+            
             ConsoleOpened += ShowMouse;
             ConsoleClosed += HideMouse;
         }

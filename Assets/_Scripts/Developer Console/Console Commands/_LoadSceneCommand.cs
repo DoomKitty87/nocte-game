@@ -3,7 +3,7 @@ using UnityEngine.SceneManagement;
 
 namespace Console.Commands
 {
-    public class LoadSceneCommand : ConsoleCommand
+    public class _LoadSceneCommand : ConsoleCommand
     {
         private const string _wrongAmountMsg = "This command takes one input.";
         private const string _notFoundMsg = "No scene with that input found.";

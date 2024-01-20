@@ -2,7 +2,7 @@ using System;
 
 namespace Console.Commands
 {
-    public class NoclipCommand : ConsoleCommand
+    public class _NoclipCommand : ConsoleCommand
     {
         private const string _wrongAmountMsg = "This command takes one input.";
         private const string _wrongInputMsg = "Must be a value of either 1 or 0.";

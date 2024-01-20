@@ -24,6 +24,7 @@ public class ConsoleScroller : MonoBehaviour
 
     IEnumerator ResetScroll() {
         yield return _waitForEndOfFrame;
+        Debug.Log("Scrolled Down");
         _scrollbar.value = 0;
     }
 }

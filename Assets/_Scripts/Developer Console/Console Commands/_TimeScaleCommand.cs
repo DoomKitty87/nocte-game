@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Console.Commands
 {
-    public class TimeScaleCommand : ConsoleCommand
+    public class _TimeScaleCommand : ConsoleCommand
     {
         private const string _wrongAmountMsg = "This command takes one input.";
         

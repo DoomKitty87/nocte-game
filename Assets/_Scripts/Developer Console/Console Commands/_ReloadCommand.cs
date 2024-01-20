@@ -2,7 +2,7 @@ using UnityEngine.SceneManagement;
 
 namespace Console.Commands
 {
-    public class ReloadCommand : ConsoleCommand
+    public class _ReloadCommand : ConsoleCommand
     {
         public override string Command => "reload";
 
