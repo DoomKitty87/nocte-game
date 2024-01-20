@@ -17,6 +17,10 @@ namespace Console.Commands
         public override string SuccessMessage => _currentSuccessMessage;
 
         public override bool Process(string[] args) {
+            if (args.Length == 0) {
+                _currentSuccessMessage = BuildCallbackMessage();
+                return true;
+            }
             if (args.Length != 1) {
                 _currentWrongMsg = _wrongAmountMsg;
                 return false;
@@ -65,8 +69,12 @@ namespace Console.Commands
                 return false;
         }
 
-        private string BuildSuccessMessage(string arg) {
-            return $"{arg} noclip.";
-        }
+        private string BuildCallbackMessage() =>
+            // TODO: Fix this
+            $"Noclip -> {(PlayerController.Instance.State == PlayerController.PlayerStates.Noclip ? 1 : 0)}";
+        
+        private string BuildSuccessMessage(string arg) =>
+            $"{arg} noclip.";
+        
     }
 }

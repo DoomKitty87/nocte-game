@@ -16,6 +16,10 @@ namespace Console.Commands
     public override string SuccessMessage => _currentSuccessMessage;
 
     public override bool Process(string[] args) {
+      if (args.Length == 0) {
+        _currentSuccessMessage = BuildCallbackMessage();
+        return true;
+      }
       if (args.Length != 1) {
                 _currentWrongMsg = _wrongAmountMsg;
         return false;
@@ -51,8 +55,10 @@ namespace Console.Commands
           return false;
     }
 
-    private string BuildSuccessMessage(string arg) {
-            return $"Max updates per frame set to {arg}.";
-    }
+    private string BuildCallbackMessage() =>
+      $"Showfps -> {WorldGenInfo._maxUpdatesPerFrame}";
+    
+    private string BuildSuccessMessage(string arg) =>
+      $"Max updates per frame set to {arg}.";
   }
 }

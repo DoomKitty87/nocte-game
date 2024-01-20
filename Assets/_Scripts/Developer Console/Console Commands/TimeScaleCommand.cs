@@ -1,4 +1,5 @@
 using System;
+using UnityEngine;
 
 namespace Console.Commands
 {
@@ -16,6 +17,10 @@ namespace Console.Commands
         public override string SuccessMessage => _currentSuccessMessage;
 
         public override bool Process(string[] args) {
+            if (args.Length == 0) {
+                _currentSuccessMessage = BuildCallbackMessage();
+                return true;
+            }
             if (args.Length != 1) {
                 _currentWrongMsg = _wrongAmountMsg;
                 return false;
@@ -64,6 +69,9 @@ namespace Console.Commands
         private string BuildWrongValue(float arg) =>
             $"Input must be equal or greater then zero.";
 
+        private string BuildCallbackMessage() =>
+            $"Timescale -> {Time.timeScale}";
+        
         private string BuildSuccessMessage(float arg) =>
             $"Time.timeScale = {arg}";
     }
