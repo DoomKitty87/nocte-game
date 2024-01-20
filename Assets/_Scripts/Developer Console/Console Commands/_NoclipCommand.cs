@@ -37,11 +37,11 @@ namespace Console.Commands
 
             if (TryValue(value)) {
                 if (value == 1) {
-                    _currentSuccessMessage = BuildSuccessMessage("Enabled");
+                    _currentSuccessMessage = BuildSuccessMessage("enabled");
                     PlayerController.Instance.State = PlayerController.PlayerStates.Noclip;
                 }
                 else {
-                    _currentSuccessMessage = BuildSuccessMessage("Disabled");
+                    _currentSuccessMessage = BuildSuccessMessage("disabled");
                     PlayerController.Instance.State = PlayerController.PlayerStates.Idle;
                 }
 
@@ -71,7 +71,7 @@ namespace Console.Commands
 
         private string BuildCallbackMessage() =>
             // TODO: Fix this
-            $"Noclip -> {(PlayerController.Instance.State == PlayerController.PlayerStates.Noclip ? 1 : 0)}";
+            $"noclip -> {(PlayerController.Instance.State == PlayerController.PlayerStates.Noclip ? 1 : 0)}";
         
         private string BuildSuccessMessage(string arg) =>
             $"{arg} noclip.";

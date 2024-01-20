@@ -14,7 +14,7 @@ namespace Console.Commands
     public override string SuccessMessage => _currentSuccessMessage;
 
     public override bool Process(string[] args) {
-      _currentSuccessMessage = $"Seed -> {WorldGenInfo._seed}";
+      _currentSuccessMessage = $"seed -> {WorldGenInfo._seed}";
       return true;
     }
   }

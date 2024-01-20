@@ -59,6 +59,6 @@ namespace Console.Commands
         }
 
         string BuildSuccessMessage(string sceneName) =>
-            $"Scene {sceneName} loaded.";
+            $"scene {sceneName} loaded.";
     }
 }

@@ -70,7 +70,7 @@ namespace Console.Commands
             $"Input must be equal or greater then zero.";
 
         private string BuildCallbackMessage() =>
-            $"Timescale -> {Time.timeScale}";
+            $"timescale -> {Time.timeScale}";
         
         private string BuildSuccessMessage(float arg) =>
             $"Time.timeScale = {arg}";

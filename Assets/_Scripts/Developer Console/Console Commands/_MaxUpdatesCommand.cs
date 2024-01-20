@@ -56,9 +56,9 @@ namespace Console.Commands
     }
 
     private string BuildCallbackMessage() =>
-      $"Showfps -> {WorldGenInfo._maxUpdatesPerFrame}";
+      $"maxUpdates -> {WorldGenInfo._maxUpdatesPerFrame}";
     
     private string BuildSuccessMessage(string arg) =>
-      $"Max updates per frame set to {arg}.";
+      $"maxUpdates -> {arg}.";
   }
 }

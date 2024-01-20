@@ -32,11 +32,11 @@ namespace Console.Commands
       int value = int.Parse(arg);
       if (TryValue(value)) {
                 if (value == 1) {
-                    _currentSuccessMessage = BuildSuccessMessage("Enabled");
+                    _currentSuccessMessage = BuildSuccessMessage("enabled");
                     BackgroundInfo._fpsEnabled = true;
                 }
                 else {
-                    _currentSuccessMessage = BuildSuccessMessage("Disabled");
+                    _currentSuccessMessage = BuildSuccessMessage("disabled");
                     BackgroundInfo._fpsEnabled = false;
                 }
 
@@ -63,7 +63,7 @@ namespace Console.Commands
     }
 
     private string BuildCallbackMessage() =>
-      $"Showfps -> {(BackgroundInfo._fpsEnabled ? 1 : 0)}";
+      $"showfps -> {(BackgroundInfo._fpsEnabled ? 1 : 0)}";
     
     private string BuildSuccessMessage(string arg) =>
       $"{arg} fps counter.";

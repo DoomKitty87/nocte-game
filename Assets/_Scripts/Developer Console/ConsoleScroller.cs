@@ -12,7 +12,10 @@ public class ConsoleScroller : MonoBehaviour
 
     private void Awake() => _scrollbar = GetComponent<Scrollbar>();
 
-    private void OnEnable() => _isClosing = false;
+    private void OnEnable() {
+        _isClosing = false;
+        StartCoroutine(ResetScroll());
+    }
 
     private void OnDisable() => _isClosing = true;
 
@@ -23,7 +26,10 @@ public class ConsoleScroller : MonoBehaviour
     }
 
     IEnumerator ResetScroll() {
+        // For reasons this is necessary 
         yield return _waitForEndOfFrame;
+        yield return _waitForEndOfFrame;
+        
         _scrollbar.value = 0;
     }
 }

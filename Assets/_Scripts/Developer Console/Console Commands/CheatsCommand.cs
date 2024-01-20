@@ -36,11 +36,11 @@ namespace Console.Commands
       
       if (TryValue(value)) {
         if (value == 1) {
-          _currentSuccessMessage = BuildSuccessMessage("Enabled");
+          _currentSuccessMessage = BuildSuccessMessage("enabled");
           BackgroundInfo._enableCheats = true;
         }
         else {
-          _currentSuccessMessage = BuildSuccessMessage("Disabled");
+          _currentSuccessMessage = BuildSuccessMessage("disabled");
           BackgroundInfo._enableCheats = false;
         }
 
@@ -67,7 +67,7 @@ namespace Console.Commands
     }
 
     private string BuildCallbackMessage() =>
-      $"Cheats -> {(BackgroundInfo._enableCheats ? 1 : 0)}";
+      $"cheats -> {(BackgroundInfo._enableCheats ? 1 : 0)}";
     
     private string BuildSuccessMessage(string arg) =>
       $"{arg} cheats.";
