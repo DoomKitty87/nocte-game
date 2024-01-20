@@ -9,6 +9,8 @@ namespace Console
     {
         [SerializeField] private GameObject _console;
 
+        private ConsoleUI _consoleUI;
+
         public KeyCode _consoleKey = KeyCode.BackQuote;
 
         private static Action _consoleOpen;
@@ -61,6 +63,8 @@ namespace Console
         }
 
         private void Start() {
+            _consoleUI = _console.GetComponentInChildren<ConsoleUI>();
+            
             CloseConsole();
 
             ConsoleUI._reloadCommands += SetupConsoleComponents;
@@ -85,6 +89,12 @@ namespace Console
         private void ReadKeyInput() {
             if (Input.GetKeyDown(_consoleKey))
                 SwapConsoleState();
+
+            if (_console.activeInHierarchy && Input.GetKeyDown(KeyCode.UpArrow)) 
+                _consoleUI.GetPreviousMessage(1);
+            
+            if (_console.activeInHierarchy && Input.GetKeyDown(KeyCode.DownArrow)) 
+                _consoleUI.GetPreviousMessage(-1);
         }
         
         private void SwapConsoleState() {
