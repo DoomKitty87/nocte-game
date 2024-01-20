@@ -9,7 +9,6 @@ public class PlayerDriving : MonoBehaviour
   
   private Collider _playerCollider;
   private Rigidbody _rb;
-  private PlayerController _playerController;
   private PlayerCameraController _playerCameraController;
   
   public KeyCode _vehicleKey;
@@ -21,7 +20,6 @@ public class PlayerDriving : MonoBehaviour
   private void Awake() {
     _playerCollider = GetComponent<Collider>();
     _rb = GetComponent<Rigidbody>();
-    _playerController = GetComponent<PlayerController>();
     _playerCameraController = GetComponent<PlayerCameraController>();
   }
 
@@ -52,14 +50,11 @@ public class PlayerDriving : MonoBehaviour
       _toDisable[i].enabled = false;
     }
 
-    _playerController.State = PlayerController.PlayerStates.Driving;
+    PlayerController.Instance.State = PlayerController.PlayerStates.Driving;
     
-    _rb.collisionDetectionMode = CollisionDetectionMode.Discrete;
-    _rb.isKinematic = true;
-    _playerCollider.enabled = false;
     _inVehicle = true;
     _currentVehicle = toEnter;
-    _playerController.SetParent(toEnter.GetComponent<VehicleControl>()._playerSeat.transform);
+    PlayerController.Instance.SetParent(toEnter.GetComponent<VehicleControl>()._playerSeat.transform);
     _playerCameraController.SetParent(toEnter.GetComponent<VehicleControl>()._playerSeat.transform);
     _playerCameraController.ResetRotation();
     _playerCameraController.UseClamp(90);
@@ -70,16 +65,13 @@ public class PlayerDriving : MonoBehaviour
     for (int i = 0; i < _toDisable.Length; i++) {
       _toDisable[i].enabled = true;
     }
-  
-    _rb.isKinematic = false;
-    _rb.collisionDetectionMode = CollisionDetectionMode.Continuous;
-    _playerCollider.enabled = true;
+    
     _inVehicle = false;
     _currentVehicle.GetComponent<VehicleControl>().ExitVehicle();
     _playerCameraController.ResetParent();
     _playerCameraController.ResetRotation();
     _playerCameraController.ResetClamp();
 
-    _playerController.State = PlayerController.PlayerStates.Idle;
+    PlayerController.Instance.State = PlayerController.PlayerStates.Idle;
   }
 }

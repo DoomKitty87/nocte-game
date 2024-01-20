@@ -3,6 +3,9 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
+
+    public static PlayerController Instance { get; private set; }
+    
     // Temporary fix for visualizing crouching - See HandleCrouchingCameraPosition()
     [SerializeField] private Transform _cameraPosition;
     private Vector3 _defaultCameraPosition;
@@ -34,6 +37,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField, Tooltip("Friction force")] private float _frictionCoefficient;
     [SerializeField, Tooltip("Friction force while sliding")] private float _slidingFrictionCoefficient;
     [SerializeField, Tooltip("Max angle at which ground is recognized as walkable")] private float _maxSlopeAngle;
+    [SerializeField, Tooltip("Noclip player speed")] private float _NoclipSpeed;
     
     [Header("Vectors")]
     [SerializeField, Tooltip("Current position")] private Vector3 _position;
@@ -50,6 +54,8 @@ public class PlayerController : MonoBehaviour
     public KeyCode _jumpKey = KeyCode.Space;
     public KeyCode _sprintKey = KeyCode.LeftShift;
     public KeyCode _crouchKey = KeyCode.LeftControl;
+    public KeyCode _upKey = KeyCode.E;
+    public KeyCode _downKey = KeyCode.Q;
     
     #endregion
     
@@ -92,12 +98,20 @@ public class PlayerController : MonoBehaviour
         Grappling,
         Driving,
         Frozen,
-        NoClip
+        Noclip
     }
 
     #endregion
 
+    
     private void Awake() {
+        if (Instance != null && Instance != this) { 
+            Destroy(this); 
+        } 
+        else { 
+            Instance = this; 
+        } 
+        
         _rb = GetComponent<Rigidbody>();
         _defaultCameraPosition = _cameraPosition.localPosition;
     }
@@ -108,8 +122,8 @@ public class PlayerController : MonoBehaviour
         if (TryGetComponent(out ConsoleController controller)) {
             // Maybe we want this?
             // Freezes player when console is open.
-            // ConsoleController.ConsoleOpened += EnableFreeze;
-            // ConsoleController.ConsoleClosed += DisableFreeze;
+            ConsoleController.ConsoleOpened += EnableFreeze;
+            ConsoleController.ConsoleClosed += DisableFreeze;
         }
     }
 
@@ -130,6 +144,8 @@ public class PlayerController : MonoBehaviour
             case PlayerStates.Driving:
                 _useVelocity = true;
                 _useGravity = true;
+                
+                EnableColliders();
                 break;
             
             case PlayerStates.Frozen:
@@ -138,7 +154,11 @@ public class PlayerController : MonoBehaviour
                 
                 if (UnFreeze != null)
                     UnFreeze();
-                
+                break;
+            
+            case PlayerStates.Noclip:
+                _useGravity = true;
+                EnableColliders();
                 break;
         }
 
@@ -162,11 +182,16 @@ public class PlayerController : MonoBehaviour
                 if (Freeze != null) 
                     Freeze();
                 break;
+            
+            case PlayerStates.Noclip:
+                DisableColliders();
+                _useGravity = false;
+                break;
         }
     }
 
     private void UpdateStates() {
-        if (State is PlayerStates.Frozen or PlayerStates.NoClip or PlayerStates.Grappling or PlayerStates.Driving)
+        if (State is PlayerStates.Frozen or PlayerStates.Noclip or PlayerStates.Grappling or PlayerStates.Driving)
             return;
         
         if (!_grounded)
@@ -410,6 +435,18 @@ public class PlayerController : MonoBehaviour
                 
                 break;
             }
+
+            case PlayerStates.Noclip: {
+                _acceleration = Vector3.zero;
+                
+                Vector3 inputDirection =
+                    (_inputVectorNormalized.x * rightDirection + _inputVectorNormalized.z * forwardDirection).
+                    normalized;
+
+                _velocity = inputDirection * _NoclipSpeed;
+                
+                break;
+            }
         }
     
         // Apply gravity
@@ -445,9 +482,24 @@ public class PlayerController : MonoBehaviour
 
     private void EnableFreeze() { State = PlayerStates.Frozen; }
 
-    private void DisableFreeze() { State = PlayerStates.Idle; }
+    private void DisableFreeze() {
+        if (State == PlayerStates.Frozen)
+            State = PlayerStates.Idle;
+    }
     
-    private void  StopGrounded() { _grounded = false; }
+    private void StopGrounded() { _grounded = false; }
+
+    public void DisableColliders() {
+        _rb.collisionDetectionMode = CollisionDetectionMode.Discrete;
+        _rb.isKinematic = true;
+        GetComponent<Collider>().enabled = false;
+    }
+
+    public void EnableColliders() {
+        _rb.isKinematic = false;
+        _rb.collisionDetectionMode = CollisionDetectionMode.Continuous;
+        GetComponent<Collider>().enabled = true;
+    }
     
     #endregion
     

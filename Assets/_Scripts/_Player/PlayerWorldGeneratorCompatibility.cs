@@ -16,11 +16,7 @@ public class PlayerWorldGeneratorCompatibility : MonoBehaviour
     
     
     private void Awake() {
-        if (enabled && _worldGeneratorObject == null) {
-            Debug.LogWarning("World Generator Object is missing. Either assign the script or disable " +
-                             "PlayerWorldGeneratorCompatibility script if there is no WorldGenerator in scene.");
-            enabled = false;
-        }
+        if (enabled && _worldGeneratorObject == null) throw new NullReferenceException("No WorldGeneratorObject found.");
 
         _playerController = GetComponent<PlayerController>();
     }
