@@ -108,8 +108,8 @@ public class PlayerController : MonoBehaviour
         if (TryGetComponent(out ConsoleController controller)) {
             // Maybe we want this?
             // Freezes player when console is open.
-            // ConsoleController.ConsoleOpened += EnableFreeze;
-            // ConsoleController.ConsoleClosed += DisableFreeze;
+            ConsoleController.ConsoleOpened += EnableFreeze;
+            ConsoleController.ConsoleClosed += DisableFreeze;
         }
     }
 

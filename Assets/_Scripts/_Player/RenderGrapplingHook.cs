@@ -55,13 +55,13 @@ public class RenderGrapplingHook : MonoBehaviour
         
         _spring.SetDamper(_damper);
         _spring.SetStrength(_strength);
-        _spring.Update(Time.deltaTime);
+        _spring.Update(Time.fixedDeltaTime);
 
         var grapplePoint = _playerGrapple._grapplePoint;
         var gunTipPosition = _playerGrapple._gunEnd.position;
         var up = Quaternion.LookRotation((grapplePoint - gunTipPosition).normalized) * Vector3.up;
 
-        _currentGrapplePosition = Vector3.Lerp(_currentGrapplePosition, grapplePoint, Time.deltaTime * 12f);
+        _currentGrapplePosition = Vector3.Lerp(_currentGrapplePosition, grapplePoint, Time.fixedDeltaTime * 12f);
 
         for (var i = 0; i < _quality + 1; i++) {
             var delta = i / (float) _quality;
