@@ -106,8 +106,10 @@ public class PlayerController : MonoBehaviour
         _rb = GetComponent<Rigidbody>();
         
         if (TryGetComponent(out ConsoleController controller)) {
-            ConsoleController.ConsoleOpened += EnableFreeze;
-            ConsoleController.ConsoleClosed += DisableFreeze;
+            // Maybe we want this?
+            // Freezes player when console is open.
+            // ConsoleController.ConsoleOpened += EnableFreeze;
+            // ConsoleController.ConsoleClosed += DisableFreeze;
         }
     }
 

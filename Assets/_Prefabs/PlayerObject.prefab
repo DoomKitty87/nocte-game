@@ -161,6 +161,7 @@ GameObject:
   - component: {fileID: 6773045848981137360}
   - component: {fileID: 1100709898825898026}
   - component: {fileID: 2251073300609769141}
+  - component: {fileID: 532845346957642240}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -299,6 +300,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 13fdfa186beaa7845853a2417b5d9710, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _freezeOnTimescale0: 0
+  _playerFreeze: 0
   _camera: {fileID: 8790353012930772278}
   _orientation: {fileID: 5411564958325643772}
   _lookSensitivityX: 2
@@ -615,6 +618,20 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _toDisable: []
   _vehicleKey: 101
+--- !u!114 &532845346957642240
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2827087983080206208}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b80b818ea5018465293f42ed95b8e3cf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _console: {fileID: 0}
+  _consoleKey: 96
 --- !u!1 &2831609703839324013
 GameObject:
   m_ObjectHideFlags: 0
