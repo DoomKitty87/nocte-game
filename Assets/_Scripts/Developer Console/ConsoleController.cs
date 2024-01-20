@@ -34,7 +34,8 @@ namespace Console
                 new TimeScaleCommand(),
                 new NoclipCommand(),
                 new SeedCommand(),
-                new ShowFPSCommand()
+                new ShowFPSCommand(),
+                new MaxUpdatesCommand(),
                 // Commands here
             };
         }
