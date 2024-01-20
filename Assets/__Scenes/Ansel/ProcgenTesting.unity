@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 178.39394, g: 69.53145, b: 34.35642, a: 1}
+  m_IndirectSpecularColor: {r: 159.07082, g: 56.36646, b: 24.698215, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -1245,6 +1245,12 @@ LineRenderer:
   m_UseWorldSpace: 0
   m_Loop: 1
   m_ApplyActiveColorSpace: 1
+--- !u!20 &492074379 stripped
+Camera:
+  m_CorrespondingSourceObject: {fileID: 5818644217144388472, guid: 807785f75a4cabf4883bf2cc8fe88221,
+    type: 3}
+  m_PrefabInstance: {fileID: 1829040276}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &509940783
 GameObject:
   m_ObjectHideFlags: 0
@@ -2086,6 +2092,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1004352485}
   - component: {fileID: 1004352484}
+  - component: {fileID: 1004352486}
   m_Layer: 0
   m_Name: Global Volume
   m_TagString: Untagged
@@ -2125,6 +2132,45 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1004352486
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1004352483}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 26d6499a6bd256e47b859377446493a1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_IsGlobal: 1
+  fadeRadius: 0
+  priority: 0
+  customPasses:
+  - rid: 5398221021191340105
+  injectionPoint: 2
+  m_TargetCamera: {fileID: 492074379}
+  useTargetCamera: 0
+  references:
+    version: 2
+    RefIds:
+    - rid: 5398221021191340105
+      type: {class: FullScreenCustomPass, ns: UnityEngine.Rendering.HighDefinition,
+        asm: Unity.RenderPipelines.HighDefinition.Runtime}
+      data:
+        m_Name: UnderWater
+        enabled: 1
+        targetColorBuffer: 0
+        targetDepthBuffer: 0
+        clearFlags: 0
+        passFoldout: 0
+        m_Version: 0
+        fullscreenPassMaterial: {fileID: 2100000, guid: 4f8998eadec5b41e08420763d59485cc,
+          type: 2}
+        materialPassIndex: 0
+        materialPassName: Custom Pass 0
+        fetchColorBuffer: 0
 --- !u!1 &1077108755
 GameObject:
   m_ObjectHideFlags: 0
