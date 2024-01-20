@@ -277,6 +277,7 @@ public class WorldGenerator : MonoBehaviour
     _riverParameters.obj.GetComponent<MeshFilter>().mesh = _waterMesh;
     WorldGenInfo._seed = _seed;
     WorldGenInfo._maxUpdatesPerFrame = _maxUpdatesPerFrame;
+    WorldGenInfo._lakePlaneHeight = _lakePlaneHeight;
     _seed = int.Parse(Hash128.Compute(_seed).ToString().Substring(0, 6), System.Globalization.NumberStyles.HexNumber);
     // Debug.Log(_seed);
     // Seed-based terrain parameter changes
