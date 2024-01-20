@@ -1,6 +1,7 @@
 using System.Collections;
 using UnityEngine;
 using TMPro;
+using UnityEngine.UI;
 
 public class ShowFPS : MonoBehaviour
 {
@@ -20,7 +21,8 @@ public class ShowFPS : MonoBehaviour
       startFramesPassed = frames;
       yield return new WaitForSeconds(_updateAfterSec);
       framesPassed = frames - startFramesPassed;
-      _text.text = $"{framesPassed * (1 / _updateAfterSec)} FPS - {_updateAfterSec / framesPassed * 1000}ms";
+      if (BackgroundInfo._fpsEnabled) _text.text = $"{framesPassed * (1 / _updateAfterSec)} FPS - {_updateAfterSec / framesPassed * 1000}ms";
+      else _text.text = "";
     }
   }
 

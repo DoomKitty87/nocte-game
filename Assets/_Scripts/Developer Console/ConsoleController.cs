@@ -32,7 +32,9 @@ namespace Console
                 new ReloadCommand(),
                 new LoadSceneCommand(),
                 new TimeScaleCommand(),
-                new NoclipCommand()
+                new NoclipCommand(),
+                new SeedCommand(),
+                new ShowFPSCommand()
                 // Commands here
             };
         }

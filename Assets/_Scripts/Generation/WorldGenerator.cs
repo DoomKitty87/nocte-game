@@ -275,6 +275,7 @@ public class WorldGenerator : MonoBehaviour
     _waterMesh = new Mesh();
     _waterMesh.indexFormat = UnityEngine.Rendering.IndexFormat.UInt32;
     _riverParameters.obj.GetComponent<MeshFilter>().mesh = _waterMesh;
+    WorldGenInfo._seed = _seed;
     _seed = int.Parse(Hash128.Compute(_seed).ToString().Substring(0, 6), System.Globalization.NumberStyles.HexNumber);
     // Debug.Log(_seed);
     // Seed-based terrain parameter changes
