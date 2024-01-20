@@ -202,9 +202,16 @@ public class PlayerController : MonoBehaviour
                 break;
         }
     }
-
+    
+    private bool _disableWorldGen;
     private void UpdateStates() {
-        _currentWaterHeight = _worldGen.GetWaterHeight(new Vector2(transform.position.x, transform.position.z));
+        if (!_disableWorldGen) {
+            if (_worldGen != null)
+                _currentWaterHeight = _worldGen.GetWaterHeight(new Vector2(transform.position.x, transform.position.z));
+            else
+                _disableWorldGen = true;
+        }
+
         if (State is PlayerStates.Frozen or PlayerStates.Noclip or PlayerStates.Grappling or PlayerStates.Driving)
             return;
         if (_currentWaterHeight > transform.position.y - _collider.bounds.size.y / 2 || WorldGenInfo._lakePlaneHeight > transform.position.y - _collider.bounds.size.y / 2) SetState(PlayerStates.Swimming);

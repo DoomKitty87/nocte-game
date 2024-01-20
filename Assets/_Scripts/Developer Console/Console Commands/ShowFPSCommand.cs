@@ -16,6 +16,10 @@ namespace Console.Commands
     public override string SuccessMessage => _currentSuccessMessage;
 
     public override bool Process(string[] args) {
+      if (args.Length == 0) {
+        _currentSuccessMessage = BuildCallbackMessage();
+        return true;
+      }
       if (args.Length != 1) {
                 _currentWrongMsg = _wrongAmountMsg;
         return false;
@@ -58,8 +62,11 @@ namespace Console.Commands
           return false;
     }
 
-    private string BuildSuccessMessage(string arg) {
-            return $"{arg} fps counter.";
-    }
+    private string BuildCallbackMessage() =>
+      $"Showfps -> {(BackgroundInfo._fpsEnabled ? 1 : 0)}";
+    
+    private string BuildSuccessMessage(string arg) =>
+      $"{arg} fps counter.";
+    
   }
 }
