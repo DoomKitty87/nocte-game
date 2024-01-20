@@ -1,4 +1,6 @@
+using System;
 using Console;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class PlayerController : MonoBehaviour
@@ -24,17 +26,21 @@ public class PlayerController : MonoBehaviour
 
     [Header("References")]
     [SerializeField, Tooltip("Player's local")] private Transform _orientation;
+    [SerializeField] private WorldGenerator _worldGen;
     
     [Header("Movement")]
     [SerializeField, Tooltip("Default walk speed on ground")] private float _walkSpeed;
+    [SerializeField, Tooltip("Default walk speed in water")] private float _swimmingSpeed;
     [SerializeField, Tooltip("Sprint speed on ground")] private float _sprintSpeed;
     [SerializeField, Tooltip("Crouching speed on ground")] private float _crouchSpeed;
     [SerializeField, Tooltip("Air speed")] private float _airMoveSpeed;
     [SerializeField, Tooltip("Slide/Crouch threshold")] private float _slideThreshold;
     [SerializeField, Tooltip("Velocity at which player can accelerate towards")] private float _airSpeedThreshold;
     [SerializeField, Tooltip("Jump force")] private float _jumpForce;
+    [SerializeField, Tooltip("Swimming upwards force")] private float _swimmingBuoyantForce;
     [SerializeField, Tooltip("Gravity, positive is downwards")] private float _gravity;
     [SerializeField, Tooltip("Friction force")] private float _frictionCoefficient;
+    [SerializeField, Tooltip("Friction force in water")] private float _waterFrictionCoefficient;
     [SerializeField, Tooltip("Friction force while sliding")] private float _slidingFrictionCoefficient;
     [SerializeField, Tooltip("Max angle at which ground is recognized as walkable")] private float _maxSlopeAngle;
     [SerializeField, Tooltip("Noclip player speed")] private float _NoclipSpeed;
@@ -71,6 +77,7 @@ public class PlayerController : MonoBehaviour
     #region Hidden Variables
 
     private Rigidbody _rb;
+    private Collider _collider;
     
     private bool _jumping;
     private bool _resetJump;
@@ -80,6 +87,8 @@ public class PlayerController : MonoBehaviour
     private bool _useVelocity = true;
     private bool _useGravity = true;
     
+    private float _currentWaterHeight;
+
     private Vector3 _inputVectorNormalized;
     
     private Vector3 _horizontalVelocity;
@@ -95,6 +104,7 @@ public class PlayerController : MonoBehaviour
         Crouching,
         Sliding,
         Air,
+        Swimming,
         Grappling,
         Driving,
         Frozen,
@@ -113,6 +123,7 @@ public class PlayerController : MonoBehaviour
         } 
         
         _rb = GetComponent<Rigidbody>();
+        _collider = GetComponent<Collider>();
         _defaultCameraPosition = _cameraPosition.localPosition;
     }
 
@@ -191,10 +202,11 @@ public class PlayerController : MonoBehaviour
     }
 
     private void UpdateStates() {
-        if (State is PlayerStates.Frozen or PlayerStates.Noclip or PlayerStates.Grappling or PlayerStates.Driving)
+        _currentWaterHeight = _worldGen.GetWaterHeight(new Vector2(transform.position.x, transform.position.z));
+        if (State is PlayerStates.Frozen or PlayerStates.NoClip or PlayerStates.Grappling or PlayerStates.Driving)
             return;
-        
-        if (!_grounded)
+        if (_currentWaterHeight > transform.position.y - _collider.bounds.size.y / 2) SetState(PlayerStates.Swimming);
+        else if (!_grounded)
             SetState(PlayerStates.Air);
         else if (Vector3.Distance(_velocity, Vector3.zero) < 0.1f && _inputVectorNormalized == Vector3.zero)
             SetState(PlayerStates.Idle);
@@ -430,6 +442,20 @@ public class PlayerController : MonoBehaviour
                 break;
             }
 
+            case PlayerStates.Swimming: {
+                Vector3 inputDirection =
+                    (_inputVectorNormalized.x * rightDirection + _inputVectorNormalized.z * forwardDirection).
+                    normalized;
+
+                _acceleration += inputDirection * _swimmingSpeed;
+                _acceleration -= _velocity * _waterFrictionCoefficient;
+
+
+                _acceleration += Vector3.up * _swimmingBuoyantForce * Mathf.Max(_currentWaterHeight - (transform.position.y - _collider.bounds.size.y / 2), 0);
+
+                break;
+            }
+
             case PlayerStates.Driving: {
                 transform.position = _parent.position;
                 
@@ -475,6 +501,12 @@ public class PlayerController : MonoBehaviour
     public void SetParent(Transform parent) {
         _parent = parent;
     }
+
+    // void OnDrawGizmos() {
+    //   Gizmos.color = Color.yellow;
+    //   Gizmos.DrawSphere(new Vector3(transform.position.x, transform.position.y - _collider.bounds.size.y / 2, transform.position.z), 1);
+    //   Gizmos.DrawSphere(new Vector3(transform.position.x, _worldGen.GetWaterHeight(new Vector2(transform.position.x, transform.position.z)), transform.position.z), 1);
+    // }
     
     #endregion
     
