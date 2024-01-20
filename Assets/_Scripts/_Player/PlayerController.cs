@@ -158,6 +158,7 @@ public class PlayerController : MonoBehaviour
             
             case PlayerStates.Noclip:
                 _useGravity = true;
+                _useVelocity = true;
                 EnableColliders();
                 break;
         }
@@ -186,6 +187,7 @@ public class PlayerController : MonoBehaviour
             case PlayerStates.Noclip:
                 DisableColliders();
                 _useGravity = false;
+                _useVelocity = false;
                 break;
         }
     }
@@ -437,13 +439,18 @@ public class PlayerController : MonoBehaviour
             }
 
             case PlayerStates.Noclip: {
-                _acceleration = Vector3.zero;
+                Transform mainCamera = Camera.main.transform;
                 
                 Vector3 inputDirection =
-                    (_inputVectorNormalized.x * rightDirection + _inputVectorNormalized.z * forwardDirection).
+                    (_inputVectorNormalized.x * mainCamera.right + _inputVectorNormalized.z * mainCamera.forward).
                     normalized;
 
-                _velocity = inputDirection * _NoclipSpeed;
+                if (Input.GetKey(_upKey)) inputDirection += mainCamera.up;
+                if (Input.GetKey(_downKey)) inputDirection -= mainCamera.up;
+                
+                _velocity = inputDirection * (_crouching ? _NoclipSpeed / 2 : (_sprinting ? _NoclipSpeed * 2 : _NoclipSpeed));
+                
+                transform.Translate(_velocity * Time.fixedDeltaTime);
                 
                 break;
             }
