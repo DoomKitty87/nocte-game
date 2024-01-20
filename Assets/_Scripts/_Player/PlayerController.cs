@@ -453,7 +453,7 @@ public class PlayerController : MonoBehaviour
                 _acceleration -= _velocity * _waterFrictionCoefficient;
 
 
-                _acceleration += Vector3.up * _swimmingBuoyantForce * Mathf.Max(_currentWaterHeight - (transform.position.y - _collider.bounds.size.y / 2), 0);
+                _acceleration += Vector3.up * (_swimmingBuoyantForce * Mathf.Max(_currentWaterHeight - (transform.position.y - _collider.bounds.size.y / 2), 0));
 
                 break;
             }
@@ -477,7 +477,7 @@ public class PlayerController : MonoBehaviour
                 
                 // Horrible but funny
                 _velocity = inputDirection * 
-                            (_crouching ? (_sprinting ? _NoclipSpeed * 6 : _NoclipSpeed / 2 ) : 
+                            (_crouching ? (_sprinting ? _NoclipSpeed * 10 : _NoclipSpeed / 2 ) : 
                                 (_sprinting ? _NoclipSpeed * 3 : _NoclipSpeed));
                 
                 transform.Translate(_velocity * Time.fixedDeltaTime);

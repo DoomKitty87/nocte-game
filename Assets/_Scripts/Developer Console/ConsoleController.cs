@@ -94,18 +94,6 @@ namespace Console
                 ConsoleClosed();
         }
 
-        public static void ResumeGame() {
-            _consoleClosed?.Invoke();
-            if (ConsoleClosed != null)
-                ConsoleClosed();
-        }
-
-        public static void PauseGame() {
-            _consoleOpen?.Invoke();
-            if (ConsoleOpened != null)
-                ConsoleOpened();
-        }
-
         private void ShowMouse() {
             Cursor.lockState = CursorLockMode.None;
             Cursor.visible = true;

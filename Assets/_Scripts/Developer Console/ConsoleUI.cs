@@ -22,13 +22,19 @@ namespace Console
 
         private bool _isClosing;
 
+        private bool _showStartUp = true;
+
         private void Awake() {
             _scroller = GetComponentInChildren<ConsoleScroller>();
         }
 
         private void OnEnable() {
             _isClosing = false;
-            ClearLog();
+            if (_showStartUp) {
+                ClearLog();
+                _showStartUp = false;
+            }
+
             ClearInput();
             SubEvents();
             SetUpInputField();
