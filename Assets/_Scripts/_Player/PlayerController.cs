@@ -160,7 +160,7 @@ public class PlayerController : MonoBehaviour
                 break;
             
             case PlayerStates.Frozen:
-                if (_rb != null)
+                if (_rb != null && _rb.isKinematic == false)
                     _rb.velocity = _velocity;
                 
                 if (UnFreeze != null)
@@ -205,7 +205,7 @@ public class PlayerController : MonoBehaviour
 
     private void UpdateStates() {
         _currentWaterHeight = _worldGen.GetWaterHeight(new Vector2(transform.position.x, transform.position.z));
-        if (State is PlayerStates.Frozen or PlayerStates.NoClip or PlayerStates.Grappling or PlayerStates.Driving)
+        if (State is PlayerStates.Frozen or PlayerStates.Noclip or PlayerStates.Grappling or PlayerStates.Driving)
             return;
         if (_currentWaterHeight > transform.position.y - _collider.bounds.size.y / 2) SetState(PlayerStates.Swimming);
         else if (!_grounded)
@@ -465,6 +465,7 @@ public class PlayerController : MonoBehaviour
             }
 
             case PlayerStates.Noclip: {
+                if (Camera.main == null) throw new ArgumentNullException("No camera tagged 'MainCamera' in scene.");
                 Transform mainCamera = Camera.main.transform;
                 
                 Vector3 inputDirection =
@@ -474,7 +475,10 @@ public class PlayerController : MonoBehaviour
                 if (Input.GetKey(_upKey)) inputDirection += mainCamera.up;
                 if (Input.GetKey(_downKey)) inputDirection -= mainCamera.up;
                 
-                _velocity = inputDirection * (_crouching ? _NoclipSpeed / 2 : (_sprinting ? _NoclipSpeed * 2 : _NoclipSpeed));
+                // Horrible but funny
+                _velocity = inputDirection * 
+                            (_crouching ? (_sprinting ? _NoclipSpeed * 6 : _NoclipSpeed / 2 ) : 
+                                (_sprinting ? _NoclipSpeed * 3 : _NoclipSpeed));
                 
                 transform.Translate(_velocity * Time.fixedDeltaTime);
                 
@@ -528,16 +532,16 @@ public class PlayerController : MonoBehaviour
     
     private void StopGrounded() { _grounded = false; }
 
-    public void DisableColliders() {
+    private void DisableColliders() {
         _rb.collisionDetectionMode = CollisionDetectionMode.Discrete;
         _rb.isKinematic = true;
-        GetComponent<Collider>().enabled = false;
+        _collider.enabled = false;
     }
 
-    public void EnableColliders() {
+    private void EnableColliders() {
         _rb.isKinematic = false;
         _rb.collisionDetectionMode = CollisionDetectionMode.Continuous;
-        GetComponent<Collider>().enabled = true;
+        _collider.enabled = true;
     }
     
     #endregion

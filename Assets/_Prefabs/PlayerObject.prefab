@@ -300,7 +300,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 13fdfa186beaa7845853a2417b5d9710, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _freezeOnTimescale0: 0
+  _freezeOnTimescale0: 1
   _playerFreeze: 0
   _camera: {fileID: 8790353012930772278}
   _orientation: {fileID: 5411564958325643772}
@@ -328,17 +328,22 @@ MonoBehaviour:
   _disableMovement: 0
   _state: 0
   _orientation: {fileID: 5411564958325643772}
+  _worldGen: {fileID: 0}
   _walkSpeed: 4
+  _swimmingSpeed: 0
   _sprintSpeed: 6
   _crouchSpeed: 2
   _airMoveSpeed: 0.4
   _slideThreshold: 7
   _airSpeedThreshold: 0.5
   _jumpForce: 5
+  _swimmingBuoyantForce: 0
   _gravity: 15
   _frictionCoefficient: 0.4
+  _waterFrictionCoefficient: 0
   _slidingFrictionCoefficient: 0
   _maxSlopeAngle: 60
+  _NoclipSpeed: 60
   _position: {x: 0, y: 0, z: 0}
   _velocity: {x: 0, y: 0, z: 0}
   _acceleration: {x: 0, y: 0, z: 0}
@@ -351,6 +356,8 @@ MonoBehaviour:
   _jumpKey: 32
   _sprintKey: 304
   _crouchKey: 306
+  _upKey: 101
+  _downKey: 113
 --- !u!114 &1286559563203328310
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -677,7 +684,7 @@ GameObject:
   - component: {fileID: 1894364332909413384}
   m_Layer: 0
   m_Name: Main Camera
-  m_TagString: Untagged
+  m_TagString: MainCamera
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
