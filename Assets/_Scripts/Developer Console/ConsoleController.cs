@@ -31,7 +31,8 @@ namespace Console
                 new ClearCommand(),
                 new ReloadCommand(),
                 new LoadSceneCommand(),
-                new TimeScaleCommand()
+                new TimeScaleCommand(),
+                new NoclipCommand()
                 // Commands here
             };
         }
