@@ -275,6 +275,8 @@ public class WorldGenerator : MonoBehaviour
     _waterMesh = new Mesh();
     _waterMesh.indexFormat = UnityEngine.Rendering.IndexFormat.UInt32;
     _riverParameters.obj.GetComponent<MeshFilter>().mesh = _waterMesh;
+    WorldGenInfo._seed = _seed;
+    WorldGenInfo._maxUpdatesPerFrame = _maxUpdatesPerFrame;
     _seed = int.Parse(Hash128.Compute(_seed).ToString().Substring(0, 6), System.Globalization.NumberStyles.HexNumber);
     // Debug.Log(_seed);
     // Seed-based terrain parameter changes
@@ -304,8 +306,8 @@ public class WorldGenerator : MonoBehaviour
         if (Time.timeScale == 0f) Time.timeScale = 1f;
       } else break;
     }
-    updatesLeft += _maxUpdatesPerFrame;
-    updatesLeft = Mathf.Min(updatesLeft, Mathf.Max(_maxUpdatesPerFrame, 1));
+    updatesLeft += WorldGenInfo._maxUpdatesPerFrame;
+    updatesLeft = Mathf.Min(updatesLeft, Mathf.Max(WorldGenInfo._maxUpdatesPerFrame, 1));
   }
 
   #endregion
