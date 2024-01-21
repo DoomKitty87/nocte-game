@@ -16,11 +16,18 @@ namespace Console
         public static Action _consoleClear;
         public static Action _consoleHelp;
 
+        public static Action _reloadCommands;
+
         private ConsoleMain _console;
 
         private ConsoleScroller _scroller;
 
+        private List<string> _inputs = new List<string>();
+        private int _currentInputSelected = -1;
+        
         private bool _isClosing;
+
+        private bool _showStartUp = true;
 
         private void Awake() {
             _scroller = GetComponentInChildren<ConsoleScroller>();
@@ -28,8 +35,12 @@ namespace Console
 
         private void OnEnable() {
             _isClosing = false;
-            ClearLog();
-            ClearInput();
+            if (_showStartUp) {
+                ClearLog();
+                _showStartUp = false;
+            }
+
+            ParseLastCharacter();
             SubEvents();
             SetUpInputField();
         }
@@ -62,16 +73,21 @@ namespace Console
         private void ProcessInput(string userInput) {
             LogText(GetFormattedUserInput(userInput));
 
+            bool cheats = BackgroundInfo._enableCheats;
+            
             string processedMessage = _console.ProcessInput(userInput);
             LogText(processedMessage);
+
+            _inputs.Add(userInput);
+            _currentInputSelected = -1;
+            
+            if (cheats != BackgroundInfo._enableCheats) 
+                _reloadCommands?.Invoke();
 
             ResetInputField();
         }
 
         private void LogText(string message) {
-            if (string.IsNullOrWhiteSpace(message)) 
-                return;
-
             _logArea.text += message + "<br>";
             _scroller.MoveDown();
         }
@@ -91,6 +107,11 @@ namespace Console
         private void ClearInput() =>
             _inputArea.text = "";
 
+        private void ParseLastCharacter() {
+            if (_inputArea.text.Length != 0)
+                _inputArea.text = _inputArea.text.Substring(0, _inputArea.text.Length - 1);
+        }
+
         private void PrintInitialInfo() {
             LogText($"Type <color=green>help</color> to get a list of commands.");
             LogText($"Type <color=red>close</color> to close developer menu.");
@@ -107,11 +128,35 @@ namespace Console
                     builder.Append(commandWord + "<br>");
                 }
                 else {
-                    int fillingSpaceAmount = 20 - commandWord.Length;
+                    int fillingSpaceAmount = 15 - commandWord.Length;
                     builder.Append(commandWord + GetFillingSpace(fillingSpaceAmount));
                 }
             }
             LogText(builder.ToString().TrimEnd(' '));
+        }
+
+        public void GetPreviousMessage(int value) {
+            int length = _inputs.Count;
+            if (length >= 1024) {
+                _inputs.RemoveAt(0);
+            }
+
+            if (length == 0 || (_currentInputSelected == -1 && value == -1)) return;
+            if (_currentInputSelected == 0 && value == -1) {
+                ClearInput();
+                _currentInputSelected = -1;
+                return;
+            }
+            
+            if (_currentInputSelected + value > length - 1) _currentInputSelected = length - 1;
+            else if (_currentInputSelected + value < 0)
+                _currentInputSelected = 0;
+            else
+                _currentInputSelected += value;
+
+            string text = _inputs[^(_currentInputSelected + 1)];
+            _inputArea.text = text;
+            _inputArea.caretPosition = text.Length;
         }
 
         private string GetFillingSpace(int count) {

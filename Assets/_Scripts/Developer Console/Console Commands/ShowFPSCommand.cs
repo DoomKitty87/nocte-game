@@ -16,6 +16,10 @@ namespace Console.Commands
     public override string SuccessMessage => _currentSuccessMessage;
 
     public override bool Process(string[] args) {
+      if (args.Length == 0) {
+        _currentSuccessMessage = BuildCallbackMessage();
+        return true;
+      }
       if (args.Length != 1) {
                 _currentWrongMsg = _wrongAmountMsg;
         return false;
@@ -28,11 +32,11 @@ namespace Console.Commands
       int value = int.Parse(arg);
       if (TryValue(value)) {
                 if (value == 1) {
-                    _currentSuccessMessage = BuildSuccessMessage("Enabled");
+                    _currentSuccessMessage = BuildSuccessMessage("enabled");
                     BackgroundInfo._fpsEnabled = true;
                 }
                 else {
-                    _currentSuccessMessage = BuildSuccessMessage("Disabled");
+                    _currentSuccessMessage = BuildSuccessMessage("disabled");
                     BackgroundInfo._fpsEnabled = false;
                 }
 
@@ -58,8 +62,11 @@ namespace Console.Commands
           return false;
     }
 
-    private string BuildSuccessMessage(string arg) {
-            return $"{arg} fps counter.";
-    }
+    private string BuildCallbackMessage() =>
+      $"showfps -> {(BackgroundInfo._fpsEnabled ? 1 : 0)}";
+    
+    private string BuildSuccessMessage(string arg) =>
+      $"{arg} fps counter.";
+    
   }
 }

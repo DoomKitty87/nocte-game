@@ -9,6 +9,8 @@ namespace Console
     {
         [SerializeField] private GameObject _console;
 
+        private ConsoleUI _consoleUI;
+
         public KeyCode _consoleKey = KeyCode.BackQuote;
 
         private static Action _consoleOpen;
@@ -20,24 +22,36 @@ namespace Console
         public static event OnConsoleOpen ConsoleOpened;
         public static event OnConsoleClose ConsoleClosed;
 
+        public bool _enableCheats;
+
         private static Action _exitConsole;
         public static void RaiseExitConsole() => _exitConsole?.Invoke();
 
         List<IConsoleCommand> GetCommands() {
-            return new List<IConsoleCommand> {
+            List<IConsoleCommand> commands = new List<IConsoleCommand> {
                 new HelpCommand(),
                 new QuitCommand(),
                 new CloseCommand(),
                 new ClearCommand(),
-                new ReloadCommand(),
-                new LoadSceneCommand(),
-                new TimeScaleCommand(),
-                new NoclipCommand(),
                 new SeedCommand(),
                 new ShowFPSCommand(),
-                new MaxUpdatesCommand(),
+                new CheatsCommand() // Comment out this script to disable player cheats
                 // Commands here
             };
+
+            List<IConsoleCommand> cheatCommands = new List<IConsoleCommand>() {
+                new _ReloadCommand(),
+                new _LoadSceneCommand(),
+                new _TimeScaleCommand(),
+                new _MaxUpdatesCommand(),
+                new _NoclipCommand()
+                // Cheat commands here
+            };
+            
+            if (BackgroundInfo._enableCheats) 
+                commands.AddRange(cheatCommands);
+
+            return commands;
         }
 
         private void Awake() {
@@ -49,8 +63,12 @@ namespace Console
         }
 
         private void Start() {
+            _consoleUI = _console.GetComponentInChildren<ConsoleUI>();
+            
             CloseConsole();
 
+            ConsoleUI._reloadCommands += SetupConsoleComponents;
+            
             ConsoleOpened += ShowMouse;
             ConsoleClosed += HideMouse;
         }
@@ -71,6 +89,12 @@ namespace Console
         private void ReadKeyInput() {
             if (Input.GetKeyDown(_consoleKey))
                 SwapConsoleState();
+
+            if (_console.activeInHierarchy && Input.GetKeyDown(KeyCode.UpArrow)) 
+                _consoleUI.GetPreviousMessage(1);
+            
+            if (_console.activeInHierarchy && Input.GetKeyDown(KeyCode.DownArrow)) 
+                _consoleUI.GetPreviousMessage(-1);
         }
         
         private void SwapConsoleState() {
@@ -95,18 +119,6 @@ namespace Console
             _consoleClosed?.Invoke();
             if (ConsoleClosed != null)
                 ConsoleClosed();
-        }
-
-        public static void ResumeGame() {
-            _consoleClosed?.Invoke();
-            if (ConsoleClosed != null)
-                ConsoleClosed();
-        }
-
-        public static void PauseGame() {
-            _consoleOpen?.Invoke();
-            if (ConsoleOpened != null)
-                ConsoleOpened();
         }
 
         private void ShowMouse() {

@@ -202,12 +202,21 @@ public class PlayerController : MonoBehaviour
                 break;
         }
     }
-
+    
+    private bool _disableWorldGen;
     private void UpdateStates() {
-        _currentWaterHeight = _worldGen.GetWaterHeight(new Vector2(transform.position.x, transform.position.z));
+        if (!_disableWorldGen) {
+            if (_worldGen != null)
+                _currentWaterHeight = _worldGen.GetWaterHeight(new Vector2(transform.position.x, transform.position.z));
+            else
+                _disableWorldGen = true;
+        }
+
         if (State is PlayerStates.Frozen or PlayerStates.Noclip or PlayerStates.Grappling or PlayerStates.Driving)
             return;
-        if (_currentWaterHeight > transform.position.y - _collider.bounds.size.y / 2) SetState(PlayerStates.Swimming);
+        if (_currentWaterHeight > transform.position.y - _collider.bounds.size.y / 2
+            || WorldGenInfo._lakePlaneHeight > transform.position.y - _collider.bounds.size.y / 2)
+            SetState(PlayerStates.Swimming);
         else if (!_grounded)
             SetState(PlayerStates.Air);
         else if (Vector3.Distance(_velocity, Vector3.zero) < 0.1f && _inputVectorNormalized == Vector3.zero)
@@ -453,7 +462,8 @@ public class PlayerController : MonoBehaviour
                 _acceleration -= _velocity * _waterFrictionCoefficient;
 
 
-                _acceleration += Vector3.up * _swimmingBuoyantForce * Mathf.Max(_currentWaterHeight - (transform.position.y - _collider.bounds.size.y / 2), 0);
+                _acceleration += Vector3.up * (_swimmingBuoyantForce * 
+                                               Mathf.Max(_currentWaterHeight - (transform.position.y - _collider.bounds.size.y / 2), 0));
 
                 break;
             }
@@ -465,7 +475,7 @@ public class PlayerController : MonoBehaviour
             }
 
             case PlayerStates.Noclip: {
-                if (Camera.main == null) throw new ArgumentNullException("No camera tagged 'MainCamera' in scene.");
+                if (Camera.main == null) throw new NullReferenceException("No camera tagged 'MainCamera' in scene.");
                 Transform mainCamera = Camera.main.transform;
                 
                 Vector3 inputDirection =
@@ -477,7 +487,7 @@ public class PlayerController : MonoBehaviour
                 
                 // Horrible but funny
                 _velocity = inputDirection * 
-                            (_crouching ? (_sprinting ? _NoclipSpeed * 6 : _NoclipSpeed / 2 ) : 
+                            (_crouching ? (_sprinting ? _NoclipSpeed * 10 : _NoclipSpeed / 2 ) : 
                                 (_sprinting ? _NoclipSpeed * 3 : _NoclipSpeed));
                 
                 transform.Translate(_velocity * Time.fixedDeltaTime);
