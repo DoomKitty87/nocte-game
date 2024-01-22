@@ -81,6 +81,7 @@ public class PlayerController : MonoBehaviour
     
     private bool _jumping;
     private bool _resetJump;
+    private bool _sprintingForward;
     private bool _sprinting;
     private bool _crouching;
     private bool _grounded;
@@ -227,7 +228,7 @@ public class PlayerController : MonoBehaviour
             else
                 SetState(PlayerStates.Sliding);
         }
-        else if (_sprinting)
+        else if (_sprintingForward)
             SetState(PlayerStates.Sprinting);
         else
             SetState(PlayerStates.Walking);
@@ -239,8 +240,9 @@ public class PlayerController : MonoBehaviour
 
     private void GetInput() {
         _inputVectorNormalized = new Vector3(Input.GetAxisRaw("Horizontal"), 0, Input.GetAxisRaw("Vertical")).normalized;
-        _jumping = Input.GetKey(_jumpKey);
+        _jumping = (Input.GetKey(_jumpKey));
         _sprinting = Input.GetKey(_sprintKey);
+        _sprintingForward = (_sprinting && _inputVectorNormalized.z > 0); // Can only sprint when forward component in input
         _crouching = Input.GetKey(_crouchKey);
     }
     
