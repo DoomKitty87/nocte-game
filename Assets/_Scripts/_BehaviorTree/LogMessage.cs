@@ -22,13 +22,13 @@ namespace _Scripts._BehaviorTree
 		public override TreeNodeState Evaluate() {
 			switch (_type) {
 				case LogType.Info:
-					// Debug.Log(_message);
+					Debug.Log(_message);
 					break;
 				case LogType.Warning:
-					// Debug.LogWarning(_message);
+					Debug.LogWarning(_message);
 					break;
 				case LogType.Error:
-					// Debug.LogError(_message);
+					Debug.LogError(_message);
 					break;
 			}
 			_nodeState = TreeNodeState.SUCCESS;

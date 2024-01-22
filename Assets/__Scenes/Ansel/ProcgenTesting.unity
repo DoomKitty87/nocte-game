@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 183.08427, g: 70.8015, b: 35.09624, a: 1}
+  m_IndirectSpecularColor: {r: 183.99716, g: 70.85688, b: 35.338963, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -697,6 +697,11 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 850810823058456834, guid: 57f3e5c86d5d08340bfd78836e755977,
         type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: -0.080078125
+      objectReference: {fileID: 0}
+    - target: {fileID: 850810823058456834, guid: 57f3e5c86d5d08340bfd78836e755977,
+        type: 3}
       propertyPath: m_AnchoredPosition.y
       value: -0.030029297
       objectReference: {fileID: 0}
@@ -733,22 +738,47 @@ PrefabInstance:
     - target: {fileID: 1366857032744886350, guid: 57f3e5c86d5d08340bfd78836e755977,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 9.560974
+      value: 9.560913
+      objectReference: {fileID: 0}
+    - target: {fileID: 2468173212818895139, guid: 57f3e5c86d5d08340bfd78836e755977,
+        type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: -15
+      objectReference: {fileID: 0}
+    - target: {fileID: 2723715286849059325, guid: 57f3e5c86d5d08340bfd78836e755977,
+        type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: -0.080078125
       objectReference: {fileID: 0}
     - target: {fileID: 2723715286849059325, guid: 57f3e5c86d5d08340bfd78836e755977,
         type: 3}
       propertyPath: m_AnchoredPosition.y
       value: 0.030029297
       objectReference: {fileID: 0}
+    - target: {fileID: 3028316271841668011, guid: 57f3e5c86d5d08340bfd78836e755977,
+        type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -0.00012207031
+      objectReference: {fileID: 0}
+    - target: {fileID: 3927659459597289054, guid: 57f3e5c86d5d08340bfd78836e755977,
+        type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: -1.2119141
+      objectReference: {fileID: 0}
     - target: {fileID: 4103910878920669351, guid: 57f3e5c86d5d08340bfd78836e755977,
         type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 0.00012207031
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4726330389487030007, guid: 57f3e5c86d5d08340bfd78836e755977,
         type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 20.00061
+      value: 20.000488
+      objectReference: {fileID: 0}
+    - target: {fileID: 5680960991281712486, guid: 57f3e5c86d5d08340bfd78836e755977,
+        type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: -1.2089844
       objectReference: {fileID: 0}
     - target: {fileID: 5680960991281712486, guid: 57f3e5c86d5d08340bfd78836e755977,
         type: 3}
@@ -779,6 +809,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_characterSpacing
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8390822320394645873, guid: 57f3e5c86d5d08340bfd78836e755977,
+        type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: -1.2119141
       objectReference: {fileID: 0}
     - target: {fileID: 8390822320394645873, guid: 57f3e5c86d5d08340bfd78836e755977,
         type: 3}
@@ -888,7 +923,7 @@ PrefabInstance:
     - target: {fileID: 8770019730658008119, guid: 57f3e5c86d5d08340bfd78836e755977,
         type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: -1.2877197
+      value: -1.2875977
       objectReference: {fileID: 0}
     - target: {fileID: 8770019730658008119, guid: 57f3e5c86d5d08340bfd78836e755977,
         type: 3}
@@ -3315,6 +3350,7 @@ GameObject:
   - component: {fileID: 1563905647}
   - component: {fileID: 1563905646}
   - component: {fileID: 1563905653}
+  - component: {fileID: 1563905654}
   m_Layer: 0
   m_Name: Enemy
   m_TagString: Untagged
@@ -3374,7 +3410,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _updateType: 0
   _playerTransform: {fileID: 108523971}
-  _distanceChase: 75
+  _distanceChase: 20
   _distanceGoal: 2
   _range: 100
   _attacks: []
@@ -3510,6 +3546,32 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 80
   m_CollisionDetection: 1
+--- !u!114 &1563905654
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1563905645}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 91e9c5a72272c4bf79d6e5a9357dbb36, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _currentHealth: 0
+  _maxHealth: 0
+  _onHealthInitialize:
+    m_PersistentCalls:
+      m_Calls: []
+  _onHealthZero:
+    m_PersistentCalls:
+      m_Calls: []
+  _onHealthChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  _onDamage:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &1570415305
 GameObject:
   m_ObjectHideFlags: 0
