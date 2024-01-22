@@ -2,6 +2,7 @@ using System;
 using Unity.VisualScripting;
 using UnityEngine;
 using System.Collections.Generic;
+using System.Linq;
 using Unity.Mathematics;
 
 public class PlaceStructures : MonoBehaviour
@@ -18,6 +19,10 @@ public class PlaceStructures : MonoBehaviour
   [SerializeField] private GameObject _roadObject;
   [SerializeField] private float _centerOffsetRadiusAmplitude;
   [SerializeField] private float _heightCutoff;
+  [SerializeField] private float _roadResolution;
+  [SerializeField] private float _roadWidth;
+  [SerializeField] private float _roadDepth;
+  [SerializeField] private float _roadInset;
 
   private Vector3[] _structurePositions;
 
@@ -125,6 +130,32 @@ public class PlaceStructures : MonoBehaviour
         outPosition.y = _worldGen.GetHeightValue(new Vector2(outPosition.x, outPosition.z));
         s++;
       }
+
+      Vector2 mainPosition2 = new Vector2(mainPosition.x, mainPosition.z);
+      Vector2 outPosition2 = new Vector2(outPosition.x, outPosition.z);
+      int roadPoints = Mathf.FloorToInt(Vector2.Distance(mainPosition2, outPosition2) / _roadResolution);
+      Vector2[] roadPath = new Vector2[roadPoints + 2];
+      for (int j = 1; j < roadPoints + 1; j++) {
+        roadPath[j] = Vector2.Lerp(mainPosition2, outPosition2, (float) j / roadPoints);
+      }
+
+      roadPath[0] = mainPosition2;
+      roadPath[roadPoints + 1] = outPosition2;
+      Vector2[] roadPlane =
+        RoadGenerator.PlanePointsFromLine(roadPath, _roadWidth);
+      Vector3[] roadPlane3 = new Vector3[roadPlane.Length];
+      
+      for (int j = 0; j < roadPlane.Length; j++) {
+        roadPlane3[j] = new Vector3(roadPlane[j].x, _worldGen.GetHeightValue(roadPlane[j]), roadPlane[j].y);
+      }
+
+      Mesh road = RoadGenerator.MeshFromPlane(roadPlane3, _roadDepth, _roadInset);
+      GameObject obj = new GameObject();
+      obj.AddComponent<MeshFilter>().mesh = road;
+      obj.AddComponent<MeshRenderer>();
+      obj.AddComponent<MeshCollider>();
+      obj.name = "RoadSegment";
+      obj.transform.parent = transform;
       heighta = _worldGen.GetHeightValue(new Vector2(outPosition.x - 1, outPosition.z));
       heightb = _worldGen.GetHeightValue(new Vector2(outPosition.x + 1, outPosition.z));
       heightc = _worldGen.GetHeightValue(new Vector2(outPosition.x, outPosition.z - 1));

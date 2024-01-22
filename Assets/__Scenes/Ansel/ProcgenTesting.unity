@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 183.99716, g: 70.85688, b: 35.338963, a: 1}
+  m_IndirectSpecularColor: {r: 180.89339, g: 70.00831, b: 34.594337, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -3350,7 +3350,6 @@ GameObject:
   - component: {fileID: 1563905647}
   - component: {fileID: 1563905646}
   - component: {fileID: 1563905653}
-  - component: {fileID: 1563905654}
   m_Layer: 0
   m_Name: Enemy
   m_TagString: Untagged
@@ -3410,7 +3409,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _updateType: 0
   _playerTransform: {fileID: 108523971}
-  _distanceChase: 20
+  _distanceChase: 75
   _distanceGoal: 2
   _range: 100
   _attacks: []
@@ -3546,32 +3545,6 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 80
   m_CollisionDetection: 1
---- !u!114 &1563905654
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1563905645}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 91e9c5a72272c4bf79d6e5a9357dbb36, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _currentHealth: 0
-  _maxHealth: 0
-  _onHealthInitialize:
-    m_PersistentCalls:
-      m_Calls: []
-  _onHealthZero:
-    m_PersistentCalls:
-      m_Calls: []
-  _onHealthChanged:
-    m_PersistentCalls:
-      m_Calls: []
-  _onDamage:
-    m_PersistentCalls:
-      m_Calls: []
 --- !u!1 &1570415305
 GameObject:
   m_ObjectHideFlags: 0
@@ -4885,6 +4858,10 @@ MonoBehaviour:
     type: 3}
   _centerOffsetRadiusAmplitude: 5000
   _heightCutoff: 500
+  _roadResolution: 5
+  _roadWidth: 25
+  _roadDepth: 10
+  _roadInset: 3
 --- !u!114 &1849557963
 MonoBehaviour:
   m_ObjectHideFlags: 0

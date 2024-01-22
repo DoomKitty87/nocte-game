@@ -18,7 +18,8 @@ namespace _Scripts._Entities.Creatures.CreatureAI
 		private EnemyController _controller;
 		[SerializeField] private Transform _playerTransform;
 
-		[Header("Settings")]
+		[Header("Settings")] 
+		[SerializeField] private float _distanceAttack;
 		[SerializeField] private float _distanceChase;
 		[SerializeField] private float _distanceGoal;
 		[SerializeField] private float _range;
@@ -30,6 +31,11 @@ namespace _Scripts._Entities.Creatures.CreatureAI
 			_creatureCombat = gameObject.GetComponent<CreatureCombat>();
 			return new Noder(new List<TreeNode> {
 				new Selector(new List<TreeNode> {
+					new Sequencer (new List<TreeNode> {
+						new DistanceTransformLessThan(_transform, _playerTransform, _distanceAttack),
+						new SetState(_controller, EnemyController.PlayerStates.Idle),
+						//new UseAttack(_creatureCombat, _attacks)
+					}),
 					new Sequencer(new List<TreeNode> {  // checks if the enemy is close to the player and starts chasing
 						new DistanceTransformLessThan(_transform, _playerTransform, _distanceChase),
 						new FaceTransform(_transform, _playerTransform, true, false, true),
