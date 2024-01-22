@@ -213,10 +213,10 @@ public class RenderSingleGrass : MonoBehaviour
                 _grassTriangleBuffer.count,
                 instanceCount: _terrainTriangleCount * _numberOfBladesPerTri
             );
-         }
-         catch {
-             GenerateGrass();
-         }
+        }
+        catch {
+            GenerateGrass();
+        }
     }
     
     #endregion
