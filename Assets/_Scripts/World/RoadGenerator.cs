@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Mathematics;
 
 public static class RoadGenerator
 {
@@ -30,62 +31,66 @@ public static class RoadGenerator
   }
 
   public static Mesh MeshFromPlane(Vector3[] points, float depth, float inset) {
-    for (int i = 0; i < points.Length; i++) points[i] -= Vector3.up * inset;
 
     int pointCount = points.Length / 3;
     Vector3[] vertices = new Vector3[pointCount * 6];
+    int halfVerts = pointCount * 3;
+    for (int i = 0; i < points.Length; i++) {
+      points[i] -= Vector3.up * inset;
+      vertices[i] = points[i];
+      vertices[i + halfVerts] = points[i] + Vector3.up * depth;
+    }
     int[] triangles = new int[(pointCount - 1) * 36];
 
     for (int i = pointCount * 3; i < pointCount * 6; i++) vertices[i] += Vector3.up * depth;
-    int halfVerts = pointCount * 3;
     for (int i = 0; i < pointCount - 1; i++) {
-      triangles[i * 36] = i * 3 + 1;
+      triangles[i * 36] = i * 3 + 0;
       triangles[i * 36 + 1] = i * 3 + 3;
-      triangles[i * 36 + 2] = i * 3;
+      triangles[i * 36 + 2] = i * 3 + 1;
 
-      triangles[i * 36 + 3] = i * 3 + 1;
+      triangles[i * 36 + 3] = i * 3 + 3;
       triangles[i * 36 + 4] = i * 3 + 4;
-      triangles[i * 36 + 5] = i * 3 + 3;
+      triangles[i * 36 + 5] = i * 3 + 1;
 
-      triangles[i * 36 + 6] = i * 3 + 2;
+      triangles[i * 36 + 6] = i * 3 + 1;
       triangles[i * 36 + 7] = i * 3 + 4;
-      triangles[i * 36 + 8] = i * 3 + 1;
+      triangles[i * 36 + 8] = i * 3 + 2;
 
-      triangles[i * 36 + 9] = i * 3 + 2;
+      triangles[i * 36 + 9] = i * 3 + 4;
       triangles[i * 36 + 10] = i * 3 + 5;
-      triangles[i * 36 + 11] = i * 3 + 4;
+      triangles[i * 36 + 11] = i * 3 + 2;
 
-      triangles[i * 36 + 12] = i * 3;
+      triangles[i * 36 + 12] = i * 3 + halfVerts;
       triangles[i * 36 + 13] = i * 3 + 3;
-      triangles[i * 36 + 14] = i * 3 + halfVerts;
+      triangles[i * 36 + 14] = i * 3 + 0;
 
-      triangles[i * 36 + 15] = i * 3 + 3;
+      triangles[i * 36 + 15] = i * 3 + halfVerts;
       triangles[i * 36 + 16] = i * 3 + 3 + halfVerts;
-      triangles[i * 36 + 17] = i * 3 + halfVerts;
+      triangles[i * 36 + 17] = i * 3 + 0;
 
-      triangles[i * 36 + 18] = i * 3 + 5;
+      triangles[i * 36 + 18] = i * 3 + 2 + halfVerts;
       triangles[i * 36 + 19] = i * 3 + 2;
-      triangles[i * 36 + 20] = i * 3 + 2 + halfVerts;
+      triangles[i * 36 + 20] = i * 3 + 5;
 
-      triangles[i * 36 + 21] = i * 3 + 5;
+      triangles[i * 36 + 21] = i * 3 + 5 + halfVerts;
       triangles[i * 36 + 22] = i * 3 + 2 + halfVerts;
-      triangles[i * 36 + 23] = i * 3 + 5 + halfVerts;
+      triangles[i * 36 + 23] = i * 3 + 5;
 
-      triangles[i * 36 + 24] = i * 3 + halfVerts;
+      triangles[i * 36 + 24] = i * 3 + 1 + halfVerts;
       triangles[i * 36 + 25] = i * 3 + 3 + halfVerts;
-      triangles[i * 36 + 26] = i * 3 + 1 + halfVerts;
+      triangles[i * 36 + 26] = i * 3 + 0 + halfVerts;
       
-      triangles[i * 36 + 27] = i * 3 + 3 + halfVerts;
+      triangles[i * 36 + 27] = i * 3 + 1 + halfVerts;
       triangles[i * 36 + 28] = i * 3 + 4 + halfVerts;
-      triangles[i * 36 + 29] = i * 3 + 1 + halfVerts;
+      triangles[i * 36 + 29] = i * 3 + 3 + halfVerts;
 
-      triangles[i * 36 + 30] = i * 3 + 1 + halfVerts;
+      triangles[i * 36 + 30] = i * 3 + 2 + halfVerts;
       triangles[i * 36 + 31] = i * 3 + 4 + halfVerts;
-      triangles[i * 36 + 32] = i * 3 + 2 + halfVerts;
+      triangles[i * 36 + 32] = i * 3 + 1 + halfVerts;
 
-      triangles[i * 36 + 33] = i * 3 + 4 + halfVerts;
+      triangles[i * 36 + 33] = i * 3 + 2 + halfVerts;
       triangles[i * 36 + 34] = i * 3 + 5 + halfVerts;
-      triangles[i * 36 + 35] = i * 3 + 2 + halfVerts;
+      triangles[i * 36 + 35] = i * 3 + 4 + halfVerts;
     }
 
     Mesh msh = new Mesh();
