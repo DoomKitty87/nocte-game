@@ -23,6 +23,8 @@ public class PlaceStructures : MonoBehaviour
   [SerializeField] private float _roadWidth;
   [SerializeField] private float _roadDepth;
   [SerializeField] private float _roadInset;
+  [SerializeField] private float _roadWaterImpact;
+  [SerializeField] private float _roadNoiseAmplitude;
 
   private Vector3[] _structurePositions;
 
@@ -142,11 +144,11 @@ public class PlaceStructures : MonoBehaviour
       roadPath[0] = mainPosition2;
       roadPath[roadPoints + 1] = outPosition2;
       Vector2[] roadPlane =
-        RoadGenerator.PlanePointsFromLine(roadPath, _roadWidth);
+        RoadGenerator.PlanePointsFromLine(roadPath, _roadWidth, _roadNoiseAmplitude);
       Vector3[] roadPlane3 = new Vector3[roadPlane.Length];
       
       for (int j = 0; j < roadPlane.Length; j++) {
-        roadPlane3[j] = new Vector3(roadPlane[j].x, _worldGen.GetHeightValue(roadPlane[j]), roadPlane[j].y);
+        roadPlane3[j] = new Vector3(roadPlane[j].x, _worldGen.GetHeightValue(roadPlane[j]), roadPlane[j].y) + Vector3.up * _roadWaterImpact * _worldGen.GetRiverValue(roadPlane[j]);
       }
 
       Mesh road = RoadGenerator.MeshFromPlane(roadPlane3, _roadDepth, _roadInset);

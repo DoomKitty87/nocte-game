@@ -6,7 +6,7 @@ using Unity.Mathematics;
 public static class RoadGenerator
 {
 
-  public static Vector2[] PlanePointsFromLine(Vector2[] points, float width) {
+  public static Vector2[] PlanePointsFromLine(Vector2[] points, float width, float noiseAmplitude) {
 
     Vector2[] perpVectors = new Vector2[points.Length];
 
@@ -22,9 +22,10 @@ public static class RoadGenerator
 
     for (int i = 0; i < points.Length; i++) {
       perpVectors[i].Normalize();
-      outPoints[i * 3] = points[i] - perpVectors[i] * width;
+      float noiseValue = noise.snoise(new float2(points[i].x, points[i].y) * 0.001f) * noiseAmplitude;
+      outPoints[i * 3] = points[i] + perpVectors[i] * (-width + noiseValue);
       outPoints[i * 3 + 1] = points[i];
-      outPoints[i * 3 + 2] = points[i] + perpVectors[i] * width;
+      outPoints[i * 3 + 2] = points[i] + perpVectors[i] * (width + noiseValue);
     }
 
     return outPoints;
@@ -68,9 +69,9 @@ public static class RoadGenerator
       triangles[i * 36 + 16] = i * 3 + 3 + halfVerts;
       triangles[i * 36 + 17] = i * 3 + 0;
 
-      triangles[i * 36 + 18] = i * 3 + 2 + halfVerts;
+      triangles[i * 36 + 18] = i * 3 + 5;
       triangles[i * 36 + 19] = i * 3 + 2;
-      triangles[i * 36 + 20] = i * 3 + 5;
+      triangles[i * 36 + 20] = i * 3 + 2 + halfVerts;
 
       triangles[i * 36 + 21] = i * 3 + 5 + halfVerts;
       triangles[i * 36 + 22] = i * 3 + 2 + halfVerts;
