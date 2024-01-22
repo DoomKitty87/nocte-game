@@ -10,7 +10,6 @@ Shader "Custom/Outline/ExpandMaskAndCompositeOutline"
         _OutlineWidth("Outline Width", Range(0, 3)) = 0.1
         _InsideOutlineColor("Inside Outline Color", Color) = (0, 0, 0, 0)
         _TakeDiagonalSamples("Take Diagonal Samples", Range(0, 1)) = 1
-        _SmoothOutlineToWorldTransition("Smooth Outline/World Transition", Range(0, 1)) = 0
     }
     
     
@@ -91,6 +90,7 @@ Shader "Custom/Outline/ExpandMaskAndCompositeOutline"
         }
 
         float4 outputColor = float4(0,0,0,0);
+        // Never really smoothes anything out, just replaces if statement with a lerp
         outputColor = lerp(outputColor, float4(colorPlusOutlineWidth.rgb, 1), colorPlusOutlineWidth.a);
         outputColor = lerp(outputColor, _InsideOutlineColor, color.a);
         return outputColor;
