@@ -44,7 +44,8 @@ namespace Console
                 new _LoadSceneCommand(),
                 new _TimeScaleCommand(),
                 new _MaxUpdatesCommand(),
-                new _NoclipCommand()
+                new _NoclipCommand(),
+                new _SetPlayerVarCommand()
                 // Cheat commands here
             };
             
