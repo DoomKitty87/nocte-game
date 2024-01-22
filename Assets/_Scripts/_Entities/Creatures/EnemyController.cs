@@ -1,246 +1,409 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-namespace _Scripts._Entities.Creatures 
+public class EnemyController : MonoBehaviour
 {
-    public class EnemyController : MonoBehaviour
-    {
-        public bool CanMove { get; private set; } = true;
-
-        [SerializeField] private Transform _orientation;
-        private Rigidbody _rb;
-
-        [Space(10)] 
-        [Header("General")] 
-        [SerializeField] private float _gravity = 15f;
-        [SerializeField] private float _friction = 0.2f;
-        public bool _useGravity = true;
-
-        public float Gravity {
-            get {
-                return Physics.gravity.y;
-            }
-            set
-            {
-                Physics.gravity = Vector3.down * value;
-            }
-        }
-        
-        [Space(10)]
-        [Header("Moving")] 
-        [SerializeField] private float _moveSpeed = 4500f;
-        [SerializeField] private float _maxGroundedSpeed = 20f;
-        [SerializeField] private float _maxAirSpeed = 30f; // I kind of like the idea of having a unbounded max air speed
-        [SerializeField] private LayerMask _ground;
-        [HideInInspector] public bool _grounded;
-        public bool _useGroundFriction = true;
-
-        [SerializeField] private float _centerMovement = 0.175f;
-        private float _threshold = 0.01f;
-        [SerializeField] private float _maxSlopeAngle = 35;
-
-        [Space(10)] 
-        [Header("Crouching")] 
-        [SerializeField] private float _slideForce = 400f;
-        [SerializeField] private float _minimumSlideMomentum = 0.5f;
-        private Vector3 _crouchScale = new Vector3(1f, 0.5f, 1f);
-        private Vector3 _playerScale;
-
-        [Space(10)] 
-        [Header("Jumping")] 
-        [SerializeField] private float _jumpForce = 550f;
-        [SerializeField] private float _jumpCooldown = 0.25f;
-        private bool _readyToJump = true;
-        
-        // Input
-        private Vector3 _inputVector;
-        private bool _jumpKey, _crouchKey;
-        private bool _jumping, _sprinting, _crouching;
-
-        // Sliding
-        private Vector3 _normalVector = Vector3.up;
-        private Vector3 _wallNormalVector;
-
-        public void CreateInput(Vector3 vector) {
-            _inputVector = vector;
-        }
-        
-        private Vector2 FindVelRelativeToLook() {
-            float lookAngle = _orientation.transform.eulerAngles.y;
-            float moveAngle = Mathf.Atan2(_rb.velocity.x, _rb.velocity.z) * Mathf.Rad2Deg;
-
-            float u = Mathf.DeltaAngle(lookAngle, moveAngle);
-            float v = 90 - u;
-
-            float magnitude = _rb.velocity.magnitude;
-            float yMag = magnitude * Mathf.Cos(u * Mathf.Deg2Rad);
-            float xMag = magnitude * Mathf.Cos(v * Mathf.Deg2Rad);
-            
-            return new Vector2(xMag, yMag);
-        }
-        
-        private void CalculateFriction(float x, float y, Vector2 magnitude) {
-            if (!_grounded || _jumping) return;
-
-            if (_crouching) {
-                _rb.AddForce(_moveSpeed * Time.deltaTime * _friction * -_rb.velocity.normalized);
-                return;
-            }
-
-            //Counter movement
-            if (Math.Abs(magnitude.x) > _threshold && Math.Abs(x) < 0.05f || (magnitude.x < -_threshold && x > 0) || (magnitude.x > _threshold && x < 0)) {
-                _rb.AddForce(_moveSpeed * Time.deltaTime * -magnitude.x * _friction * _orientation.transform.right);
-            }
-            if (Math.Abs(magnitude.y) > _threshold && Math.Abs(y) < 0.05f || (magnitude.y < -_threshold && y > 0) || (magnitude.y > _threshold && y < 0)) {
-                _rb.AddForce(_moveSpeed * Time.deltaTime * -magnitude.y * _friction * _orientation.transform.forward);
-            }
-            
-            //Limit diagonal running. This will also cause a full stop if sliding fast and un-crouching, so not optimal.
-            if (Mathf.Sqrt((Mathf.Pow(_rb.velocity.x, 2) + Mathf.Pow(_rb.velocity.z, 2))) > _maxGroundedSpeed) {
-                float fallSpeed = _rb.velocity.y;
-                Vector3 newVelocity = _rb.velocity.normalized * _maxGroundedSpeed;
-                _rb.velocity = new Vector3(newVelocity.x, fallSpeed, newVelocity.z);
-            }
-        }
-        
-        private void CorrectForSlope(ref Vector3 vector) {
-            Physics.Raycast(transform.position, Vector3.down, out RaycastHit hit, 2);
-            Vector3 slopeNormal = hit.normal;
-            
-            Vector3 fixedVector = Vector3.ProjectOnPlane(vector, slopeNormal).normalized;
-
-            vector = fixedVector;
-        }
-
-        private void ClampMaximumVelocity(ref Vector3 vector) {
-            
-            Vector2 vectorNormalized = vector.normalized;
-
-            float magnitude = Mathf.Clamp(vector.magnitude, 0, _maxGroundedSpeed);
-            Vector2 clampedVelocity = vectorNormalized * magnitude;
-            vector = clampedVelocity;
-        }
-        
-        private void Awake() {
-            _rb = GetComponent<Rigidbody>();
-        }
-
-        private void Start() {
-            _rb.useGravity = false;
-            Gravity = _gravity;
-            _playerScale = transform.localScale;
-        }
-
-        public void SetInputVector(Vector3 inputVector) {
-            _inputVector = inputVector;
-        }
-        
-        private void FixedUpdate() {
-            HandleMovement();
-            
-            // Debug for horizontal velocity
-            // Debug.Log($"Velocity: " + new Vector3(_rb.velocity.x, 0f, _rb.velocity.z).magnitude, gameObject);
-        }
-
-        private void HandleMovement() {
-            if (_useGravity) _rb.AddForce(Physics.gravity, ForceMode.Acceleration);
-            
-            Vector2 magnitude = FindVelRelativeToLook();
-            
-            // CalculateFriction(_inputVector.x, _inputVector.z, magnitude);
-            
-            if (_grounded && _readyToJump && _jumping) Jump();
-            
-            if (_crouching && _grounded && _readyToJump) {
-                _rb.AddForce(Time.deltaTime * 3000 * Vector3.down);
-                return;
-            }
-            
-            // If speed is larger than maxspeed, cancel out the input so you don't go over max speed
-            // ClampMaximumVelocity(ref _inputVector);
-            
-            // Movement in air
-            if (!_grounded) {
-                AirMovement(ref _inputVector);
-            } else {        
-                CorrectForSlope(ref _inputVector);
-            }
-            
-            //Apply forces to move player
-            _rb.AddForce(_moveSpeed * Time.deltaTime * (_orientation.transform.rotation * _inputVector));
-        }
-        
-        private void AirMovement(ref Vector3 moveVector) {
-            Vector3 vector = new Vector3(moveVector.x, 0, moveVector.y);
-            Vector3 projVel = Vector3.Project(_rb.velocity, vector);
-            bool isAway = Vector3.Dot(vector, projVel) <= 0f;
-
-            if (projVel.magnitude < _maxAirSpeed || isAway)
-            {
-                Vector3 vc = vector.normalized * _maxAirSpeed;
-                if (!isAway)
-                    vc = Vector3.ClampMagnitude(vc, _maxGroundedSpeed - projVel.magnitude);
-                else
-                    vc = Vector3.ClampMagnitude(vc, _maxGroundedSpeed + projVel.magnitude);
-
-                moveVector = vc * Time.deltaTime;
-            }
-        }
-
-        private void Jump() {
-            _readyToJump = false;
-
-            Vector3 velocity =_rb.velocity;
-            if (velocity.y <= 0) _rb.velocity = new Vector3(velocity.x, 0f, velocity.z);
-            
-            // Sort of arbitrary values that cause player to jump in direction of ground normal
-            _rb.AddForce(_jumpForce * 1.5f * Vector3.up);
-            _rb.AddForce(_jumpForce * 0.5f * _normalVector);
-            
-            Invoke(nameof(ResetJump), _jumpCooldown);
-        }
-
-        private void ResetJump() { _readyToJump = true; }
-        
-        private bool IsFloor(Vector3 v) {
-            float angle = Vector3.Angle(Vector3.up, v);
-            return angle < _maxSlopeAngle;
-        }
-        
-        private bool _cancellingGrounded;
-        private void OnCollisionStay(Collision other) {
-            // If gravity is turned off, shouldn't slow down player
-            if (!_useGravity) return;
-            if (!_useGroundFriction) return;
-            
-            // Make sure we are only checking for walkable layers
-            int layer = other.gameObject.layer;
-            if (_ground != (_ground | (1 << layer))) return;
-            
-            // Iterate through every collision in a physics update
-            for (int i = 0; i < other.contactCount; i++) {
-                Vector3 normal = other.contacts[i].normal;
-                if (IsFloor(normal)) {
-                    _grounded = true;
-                    _cancellingGrounded = false;
-                    _normalVector = normal;
-                    CancelInvoke(nameof(StopGrounded));
-                }
-            }
-            
-            // Invoke ground/wall cancel, since we can't check normals with CollisionExit
-            float delay = 3f;
-            if (!_cancellingGrounded) {
-                _cancellingGrounded = true;
-                Invoke(nameof(StopGrounded), Time.deltaTime * delay);
-            }
-        }
-        
-        private void StopGrounded() { _grounded = false; }
-
-        public void ResetGravity() { Gravity = _gravity; }
-
+    
+    #region Exposed Variables
+    
+    [HideInInspector] public bool _disableMovement;
+    
+    [Header("State")]
+    [SerializeField, Tooltip("Player's current state")] private PlayerStates _state;
+    public PlayerStates State {
+        get => _state;
+        set => SetState(value);
     }
+
+    [Header("References")]
+    [SerializeField, Tooltip("Player's local")] private Transform _orientation;
+    
+    [Header("Movement")]
+    [SerializeField, Tooltip("Default walk speed on ground")] private float _walkSpeed;
+    [SerializeField, Tooltip("Sprint speed on ground")] private float _sprintSpeed;
+    [SerializeField, Tooltip("Crouching speed on ground")] private float _crouchSpeed;
+    [SerializeField, Tooltip("Air speed")] private float _airMoveSpeed;
+    [SerializeField, Tooltip("Slide/Crouch threshold")] private float _slideThreshold;
+    [SerializeField, Tooltip("Velocity at which player can accelerate towards")] private float _airSpeedThreshold;
+    [SerializeField, Tooltip("Jump force")] private float _jumpForce;
+    [SerializeField, Tooltip("Gravity, positive is downwards")] private float _gravity;
+    [SerializeField, Tooltip("Friction force")] private float _frictionCoefficient;
+    [SerializeField, Tooltip("Friction force while sliding")] private float _slidingFrictionCoefficient;
+    [SerializeField, Tooltip("Max angle at which ground is recognized as walkable")] private float _maxSlopeAngle;
+    
+    [Header("Vectors")]
+    [SerializeField, Tooltip("Current position")] private Vector3 _position;
+    [SerializeField, Tooltip("Current velocity")] private Vector3 _velocity;
+    [SerializeField, Tooltip("Current acceleration")] private Vector3 _acceleration;
+    [SerializeField, Tooltip("Normal of ground")] private Vector3 _normalVector;
+    [SerializeField] private float _velocityMagnitude;
+    [SerializeField] private float _horizontalVelocityMagnitude;
+    
+    [Header("Ground")]
+    [SerializeField, Tooltip("Layer for ground")] private LayerMask _groundMask;
+    
+    [Header("Keybinds")]
+    public KeyCode _jumpKey = KeyCode.Space;
+    public KeyCode _sprintKey = KeyCode.LeftShift;
+    public KeyCode _crouchKey = KeyCode.LeftControl;
+    
+    #endregion
+    
+    #region Hidden Variables
+
+    private Rigidbody _rb;
+    
+    private bool _jumping;
+    private bool _resetJump;
+    private bool _sprinting;
+    private bool _crouching;
+    private bool _grounded;
+    private bool _useVelocity = true;
+    private bool _useGravity = true;
+    
+    private Vector3 _inputVectorNormalized;
+    
+    private Vector3 _horizontalVelocity;
+    private Vector3 _horizontalAcceleration;
+
+    private Transform _parent;
+
+    private Vector3 _goalPos;
+    
+    public enum PlayerStates
+    {
+        Idle,
+        Walking,
+        Sprinting,
+        Crouching,
+        Sliding,
+        Air,
+        Grappling,
+        Driving,
+        Frozen,
+        NoClip
+    }
+
+    #endregion
+
+    private void Awake() {
+        _rb = GetComponent<Rigidbody>();
+    }
+    
+    #region State Machine
+    
+    public void SetState(PlayerStates newState) {
+        
+        // Exiting state
+        switch (_state) {
+            case PlayerStates.Air:
+                _resetJump = true;
+                break; 
+            
+            case PlayerStates.Grappling:
+                _useVelocity = true;
+                break;
+            
+            case PlayerStates.Driving:
+                _useVelocity = true;
+                _useGravity = true;
+                break;
+        }
+
+        _state = newState;
+
+        // Entering new state
+        switch (_state) {
+            case PlayerStates.Grappling:
+                _useVelocity = false;
+                break;
+            
+            case PlayerStates.Driving:
+                _useVelocity = false;
+                _useGravity = false;
+                break;
+        }
+    }
+
+    private void UpdateStates() {
+        if (State is PlayerStates.Frozen or PlayerStates.NoClip or PlayerStates.Grappling or PlayerStates.Driving)
+            return;
+        
+        if (!_grounded)
+            SetState(PlayerStates.Air);
+        else if (Vector3.Distance(_velocity, Vector3.zero) < 0.1f && _inputVectorNormalized == Vector3.zero)
+            SetState(PlayerStates.Idle);
+        else if (_crouching) {
+            if (_horizontalVelocityMagnitude < _slideThreshold)
+                SetState(PlayerStates.Crouching);
+            else
+                SetState(PlayerStates.Sliding);
+        }
+        else if (_sprinting)
+            SetState(PlayerStates.Sprinting);
+        else
+            SetState(PlayerStates.Walking);
+    }
+    
+    #endregion
+    
+    #region Input
+
+    public void SetInputVector(Vector3 inputVector) {
+        _inputVectorNormalized = inputVector;
+    }
+
+    public void SetGoalPos(Vector2 goalPos) {
+        _goalPos = goalPos;
+    }
+    
+    public Vector2 GetGoalPos() {
+        return _goalPos;
+    }
+    
+    #endregion
+    
+    #region Collisions
+
+    private bool _cancellingGrounded;
+    private void OnCollisionStay(Collision other) {
+        // Make sure we are only checking for walkable layers
+        int layer = other.gameObject.layer;
+        if (_groundMask != (_groundMask | (1 << layer))) return;
+        
+        // Iterate through every collision in a physics update
+        for (int i = 0; i < other.contactCount; i++) {
+            Vector3 normal = other.contacts[i].normal;
+            if (IsFloor(normal)) {
+                _grounded = true;
+                _cancellingGrounded = false;
+                _normalVector = normal;
+                CancelInvoke(nameof(StopGrounded));
+            }
+        }
+        
+        // Invoke ground/wall cancel, since we can't check normals with CollisionExit
+        const float delay = 3f;
+        if (!_cancellingGrounded) {
+            _cancellingGrounded = true;
+            Invoke(nameof(StopGrounded), Time.deltaTime * delay);
+        }
+    }
+    
+    private bool IsFloor(Vector3 v) {
+        float angle = Vector3.Angle(Vector3.up, v);
+        return angle < _maxSlopeAngle;
+    }
+    
+    #endregion
+
+    #region Update
+
+    private void Update() {
+        UpdateStates();
+    }
+
+    private void FixedUpdate() {
+        Move();
+    }
+    
+    void OnDrawGizmos() {
+        Gizmos.color = Color.yellow;
+        Gizmos.DrawSphere(new Vector3(_goalPos.x, transform.position.y, _goalPos.y), 1);
+    }
+
+    #endregion
+    
+    #region Movement
+    private void Move() {
+        if (_disableMovement) return;
+        
+        _position = transform.position;
+        _velocity = _rb.velocity;
+        _horizontalVelocity = new Vector3(_velocity.x, 0, _velocity.z);
+
+        _acceleration = Vector3.zero;
+        _horizontalAcceleration = Vector3.zero;
+
+        _velocityMagnitude = _velocity.magnitude;
+        _horizontalVelocityMagnitude = _horizontalVelocity.magnitude;
+
+        Vector3 forwardDirection = _orientation.forward;
+        Vector3 rightDirection = _orientation.right;
+
+        switch (State) {
+            case PlayerStates.Walking: {
+                // Transform the input vector to the orientation's forward and right directions
+                Vector3 inputDirection =
+                    (_inputVectorNormalized.x * rightDirection + _inputVectorNormalized.z * forwardDirection).
+                    normalized;
+
+                // Fixed movement for slope                
+                Vector3 fixedVector = Vector3.ProjectOnPlane(inputDirection, _normalVector).normalized;
+
+                _acceleration += fixedVector * _walkSpeed;
+
+                // Friction
+                _acceleration -= Vector3.ProjectOnPlane(_velocity, _normalVector) * _frictionCoefficient;
+
+                if (_jumping && _resetJump) {
+                    _acceleration += _jumpForce * Vector3.up;
+                    _jumping = false;
+                    _resetJump = false;
+                }
+
+                break;
+            }
+            
+            case PlayerStates.Sprinting: {
+                // Transform the input vector to the orientation's forward and right directions
+                Vector3 inputDirection =
+                    (_inputVectorNormalized.x * rightDirection + _inputVectorNormalized.z * forwardDirection).
+                    normalized;
+
+                // Fixed movement for slope                
+                Vector3 fixedVector = Vector3.ProjectOnPlane(inputDirection, _normalVector).normalized;
+
+                _acceleration += fixedVector * _sprintSpeed;
+
+                // Friction
+                _acceleration -= Vector3.ProjectOnPlane(_velocity, _normalVector) * _frictionCoefficient;
+
+                if (_jumping && _resetJump) {
+                    _acceleration += _jumpForce * Vector3.up;
+                    _jumping = false;
+                    _resetJump = false;
+                }
+
+                break;
+            }
+            
+            case PlayerStates.Crouching: {
+                // Transform the input vector to the orientation's forward and right directions
+                Vector3 inputDirection =
+                    (_inputVectorNormalized.x * rightDirection + _inputVectorNormalized.z * forwardDirection).
+                    normalized;
+
+                // Fixed movement for slope                
+                Vector3 fixedVector = Vector3.ProjectOnPlane(inputDirection, _normalVector).normalized;
+
+                _acceleration += fixedVector * _crouchSpeed;
+
+                // Friction
+                _acceleration -= Vector3.ProjectOnPlane(_velocity, _normalVector) * _frictionCoefficient;
+
+                if (_jumping && _resetJump) {
+                    _acceleration += _jumpForce * Vector3.up;
+                    _jumping = false;
+                    _resetJump = false;
+                }
+
+                break;
+            }
+
+            case PlayerStates.Sliding: {
+                // Note that gravity applies some friction to movement already
+                
+                _acceleration -= Vector3.ProjectOnPlane(_velocity, _normalVector) * _slidingFrictionCoefficient;
+                
+                if (_jumping && _resetJump) {
+                    _acceleration += _jumpForce * Vector3.up;
+                    _jumping = false;
+                    _resetJump = false;
+                }
+                
+                break;
+            }
+            
+            case PlayerStates.Idle: {
+
+                // Friction
+                _acceleration -= Vector3.ProjectOnPlane(_velocity, _normalVector) * _frictionCoefficient;
+
+                if (_jumping && _resetJump) {
+                    _acceleration += _jumpForce * Vector3.up;
+                    _jumping = false;
+                    _resetJump = false;
+                }
+
+                break;
+            }
+
+            case PlayerStates.Air: {
+                // Transform the input vector to the orientation's forward and right directions
+                Vector3 inputDirection =
+                    (_inputVectorNormalized.x * rightDirection + _inputVectorNormalized.z * forwardDirection).
+                    normalized;
+                
+                // 4 different cases:
+                if (_horizontalVelocityMagnitude < _airSpeedThreshold) {
+                    if ((_horizontalVelocity + inputDirection * _airMoveSpeed).magnitude > _airSpeedThreshold) {
+                        // Case 1: Previous velocity is less then cutoff and new velocity is less then cutoff.
+                        // New velocity is calculated normally
+                        _acceleration += inputDirection * _airMoveSpeed;
+                    }
+                    else {
+                        // Case 2: Previous velocity is less then cutoff and new velocity is more then cutoff.
+                        // New velocity capped at cutoff
+                        Vector3 newVelocity = _horizontalVelocity + inputDirection * _airMoveSpeed;
+                        Vector3 cappedNewVelocity = Vector3.ClampMagnitude(newVelocity, _airSpeedThreshold);
+                        Vector3 acceleration = cappedNewVelocity - _horizontalVelocity;
+                        _acceleration += acceleration;
+                    }
+                }
+                else {
+                    if ((_horizontalVelocity + inputDirection * _airMoveSpeed).magnitude < _airSpeedThreshold) {
+                        // Case 3: Previous velocity is more then cutoff and new velocity is less then cutoff.
+                        // New velocity is calculated normally
+                        _acceleration += inputDirection * _airMoveSpeed;
+                    }
+                    else {
+                        // Case 4: Previous velocity is more then cutoff and new velocity ism ore then cutoff.
+                        // New velocity is capped at previous velocity magnitude
+                        Vector3 newVelocity = _horizontalVelocity + inputDirection * _airMoveSpeed;
+                        Vector3 cappedNewVelocity = Vector3.ClampMagnitude(newVelocity, _horizontalVelocityMagnitude);
+                        Vector3 acceleration = cappedNewVelocity - _horizontalVelocity;
+                        _acceleration += acceleration;
+                    }
+                }
+                
+                break;
+            }
+
+            case PlayerStates.Driving: {
+                transform.position = _parent.position;
+                
+                break;
+            }
+        }
+    
+        // Apply gravity
+        if (_useGravity)
+            _acceleration += _gravity * Time.fixedDeltaTime * Vector3.down;
+        
+        // Apply forces
+        // Boolean used for cases when rb.AddForce is required
+        if (_useVelocity)
+            _rb.velocity = _velocity + _acceleration;
+    }
+
+    #endregion
+    
+    #region Public functions
+    
+    public void SetPosition(Vector3 position) {
+        transform.position = position;
+    }
+
+    public void SetParent(Transform parent) {
+        _parent = parent;
+    }
+    
+    #endregion
+    
+    #region Helper functions
+    
+    private void  StopGrounded() { _grounded = false; }
+    
+    #endregion
+    
 }

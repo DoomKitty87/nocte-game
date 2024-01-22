@@ -31,6 +31,10 @@ public class RifleScript : WeaponScript
     Debug.LogError($"{gameObject.name} RifleScript: Could not find mainCamera!");
     return Vector3.zero;
   }
+
+  public override (float, float) GetAmmo {
+    get { return (_ammo, _maxAmmo); }
+  }
   
   private void RaycastBullet() {
     _timeSinceLastShot = 0;

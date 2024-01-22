@@ -35,6 +35,8 @@ public class WeatherManager : MonoBehaviour
   [SerializeField] private VisualEffect _asteroidEffect;
   [SerializeField] private int _frameUpdateDelay;
   [SerializeField] private int _frameUpdateDelay2;
+  [SerializeField] private Vector3 _sunAxis;
+  [SerializeField] private float _spaceFactorInitial;
   
 
   // X value represents day cycle, Y represents cloud density, and Z represents rain density.
@@ -55,6 +57,7 @@ public class WeatherManager : MonoBehaviour
   private int _updateCounter2;
 
   private void Start() {
+    _spacePhase = _spaceFactorInitial;
     _sunInitRot = _sunTransform.localRotation;
     _seed = (int)_worldGenerator.GetSeedHash();
     _weatherPhases = new Vector2(Mathf.PerlinNoise(_seed, _seed), Mathf.PerlinNoise(-_seed, -_seed));
@@ -87,7 +90,7 @@ public class WeatherManager : MonoBehaviour
       _updateCounter2++;
     } else {
       _updateCounter2 = 0;
-      _sunTransform.localRotation = Quaternion.AngleAxis(_weatherState.x * 360, Vector3.right) * _sunInitRot;
+      _sunTransform.localRotation = Quaternion.AngleAxis(_weatherState.x * 360, _sunAxis) * _sunInitRot;
       _physicalSky.spaceRotation.value = Quaternion.AngleAxis(_spacePhase * 360, _spaceRotationAxis).eulerAngles;
     }
     if (_updateCounter < _frameUpdateDelay) {
