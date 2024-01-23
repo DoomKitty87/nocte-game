@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 180.89339, g: 70.00831, b: 34.594337, a: 1}
+  m_IndirectSpecularColor: {r: 183.39378, g: 70.58206, b: 35.19254, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -3409,6 +3409,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _updateType: 0
   _playerTransform: {fileID: 108523971}
+  _distanceAttack: 0
   _distanceChase: 75
   _distanceGoal: 2
   _range: 100
@@ -4860,8 +4861,12 @@ MonoBehaviour:
   _heightCutoff: 500
   _roadResolution: 5
   _roadWidth: 25
-  _roadDepth: 10
-  _roadInset: 3
+  _roadDepth: 0.55
+  _roadInset: 0.5
+  _roadWaterImpact: 25
+  _roadNoiseAmplitude: 50
+  _roadMaterial: {fileID: 6042089382233289012, guid: 019e37aa992760745adb1abfec451b9d,
+    type: 3}
 --- !u!114 &1849557963
 MonoBehaviour:
   m_ObjectHideFlags: 0

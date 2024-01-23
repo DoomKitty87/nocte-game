@@ -25,6 +25,7 @@ public class PlaceStructures : MonoBehaviour
   [SerializeField] private float _roadInset;
   [SerializeField] private float _roadWaterImpact;
   [SerializeField] private float _roadNoiseAmplitude;
+  [SerializeField] private Material _roadMaterial;
 
   private Vector3[] _structurePositions;
 
@@ -154,7 +155,7 @@ public class PlaceStructures : MonoBehaviour
       Mesh road = RoadGenerator.MeshFromPlane(roadPlane3, _roadDepth, _roadInset);
       GameObject obj = new GameObject();
       obj.AddComponent<MeshFilter>().mesh = road;
-      obj.AddComponent<MeshRenderer>();
+      obj.AddComponent<MeshRenderer>().material = _roadMaterial;
       obj.AddComponent<MeshCollider>();
       obj.name = "RoadSegment";
       obj.transform.parent = transform;
