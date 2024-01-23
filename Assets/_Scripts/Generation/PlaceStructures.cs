@@ -147,12 +147,15 @@ public class PlaceStructures : MonoBehaviour
       Vector2[] roadPlane =
         RoadGenerator.PlanePointsFromLine(roadPath, _roadWidth, _roadNoiseAmplitude);
       Vector3[] roadPlane3 = new Vector3[roadPlane.Length];
-      
+      Color[] roadVertexColors = new Color[roadPlane.Length * 2];
       for (int j = 0; j < roadPlane.Length; j++) {
         roadPlane3[j] = new Vector3(roadPlane[j].x, _worldGen.GetHeightValue(roadPlane[j]), roadPlane[j].y) + Vector3.up * _roadWaterImpact * _worldGen.GetRiverValue(roadPlane[j]);
+        roadVertexColors[j] = new Color(_worldGen.GetRiverValue(roadPlane[j]), 0, 0, 0);
+        roadVertexColors[j + roadPlane.Length] = new Color(_worldGen.GetRiverValue(roadPlane[j]), 0, 0, 0);
       }
 
       Mesh road = RoadGenerator.MeshFromPlane(roadPlane3, _roadDepth, _roadInset);
+      road.colors = roadVertexColors;
       GameObject obj = new GameObject();
       obj.AddComponent<MeshFilter>().mesh = road;
       obj.AddComponent<MeshRenderer>().material = _roadMaterial;

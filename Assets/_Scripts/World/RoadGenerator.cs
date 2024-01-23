@@ -37,9 +37,8 @@ public static class RoadGenerator
     Vector3[] vertices = new Vector3[pointCount * 6];
     int halfVerts = pointCount * 3;
     for (int i = 0; i < points.Length; i++) {
-      points[i] -= Vector3.up * inset;
-      vertices[i] = points[i];
-      vertices[i + halfVerts] = points[i] + Vector3.up * depth;
+      vertices[i] = points[i] - Vector3.up * inset;
+      vertices[i + halfVerts] = points[i] + Vector3.up * depth - Vector3.up * inset;
     }
     int[] triangles = new int[(pointCount - 1) * 36 + 24];
 
@@ -130,6 +129,7 @@ public static class RoadGenerator
     msh.vertices = vertices;
     msh.triangles = triangles;
     msh.RecalculateNormals();
+    msh.RecalculateTangents();
 
     return msh;
   }
