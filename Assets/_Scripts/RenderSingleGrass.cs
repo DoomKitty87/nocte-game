@@ -203,18 +203,19 @@ public class RenderSingleGrass : MonoBehaviour
         }
         
         if (!_enableGrass) return;
-
+        
         // Is this slow?
         try {
             Graphics.RenderPrimitivesIndexed(
                 _rp,
                 MeshTopology.Triangles,
                 _grassTriangleBuffer,
-                _grassTriangleBuffer.count,
+                _grassTriangleBuffer.count, 
                 instanceCount: _terrainTriangleCount * _numberOfBladesPerTri
             );
         }
         catch {
+            Debug.Log("Not Rendering Grass This Frame Due To GPU Instance Error, regenerating grass");
             GenerateGrass();
         }
     }
