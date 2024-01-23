@@ -10,7 +10,7 @@ public static class AmalgamNoise
 {
 
   [BurstCompile]
-  private struct NoiseJob : IJobParallelFor
+  public struct NoiseJob : IJobParallelFor
   {
 
     [ReadOnly] public int size;
@@ -200,7 +200,7 @@ public static class AmalgamNoise
   }
 
   [BurstCompile]
-  private struct RiverJob : IJobParallelFor
+  public struct RiverJob : IJobParallelFor
   {
 
     [ReadOnly] public float size;

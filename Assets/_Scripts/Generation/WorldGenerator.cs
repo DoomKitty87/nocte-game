@@ -13,6 +13,7 @@ using Unity.Burst;
 using Unity.Collections;
 using UnityEngine.Rendering;
 using IEnumerator = System.Collections.IEnumerator;
+using static AmalgamNoise;
 
 public class WorldGenerator : MonoBehaviour
 {
@@ -574,6 +575,220 @@ public class WorldGenerator : MonoBehaviour
     // Implement idk
   }
 
+  private IEnumerator UpdateTileJobs(int index) {
+    int x = _tilePool[index].x;
+    int z = _tilePool[index].z;
+    int lodFactor = (int) Mathf.Pow(2, _tilePool[index].currentLOD);
+    if (_size * lodFactor * _size * lodFactor > 65000) {
+        _tilePool[index].mesh.indexFormat = UnityEngine.Rendering.IndexFormat.UInt32;
+    }
+    float maxDistance = Mathf.Sqrt(Mathf.Pow(Mathf.Abs(x - _playerXChunkScale), 2) + Mathf.Pow(Mathf.Abs(z - _playerZChunkScale), 2));
+    int tmpSize = _size * lodFactor + 5;
+    float tmpRes = _resolution / lodFactor;
+    NativeArray<float> output = new NativeArray<float>(tmpSize * tmpSize, Allocator.TempJob);
+    NoiseJob job = new NoiseJob {
+      size = tmpSize,
+      overlap = 1,
+      xOffset = x * _size * _resolution + _seed,
+      zOffset = z * _seed * _resolution + _seed,
+      xResolution = tmpRes,
+      zResolution = tmpRes,
+      octaves = _noiseParameters.octaves,
+      lacunarity = _noiseParameters.lacunarity,
+      persistence = _noiseParameters.persistence,
+      sharpnessScale = 1f / _noiseParameters.sharpnessScale,
+      sharpnessAmplitude = _noiseParameters.sharpnessAmplitude,
+      sharpnessMean = _noiseParameters.sharpnessMean,
+      scaleScale = 1f / _noiseParameters.scaleScale,
+      scaleAmplitude = _noiseParameters.scaleAmplitude,
+      scaleMean = _noiseParameters.scaleMean,
+      amplitudeScale = 1f / _noiseParameters.amplitudeScale,
+      amplitudeAmplitude = _noiseParameters.amplitudeAmplitude,
+      amplitudeMean = _noiseParameters.amplitudeMean,
+      warpStrengthScale = 1f / _noiseParameters.warpStrengthScale,
+      warpStrengthAmplitude = _noiseParameters.warpStrengthAmplitude,
+      warpStrengthMean = _noiseParameters.warpStrengthMean,
+      warpScaleScale = 1f / _noiseParameters.warpScaleScale,
+      warpScaleAmplitude = _noiseParameters.warpScaleAmplitude,
+      warpScaleMean = _noiseParameters.warpScaleMean,
+      amplitudePower = _noiseParameters.amplitudePower,
+      output = output
+    };
+    JobHandle handle = job.Schedule(tmpSize * tmpSize, 64);
+    while (!handle.IsCompleted) yield return null;
+    handle.Complete();
+    NativeArray<Vector3> vertices = new NativeArray<Vector3>(tmpSize * tmpSize, Allocator.TempJob);
+    for (int i = 0; i < tmpSize * tmpSize; i++) {
+      vertices[i] = new Vector3((i % tmpSize - 1) * tmpRes, output[i], (i / tmpSize - 1) * tmpRes);
+    }
+    output.Dispose();
+
+    _tilePool[index].obj.transform.position = new Vector3(x * _size * _resolution, 0, z * _size * _resolution);
+    if (!_generatedStructureTiles.Contains(new Vector2(x, z))) {
+        _structures.GenerateChunkStructures(new Vector2(x * _size * _resolution, z * _size * _resolution), new Vector2((x + 1) * _size * _resolution, (z + 1) * _size * _resolution));
+        _generatedStructureTiles.Add(new Vector2(x, z));
+    }
+
+    // Update Mesh here (replace function with job calls)
+    NativeArray<ushort> triangles = new NativeArray<ushort>(Mathf.Pow((int) Mathf.Sqrt(vertices.Length) - 1, 2) * 6, Allocator.TempJob);
+
+    ushort sideLength = (ushort) Mathf.Sqrt(vertices.Length) - 1;
+    ushort vert = 0;
+    ushort tris = 0;
+    for (ushort z = 0; z < sideLength; z++)
+    {
+      for (ushort x = 0; x < sideLength; x++)
+      {
+        triangles[tris] = vert;
+        triangles[tris + 1] = vert + sideLength + 1;
+        triangles[tris + 2] = vert + 1;
+        triangles[tris + 3] = vert + 1;
+        triangles[tris + 4] = vert + sideLength + 1;
+        triangles[tris + 5] = vert + sideLength + 2;
+        vert++;
+        tris += 6;
+      }
+      vert++;
+    }
+
+    NativeArray<Vector3> normals = new NativeArray<Vector3>(vertices.Length, Allocator.TempJob);
+    NormalJobManaged normalJob = new NormalJobManaged {
+      vertices = vertices,
+      triangles = triangles,
+      normals = normals
+    };
+
+    handle = normalJob.Schedule(vertices.Length, 64);
+    while (!handle.IsCompleted) yield return null;
+    handle.Complete();
+
+    NativeArray<float> heightMods = new NativeArray<float>(vertices.Length, Allocator.TempJob);
+    RiverJob riverJob = new RiverJob {
+      size = tmpSize,
+      octaves = _riverParameters.octaves,
+      lacunarity = _riverParameters.lacunarity,
+      persistence = _riverParameters.persistence,
+      xOffset = x * _size * _resolution + _seed,
+      zOffset = z * _size * _resolution + _seed,
+      xResolution = tmpRes,
+      zResolution = tmpRes,
+      scale = 1f / _riverParameters.scale,
+      warpScale = 1f / _riverParameters.warpScale,
+      warpStrength = _riverParameters.warpStrength,
+      output = heightMods
+    };
+    handle = riverJob.Schedule(tmpSize * tmpSize, 64);
+    while (!handle.IsCompleted) yield return null;
+    handle.Complete();
+
+    if (_tilePool[index].waterVertCount > 0) {
+      _waterVertices.RemoveRange(_tilePool[index].waterVertIndex, _tilePool[index].waterVertCount);
+      _waterTriangles.RemoveRange(_tilePool[index].waterTriIndex, _tilePool[index].waterTriCount);
+      for (int i = 0; i < _waterTriangles.Count; i++) {
+        if (_waterTriangles[i] >= _tilePool[index].waterVertIndex) _waterTriangles[i] -= _tilePool[index].waterVertCount;
+      }
+      for (int i = 0; i < _tileCount * _tileCount; i++) {
+        if (_tilePool[i].waterVertIndex > _tilePool[index].waterVertIndex) {
+          _tilePool[i].waterVertIndex -= _tilePool[index].waterVertCount;
+        }
+        if (_tilePool[i].waterTriIndex > _tilePool[index].waterTriIndex) {
+          _tilePool[i].waterTriIndex -= _tilePool[index].waterTriCount;
+        }
+      }
+    }
+    _tilePool[index].waterVertCount = 0;
+
+    Vector3[] waterVerts = new Vector3[vertices.Length];
+    bool[] ignoreVerts = new bool[vertices.Length];
+    int ignored = 0;
+    for (int i = 0; i < heightMods.Length; i++) {
+      heightMods[i] = _riverParameters.noiseCurve.Evaluate(heightMods[i]) * _riverParameters.heightCurve.Evaluate(vertices[i].y / _maxPossibleHeight) * _riverParameters.normalCurve.Evaluate(Mathf.Abs(normals[i].y));
+      if (vertices[i].y <= _lakePlaneHeight) {
+        if (heightMods[i] != 0) vertices[i] -= new Vector3(0, heightMods[i] * _riverParameters.amplitude, 0);
+        waterVerts[i] = new Vector3(vertices[i].x, _lakePlaneHeight - _riverParameters.waterLevel, vertices[i].z);
+        waterVerts[i] += _tilePool[index].obj.transform.position;
+        continue;
+      }
+      waterVerts[i] = vertices[i] - new Vector3(0, _riverParameters.waterLevel, 0);
+      waterVerts[i] += _tilePool[index].obj.transform.position;
+      if (heightMods[i] == 0) {
+        ignoreVerts[i] = true;
+        ignored++;
+      } else {
+        vertices[i] -= new Vector3(0, heightMods[i] * _riverParameters.amplitude, 0);
+      }
+    }
+
+    int sideLength = (int) Mathf.Sqrt(vertices.Length);
+    int[] waterTriangles = new int[(sideLength - 1) * (sideLength - 1) * 6];
+    for (int i = 0, j = 0; i < waterVerts.Length; i++) {
+      if (i / sideLength >= sideLength - 1) continue;
+      if (i % sideLength >= sideLength - 1) continue;
+      if (i / sideLength == 0) continue;
+      if (i % sideLength == 0) continue;
+      waterTriangles[j * 6] = i;
+      waterTriangles[j * 6 + 1] = i + sideLength;
+      waterTriangles[j * 6 + 2] = i + 1;
+      waterTriangles[j * 6 + 3] = i + sideLength;
+      waterTriangles[j * 6 + 4] = i + sideLength + 1;
+      waterTriangles[j * 6 + 5] = i + 1;
+      j++;
+    }
+    int waterVertsLength = _waterVertices.Count;
+    int waterTriLength = _waterTriangles.Count;
+    int[] realIndices = new int[waterVerts.Length];
+    Vector3[] waterVertsFinal = new Vector3[waterVerts.Length - ignored];
+    for (int i = 0, j = 0; i < waterVerts.Length; i++) {
+      if (!ignoreVerts[i]) {
+        waterVertsFinal[j] = waterVerts[i];
+        realIndices[i] = j;
+        j++;
+      }
+    }
+    int triCount = 0;
+    for (int i = 0; i < waterTriangles.Length; i+= 3) {
+      if (!ignoreVerts[waterTriangles[i]] && !ignoreVerts[waterTriangles[i + 1]] && !ignoreVerts[waterTriangles[i + 2]]) {
+        triCount += 3;
+      }
+    }
+    int[] waterTrisFinal = new int[triCount];
+    for (int i = 0, j = 0; i < triangles.Length; i+= 3) {
+      if (!ignoreVerts[waterTriangles[i]] && !ignoreVerts[waterTriangles[i + 1]] && !ignoreVerts[waterTriangles[i + 2]]) {
+        waterTrisFinal[j] = realIndices[waterTriangles[i]] + waterVertsLength;
+        waterTrisFinal[j + 1] = realIndices[waterTriangles[i + 1]] + waterVertsLength;
+        trwaterTrisFinalis[j + 2] = realIndices[waterTriangles[i + 2]] + waterVertsLength;
+        j += 3;
+      }
+    }
+    _waterVertices.AddRange(waterVertsFinal);
+    _waterTriangles.AddRange(waterTrisFinal);
+    _tilePool[index].waterVertIndex = waterVertsLength;
+    _tilePool[index].waterVertCount = waterVerts.Length - ignored;
+    _tilePool[index].waterTriIndex = waterTriLength;
+    _tilePool[index].waterTriCount = _waterTriangles.Count - waterTriLength;
+
+    // Write data to the mesh after all passes
+
+    MeshDataArray meshDataArray = Mesh.AllocateWritableMeshData(1);
+    WriteMeshJob meshJob = new WriteMeshJob {
+      vertices = vertices,
+      triangles = triangles,
+      normals = normals,
+      mesh = meshDataArray[0]
+    };
+
+    handle = meshJob.Schedule();
+    while (!handle.IsCompleted) yield return null;
+    handle.Complete();
+
+    Mesh.ApplyAndDisposeWritableMeshData(meshDataArray, _tilePool[index].mesh);
+
+    ScatterTile(index);
+    maxDistance = Mathf.Max(Mathf.Abs(x - _playerXChunkScale), Mathf.Abs(z - _playerZChunkScale));
+    if (_enableColliders && maxDistance <= _colliderRange) UpdateCollider(index);
+
+  }
+
   #endregion
 
   #region Water Management Functions
@@ -681,6 +896,69 @@ public class WorldGenerator : MonoBehaviour
   #endregion
 
   #region Mesh Operation Functions
+
+  private struct NormalJobManaged : IJobParallelFor
+  {
+
+    [ReadOnly] public NativeArray<Vector3> vertices;
+    [ReadOnly] public NativeArray<int> triangles;
+
+    [WriteOnly] public NativeArray<Vector3> normals;
+
+    public void Execute(int index) {
+      int vertexIndexA = triangles[index * 3];
+      int vertexIndexB = triangles[index * 3 + 1];
+      int vertexIndexC = triangles[index * 3 + 2];
+      Vector3 pointA = vertices[vertexIndexA];
+      Vector3 normal = Vector3.Cross(vertices[vertexIndexB] - pointA, vertices[vertexIndexC] - pointA);
+      normals[vertexIndexA] += normal;
+      normals[vertexIndexA].Normalize();
+      normals[vertexIndexB] += normal;
+      normals[vertexIndexB].Normalize();
+      normals[vertexIndexC] += normal;
+      normals[vertexIndexC].Normalize();
+    }
+
+  }
+
+  private struct Vertex 
+  {
+
+    public Vector3 pos;
+    public Vector3 normal;
+
+  }
+
+  private struct WriteMeshJob : IJob
+  {
+
+    [ReadOnly] public NativeArray<Vector3> vertices;
+    [ReadOnly] public NativeArray<Vector3> normals;
+    [ReadOnly] public NativeArray<ushort> triangles;
+    
+    public MeshData mesh;
+
+    public void Execute() {
+
+      mesh.SetVertexBufferParams(vertices.Length,
+      new VertexAttributeDescriptor(VertexAttribute.Position),
+      new VertexAttributeDescriptor(VertexAttribute.Normal, stream: 1));
+
+      NativeArray<Vertex> verts = mesh.GetVertexData<Vertex>();
+      for (int i = 0; i < verts.Length; i++) {
+        verts[i].pos = vertices[i];
+        verts[i].normal = normals[i];
+      }
+
+      mesh.SetIndexBufferParams(triangles.Length, IndexFormat.UInt16);
+      NativeArray<ushort> tris = meshData.GetIndexData<ushort>();
+      for (int i = 0; i < indexBuffer.Length; i++) tris[i] = triangles[i];
+      mesh.subMeshCount = 1;
+      mesh.SetSubMesh(0, new SubMeshDescriptor(0, tris.Length));
+
+    }
+
+  }
 
   private void WriteToMesh(Mesh targetMesh, Vector3[] vertices) {
     int sideLength = (int) Mathf.Sqrt(vertices.Length) - 1;
