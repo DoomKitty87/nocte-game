@@ -157,6 +157,7 @@ public class PlaceStructures : MonoBehaviour
       Mesh road = RoadGenerator.MeshFromPlane(roadPlane3, _roadDepth, _roadInset);
       road.colors = roadVertexColors;
       GameObject obj = new GameObject();
+      obj.layer = 6;
       obj.AddComponent<MeshFilter>().mesh = road;
       obj.AddComponent<MeshRenderer>().material = _roadMaterial;
       obj.AddComponent<MeshCollider>();
