@@ -11,6 +11,7 @@ using Unity.Mathematics;
 using Unity.Jobs;
 using Unity.Burst;
 using Unity.Collections;
+using UnityEngine.Rendering;
 using IEnumerator = System.Collections.IEnumerator;
 
 public class WorldGenerator : MonoBehaviour
@@ -555,10 +556,8 @@ public class WorldGenerator : MonoBehaviour
         _noiseParameters.scaleMean, _noiseParameters.amplitudeScale, _noiseParameters.amplitudeAmplitude, _noiseParameters.amplitudeMean,
         _noiseParameters.warpStrengthScale, _noiseParameters.warpStrengthAmplitude, _noiseParameters.warpStrengthMean,
         _noiseParameters.warpScaleScale, _noiseParameters.warpScaleAmplitude, _noiseParameters.warpScaleMean, _noiseParameters.amplitudePower);
-    _tilePool[index].mesh.triangles = null;
-    _tilePool[index].mesh.vertices = result;
-
-    WindTriangles(_tilePool[index].mesh);
+    
+    WriteToMesh(_tilePool[index].mesh, result);
 
     _tilePool[index].obj.transform.position = new Vector3(x * _size * _resolution, 0, z * _size * _resolution);
     if (!_generatedStructureTiles.Contains(new Vector2(x, z))) {
@@ -683,6 +682,52 @@ public class WorldGenerator : MonoBehaviour
 
   #region Mesh Operation Functions
 
+  private void WriteToMesh(Mesh targetMesh, Vector3[] vertices) {
+    int sideLength = (int) Mathf.Sqrt(vertices.Length) - 1;
+    int[] triangles = new int[sideLength * sideLength * 6];
+    int vert = 0;
+    int tris = 0;
+    for (int z = 0; z < sideLength; z++)
+    {
+      for (int x = 0; x < sideLength; x++)
+      {
+        triangles[tris] = vert;
+        triangles[tris + 1] = vert + sideLength + 1;
+        triangles[tris + 2] = vert + 1;
+        triangles[tris + 3] = vert + 1;
+        triangles[tris + 4] = vert + sideLength + 1;
+        triangles[tris + 5] = vert + sideLength + 2;
+        vert++;
+        tris += 6;
+      }
+      vert++;
+    }
+
+    NativeArray<Vector3> vNativeArray = new NativeArray<Vector3>(vertices, Allocator.TempJob);
+    NativeArray<int> tNativeArray = new NativeArray<int>(triangles, Allocator.TempJob);
+
+    var meshDataArray = Mesh.AllocateWritableMeshData(1);
+    var meshData = meshDataArray[0];
+
+    meshData.SetVertexBufferParams(vertices.Length,
+      new VertexAttributeDescriptor(VertexAttribute.Position),
+      new VertexAttributeDescriptor(VertexAttribute.Normal, stream: 1));
+
+    NativeArray<Vector3> pos = meshData.GetVertexData<Vector3>();
+    for (int i = 0; i < pos.Length; i++) pos[i] = vertices[i];
+
+    meshData.SetIndexBufferParams(triangles.Length, IndexFormat.UInt16);
+    NativeArray<ushort> indexBuffer = meshData.GetIndexData<ushort>();
+    for (int i = 0; i < indexBuffer.Length; i++)
+      indexBuffer[i] = (ushort) triangles[i];
+    meshData.subMeshCount = 1;
+    meshData.SetSubMesh(0, new SubMeshDescriptor(0, indexBuffer.Length));
+    Mesh.ApplyAndDisposeWritableMeshData(meshDataArray, targetMesh);
+
+    vNativeArray.Dispose();
+    tNativeArray.Dispose();
+  }
+
   private void WindTriangles(Mesh targetMesh) {
     int sideLength = (int) Mathf.Sqrt(targetMesh.vertices.Length) - 1;
     int[] triangles = new int[sideLength * sideLength * 6];
@@ -785,7 +830,7 @@ public class WorldGenerator : MonoBehaviour
   private void UpdateMesh(Mesh targetMesh, int index) {
     targetMesh.normals = CalculateNormalsJobs(targetMesh);
     RiverPass(targetMesh, index);
-    targetMesh.triangles = CullTriangles(targetMesh);
+    //targetMesh.triangles = CullTriangles(targetMesh);
     targetMesh.RecalculateBounds();
   }
 
