@@ -296,7 +296,8 @@ public class WorldGenerator : MonoBehaviour
     }
     while (updatesLeft > 0) {
       if (_updateQueue.Count > 0 && _generateQueue.Count == 0) {
-        UpdateTile(_updateQueue[0]);
+        StartCoroutine(UpdateTileJobs(_updateQueue[0]));
+        //UpdateTile(_updateQueue[0]);
         _updateQueue.RemoveAt(0);
         if (_updateQueue.Count == 0) UpdateWaterMesh();
         updatesLeft--;
@@ -579,13 +580,13 @@ public class WorldGenerator : MonoBehaviour
     int x = _tilePool[index].x;
     int z = _tilePool[index].z;
     int lodFactor = (int) Mathf.Pow(2, _tilePool[index].currentLOD);
-    if (_size * lodFactor * _size * lodFactor > 65000) {
-        _tilePool[index].mesh.indexFormat = UnityEngine.Rendering.IndexFormat.UInt32;
-    }
+    // if (_size * lodFactor * _size * lodFactor > 65000) {
+    //     _tilePool[index].mesh.indexFormat = UnityEngine.Rendering.IndexFormat.UInt32;
+    // }
     float maxDistance = Mathf.Sqrt(Mathf.Pow(Mathf.Abs(x - _playerXChunkScale), 2) + Mathf.Pow(Mathf.Abs(z - _playerZChunkScale), 2));
     int tmpSize = _size * lodFactor + 5;
     float tmpRes = _resolution / lodFactor;
-    NativeArray<float> output = new NativeArray<float>(tmpSize * tmpSize, Allocator.TempJob);
+    NativeArray<float> output = new NativeArray<float>(tmpSize * tmpSize, Allocator.Persistent);
     NoiseJob job = new NoiseJob {
       size = tmpSize,
       overlap = 1,
@@ -617,7 +618,7 @@ public class WorldGenerator : MonoBehaviour
     JobHandle handle = job.Schedule(tmpSize * tmpSize, 64);
     while (!handle.IsCompleted) yield return null;
     handle.Complete();
-    NativeArray<Vector3> vertices = new NativeArray<Vector3>(tmpSize * tmpSize, Allocator.TempJob);
+    NativeArray<Vector3> vertices = new NativeArray<Vector3>(tmpSize * tmpSize, Allocator.Persistent);
     for (int i = 0; i < tmpSize * tmpSize; i++) {
       vertices[i] = new Vector3((i % tmpSize - 1) * tmpRes, output[i], (i / tmpSize - 1) * tmpRes);
     }
@@ -630,28 +631,28 @@ public class WorldGenerator : MonoBehaviour
     }
 
     // Update Mesh here (replace function with job calls)
-    NativeArray<ushort> triangles = new NativeArray<ushort>(Mathf.Pow((int) Mathf.Sqrt(vertices.Length) - 1, 2) * 6, Allocator.TempJob);
+    NativeArray<int> triangles = new NativeArray<int>((int) Mathf.Pow((int) Mathf.Sqrt(vertices.Length) - 1, 2) * 6, Allocator.Persistent);
 
-    ushort sideLength = (ushort) Mathf.Sqrt(vertices.Length) - 1;
+    int sideLength0 = (int) Mathf.Sqrt(vertices.Length) - 1;
     ushort vert = 0;
     ushort tris = 0;
-    for (ushort z = 0; z < sideLength; z++)
+    for (int z2 = 0; z2 < sideLength0; z2++)
     {
-      for (ushort x = 0; x < sideLength; x++)
+      for (int x2 = 0; x2 < sideLength0; x2++)
       {
         triangles[tris] = vert;
-        triangles[tris + 1] = vert + sideLength + 1;
+        triangles[tris + 1] = vert + sideLength0 + 1;
         triangles[tris + 2] = vert + 1;
         triangles[tris + 3] = vert + 1;
-        triangles[tris + 4] = vert + sideLength + 1;
-        triangles[tris + 5] = vert + sideLength + 2;
+        triangles[tris + 4] = vert + sideLength0 + 1;
+        triangles[tris + 5] = vert + sideLength0 + 2;
         vert++;
         tris += 6;
       }
       vert++;
     }
 
-    NativeArray<Vector3> normals = new NativeArray<Vector3>(vertices.Length, Allocator.TempJob);
+    NativeArray<Vector3> normals = new NativeArray<Vector3>(vertices.Length, Allocator.Persistent);
     NormalJobManaged normalJob = new NormalJobManaged {
       vertices = vertices,
       triangles = triangles,
@@ -662,7 +663,7 @@ public class WorldGenerator : MonoBehaviour
     while (!handle.IsCompleted) yield return null;
     handle.Complete();
 
-    NativeArray<float> heightMods = new NativeArray<float>(vertices.Length, Allocator.TempJob);
+    NativeArray<float> heightMods = new NativeArray<float>(vertices.Length, Allocator.Persistent);
     RiverJob riverJob = new RiverJob {
       size = tmpSize,
       octaves = _riverParameters.octaves,
@@ -756,7 +757,7 @@ public class WorldGenerator : MonoBehaviour
       if (!ignoreVerts[waterTriangles[i]] && !ignoreVerts[waterTriangles[i + 1]] && !ignoreVerts[waterTriangles[i + 2]]) {
         waterTrisFinal[j] = realIndices[waterTriangles[i]] + waterVertsLength;
         waterTrisFinal[j + 1] = realIndices[waterTriangles[i + 1]] + waterVertsLength;
-        trwaterTrisFinalis[j + 2] = realIndices[waterTriangles[i + 2]] + waterVertsLength;
+        waterTrisFinal[j + 2] = realIndices[waterTriangles[i + 2]] + waterVertsLength;
         j += 3;
       }
     }
@@ -766,22 +767,32 @@ public class WorldGenerator : MonoBehaviour
     _tilePool[index].waterVertCount = waterVerts.Length - ignored;
     _tilePool[index].waterTriIndex = waterTriLength;
     _tilePool[index].waterTriCount = _waterTriangles.Count - waterTriLength;
-
+    heightMods.Dispose();
     // Write data to the mesh after all passes
 
-    MeshDataArray meshDataArray = Mesh.AllocateWritableMeshData(1);
-    WriteMeshJob meshJob = new WriteMeshJob {
-      vertices = vertices,
-      triangles = triangles,
-      normals = normals,
-      mesh = meshDataArray[0]
-    };
-
-    handle = meshJob.Schedule();
-    while (!handle.IsCompleted) yield return null;
-    handle.Complete();
-
-    Mesh.ApplyAndDisposeWritableMeshData(meshDataArray, _tilePool[index].mesh);
+    // Mesh.MeshDataArray meshDataArray = Mesh.AllocateWritableMeshData(1);
+    // WriteMeshJob meshJob = new WriteMeshJob {
+    //   vertices = vertices,
+    //   triangles = triangles,
+    //   normals = normals,
+    //   mesh = meshDataArray[0]
+    // };
+    //
+    // handle = meshJob.Schedule();
+    // while (!handle.IsCompleted) yield return null;
+    // handle.Complete();
+    //
+    // Mesh.ApplyAndDisposeWritableMeshData(meshDataArray, _tilePool[index].mesh);
+    Vector3[] vertManaged = new Vector3[vertices.Length];
+    int[] triManaged = new int[triangles.Length];
+    for (int i = 0; i < vertices.Length; i++) vertManaged[i] = vertices[i];
+    for (int i = 0; i < triangles.Length; i++) triManaged[i] = triangles[i];
+    _tilePool[index].mesh.vertices = vertManaged;
+    _tilePool[index].mesh.triangles = triManaged;
+    vertices.Dispose();
+    triangles.Dispose();
+    normals.Dispose();
+    
 
     ScatterTile(index);
     maxDistance = Mathf.Max(Mathf.Abs(x - _playerXChunkScale), Mathf.Abs(z - _playerZChunkScale));
@@ -900,10 +911,10 @@ public class WorldGenerator : MonoBehaviour
   private struct NormalJobManaged : IJobParallelFor
   {
 
-    [ReadOnly] public NativeArray<Vector3> vertices;
-    [ReadOnly] public NativeArray<int> triangles;
+    [NativeDisableParallelForRestriction] [ReadOnly] public NativeArray<Vector3> vertices;
+    [NativeDisableParallelForRestriction] [ReadOnly] public NativeArray<int> triangles;
 
-    [WriteOnly] public NativeArray<Vector3> normals;
+    [NativeDisableParallelForRestriction] public NativeArray<Vector3> normals;
 
     public void Execute(int index) {
       int vertexIndexA = triangles[index * 3];
@@ -921,12 +932,12 @@ public class WorldGenerator : MonoBehaviour
 
   }
 
-  private struct Vertex 
+  private struct Vertex
   {
 
-    public Vector3 pos;
+    public Vector3 position;
     public Vector3 normal;
-
+    
   }
 
   private struct WriteMeshJob : IJob
@@ -934,25 +945,28 @@ public class WorldGenerator : MonoBehaviour
 
     [ReadOnly] public NativeArray<Vector3> vertices;
     [ReadOnly] public NativeArray<Vector3> normals;
-    [ReadOnly] public NativeArray<ushort> triangles;
+    [ReadOnly] public NativeArray<int> triangles;
     
-    public MeshData mesh;
+    public Mesh.MeshData mesh;
 
     public void Execute() {
 
       mesh.SetVertexBufferParams(vertices.Length,
       new VertexAttributeDescriptor(VertexAttribute.Position),
-      new VertexAttributeDescriptor(VertexAttribute.Normal, stream: 1));
+      new VertexAttributeDescriptor(VertexAttribute.Normal));
 
       NativeArray<Vertex> verts = mesh.GetVertexData<Vertex>();
+
       for (int i = 0; i < verts.Length; i++) {
-        verts[i].pos = vertices[i];
-        verts[i].normal = normals[i];
+        Vertex v = new Vertex();
+        v.position = vertices[i];
+        v.normal = normals[i];
+        verts[i] = v;
       }
 
       mesh.SetIndexBufferParams(triangles.Length, IndexFormat.UInt16);
-      NativeArray<ushort> tris = meshData.GetIndexData<ushort>();
-      for (int i = 0; i < indexBuffer.Length; i++) tris[i] = triangles[i];
+      NativeArray<int> tris = mesh.GetIndexData<int>();
+      for (int i = 0; i < tris.Length; i++) tris[i] = triangles[i];
       mesh.subMeshCount = 1;
       mesh.SetSubMesh(0, new SubMeshDescriptor(0, tris.Length));
 
