@@ -206,6 +206,7 @@ public class WorldGenerator : MonoBehaviour
 
   private bool _doneGenerating = false;
   private int _currentlyUpdating = 0;
+  private int _currentlyGenerating = 0;
 
   public delegate void OnGenerationComplete();
   
@@ -307,8 +308,8 @@ public class WorldGenerator : MonoBehaviour
     }
     for (int i = 0; i < _maxUpdatesPerFrame * 250; i++) {
       if (_generateQueue.Count > 0) {
-        //StartCoroutine(GenerateTileJobs(_generateQueue[0][0], _generateQueue[0][1], _generateQueue[0][2]));
-        GenerateTile(_generateQueue[0][0], _generateQueue[0][1], _generateQueue[0][2]);
+        StartCoroutine(GenerateTileJobs(_generateQueue[0][0], _generateQueue[0][1], _generateQueue[0][2]));
+        //GenerateTile(_generateQueue[0][0], _generateQueue[0][1], _generateQueue[0][2]);
         _generateQueue.RemoveAt(0);
         if (Time.timeScale == 0f) Time.timeScale = 1f;
       } else break;
@@ -584,6 +585,7 @@ public class WorldGenerator : MonoBehaviour
   }
 
   private IEnumerator GenerateTileJobs(int x, int z, int index) {
+    _currentlyGenerating++;
     GameObject go = new GameObject("Tile");
     go.transform.parent = transform;
     MeshFilter mf = go.AddComponent<MeshFilter>();
@@ -595,6 +597,20 @@ public class WorldGenerator : MonoBehaviour
     int lodFactor = GetLOD(new Vector2(_playerXChunkScale, _playerZChunkScale), new Vector2(x, z));
     tile.currentLOD = lodFactor;
     lodFactor = (int) Mathf.Pow(2, lodFactor);
+    go.transform.position = new Vector3(x * _size * _resolution, 0, z * _size * _resolution);
+    go.isStatic = true;
+    
+    // If you need to put anything else (tag, components, etc) on the tile, do it here. If it needs to change every time the LOD is changed, do it in the UpdateTile function.
+    go.tag = "Ground";
+    go.layer = 6;
+    _structures.GenerateChunkStructures(new Vector2(x * _size * _resolution, z * _size * _resolution), new Vector2((x + 1) * _size * _resolution, (z + 1) * _size * _resolution));
+    _generatedStructureTiles.Add(new Vector2(x, z));
+    tile.mesh = msh;
+    tile.obj = go;
+    tile.x = x;
+    tile.z = z;
+    _tilePool[index] = tile;
+    _tilePositions[index / _tileCount, index % _tileCount] = index;
     
     int tmpSize = _size * lodFactor + 5;
     float tmpRes = _resolution / lodFactor;
@@ -673,8 +689,8 @@ public class WorldGenerator : MonoBehaviour
       octaves = _riverParameters.octaves,
       lacunarity = _riverParameters.lacunarity,
       persistence = _riverParameters.persistence,
-      xOffset = x * _size * _resolution + _seed,
-      zOffset = z * _size * _resolution + _seed,
+      xOffset = x * _size * _resolution + _seed % 216812,
+      zOffset = z * _size * _resolution + _seed % 216812,
       xResolution = tmpRes,
       zResolution = tmpRes,
       scale = 1f / _riverParameters.scale,
@@ -688,8 +704,8 @@ public class WorldGenerator : MonoBehaviour
 
     for (int i = 0; i < heightMods.Length; i++) heightMods[i] = _riverParameters.noiseCurve.Evaluate(heightMods[i]) * _riverParameters.heightCurve.Evaluate(vertices[i].y / _maxPossibleHeight) * _riverParameters.normalCurve.Evaluate(Mathf.Abs(normals[i].y));
 
-    NativeList<Vector3> waterVertsFinal = new NativeList<Vector3>(0, Allocator.TempJob);
-    NativeList<int> waterTrisFinal = new NativeList<int>(0, Allocator.TempJob);
+    NativeList<Vector3> waterVertsFinal = new NativeList<Vector3>(0, Allocator.Persistent);
+    NativeList<int> waterTrisFinal = new NativeList<int>(0, Allocator.Persistent);
 
     RiverPassJob riverPassJob = new RiverPassJob {
       vertices = vertices,
@@ -707,8 +723,10 @@ public class WorldGenerator : MonoBehaviour
     while (!handle.IsCompleted) yield return null;
     handle.Complete();
 
-    _tilePool[index].waterVertices = waterVertsFinal.ToArray();
-    _tilePool[index].waterTriangles = waterTrisFinal.ToArray();
+    _tilePool[index].waterVertices = waterVertsFinal.AsArray().ToArray();
+    _tilePool[index].waterTriangles = waterTrisFinal.AsArray().ToArray();
+    // Debug.Log(waterVertsFinal.Length);
+    // Debug.Log(_tilePool[index].waterVertices.Length);
     waterVertsFinal.Dispose();
     waterTrisFinal.Dispose();
     heightMods.Dispose();
@@ -732,27 +750,13 @@ public class WorldGenerator : MonoBehaviour
     triangles.Dispose();
     normals.Dispose();
     
-    go.transform.position = new Vector3(x * _size * _resolution, 0, z * _size * _resolution);
-    go.isStatic = true;
-    
-    // If you need to put anything else (tag, components, etc) on the tile, do it here. If it needs to change every time the LOD is changed, do it in the UpdateTile function.
-    go.tag = "Ground";
-    go.layer = 6;
-    _structures.GenerateChunkStructures(new Vector2(x * _size * _resolution, z * _size * _resolution), new Vector2((x + 1) * _size * _resolution, (z + 1) * _size * _resolution));
-    _generatedStructureTiles.Add(new Vector2(x, z));
-    tile.mesh = msh;
-    tile.obj = go;
-    tile.x = x;
-    tile.z = z;
-    _tilePool[index] = tile;
-    _tilePositions[index / _tileCount, index % _tileCount] = index;
-
     //RiverPass(msh, index);
     ScatterTile(index);
     float maxDistance = Mathf.Max(Mathf.Abs(x), Mathf.Abs(z));
     if (_enableColliders && maxDistance <= _colliderRange) UpdateCollider(index);
 
-    if (index == (_tileCount * _tileCount) - 1) {
+    _currentlyGenerating--;
+    if (_currentlyGenerating == 0 && _generateQueue.Count == 0) {
       _doneGenerating = true;
       UpdateWaterMesh();
     }
@@ -850,8 +854,8 @@ public class WorldGenerator : MonoBehaviour
       octaves = _riverParameters.octaves,
       lacunarity = _riverParameters.lacunarity,
       persistence = _riverParameters.persistence,
-      xOffset = x * _size * _resolution + _seed,
-      zOffset = z * _size * _resolution + _seed,
+      xOffset = x * _size * _resolution + _seed % 216812,
+      zOffset = z * _size * _resolution + _seed % 216812,
       xResolution = tmpRes,
       zResolution = tmpRes,
       scale = 1f / _riverParameters.scale,
@@ -865,8 +869,8 @@ public class WorldGenerator : MonoBehaviour
 
     for (int i = 0; i < heightMods.Length; i++) heightMods[i] = _riverParameters.noiseCurve.Evaluate(heightMods[i]) * _riverParameters.heightCurve.Evaluate(vertices[i].y / _maxPossibleHeight) * _riverParameters.normalCurve.Evaluate(Mathf.Abs(normals[i].y));
 
-    NativeList<Vector3> waterVertsFinal = new NativeList<Vector3>(0, Allocator.TempJob);
-    NativeList<int> waterTrisFinal = new NativeList<int>(0, Allocator.TempJob);
+    NativeList<Vector3> waterVertsFinal = new NativeList<Vector3>(0, Allocator.Persistent);
+    NativeList<int> waterTrisFinal = new NativeList<int>(0, Allocator.Persistent);
 
     RiverPassJob riverPassJob = new RiverPassJob {
       vertices = vertices,
@@ -884,8 +888,8 @@ public class WorldGenerator : MonoBehaviour
     while (!handle.IsCompleted) yield return null;
     handle.Complete();
 
-    _tilePool[index].waterVertices = waterVertsFinal.ToArray();
-    _tilePool[index].waterTriangles = waterTrisFinal.ToArray();
+    _tilePool[index].waterVertices = waterVertsFinal.AsArray().ToArray();
+    _tilePool[index].waterTriangles = waterTrisFinal.AsArray().ToArray();
     waterVertsFinal.Dispose();
     waterTrisFinal.Dispose();
     heightMods.Dispose();
@@ -921,7 +925,7 @@ public class WorldGenerator : MonoBehaviour
     maxDistance = Mathf.Max(Mathf.Abs(x - _playerXChunkScale), Mathf.Abs(z - _playerZChunkScale));
     if (_enableColliders && maxDistance <= _colliderRange) UpdateCollider(index);
     _currentlyUpdating--;
-    if (_currentlyUpdating == 0) UpdateWaterMesh();
+    if (_currentlyUpdating == 0 && _updateQueue.Count == 0) UpdateWaterMesh();
   }
 
   #endregion
@@ -1012,12 +1016,15 @@ public class WorldGenerator : MonoBehaviour
     int vertexCount = 0;
     int triangleCount = 0;
     for (int i = 0; i < _tilePool.Length; i++) {
+      if (_tilePool[i].waterVertices == null) continue;
       vertexCount += _tilePool[i].waterVertices.Length;
       triangleCount += _tilePool[i].waterTriangles.Length;
     }
+    //Debug.Log(vertexCount);
     Vector3[] waterVertices = new Vector3[vertexCount];
     int[] waterTriangles = new int[triangleCount];
     for (int i = 0, v = 0, t = 0; i < _tilePool.Length; i++) {
+      if (_tilePool[i].waterVertices == null) continue;
       for (int j = 0; j < _tilePool[i].waterTriangles.Length; j++, t++) {
         waterTriangles[t] = _tilePool[i].waterTriangles[j] + v;
       }
@@ -1025,10 +1032,22 @@ public class WorldGenerator : MonoBehaviour
         waterVertices[v] = _tilePool[i].waterVertices[j];
       }
     }
-    _waterMesh.triangles = null;
-    _waterMesh.vertices = waterVertices;
-    _waterMesh.triangles = waterTriangles;
-    _waterMesh.RecalculateNormals();
+
+    var meshDataArray = Mesh.AllocateWritableMeshData(1);
+    var meshData = meshDataArray[0];
+    
+    meshData.SetVertexBufferParams(waterVertices.Length, new VertexAttributeDescriptor(VertexAttribute.Position));
+
+    NativeArray<Vector3> positions = meshData.GetVertexData<Vector3>();
+    for (int i = 0; i < positions.Length; i++) positions[i] = waterVertices[i];
+    
+    meshData.SetIndexBufferParams(waterTriangles.Length, IndexFormat.UInt32);
+    NativeArray<int> indices = meshData.GetIndexData<int>();
+    for (int i = 0; i < indices.Length; i++) indices[i] = waterTriangles[i];
+
+    meshData.subMeshCount = 1;
+    meshData.SetSubMesh(0, new SubMeshDescriptor(0, indices.Length));
+    Mesh.ApplyAndDisposeWritableMeshData(meshDataArray, _waterMesh);
   }
 
   // private void RiverPass(Mesh targetMesh, int index) {
@@ -1302,7 +1321,7 @@ public class WorldGenerator : MonoBehaviour
       meshes[i] = _tilePool[indices[i]].mesh;
     }
 
-    NativeArray<int> meshIds = new NativeArray<int>(meshes.Length, Allocator.TempJob);
+    NativeArray<int> meshIds = new NativeArray<int>(meshes.Length, Allocator.Persistent);
     for (int i = 0; i < meshes.Length; i++) {
       meshIds[i] = meshes[i].GetInstanceID();
     }
