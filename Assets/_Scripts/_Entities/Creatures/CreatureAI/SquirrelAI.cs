@@ -54,9 +54,7 @@ namespace _Scripts._Entities.Creatures.CreatureAI
 					new SetState(_controller, EnemyController.PlayerStates.Walking),
 					new CheckGoalExists(_controller),
 					new FaceGoal(_controller, _transform, true, false, true),
-					new SetMovementToDirection(_transform.forward, _controller)
-				}),
-				new Sequencer(new List<TreeNode> { // checks if stuck and moves goal
+					new SetMovementToDirection(_transform.forward, _controller),
 					new CheckStuck(_transform),
 					new PlaceRandomGoal(_controller, _transform, _range)
 				})
