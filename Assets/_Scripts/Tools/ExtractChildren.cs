@@ -6,7 +6,7 @@ public class ExtractChildren : MonoBehaviour
   private void Awake() {
     int numberOfChildren = transform.childCount;
     for (int i = 0; i < numberOfChildren; i++) {
-      transform.GetChild(0).parent = null;
+      transform.GetChild(0).SetParent(null);
     }
     
     Destroy(transform.gameObject);
