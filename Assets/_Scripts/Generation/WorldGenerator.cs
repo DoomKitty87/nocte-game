@@ -833,8 +833,8 @@ public class WorldGenerator : MonoBehaviour
 
     for (int i = 0; i < heightMods.Length; i++) heightMods[i] = _riverParameters.noiseCurve.Evaluate(heightMods[i]) * _riverParameters.heightCurve.Evaluate(vertices[i].y / _maxPossibleHeight) * _riverParameters.normalCurve.Evaluate(Mathf.Abs(normals[i].y));
 
-    NativeArray<Vector3> waterVertsFinal = new NativeArray<Vector3>(0, Allocator.TempJob);
-    NativeArray<int> waterTrisFinal = new NativeArray<int>(0, Allocator.TempJob);
+    NativeList<Vector3> waterVertsFinal = new NativeList<Vector3>(0, Allocator.TempJob);
+    NativeList<int> waterTrisFinal = new NativeList<int>(0, Allocator.TempJob);
 
     RiverPassJob riverPassJob = new RiverPassJob {
       vertices = vertices,
@@ -857,8 +857,8 @@ public class WorldGenerator : MonoBehaviour
     _tilePool[index].waterVertCount = waterVertsFinal.Length;
     _tilePool[index].waterTriIndex = _waterTriangles.Count;
     _tilePool[index].waterTriCount = waterTrisFinal.Length;
-    _waterVertices.AddRange(waterVertsFinal);
-    _waterTriangles.AddRange(waterTrisFinal);
+    _waterVertices.AddRange(waterVertsFinal.ToArray());
+    _waterTriangles.AddRange(waterTrisFinal.ToArray());
     waterVertsFinal.Dispose();
     waterTrisFinal.Dispose();
     heightMods.Dispose();
@@ -914,8 +914,8 @@ public class WorldGenerator : MonoBehaviour
     [ReadOnly] public int waterVertCount;
     [ReadOnly] public NativeArray<int> triangles;
 
-    [WriteOnly] public NativeArray<Vector3> waterVertsOut;
-    [WriteOnly] public NativeArray<int> waterTrisOut;
+    [WriteOnly] public NativeList<Vector3> waterVertsOut;
+    [WriteOnly] public NativeList<int> waterTrisOut;
 
     public void Execute() {
       Vector3[] waterVerts = new Vector3[vertices.Length];
@@ -955,7 +955,7 @@ public class WorldGenerator : MonoBehaviour
       }
 
       int[] realIndices = new int[waterVerts.Length];
-      waterVertsOut = new NativeArray<Vector3>(waterVerts.Length - ignored, Allocator.Temp);
+      waterVertsOut.Length = waterVerts.Length - ignored;
       for (int i = 0, j = 0; i < waterVerts.Length; i++) {
         if (!ignoreVerts[i]) {
           waterVertsOut[j] = waterVerts[i];
@@ -969,7 +969,7 @@ public class WorldGenerator : MonoBehaviour
           triCount += 3;
         }
       }
-      waterTrisOut = new NativeArray<int>(triCount, Allocator.Temp);
+      waterTrisOut.Length = triCount;
       for (int i = 0, j = 0; i < triangles.Length; i+= 3) {
         if (!ignoreVerts[waterTriangles[i]] && !ignoreVerts[waterTriangles[i + 1]] && !ignoreVerts[waterTriangles[i + 2]]) {
           waterTrisOut[j] = realIndices[waterTriangles[i]] + waterVertCount;

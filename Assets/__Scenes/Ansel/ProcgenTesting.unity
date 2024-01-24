@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 183.45914, g: 70.67798, b: 35.252354, a: 1}
+  m_IndirectSpecularColor: {r: 180.37129, g: 69.964676, b: 34.854008, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -4506,6 +4506,11 @@ PrefabInstance:
       propertyPath: _console
       value: 
       objectReference: {fileID: 448989663}
+    - target: {fileID: 532845346957642240, guid: 807785f75a4cabf4883bf2cc8fe88221,
+        type: 3}
+      propertyPath: _enableCheats
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 1333633713862141535, guid: 807785f75a4cabf4883bf2cc8fe88221,
         type: 3}
       propertyPath: m_Enabled
@@ -4862,7 +4867,8 @@ MonoBehaviour:
   _roadResolution: 2
   _roadWidth: 25
   _roadDepth: 5
-  _roadInset: 9.7
+  _roadInset: 9
+  _roadBevel: 0.5
   _roadWaterImpact: 25
   _roadNoiseAmplitude: 50
   _roadMaterial: {fileID: 2100000, guid: 0b575891d2861ca4f964e919cca70067, type: 2}
@@ -7872,7 +7878,7 @@ PrefabInstance:
     - target: {fileID: 8819276947174590073, guid: 862d92a67177d4c7b84ab88d6b6e0257,
         type: 3}
       propertyPath: _maxUpdatesPerFrame
-      value: 0.2
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8819276947174590073, guid: 862d92a67177d4c7b84ab88d6b6e0257,
         type: 3}
