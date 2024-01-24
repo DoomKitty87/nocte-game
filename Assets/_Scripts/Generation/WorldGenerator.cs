@@ -305,7 +305,8 @@ public class WorldGenerator : MonoBehaviour
     }
     for (int i = 0; i < _maxUpdatesPerFrame * 250; i++) {
       if (_generateQueue.Count > 0) {
-        GenerateTile(_generateQueue[0][0], _generateQueue[0][1], _generateQueue[0][2]);
+        StartCoroutine(GenerateTileJobs(_generateQueue[0][0], _generateQueue[0][1], _generateQueue[0][2]));
+        //GenerateTile(_generateQueue[0][0], _generateQueue[0][1], _generateQueue[0][2]);
         _generateQueue.RemoveAt(0);
         if (Time.timeScale == 0f) Time.timeScale = 1f;
       } else break;
@@ -576,6 +577,132 @@ public class WorldGenerator : MonoBehaviour
     // Implement idk
   }
 
+  private IEnumerator GenerateTileJobs(int x, int z, int index) {
+    GameObject go = new GameObject("Tile");
+    go.transform.parent = transform;
+    MeshFilter mf = go.AddComponent<MeshFilter>();
+    MeshRenderer mr = go.AddComponent<MeshRenderer>();
+    mr.material = _material;
+    mf.mesh = new Mesh();
+    Mesh msh = mf.mesh;
+    WorldTile tile = new WorldTile();
+    int lodFactor = GetLOD(new Vector2(_playerXChunkScale, _playerZChunkScale), new Vector2(x, z));
+    tile.currentLOD = lodFactor;
+    lodFactor = (int) Mathf.Pow(2, lodFactor);
+    
+    int tmpSize = _size * lodFactor + 5;
+    float tmpRes = _resolution / lodFactor;
+    NativeArray<float> output = new NativeArray<float>(tmpSize * tmpSize, Allocator.Persistent);
+    NoiseJob job = new NoiseJob {
+      size = tmpSize,
+      overlap = 1,
+      xOffset = x * _size * _resolution + _seed,
+      zOffset = z * _size * _resolution + _seed,
+      xResolution = tmpRes,
+      zResolution = tmpRes,
+      octaves = _noiseParameters.octaves,
+      lacunarity = _noiseParameters.lacunarity,
+      persistence = _noiseParameters.persistence,
+      sharpnessScale = 1f / _noiseParameters.sharpnessScale,
+      sharpnessAmplitude = _noiseParameters.sharpnessAmplitude,
+      sharpnessMean = _noiseParameters.sharpnessMean,
+      scaleScale = 1f / _noiseParameters.scaleScale,
+      scaleAmplitude = _noiseParameters.scaleAmplitude,
+      scaleMean = _noiseParameters.scaleMean,
+      amplitudeScale = 1f / _noiseParameters.amplitudeScale,
+      amplitudeAmplitude = _noiseParameters.amplitudeAmplitude,
+      amplitudeMean = _noiseParameters.amplitudeMean,
+      warpStrengthScale = 1f / _noiseParameters.warpStrengthScale,
+      warpStrengthAmplitude = _noiseParameters.warpStrengthAmplitude,
+      warpStrengthMean = _noiseParameters.warpStrengthMean,
+      warpScaleScale = 1f / _noiseParameters.warpScaleScale,
+      warpScaleAmplitude = _noiseParameters.warpScaleAmplitude,
+      warpScaleMean = _noiseParameters.warpScaleMean,
+      amplitudePower = _noiseParameters.amplitudePower,
+      output = output
+    };
+    JobHandle handle = job.Schedule(tmpSize * tmpSize, 64);
+    while (!handle.IsCompleted) yield return null;
+    handle.Complete();
+    NativeArray<Vector3> vertices = new NativeArray<Vector3>(tmpSize * tmpSize, Allocator.Persistent);
+    for (int i = 0; i < tmpSize * tmpSize; i++) {
+      vertices[i] = new Vector3((i % tmpSize - 1) * tmpRes, output[i], (i / tmpSize - 1) * tmpRes);
+    }
+    output.Dispose();
+
+    int sideLength0 = (int) Mathf.Sqrt(vertices.Length) - 1;
+    NativeArray<int> triangles = new NativeArray<int>(sideLength0 * sideLength0 * 6, Allocator.Persistent);
+    int vert = 0;
+    int tris = 0;
+    for (int z2 = 0; z2 < sideLength0; z2++)
+    {
+      for (int x2 = 0; x2 < sideLength0; x2++)
+      {
+        triangles[tris] = vert;
+        triangles[tris + 1] = vert + sideLength0 + 1;
+        triangles[tris + 2] = vert + 1;
+        triangles[tris + 3] = vert + 1;
+        triangles[tris + 4] = vert + sideLength0 + 1;
+        triangles[tris + 5] = vert + sideLength0 + 2;
+        vert++;
+        tris += 6;
+      }
+      vert++;
+    }
+
+    NativeArray<Vector3> normals = new NativeArray<Vector3>(vertices.Length, Allocator.Persistent);
+    NormalJobManaged normalJob = new NormalJobManaged {
+      vertices = vertices,
+      triangles = triangles,
+      normals = normals
+    };
+
+    handle = normalJob.Schedule(triangles.Length / 3, 64);
+    while (!handle.IsCompleted) yield return null;
+    handle.Complete();
+
+    Mesh.MeshDataArray meshDataArray = Mesh.AllocateWritableMeshData(1);
+    WriteMeshJob meshJob = new WriteMeshJob {
+      vertices = vertices,
+      triangles = triangles,
+      normals = normals,
+      mesh = meshDataArray[0]
+    };
+    
+    handle = meshJob.Schedule();
+    while (!handle.IsCompleted) yield return null;
+    handle.Complete();
+    
+    Mesh.ApplyAndDisposeWritableMeshData(meshDataArray, msh);
+    msh.RecalculateBounds();
+
+    vertices.Dispose();
+    triangles.Dispose();
+    normals.Dispose();
+    
+    go.transform.position = new Vector3(x * _size * _resolution, 0, z * _size * _resolution);
+    go.isStatic = true;
+    
+    // If you need to put anything else (tag, components, etc) on the tile, do it here. If it needs to change every time the LOD is changed, do it in the UpdateTile function.
+    go.tag = "Ground";
+    go.layer = 6;
+    _structures.GenerateChunkStructures(new Vector2(x * _size * _resolution, z * _size * _resolution), new Vector2((x + 1) * _size * _resolution, (z + 1) * _size * _resolution));
+    _generatedStructureTiles.Add(new Vector2(x, z));
+    tile.mesh = msh;
+    tile.obj = go;
+    tile.x = x;
+    tile.z = z;
+    _tilePool[index] = tile;
+    _tilePositions[index / _tileCount, index % _tileCount] = index;
+
+    RiverPass(msh, index);
+    ScatterTile(index);
+    float maxDistance = Mathf.Max(Mathf.Abs(x), Mathf.Abs(z));
+    if (_enableColliders && maxDistance <= _colliderRange) UpdateCollider(index);
+
+    if (index == (_tileCount * _tileCount) - 1) UpdateWaterMesh();
+  }
+
   private IEnumerator UpdateTileJobs(int index) {
     int x = _tilePool[index].x;
     int z = _tilePool[index].z;
@@ -629,8 +756,6 @@ public class WorldGenerator : MonoBehaviour
         _structures.GenerateChunkStructures(new Vector2(x * _size * _resolution, z * _size * _resolution), new Vector2((x + 1) * _size * _resolution, (z + 1) * _size * _resolution));
         _generatedStructureTiles.Add(new Vector2(x, z));
     }
-
-    // Update Mesh here (replace function with job calls)
 
     int sideLength0 = (int) Mathf.Sqrt(vertices.Length) - 1;
     NativeArray<int> triangles = new NativeArray<int>(sideLength0 * sideLength0 * 6, Allocator.Persistent);
@@ -785,6 +910,7 @@ public class WorldGenerator : MonoBehaviour
     handle.Complete();
     
     Mesh.ApplyAndDisposeWritableMeshData(meshDataArray, _tilePool[index].mesh);
+    _tilePool[index].mesh.RecalculateBounds();
     // Vector3[] vertManaged = new Vector3[vertices.Length];
     // int[] triManaged = new int[triangles.Length];
     // for (int i = 0; i < vertices.Length; i++) vertManaged[i] = vertices[i];
