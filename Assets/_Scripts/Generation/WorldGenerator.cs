@@ -591,7 +591,7 @@ public class WorldGenerator : MonoBehaviour
       size = tmpSize,
       overlap = 1,
       xOffset = x * _size * _resolution + _seed,
-      zOffset = z * _seed * _resolution + _seed,
+      zOffset = z * _size * _resolution + _seed,
       xResolution = tmpRes,
       zResolution = tmpRes,
       octaves = _noiseParameters.octaves,
@@ -631,11 +631,11 @@ public class WorldGenerator : MonoBehaviour
     }
 
     // Update Mesh here (replace function with job calls)
-    NativeArray<int> triangles = new NativeArray<int>((int) Mathf.Pow((int) Mathf.Sqrt(vertices.Length) - 1, 2) * 6, Allocator.Persistent);
 
     int sideLength0 = (int) Mathf.Sqrt(vertices.Length) - 1;
-    ushort vert = 0;
-    ushort tris = 0;
+    NativeArray<int> triangles = new NativeArray<int>(sideLength0 * sideLength0 * 6, Allocator.Persistent);
+    int vert = 0;
+    int tris = 0;
     for (int z2 = 0; z2 < sideLength0; z2++)
     {
       for (int x2 = 0; x2 < sideLength0; x2++)
@@ -659,7 +659,7 @@ public class WorldGenerator : MonoBehaviour
       normals = normals
     };
 
-    handle = normalJob.Schedule(vertices.Length, 64);
+    handle = normalJob.Schedule(triangles.Length / 3, 64);
     while (!handle.IsCompleted) yield return null;
     handle.Complete();
 
@@ -681,6 +681,8 @@ public class WorldGenerator : MonoBehaviour
     handle = riverJob.Schedule(tmpSize * tmpSize, 64);
     while (!handle.IsCompleted) yield return null;
     handle.Complete();
+
+    // Currently the worst part for performance (setting water lists)
 
     if (_tilePool[index].waterVertCount > 0) {
       _waterVertices.RemoveRange(_tilePool[index].waterVertIndex, _tilePool[index].waterVertCount);
@@ -770,25 +772,26 @@ public class WorldGenerator : MonoBehaviour
     heightMods.Dispose();
     // Write data to the mesh after all passes
 
-    // Mesh.MeshDataArray meshDataArray = Mesh.AllocateWritableMeshData(1);
-    // WriteMeshJob meshJob = new WriteMeshJob {
-    //   vertices = vertices,
-    //   triangles = triangles,
-    //   normals = normals,
-    //   mesh = meshDataArray[0]
-    // };
-    //
-    // handle = meshJob.Schedule();
-    // while (!handle.IsCompleted) yield return null;
-    // handle.Complete();
-    //
-    // Mesh.ApplyAndDisposeWritableMeshData(meshDataArray, _tilePool[index].mesh);
-    Vector3[] vertManaged = new Vector3[vertices.Length];
-    int[] triManaged = new int[triangles.Length];
-    for (int i = 0; i < vertices.Length; i++) vertManaged[i] = vertices[i];
-    for (int i = 0; i < triangles.Length; i++) triManaged[i] = triangles[i];
-    _tilePool[index].mesh.vertices = vertManaged;
-    _tilePool[index].mesh.triangles = triManaged;
+    Mesh.MeshDataArray meshDataArray = Mesh.AllocateWritableMeshData(1);
+    WriteMeshJob meshJob = new WriteMeshJob {
+      vertices = vertices,
+      triangles = triangles,
+      normals = normals,
+      mesh = meshDataArray[0]
+    };
+    
+    handle = meshJob.Schedule();
+    while (!handle.IsCompleted) yield return null;
+    handle.Complete();
+    
+    Mesh.ApplyAndDisposeWritableMeshData(meshDataArray, _tilePool[index].mesh);
+    // Vector3[] vertManaged = new Vector3[vertices.Length];
+    // int[] triManaged = new int[triangles.Length];
+    // for (int i = 0; i < vertices.Length; i++) vertManaged[i] = vertices[i];
+    // for (int i = 0; i < triangles.Length; i++) triManaged[i] = triangles[i];
+    // _tilePool[index].mesh.triangles = null;
+    // _tilePool[index].mesh.vertices = vertManaged;
+    // _tilePool[index].mesh.triangles = triManaged;
     vertices.Dispose();
     triangles.Dispose();
     normals.Dispose();
@@ -923,11 +926,8 @@ public class WorldGenerator : MonoBehaviour
       Vector3 pointA = vertices[vertexIndexA];
       Vector3 normal = Vector3.Cross(vertices[vertexIndexB] - pointA, vertices[vertexIndexC] - pointA);
       normals[vertexIndexA] += normal;
-      normals[vertexIndexA].Normalize();
       normals[vertexIndexB] += normal;
-      normals[vertexIndexB].Normalize();
       normals[vertexIndexC] += normal;
-      normals[vertexIndexC].Normalize();
     }
 
   }
@@ -960,11 +960,11 @@ public class WorldGenerator : MonoBehaviour
       for (int i = 0; i < verts.Length; i++) {
         Vertex v = new Vertex();
         v.position = vertices[i];
-        v.normal = normals[i];
+        v.normal = normals[i].normalized;
         verts[i] = v;
       }
 
-      mesh.SetIndexBufferParams(triangles.Length, IndexFormat.UInt16);
+      mesh.SetIndexBufferParams(triangles.Length, IndexFormat.UInt32);
       NativeArray<int> tris = mesh.GetIndexData<int>();
       for (int i = 0; i < tris.Length; i++) tris[i] = triangles[i];
       mesh.subMeshCount = 1;
