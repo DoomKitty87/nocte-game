@@ -31,7 +31,7 @@ public static class RoadGenerator
     return outPoints;
   }
 
-  public static Mesh MeshFromPlane(Vector3[] points, float depth, float inset) {
+  public static Mesh MeshFromPlane(Vector3[] points, float depth, float inset, float bevel) {
 
     int pointCount = points.Length / 3;
     Vector3[] vertices = new Vector3[pointCount * 6];
@@ -39,6 +39,11 @@ public static class RoadGenerator
     for (int i = 0; i < points.Length; i++) {
       vertices[i] = points[i] - Vector3.up * inset;
       vertices[i + halfVerts] = points[i] + Vector3.up * depth - Vector3.up * inset;
+    }
+
+    for (int i = 0; i < points.Length / 3; i++) {
+      vertices[i * 3 + halfVerts] = Vector3.Lerp(vertices[i * 3 + halfVerts], vertices[i * 3 + 1 + halfVerts], bevel);
+      vertices[i * 3 + 2 + halfVerts] = Vector3.Lerp(vertices[i * 3 + 2 + halfVerts], vertices[i * 3 + 1 + halfVerts], bevel);
     }
     int[] triangles = new int[(pointCount - 1) * 36 + 24];
 
