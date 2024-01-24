@@ -27,10 +27,8 @@ public class WorldGenerator : MonoBehaviour
     public MeshCollider meshCollider;
     public int x;
     public int z;
-    public int waterVertIndex;
-    public int waterVertCount;
-    public int waterTriIndex;
-    public int waterTriCount;
+    public Vector3[] waterVertices;
+    public int[] waterTriangles;
     public int currentLOD;
 
   }
@@ -205,10 +203,9 @@ public class WorldGenerator : MonoBehaviour
 
   private float _maxPossibleHeight;
   private Mesh _waterMesh;
-  private List<Vector3> _waterVertices = new List<Vector3>();
-  private List<int> _waterTriangles = new List<int>();
 
   private bool _doneGenerating = false;
+  private int _currentlyUpdating = 0;
 
   public delegate void OnGenerationComplete();
   
@@ -305,7 +302,6 @@ public class WorldGenerator : MonoBehaviour
         StartCoroutine(UpdateTileJobs(_updateQueue[0]));
         //UpdateTile(_updateQueue[0]);
         _updateQueue.RemoveAt(0);
-        if (_updateQueue.Count == 0) UpdateWaterMesh();
         updatesLeft--;
       } else break;
     }
@@ -717,6 +713,7 @@ public class WorldGenerator : MonoBehaviour
   }
 
   private IEnumerator UpdateTileJobs(int index) {
+    _currentlyUpdating++;
     int x = _tilePool[index].x;
     int z = _tilePool[index].z;
     int lodFactor = (int) Mathf.Pow(2, _tilePool[index].currentLOD);
@@ -820,25 +817,6 @@ public class WorldGenerator : MonoBehaviour
     while (!handle.IsCompleted) yield return null;
     handle.Complete();
 
-    // Currently the worst part for performance (setting water lists)
-
-    if (_tilePool[index].waterVertCount > 0) {
-      _waterVertices.RemoveRange(_tilePool[index].waterVertIndex, _tilePool[index].waterVertCount);
-      _waterTriangles.RemoveRange(_tilePool[index].waterTriIndex, _tilePool[index].waterTriCount);
-      for (int i = 0; i < _waterTriangles.Count; i++) {
-        if (_waterTriangles[i] >= _tilePool[index].waterVertIndex) _waterTriangles[i] -= _tilePool[index].waterVertCount;
-      }
-      for (int i = 0; i < _tileCount * _tileCount; i++) {
-        if (_tilePool[i].waterVertIndex > _tilePool[index].waterVertIndex) {
-          _tilePool[i].waterVertIndex -= _tilePool[index].waterVertCount;
-        }
-        if (_tilePool[i].waterTriIndex > _tilePool[index].waterTriIndex) {
-          _tilePool[i].waterTriIndex -= _tilePool[index].waterTriCount;
-        }
-      }
-    }
-    _tilePool[index].waterVertCount = 0;
-
     for (int i = 0; i < heightMods.Length; i++) heightMods[i] = _riverParameters.noiseCurve.Evaluate(heightMods[i]) * _riverParameters.heightCurve.Evaluate(vertices[i].y / _maxPossibleHeight) * _riverParameters.normalCurve.Evaluate(Mathf.Abs(normals[i].y));
 
     NativeList<Vector3> waterVertsFinal = new NativeList<Vector3>(0, Allocator.TempJob);
@@ -861,12 +839,8 @@ public class WorldGenerator : MonoBehaviour
     while (!handle.IsCompleted) yield return null;
     handle.Complete();
 
-    _tilePool[index].waterVertIndex = _waterVertices.Count;
-    _tilePool[index].waterVertCount = waterVertsFinal.Length;
-    _tilePool[index].waterTriIndex = _waterTriangles.Count;
-    _tilePool[index].waterTriCount = waterTrisFinal.Length;
-    _waterVertices.AddRange(waterVertsFinal.ToArray());
-    _waterTriangles.AddRange(waterTrisFinal.ToArray());
+    _tilePool[index].waterVertices = waterVertsFinal.ToArray();
+    _tilePool[index].waterTriangles = waterTrisFinal.ToArray();
     waterVertsFinal.Dispose();
     waterTrisFinal.Dispose();
     heightMods.Dispose();
@@ -898,11 +872,11 @@ public class WorldGenerator : MonoBehaviour
     triangles.Dispose();
     normals.Dispose();
     
-
     ScatterTile(index);
     maxDistance = Mathf.Max(Mathf.Abs(x - _playerXChunkScale), Mathf.Abs(z - _playerZChunkScale));
     if (_enableColliders && maxDistance <= _colliderRange) UpdateCollider(index);
-
+    _currentlyUpdating--;
+    if (_currentlyUpdating == 0) UpdateWaterMesh();
   }
 
   #endregion
@@ -990,9 +964,25 @@ public class WorldGenerator : MonoBehaviour
   }
 
   private void UpdateWaterMesh() {
+    int vertexCount = 0;
+    int triangleCount = 0;
+    for (int i = 0; i < _tilePool.Length; i++) {
+      vertexCount += _tilePool[i].waterVertices.Length;
+      triangleCount += _tilePool[i].waterTriangles.Length;
+    }
+    Vector3[] waterVertices = new Vector3[vertexCount];
+    int[] waterTriangles = new int[triangleCount];
+    for (int i, v, t = 0; i < _tilePool.Length; i++) {
+      for (int j = 0; j < _tilePool[i].waterTriangles.Length; j++, t++) {
+        waterTriangles[t] = _tilePool[i].waterTriangles[j] + v;
+      }
+      for (int j = 0; j < _tilePool[i].waterVertices.Length; j++, v++) {
+        waterVertices[v] = _tilePool[i].waterVertices[j];
+      }
+    }
     _waterMesh.triangles = null;
-    _waterMesh.vertices = _waterVertices.ToArray();
-    _waterMesh.triangles = _waterTriangles.ToArray();
+    _waterMesh.vertices = waterVertices;
+    _waterMesh.triangles = waterTriangles;
     _waterMesh.RecalculateNormals();
   }
 
