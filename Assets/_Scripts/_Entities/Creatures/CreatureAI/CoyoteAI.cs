@@ -34,7 +34,7 @@ namespace _Scripts._Entities.Creatures.CreatureAI
 					new Sequencer (new List<TreeNode> {
 						new DistanceTransformLessThan(_transform, _playerTransform, _distanceAttack),
 						new SetState(_controller, EnemyController.PlayerStates.Idle),
-						//new UseAttack(_creatureCombat, _attacks)
+						new UseAttack(_creatureCombat, _attacks[0])
 					}),
 					new Sequencer(new List<TreeNode> {  // checks if the enemy is close to the player and starts chasing
 						new DistanceTransformLessThan(_transform, _playerTransform, _distanceChase),
