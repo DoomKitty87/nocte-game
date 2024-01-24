@@ -210,6 +210,10 @@ public class WorldGenerator : MonoBehaviour
 
   private bool _doneGenerating = false;
 
+  public delegate void OnGenerationComplete();
+  
+  public static event OnGenerationComplete GenerationComplete;
+
   #endregion
 
   #region Public Fetch Functions
@@ -307,8 +311,8 @@ public class WorldGenerator : MonoBehaviour
     }
     for (int i = 0; i < _maxUpdatesPerFrame * 250; i++) {
       if (_generateQueue.Count > 0) {
-        StartCoroutine(GenerateTileJobs(_generateQueue[0][0], _generateQueue[0][1], _generateQueue[0][2]));
-        //GenerateTile(_generateQueue[0][0], _generateQueue[0][1], _generateQueue[0][2]);
+        //StartCoroutine(GenerateTileJobs(_generateQueue[0][0], _generateQueue[0][1], _generateQueue[0][2]));
+        GenerateTile(_generateQueue[0][0], _generateQueue[0][1], _generateQueue[0][2]);
         _generateQueue.RemoveAt(0);
         if (Time.timeScale == 0f) Time.timeScale = 1f;
       } else break;
@@ -544,7 +548,11 @@ public class WorldGenerator : MonoBehaviour
     float maxDistance = Mathf.Max(Mathf.Abs(x), Mathf.Abs(z));
     if (_enableColliders && maxDistance <= _colliderRange) UpdateCollider(index);
 
-    if (index == (_tileCount * _tileCount) - 1) UpdateWaterMesh();
+    if (index == (_tileCount * _tileCount) - 1) {
+      // Generation Complete
+      UpdateWaterMesh();
+      GenerationComplete?.Invoke();
+    }
   }
 
   private void UpdateTile(int index) {
