@@ -208,6 +208,8 @@ public class WorldGenerator : MonoBehaviour
   private List<Vector3> _waterVertices = new List<Vector3>();
   private List<int> _waterTriangles = new List<int>();
 
+  private bool _doneGenerating = false;
+
   #endregion
 
   #region Public Fetch Functions
@@ -295,7 +297,7 @@ public class WorldGenerator : MonoBehaviour
       if (!_bakingColliders) StartCoroutine(BakeColliders());
     }
     while (updatesLeft > 0) {
-      if (_updateQueue.Count > 0 && _generateQueue.Count == 0) {
+      if (_updateQueue.Count > 0 && _doneGenerating) {
         StartCoroutine(UpdateTileJobs(_updateQueue[0]));
         //UpdateTile(_updateQueue[0]);
         _updateQueue.RemoveAt(0);
@@ -700,7 +702,10 @@ public class WorldGenerator : MonoBehaviour
     float maxDistance = Mathf.Max(Mathf.Abs(x), Mathf.Abs(z));
     if (_enableColliders && maxDistance <= _colliderRange) UpdateCollider(index);
 
-    if (index == (_tileCount * _tileCount) - 1) UpdateWaterMesh();
+    if (index == (_tileCount * _tileCount) - 1) {
+      _doneGenerating = true;
+      UpdateWaterMesh();
+    }
   }
 
   private IEnumerator UpdateTileJobs(int index) {
@@ -891,10 +896,11 @@ public class WorldGenerator : MonoBehaviour
     _waterVertices.AddRange(waterVertsFinal);
     _waterTriangles.AddRange(waterTrisFinal);
     _tilePool[index].waterVertIndex = waterVertsLength;
-    _tilePool[index].waterVertCount = waterVerts.Length - ignored;
+    _tilePool[index].waterVertCount = waterVertsFinal.Length;
     _tilePool[index].waterTriIndex = waterTriLength;
-    _tilePool[index].waterTriCount = _waterTriangles.Count - waterTriLength;
+    _tilePool[index].waterTriCount = waterTrisFinal.Length;
     heightMods.Dispose();
+
     // Write data to the mesh after all passes
 
     Mesh.MeshDataArray meshDataArray = Mesh.AllocateWritableMeshData(1);
