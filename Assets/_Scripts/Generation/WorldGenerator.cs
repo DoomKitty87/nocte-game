@@ -666,6 +666,52 @@ public class WorldGenerator : MonoBehaviour
     handle = normalJob.Schedule(triangles.Length / 3, 64);
     while (!handle.IsCompleted) yield return null;
     handle.Complete();
+    
+    NativeArray<float> heightMods = new NativeArray<float>(vertices.Length, Allocator.Persistent);
+    RiverJob riverJob = new RiverJob {
+      size = tmpSize,
+      octaves = _riverParameters.octaves,
+      lacunarity = _riverParameters.lacunarity,
+      persistence = _riverParameters.persistence,
+      xOffset = x * _size * _resolution + _seed,
+      zOffset = z * _size * _resolution + _seed,
+      xResolution = tmpRes,
+      zResolution = tmpRes,
+      scale = 1f / _riverParameters.scale,
+      warpScale = 1f / _riverParameters.warpScale,
+      warpStrength = _riverParameters.warpStrength,
+      output = heightMods
+    };
+    handle = riverJob.Schedule(tmpSize * tmpSize, 64);
+    while (!handle.IsCompleted) yield return null;
+    handle.Complete();
+
+    for (int i = 0; i < heightMods.Length; i++) heightMods[i] = _riverParameters.noiseCurve.Evaluate(heightMods[i]) * _riverParameters.heightCurve.Evaluate(vertices[i].y / _maxPossibleHeight) * _riverParameters.normalCurve.Evaluate(Mathf.Abs(normals[i].y));
+
+    NativeList<Vector3> waterVertsFinal = new NativeList<Vector3>(0, Allocator.TempJob);
+    NativeList<int> waterTrisFinal = new NativeList<int>(0, Allocator.TempJob);
+
+    RiverPassJob riverPassJob = new RiverPassJob {
+      vertices = vertices,
+      heightMods = heightMods,
+      positionOffset = _tilePool[index].obj.transform.position,
+      waterLevel = _riverParameters.waterLevel,
+      waterAmplitude = _riverParameters.amplitude,
+      lakePlaneHeight = _lakePlaneHeight,
+      triangles = triangles,
+      waterVertsOut = waterVertsFinal,
+      waterTrisOut = waterTrisFinal
+    };
+
+    handle = riverPassJob.Schedule();
+    while (!handle.IsCompleted) yield return null;
+    handle.Complete();
+
+    _tilePool[index].waterVertices = waterVertsFinal.ToArray();
+    _tilePool[index].waterTriangles = waterTrisFinal.ToArray();
+    waterVertsFinal.Dispose();
+    waterTrisFinal.Dispose();
+    heightMods.Dispose();
 
     Mesh.MeshDataArray meshDataArray = Mesh.AllocateWritableMeshData(1);
     WriteMeshJob meshJob = new WriteMeshJob {
@@ -701,7 +747,7 @@ public class WorldGenerator : MonoBehaviour
     _tilePool[index] = tile;
     _tilePositions[index / _tileCount, index % _tileCount] = index;
 
-    RiverPass(msh, index);
+    //RiverPass(msh, index);
     ScatterTile(index);
     float maxDistance = Mathf.Max(Mathf.Abs(x), Mathf.Abs(z));
     if (_enableColliders && maxDistance <= _colliderRange) UpdateCollider(index);
@@ -829,7 +875,6 @@ public class WorldGenerator : MonoBehaviour
       waterLevel = _riverParameters.waterLevel,
       waterAmplitude = _riverParameters.amplitude,
       lakePlaneHeight = _lakePlaneHeight,
-      waterVertCount = _waterVertices.Count,
       triangles = triangles,
       waterVertsOut = waterVertsFinal,
       waterTrisOut = waterTrisFinal
@@ -954,9 +999,9 @@ public class WorldGenerator : MonoBehaviour
       waterTrisOut.Length = triCount;
       for (int i = 0, j = 0; i < triangles.Length; i+= 3) {
         if (!ignoreVerts[waterTriangles[i]] && !ignoreVerts[waterTriangles[i + 1]] && !ignoreVerts[waterTriangles[i + 2]]) {
-          waterTrisOut[j] = realIndices[waterTriangles[i]] + waterVertCount;
-          waterTrisOut[j + 1] = realIndices[waterTriangles[i + 1]] + waterVertCount;
-          waterTrisOut[j + 2] = realIndices[waterTriangles[i + 2]] + waterVertCount;
+          waterTrisOut[j] = realIndices[waterTriangles[i]];
+          waterTrisOut[j + 1] = realIndices[waterTriangles[i + 1]];
+          waterTrisOut[j + 2] = realIndices[waterTriangles[i + 2]];
           j += 3;
         }
       }
@@ -972,7 +1017,7 @@ public class WorldGenerator : MonoBehaviour
     }
     Vector3[] waterVertices = new Vector3[vertexCount];
     int[] waterTriangles = new int[triangleCount];
-    for (int i, v, t = 0; i < _tilePool.Length; i++) {
+    for (int i = 0, v = 0, t = 0; i < _tilePool.Length; i++) {
       for (int j = 0; j < _tilePool[i].waterTriangles.Length; j++, t++) {
         waterTriangles[t] = _tilePool[i].waterTriangles[j] + v;
       }
@@ -986,98 +1031,98 @@ public class WorldGenerator : MonoBehaviour
     _waterMesh.RecalculateNormals();
   }
 
-  private void RiverPass(Mesh targetMesh, int index) {
-    if (_tilePool[index].waterVertCount > 0) {
-      _waterVertices.RemoveRange(_tilePool[index].waterVertIndex, _tilePool[index].waterVertCount);
-      _waterTriangles.RemoveRange(_tilePool[index].waterTriIndex, _tilePool[index].waterTriCount);
-      for (int i = 0; i < _waterTriangles.Count; i++) {
-        if (_waterTriangles[i] >= _tilePool[index].waterVertIndex) _waterTriangles[i] -= _tilePool[index].waterVertCount;
-      }
-      for (int i = 0; i < _tileCount * _tileCount; i++) {
-        if (_tilePool[i].waterVertIndex > _tilePool[index].waterVertIndex) {
-          _tilePool[i].waterVertIndex -= _tilePool[index].waterVertCount;
-        }
-        if (_tilePool[i].waterTriIndex > _tilePool[index].waterTriIndex) {
-          _tilePool[i].waterTriIndex -= _tilePool[index].waterTriCount;
-        }
-      }
-    }
-    _tilePool[index].waterVertCount = 0;
-    Vector3[] vertices = targetMesh.vertices;
-    Vector3[] normals = targetMesh.normals;
-    int lodFactor = (int) Mathf.Pow(2, _tilePool[index].currentLOD);
-    float[] heightMods = AmalgamNoise.GenerateRivers(_size, lodFactor, _tilePool[index].x * _size * _resolution + _seed % 216812,
-        _tilePool[index].z * _size * _resolution + _seed % 216812, _resolution / lodFactor, _resolution / lodFactor, _riverParameters.scale, _riverParameters.octaves, _riverParameters.lacunarity, _riverParameters.persistence, _riverParameters.warpScale, _riverParameters.warpStrength);
-    Vector3[] waterVerts = new Vector3[vertices.Length];
-    bool[] ignoreVerts = new bool[vertices.Length];
-    int ignored = 0;
-    for (int i = 0; i < heightMods.Length; i++) {
-      heightMods[i] = _riverParameters.noiseCurve.Evaluate(heightMods[i]) * _riverParameters.heightCurve.Evaluate(vertices[i].y / _maxPossibleHeight) * _riverParameters.normalCurve.Evaluate(Mathf.Abs(normals[i].y));
-      if (vertices[i].y <= _lakePlaneHeight) {
-        if (heightMods[i] != 0) vertices[i] -= new Vector3(0, heightMods[i] * _riverParameters.amplitude, 0);
-        waterVerts[i] = new Vector3(vertices[i].x, _lakePlaneHeight - _riverParameters.waterLevel, vertices[i].z);
-        waterVerts[i] += _tilePool[index].obj.transform.position;
-        continue;
-      }
-      waterVerts[i] = vertices[i] - new Vector3(0, _riverParameters.waterLevel, 0);
-      waterVerts[i] += _tilePool[index].obj.transform.position;
-      if (heightMods[i] == 0) {
-        ignoreVerts[i] = true;
-        ignored++;
-      } else {
-        vertices[i] -= new Vector3(0, heightMods[i] * _riverParameters.amplitude, 0);
-      }
-    }
-
-    int sideLength = (int) Mathf.Sqrt(vertices.Length);
-    int[] triangles = new int[(sideLength - 1) * (sideLength - 1) * 6];
-    for (int i = 0, j = 0; i < waterVerts.Length; i++) {
-      if (i / sideLength >= sideLength - 1) continue;
-      if (i % sideLength >= sideLength - 1) continue;
-      if (i / sideLength == 0) continue;
-      if (i % sideLength == 0) continue;
-      triangles[j * 6] = i;
-      triangles[j * 6 + 1] = i + sideLength;
-      triangles[j * 6 + 2] = i + 1;
-      triangles[j * 6 + 3] = i + sideLength;
-      triangles[j * 6 + 4] = i + sideLength + 1;
-      triangles[j * 6 + 5] = i + 1;
-      j++;
-    }
-    targetMesh.vertices = vertices;
-    int waterVertsLength = _waterVertices.Count;
-    int waterTriLength = _waterTriangles.Count;
-    int[] realIndices = new int[waterVerts.Length];
-    Vector3[] verts = new Vector3[waterVerts.Length - ignored];
-    for (int i = 0, j = 0; i < waterVerts.Length; i++) {
-      if (!ignoreVerts[i]) {
-        verts[j] = waterVerts[i];
-        realIndices[i] = j;
-        j++;
-      }
-    }
-    int triCount = 0;
-    for (int i = 0; i < triangles.Length; i+= 3) {
-      if (!ignoreVerts[triangles[i]] && !ignoreVerts[triangles[i + 1]] && !ignoreVerts[triangles[i + 2]]) {
-        triCount += 3;
-      }
-    }
-    int[] tris = new int[triCount];
-    for (int i = 0, j = 0; i < triangles.Length; i+= 3) {
-      if (!ignoreVerts[triangles[i]] && !ignoreVerts[triangles[i + 1]] && !ignoreVerts[triangles[i + 2]]) {
-        tris[j] = realIndices[triangles[i]] + waterVertsLength;
-        tris[j + 1] = realIndices[triangles[i + 1]] + waterVertsLength;
-        tris[j + 2] = realIndices[triangles[i + 2]] + waterVertsLength;
-        j += 3;
-      }
-    }
-    _waterVertices.AddRange(verts);
-    _waterTriangles.AddRange(tris);
-    _tilePool[index].waterVertIndex = waterVertsLength;
-    _tilePool[index].waterVertCount = waterVerts.Length - ignored;
-    _tilePool[index].waterTriIndex = waterTriLength;
-    _tilePool[index].waterTriCount = _waterTriangles.Count - waterTriLength;
-  }
+  // private void RiverPass(Mesh targetMesh, int index) {
+  //   if (_tilePool[index].waterVertCount > 0) {
+  //     _waterVertices.RemoveRange(_tilePool[index].waterVertIndex, _tilePool[index].waterVertCount);
+  //     _waterTriangles.RemoveRange(_tilePool[index].waterTriIndex, _tilePool[index].waterTriCount);
+  //     for (int i = 0; i < _waterTriangles.Count; i++) {
+  //       if (_waterTriangles[i] >= _tilePool[index].waterVertIndex) _waterTriangles[i] -= _tilePool[index].waterVertCount;
+  //     }
+  //     for (int i = 0; i < _tileCount * _tileCount; i++) {
+  //       if (_tilePool[i].waterVertIndex > _tilePool[index].waterVertIndex) {
+  //         _tilePool[i].waterVertIndex -= _tilePool[index].waterVertCount;
+  //       }
+  //       if (_tilePool[i].waterTriIndex > _tilePool[index].waterTriIndex) {
+  //         _tilePool[i].waterTriIndex -= _tilePool[index].waterTriCount;
+  //       }
+  //     }
+  //   }
+  //   _tilePool[index].waterVertCount = 0;
+  //   Vector3[] vertices = targetMesh.vertices;
+  //   Vector3[] normals = targetMesh.normals;
+  //   int lodFactor = (int) Mathf.Pow(2, _tilePool[index].currentLOD);
+  //   float[] heightMods = AmalgamNoise.GenerateRivers(_size, lodFactor, _tilePool[index].x * _size * _resolution + _seed % 216812,
+  //       _tilePool[index].z * _size * _resolution + _seed % 216812, _resolution / lodFactor, _resolution / lodFactor, _riverParameters.scale, _riverParameters.octaves, _riverParameters.lacunarity, _riverParameters.persistence, _riverParameters.warpScale, _riverParameters.warpStrength);
+  //   Vector3[] waterVerts = new Vector3[vertices.Length];
+  //   bool[] ignoreVerts = new bool[vertices.Length];
+  //   int ignored = 0;
+  //   for (int i = 0; i < heightMods.Length; i++) {
+  //     heightMods[i] = _riverParameters.noiseCurve.Evaluate(heightMods[i]) * _riverParameters.heightCurve.Evaluate(vertices[i].y / _maxPossibleHeight) * _riverParameters.normalCurve.Evaluate(Mathf.Abs(normals[i].y));
+  //     if (vertices[i].y <= _lakePlaneHeight) {
+  //       if (heightMods[i] != 0) vertices[i] -= new Vector3(0, heightMods[i] * _riverParameters.amplitude, 0);
+  //       waterVerts[i] = new Vector3(vertices[i].x, _lakePlaneHeight - _riverParameters.waterLevel, vertices[i].z);
+  //       waterVerts[i] += _tilePool[index].obj.transform.position;
+  //       continue;
+  //     }
+  //     waterVerts[i] = vertices[i] - new Vector3(0, _riverParameters.waterLevel, 0);
+  //     waterVerts[i] += _tilePool[index].obj.transform.position;
+  //     if (heightMods[i] == 0) {
+  //       ignoreVerts[i] = true;
+  //       ignored++;
+  //     } else {
+  //       vertices[i] -= new Vector3(0, heightMods[i] * _riverParameters.amplitude, 0);
+  //     }
+  //   }
+  //
+  //   int sideLength = (int) Mathf.Sqrt(vertices.Length);
+  //   int[] triangles = new int[(sideLength - 1) * (sideLength - 1) * 6];
+  //   for (int i = 0, j = 0; i < waterVerts.Length; i++) {
+  //     if (i / sideLength >= sideLength - 1) continue;
+  //     if (i % sideLength >= sideLength - 1) continue;
+  //     if (i / sideLength == 0) continue;
+  //     if (i % sideLength == 0) continue;
+  //     triangles[j * 6] = i;
+  //     triangles[j * 6 + 1] = i + sideLength;
+  //     triangles[j * 6 + 2] = i + 1;
+  //     triangles[j * 6 + 3] = i + sideLength;
+  //     triangles[j * 6 + 4] = i + sideLength + 1;
+  //     triangles[j * 6 + 5] = i + 1;
+  //     j++;
+  //   }
+  //   targetMesh.vertices = vertices;
+  //   int waterVertsLength = _waterVertices.Count;
+  //   int waterTriLength = _waterTriangles.Count;
+  //   int[] realIndices = new int[waterVerts.Length];
+  //   Vector3[] verts = new Vector3[waterVerts.Length - ignored];
+  //   for (int i = 0, j = 0; i < waterVerts.Length; i++) {
+  //     if (!ignoreVerts[i]) {
+  //       verts[j] = waterVerts[i];
+  //       realIndices[i] = j;
+  //       j++;
+  //     }
+  //   }
+  //   int triCount = 0;
+  //   for (int i = 0; i < triangles.Length; i+= 3) {
+  //     if (!ignoreVerts[triangles[i]] && !ignoreVerts[triangles[i + 1]] && !ignoreVerts[triangles[i + 2]]) {
+  //       triCount += 3;
+  //     }
+  //   }
+  //   int[] tris = new int[triCount];
+  //   for (int i = 0, j = 0; i < triangles.Length; i+= 3) {
+  //     if (!ignoreVerts[triangles[i]] && !ignoreVerts[triangles[i + 1]] && !ignoreVerts[triangles[i + 2]]) {
+  //       tris[j] = realIndices[triangles[i]] + waterVertsLength;
+  //       tris[j + 1] = realIndices[triangles[i + 1]] + waterVertsLength;
+  //       tris[j + 2] = realIndices[triangles[i + 2]] + waterVertsLength;
+  //       j += 3;
+  //     }
+  //   }
+  //   _waterVertices.AddRange(verts);
+  //   _waterTriangles.AddRange(tris);
+  //   _tilePool[index].waterVertIndex = waterVertsLength;
+  //   _tilePool[index].waterVertCount = waterVerts.Length - ignored;
+  //   _tilePool[index].waterTriIndex = waterTriLength;
+  //   _tilePool[index].waterTriCount = _waterTriangles.Count - waterTriLength;
+  // }
 
   #endregion
 
@@ -1293,7 +1338,7 @@ public class WorldGenerator : MonoBehaviour
 
   private void UpdateMesh(Mesh targetMesh, int index) {
     targetMesh.normals = CalculateNormalsJobs(targetMesh);
-    RiverPass(targetMesh, index);
+    //RiverPass(targetMesh, index);
     //targetMesh.triangles = CullTriangles(targetMesh);
     targetMesh.RecalculateBounds();
   }
