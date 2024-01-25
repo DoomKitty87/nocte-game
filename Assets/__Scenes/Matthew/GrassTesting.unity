@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 262.30203, g: 324.99054, b: 430.14313, a: 1}
+  m_IndirectSpecularColor: {r: 261.80283, g: 324.33078, b: 429.25055, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -1171,19 +1171,18 @@ MonoBehaviour:
   m_GameObject: {fileID: 1424418020}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f2fd38c0f36d540a3882b505de6275ee, type: 3}
+  m_Script: {fileID: 11500000, guid: ba3ce9bc2a8946549bbc1e0c83698b68, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _enableGrass: 1
-  _regenerateGrass: 0
-  _minBladeHeight: 0.2
-  _maxBladeHeight: 0.75
-  _scale: 0.5
-  _numberOfBladesPerTri: 1
-  _computeShader: {fileID: 0}
-  _terrainMesh: {fileID: 0}
-  _grassMesh: {fileID: 0}
-  _material: {fileID: 0}
+  _meshRenderer: {fileID: 1424418023}
+  _terrainTileMeshFilter: {fileID: 1424418024}
+  _grassMesh: {fileID: -462981019419857548, guid: e9edbbe92ffc1e04a94817a23bc92820,
+    type: 3}
+  _renderingMaterial: {fileID: 2100000, guid: c4d98046d6a10394c8c7df596a52754e, type: 2}
+  _samplesX: 1
+  _samplesY: 1
+  _tileSplitFactor: 0
+  _meshBoundsPadding: 0
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
