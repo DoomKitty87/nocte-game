@@ -132,10 +132,10 @@ public class PlayerController : MonoBehaviour
         _rb = GetComponent<Rigidbody>();
         
         if (TryGetComponent(out ConsoleController controller)) {
-            // Maybe we want this?
-            // Freezes player when console is open.
-            ConsoleController.ConsoleOpened += EnableFreeze;
-            ConsoleController.ConsoleClosed += DisableFreeze;
+            if (BackgroundInfo._freezeTimeOnEnterConsole) {
+                ConsoleController.ConsoleOpened += DisablePlayer;
+                ConsoleController.ConsoleClosed += EnablePlayer;
+            }
         }
     }
 
@@ -297,207 +297,217 @@ public class PlayerController : MonoBehaviour
     
     #region Movement
     private void Move() {
-        if (_disableMovement) return;
+        if (!_disableMovement) {
 
-        if (State is PlayerStates.Frozen) return;
-        
-        HandleCrouchingCameraPosition();
-        
-        _position = transform.position;
-        _velocity = _rb.velocity;
-        _horizontalVelocity = new Vector3(_velocity.x, 0, _velocity.z);
+            if (State is PlayerStates.Frozen) return;
 
-        _acceleration = Vector3.zero;
-        _horizontalAcceleration = Vector3.zero;
+            HandleCrouchingCameraPosition();
 
-        _velocityMagnitude = _velocity.magnitude;
-        _horizontalVelocityMagnitude = _horizontalVelocity.magnitude;
+            _position = transform.position;
+            _velocity = _rb.velocity;
+            _horizontalVelocity = new Vector3(_velocity.x, 0, _velocity.z);
 
-        Vector3 forwardDirection = _orientation.forward;
-        Vector3 rightDirection = _orientation.right;
+            _acceleration = Vector3.zero;
+            _horizontalAcceleration = Vector3.zero;
 
-        switch (State) {
-            case PlayerStates.Walking: {
-                // Transform the input vector to the orientation's forward and right directions
-                Vector3 inputDirection =
-                    (_inputVectorNormalized.x * rightDirection + _inputVectorNormalized.z * forwardDirection).
-                    normalized;
+            _velocityMagnitude = _velocity.magnitude;
+            _horizontalVelocityMagnitude = _horizontalVelocity.magnitude;
 
-                // Fixed movement for slope                
-                Vector3 fixedVector = Vector3.ProjectOnPlane(inputDirection, _normalVector).normalized;
+            Vector3 forwardDirection = _orientation.forward;
+            Vector3 rightDirection = _orientation.right;
 
-                _acceleration += fixedVector * _walkSpeed;
+            switch (State) {
+                case PlayerStates.Walking: {
+                    // Transform the input vector to the orientation's forward and right directions
+                    Vector3 inputDirection =
+                        (_inputVectorNormalized.x * rightDirection + _inputVectorNormalized.z * forwardDirection).
+                        normalized;
 
-                // Friction
-                _acceleration -= Vector3.ProjectOnPlane(_velocity, _normalVector) * _frictionCoefficient;
+                    // Fixed movement for slope                
+                    Vector3 fixedVector = Vector3.ProjectOnPlane(inputDirection, _normalVector).normalized;
 
-                if (_jumping && _resetJump) {
-                    _acceleration += _jumpForce * Vector3.up;
-                    _jumping = false;
-                    _resetJump = false;
+                    _acceleration += fixedVector * _walkSpeed;
+
+                    // Friction
+                    _acceleration -= Vector3.ProjectOnPlane(_velocity, _normalVector) * _frictionCoefficient;
+
+                    if (_jumping && _resetJump) {
+                        _acceleration += _jumpForce * Vector3.up;
+                        _jumping = false;
+                        _resetJump = false;
+                    }
+
+                    break;
                 }
 
-                break;
-            }
-            
-            case PlayerStates.Sprinting: {
-                // Transform the input vector to the orientation's forward and right directions
-                Vector3 inputDirection =
-                    (_inputVectorNormalized.x * rightDirection + _inputVectorNormalized.z * forwardDirection).
-                    normalized;
+                case PlayerStates.Sprinting: {
+                    // Transform the input vector to the orientation's forward and right directions
+                    Vector3 inputDirection =
+                        (_inputVectorNormalized.x * rightDirection + _inputVectorNormalized.z * forwardDirection).
+                        normalized;
 
-                // Fixed movement for slope                
-                Vector3 fixedVector = Vector3.ProjectOnPlane(inputDirection, _normalVector).normalized;
+                    // Fixed movement for slope                
+                    Vector3 fixedVector = Vector3.ProjectOnPlane(inputDirection, _normalVector).normalized;
 
-                _acceleration += fixedVector * _sprintSpeed;
+                    _acceleration += fixedVector * _sprintSpeed;
 
-                // Friction
-                _acceleration -= Vector3.ProjectOnPlane(_velocity, _normalVector) * _frictionCoefficient;
+                    // Friction
+                    _acceleration -= Vector3.ProjectOnPlane(_velocity, _normalVector) * _frictionCoefficient;
 
-                if (_jumping && _resetJump) {
-                    _acceleration += _jumpForce * Vector3.up;
-                    _jumping = false;
-                    _resetJump = false;
+                    if (_jumping && _resetJump) {
+                        _acceleration += _jumpForce * Vector3.up;
+                        _jumping = false;
+                        _resetJump = false;
+                    }
+
+                    break;
                 }
 
-                break;
-            }
-            
-            case PlayerStates.Crouching: {
-                // Transform the input vector to the orientation's forward and right directions
-                Vector3 inputDirection =
-                    (_inputVectorNormalized.x * rightDirection + _inputVectorNormalized.z * forwardDirection).
-                    normalized;
+                case PlayerStates.Crouching: {
+                    // Transform the input vector to the orientation's forward and right directions
+                    Vector3 inputDirection =
+                        (_inputVectorNormalized.x * rightDirection + _inputVectorNormalized.z * forwardDirection).
+                        normalized;
 
-                // Fixed movement for slope                
-                Vector3 fixedVector = Vector3.ProjectOnPlane(inputDirection, _normalVector).normalized;
+                    // Fixed movement for slope                
+                    Vector3 fixedVector = Vector3.ProjectOnPlane(inputDirection, _normalVector).normalized;
 
-                _acceleration += fixedVector * _crouchSpeed;
+                    _acceleration += fixedVector * _crouchSpeed;
 
-                // Friction
-                _acceleration -= Vector3.ProjectOnPlane(_velocity, _normalVector) * _frictionCoefficient;
+                    // Friction
+                    _acceleration -= Vector3.ProjectOnPlane(_velocity, _normalVector) * _frictionCoefficient;
 
-                if (_jumping && _resetJump) {
-                    _acceleration += _jumpForce * Vector3.up;
-                    _jumping = false;
-                    _resetJump = false;
+                    if (_jumping && _resetJump) {
+                        _acceleration += _jumpForce * Vector3.up;
+                        _jumping = false;
+                        _resetJump = false;
+                    }
+
+                    break;
                 }
 
-                break;
-            }
+                case PlayerStates.Sliding: {
+                    // Note that gravity applies some friction to movement already
 
-            case PlayerStates.Sliding: {
-                // Note that gravity applies some friction to movement already
-                
-                _acceleration -= Vector3.ProjectOnPlane(_velocity, _normalVector) * _slidingFrictionCoefficient;
-                
-                if (_jumping && _resetJump) {
-                    _acceleration += _jumpForce * Vector3.up;
-                    _jumping = false;
-                    _resetJump = false;
-                }
-                
-                break;
-            }
-            
-            case PlayerStates.Idle: {
+                    _acceleration -= Vector3.ProjectOnPlane(_velocity, _normalVector) * _slidingFrictionCoefficient;
 
-                // Friction
-                _acceleration -= Vector3.ProjectOnPlane(_velocity, _normalVector) * _frictionCoefficient;
+                    if (_jumping && _resetJump) {
+                        _acceleration += _jumpForce * Vector3.up;
+                        _jumping = false;
+                        _resetJump = false;
+                    }
 
-                if (_jumping && _resetJump) {
-                    _acceleration += _jumpForce * Vector3.up;
-                    _jumping = false;
-                    _resetJump = false;
+                    break;
                 }
 
-                break;
-            }
+                case PlayerStates.Idle: {
 
-            case PlayerStates.Air: {
-                // Transform the input vector to the orientation's forward and right directions
-                Vector3 inputDirection =
-                    (_inputVectorNormalized.x * rightDirection + _inputVectorNormalized.z * forwardDirection).
-                    normalized;
-                
-                // 4 different cases:
-                if (_horizontalVelocityMagnitude < _airSpeedThreshold) {
-                    if ((_horizontalVelocity + inputDirection * _airMoveSpeed).magnitude > _airSpeedThreshold) {
-                        // Case 1: Previous velocity is less then cutoff and new velocity is less then cutoff.
-                        // New velocity is calculated normally
-                        _acceleration += inputDirection * _airMoveSpeed;
+                    // Friction
+                    _acceleration -= Vector3.ProjectOnPlane(_velocity, _normalVector) * _frictionCoefficient;
+
+                    if (_jumping && _resetJump) {
+                        _acceleration += _jumpForce * Vector3.up;
+                        _jumping = false;
+                        _resetJump = false;
+                    }
+
+                    break;
+                }
+
+                case PlayerStates.Air: {
+                    // Transform the input vector to the orientation's forward and right directions
+                    Vector3 inputDirection =
+                        (_inputVectorNormalized.x * rightDirection + _inputVectorNormalized.z * forwardDirection).
+                        normalized;
+
+                    // 4 different cases:
+                    if (_horizontalVelocityMagnitude < _airSpeedThreshold) {
+                        if ((_horizontalVelocity + inputDirection * _airMoveSpeed).magnitude > _airSpeedThreshold) {
+                            // Case 1: Previous velocity is less then cutoff and new velocity is less then cutoff.
+                            // New velocity is calculated normally
+                            _acceleration += inputDirection * _airMoveSpeed;
+                        }
+                        else {
+                            // Case 2: Previous velocity is less then cutoff and new velocity is more then cutoff.
+                            // New velocity capped at cutoff
+                            Vector3 newVelocity = _horizontalVelocity + inputDirection * _airMoveSpeed;
+                            Vector3 cappedNewVelocity = Vector3.ClampMagnitude(newVelocity, _airSpeedThreshold);
+                            Vector3 acceleration = cappedNewVelocity - _horizontalVelocity;
+                            _acceleration += acceleration;
+                        }
                     }
                     else {
-                        // Case 2: Previous velocity is less then cutoff and new velocity is more then cutoff.
-                        // New velocity capped at cutoff
-                        Vector3 newVelocity = _horizontalVelocity + inputDirection * _airMoveSpeed;
-                        Vector3 cappedNewVelocity = Vector3.ClampMagnitude(newVelocity, _airSpeedThreshold);
-                        Vector3 acceleration = cappedNewVelocity - _horizontalVelocity;
-                        _acceleration += acceleration;
+                        if ((_horizontalVelocity + inputDirection * _airMoveSpeed).magnitude < _airSpeedThreshold) {
+                            // Case 3: Previous velocity is more then cutoff and new velocity is less then cutoff.
+                            // New velocity is calculated normally
+                            _acceleration += inputDirection * _airMoveSpeed;
+                        }
+                        else {
+                            // Case 4: Previous velocity is more then cutoff and new velocity ism ore then cutoff.
+                            // New velocity is capped at previous velocity magnitude
+                            Vector3 newVelocity = _horizontalVelocity + inputDirection * _airMoveSpeed;
+                            Vector3 cappedNewVelocity = Vector3.ClampMagnitude(
+                                newVelocity,
+                                _horizontalVelocityMagnitude
+                            );
+                            Vector3 acceleration = cappedNewVelocity - _horizontalVelocity;
+                            _acceleration += acceleration;
+                        }
                     }
+
+                    break;
                 }
-                else {
-                    if ((_horizontalVelocity + inputDirection * _airMoveSpeed).magnitude < _airSpeedThreshold) {
-                        // Case 3: Previous velocity is more then cutoff and new velocity is less then cutoff.
-                        // New velocity is calculated normally
-                        _acceleration += inputDirection * _airMoveSpeed;
-                    }
-                    else {
-                        // Case 4: Previous velocity is more then cutoff and new velocity ism ore then cutoff.
-                        // New velocity is capped at previous velocity magnitude
-                        Vector3 newVelocity = _horizontalVelocity + inputDirection * _airMoveSpeed;
-                        Vector3 cappedNewVelocity = Vector3.ClampMagnitude(newVelocity, _horizontalVelocityMagnitude);
-                        Vector3 acceleration = cappedNewVelocity - _horizontalVelocity;
-                        _acceleration += acceleration;
-                    }
+
+                case PlayerStates.Swimming: {
+                    Vector3 inputDirection =
+                        (_inputVectorNormalized.x * rightDirection + _inputVectorNormalized.z * forwardDirection).
+                        normalized;
+
+                    _acceleration += inputDirection * _swimmingSpeed;
+                    _acceleration -= _velocity * _waterFrictionCoefficient;
+
+
+                    _acceleration += Vector3.up * (_swimmingBuoyantForce *
+                                                   Mathf.Max(
+                                                       _currentWaterHeight - (transform.position.y -
+                                                                              _collider.bounds.size.y / 2),
+                                                       0
+                                                   ));
+
+                    break;
                 }
-                
-                break;
-            }
 
-            case PlayerStates.Swimming: {
-                Vector3 inputDirection =
-                    (_inputVectorNormalized.x * rightDirection + _inputVectorNormalized.z * forwardDirection).
-                    normalized;
+                case PlayerStates.Driving: {
+                    transform.position = _parent.position;
 
-                _acceleration += inputDirection * _swimmingSpeed;
-                _acceleration -= _velocity * _waterFrictionCoefficient;
+                    break;
+                }
 
+                case PlayerStates.Noclip: {
+                    if (Camera.main == null)
+                        throw new NullReferenceException("No camera tagged 'MainCamera' in scene.");
+                    Transform mainCamera = Camera.main.transform;
 
-                _acceleration += Vector3.up * (_swimmingBuoyantForce * 
-                                               Mathf.Max(_currentWaterHeight - (transform.position.y - _collider.bounds.size.y / 2), 0));
+                    Vector3 inputDirection =
+                        (_inputVectorNormalized.x * mainCamera.right + _inputVectorNormalized.z * mainCamera.forward).
+                        normalized;
 
-                break;
-            }
+                    if (Input.GetKey(_upKey)) inputDirection += mainCamera.up;
+                    if (Input.GetKey(_downKey)) inputDirection -= mainCamera.up;
 
-            case PlayerStates.Driving: {
-                transform.position = _parent.position;
-                
-                break;
-            }
+                    // Horrible but funny
+                    _velocity = inputDirection *
+                                (_crouching
+                                    ? (_sprinting ? _NoclipSpeed * 10 : _NoclipSpeed / 2)
+                                    : (_sprinting ? _NoclipSpeed * 3 : _NoclipSpeed));
 
-            case PlayerStates.Noclip: {
-                if (Camera.main == null) throw new NullReferenceException("No camera tagged 'MainCamera' in scene.");
-                Transform mainCamera = Camera.main.transform;
-                
-                Vector3 inputDirection =
-                    (_inputVectorNormalized.x * mainCamera.right + _inputVectorNormalized.z * mainCamera.forward).
-                    normalized;
+                    transform.Translate(_velocity * Time.fixedDeltaTime);
 
-                if (Input.GetKey(_upKey)) inputDirection += mainCamera.up;
-                if (Input.GetKey(_downKey)) inputDirection -= mainCamera.up;
-                
-                // Horrible but funny
-                _velocity = inputDirection * 
-                            (_crouching ? (_sprinting ? _NoclipSpeed * 10 : _NoclipSpeed / 2 ) : 
-                                (_sprinting ? _NoclipSpeed * 3 : _NoclipSpeed));
-                
-                transform.Translate(_velocity * Time.fixedDeltaTime);
-                
-                break;
+                    break;
+                }
             }
         }
-    
+
         // Apply gravity
         if (_useGravity)
             _acceleration += _gravity * Time.fixedDeltaTime * Vector3.down;
@@ -535,12 +545,13 @@ public class PlayerController : MonoBehaviour
     
     #region Helper functions
 
-    private void EnableFreeze() { State = PlayerStates.Frozen; }
-
-    private void DisableFreeze() {
-        if (State == PlayerStates.Frozen)
-            State = PlayerStates.Idle;
+    private void DisablePlayer() {
+        _acceleration = Vector3.zero;
+        _disableMovement = true;
     }
+
+    private void EnablePlayer() =>
+        _disableMovement = false;
     
     private void StopGrounded() { _grounded = false; }
 
