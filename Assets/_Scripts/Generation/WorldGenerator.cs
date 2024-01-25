@@ -955,7 +955,8 @@ public class WorldGenerator : MonoBehaviour
       for (int i = 0; i < heightMods.Length; i++) {
         if (vertices[i].y <= lakePlaneHeight) {
           if (heightMods[i] != 0) vertices[i] -= new Vector3(0, heightMods[i] * waterAmplitude, 0);
-          waterVerts[i] = new Vector3(vertices[i].x, lakePlaneHeight - waterLevel, vertices[i].z);
+          waterVerts[i] = vertices[i];
+          waterVerts[i].y = lakePlaneHeight - waterLevel;
           waterVerts[i] += positionOffset;
           continue;
         }
@@ -1059,7 +1060,7 @@ public class WorldGenerator : MonoBehaviour
     [ReadOnly] public NativeArray<Vector3> vertices;
     [ReadOnly] public NativeArray<int> triangles;
 
-    public MeshData mesh;
+    public Mesh.MeshData mesh;
 
     public void Execute() {
       mesh.SetVertexBufferParams(vertices.Length, new VertexAttributeDescriptor(VertexAttribute.Position));
@@ -1071,8 +1072,8 @@ public class WorldGenerator : MonoBehaviour
       NativeArray<int> indices = mesh.GetIndexData<int>();
       for (int i = 0; i < indices.Length; i++) indices[i] = triangles[i];
 
-      meshData.subMeshCount = 1;
-      meshData.SetSubMesh(0, new SubMeshDescriptor(0, indices.Length));
+      mesh.subMeshCount = 1;
+      mesh.SetSubMesh(0, new SubMeshDescriptor(0, indices.Length));
     }
 
   }
