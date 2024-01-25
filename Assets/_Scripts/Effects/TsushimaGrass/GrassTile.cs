@@ -19,6 +19,7 @@ namespace Effects.TsushimaGrass
 		// For now, lets implement this on CPU because I wanna solidify overall method
 
 		[Header("Dependencies")]
+		[SerializeField] private MeshRenderer _meshRenderer;
 		[SerializeField] private Mesh _terrainTileMesh;
 		[SerializeField] private Mesh _grassMesh;
 		[SerializeField] private Material _renderingMaterial;
@@ -28,27 +29,13 @@ namespace Effects.TsushimaGrass
 		[SerializeField, Range(0, 100)] private int _samplesX, _samplesY;
 		[Tooltip("Amount of splits in one tile for LOD consideration and minimum tile size. 0 = 0, 1 = 4, 2 = 16, 3 = 32")]
 		[SerializeField, Range(0, 3)] private int _tileSplitFactor;
-
 		[Tooltip("Treats mesh bounds as if they were smaller on all sides by this value. Useful for when terrain tiles overlap.")]
 		[SerializeField] private float _meshBoundsPadding;
 		
 		private RenderParams _renderParams;
 
 		// Compute this in compute shader when using RenderPrimitivesIndexed
-		private WorldPositionTransformations _worldPosTransformMatrix;
-
-		private struct WorldPositionTransformations
-		{
-			public Matrix4x4[] objectToWorld;
-
-			public WorldPositionTransformations(Vector3[] worldPositions) {
-				objectToWorld = new Matrix4x4[worldPositions.Length - 1];
-				for (int i = 0; i < worldPositions.Length; i++) {
-					Vector3 worldPosition = worldPositions[i];
-					objectToWorld[i] = Matrix4x4.TRS(worldPosition, Quaternion.identity, Vector3.one);
-				}
-			}
-		}
+		private Matrix4x4[] _worldPosTransformMatrices;
 		
 		// Working up to GPU position calculation:
 		// 1 - CPU evenly spaced positions ----
@@ -56,19 +43,29 @@ namespace Effects.TsushimaGrass
 		// 3 - GPU of 1
 		// 4 - GPU of 2
 
-		private Vector3 GetPositionsAtTerrainHeight(int samplesX, int samplesY) {
-			// left to right, top to bottom
-			// lets hope the terrain tile is never rotated when instnaced
-			float xExtent = _terrainTileMesh.bounds.extents.x;
-			float zExtent = _terrainTileMesh.bounds.extents.z;
-			for (int i = 0; i < samplesY; i++) {
-				for (int j = 0; j < samplesX; j++) {
-					// TODO: write this
-					throw new NotImplementedException();
+		private Matrix4x4[] WorldPositionsToMatrix(Vector3[] worldPositions) {
+			Matrix4x4[] objectToWorld = new Matrix4x4[worldPositions.Length];
+			for (int i = 0; i < worldPositions.Length; i++) {
+				Vector3 worldPosition = worldPositions[i];
+				objectToWorld[i] = Matrix4x4.TRS(worldPosition, Quaternion.identity, Vector3.one);
+			}
+			return objectToWorld;
+		}
+		
+		private Vector3[] GetPositions(int samplesX, int samplesZ) {
+			// left to right, forward to back
+			// lets hope the terrain tile is never rotated when instanced
+			float sizeX = _meshRenderer.bounds.size.x - _meshBoundsPadding;
+			float sizeZ = _meshRenderer.bounds.size.z - _meshBoundsPadding;
+			float xSpacing = sizeX / samplesX;
+			float zSpacing = sizeZ / samplesZ;
+			Vector3[] output = new Vector3[samplesZ * samplesX];
+			for (int z = 0; z < samplesZ; z++) {
+				for (int x = 0; x < samplesX; x++) {
+					output[samplesX * z + x] = new Vector3((xSpacing * x - xSpacing / 2) - sizeX / 2, 0, (zSpacing * z - zSpacing / 2) - sizeZ / 2);
 				}
 			}
-			// temp
-			return Vector3.zero;
+			return output;
 		}
 
 		private float MinOfVector3Components(Vector3 vector) {
@@ -82,15 +79,21 @@ namespace Effects.TsushimaGrass
 			if (_meshBoundsPadding > MinOfVector3Components(_terrainTileMesh.bounds.extents)) {
 				_meshBoundsPadding = MinOfVector3Components(_terrainTileMesh.bounds.extents);
 			}
+			if (_terrainTileMesh == null) {
+				_terrainTileMesh = gameObject.GetComponent<MeshFilter>().sharedMesh;
+			}
+			if (_meshRenderer == null) {
+				_meshRenderer = gameObject.GetComponent<MeshRenderer>();
+			}
 		}
 
 		private void Start() {
 			_renderParams = new RenderParams(_renderingMaterial);
-			_worldPosTransformMatrix = new WorldPositionTransformations();
 		}
 
 		private void Update() {
-			// Graphics.RenderMeshInstanced(_renderParams, _grassMesh, 0,,);
+			_worldPosTransformMatrices = WorldPositionsToMatrix(GetPositions(_samplesX, _samplesY));
+			Graphics.RenderMeshInstanced(_renderParams, _grassMesh, 0, _worldPosTransformMatrices);
 		}
 	}
 }
