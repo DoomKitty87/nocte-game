@@ -14,13 +14,12 @@ namespace Effects.TsushimaGrass
 		// Tsushima divides tiles into 3 LODs, quarters, eighths, sixteenths. Can have combination of divisions to fill single tile
 		
 		
-		
-		
 		// For now, lets implement this on CPU because I wanna solidify overall method
 
-		[Header("Dependencies")]
+		[Header("Auto Assigned Dependencies")]
 		[SerializeField] private MeshRenderer _meshRenderer;
-		[SerializeField] private Mesh _terrainTileMesh;
+		[SerializeField] private MeshFilter _terrainTileMeshFilter;
+		[Header("Dependencies")]
 		[SerializeField] private Mesh _grassMesh;
 		[SerializeField] private Material _renderingMaterial;
 
@@ -51,6 +50,17 @@ namespace Effects.TsushimaGrass
 			}
 			return objectToWorld;
 		}
+
+		private float FindMeshHeightAtLocalXZ(Mesh mesh, float x, float z) {
+			Vector3[] meshVerts = mesh.vertices;
+			int[] triangles = mesh.triangles;
+			float closestX = Single.PositiveInfinity;
+			float closestZ = Single.PositiveInfinity;
+			int closestTriangleIndexStart = 0;
+			for (int i = 0; i < triangles.Length / 3; i++) {
+				int triStart = triangles[i * 3];
+			}
+		}
 		
 		private Vector3[] GetPositions(int samplesX, int samplesZ) {
 			// left to right, forward to back
@@ -62,7 +72,10 @@ namespace Effects.TsushimaGrass
 			Vector3[] output = new Vector3[samplesZ * samplesX];
 			for (int z = 0; z < samplesZ; z++) {
 				for (int x = 0; x < samplesX; x++) {
-					output[samplesX * z + x] = new Vector3((xSpacing * x - xSpacing / 2) - sizeX / 2, 0, (zSpacing * z - zSpacing / 2) - sizeZ / 2);
+					float xOut = (xSpacing * x - xSpacing / 2) - sizeX / 2;
+					float yOut = 0;
+					float zOut = (zSpacing * z - zSpacing / 2) - sizeZ / 2;
+					output[samplesX * z + x] = new Vector3(xOut, yOut, zOut);
 				}
 			}
 			return output;
@@ -75,12 +88,14 @@ namespace Effects.TsushimaGrass
 			return x < y ? (x < z ? x : z) : (y < z ? y : z);
 		}
 		
+		//----------------------------------------------------------------------------------
+		
 		private void OnValidate() {
-			if (_meshBoundsPadding > MinOfVector3Components(_terrainTileMesh.bounds.extents)) {
-				_meshBoundsPadding = MinOfVector3Components(_terrainTileMesh.bounds.extents);
+			if (_meshBoundsPadding > MinOfVector3Components(_meshRenderer.bounds.extents)) {
+				_meshBoundsPadding = MinOfVector3Components(_meshRenderer.bounds.extents);
 			}
-			if (_terrainTileMesh == null) {
-				_terrainTileMesh = gameObject.GetComponent<MeshFilter>().sharedMesh;
+			if (_terrainTileMeshFilter == null) {
+				_terrainTileMeshFilter = gameObject.GetComponent<MeshFilter>();
 			}
 			if (_meshRenderer == null) {
 				_meshRenderer = gameObject.GetComponent<MeshRenderer>();
