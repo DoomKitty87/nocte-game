@@ -23,8 +23,13 @@ public class PlaceStructures : MonoBehaviour
   [SerializeField] private float _roadWidth;
   [SerializeField] private float _roadDepth;
   [SerializeField] private float _roadInset;
+  [SerializeField] private float _roadBevel;
+  [SerializeField] private float _roadWaterImpact;
+  [SerializeField] private float _roadNoiseAmplitude;
+  [SerializeField] private Material _roadMaterial;
 
   private Vector3[] _structurePositions;
+  private List<Transform> _structures = new List<Transform>();
 
   private int[] _beamWindingOrder = {
     1, 2, 0, 1, 3, 2, // Bottom Face
@@ -72,6 +77,7 @@ public class PlaceStructures : MonoBehaviour
     if (heighth > maxHeight) maxHeight = heighth;
     go.transform.position = new Vector3(go.transform.position.x, maxHeight, go.transform.position.z);
     go.transform.parent = transform;
+    _structures.Add(go.transform);
     mainPosition = go.transform.position;
 
     List<Vector3> vertices = new List<Vector3>();
@@ -142,17 +148,21 @@ public class PlaceStructures : MonoBehaviour
       roadPath[0] = mainPosition2;
       roadPath[roadPoints + 1] = outPosition2;
       Vector2[] roadPlane =
-        RoadGenerator.PlanePointsFromLine(roadPath, _roadWidth);
+        RoadGenerator.PlanePointsFromLine(roadPath, _roadWidth, _roadNoiseAmplitude);
       Vector3[] roadPlane3 = new Vector3[roadPlane.Length];
-      
+      Color[] roadVertexColors = new Color[roadPlane.Length * 2];
       for (int j = 0; j < roadPlane.Length; j++) {
-        roadPlane3[j] = new Vector3(roadPlane[j].x, _worldGen.GetHeightValue(roadPlane[j]), roadPlane[j].y);
+        roadPlane3[j] = new Vector3(roadPlane[j].x, _worldGen.GetHeightValue(roadPlane[j]), roadPlane[j].y) + Vector3.up * _roadWaterImpact * _worldGen.GetRiverValue(roadPlane[j]);
+        roadVertexColors[j] = new Color(_worldGen.GetRiverValue(roadPlane[j]), 0, 0, 0);
+        roadVertexColors[j + roadPlane.Length] = new Color(_worldGen.GetRiverValue(roadPlane[j]), 0, 0, 0);
       }
 
-      Mesh road = RoadGenerator.MeshFromPlane(roadPlane3, _roadDepth, _roadInset);
+      Mesh road = RoadGenerator.MeshFromPlane(roadPlane3, _roadDepth, _roadInset, _roadBevel);
+      road.colors = roadVertexColors;
       GameObject obj = new GameObject();
+      obj.layer = 6;
       obj.AddComponent<MeshFilter>().mesh = road;
-      obj.AddComponent<MeshRenderer>();
+      obj.AddComponent<MeshRenderer>().material = _roadMaterial;
       obj.AddComponent<MeshCollider>();
       obj.name = "RoadSegment";
       obj.transform.parent = transform;
@@ -223,6 +233,7 @@ public class PlaceStructures : MonoBehaviour
       }
 
       go.transform.parent = transform;
+      _structures.Add(go.transform);
     }
   
     //for (int i = 0; i < _structurePositions.Length; i++) {
@@ -250,9 +261,9 @@ public class PlaceStructures : MonoBehaviour
   }
 
   public void CheckStructures(Vector2 playerPosition) {
-    for (int i = 0; i < transform.childCount; i++) {
-      if ((new Vector2(transform.GetChild(i).position.x, transform.GetChild(i).position.z) - playerPosition).magnitude > _structureRenderDistance) transform.GetChild(i).gameObject.SetActive(false);
-      else transform.GetChild(i).gameObject.SetActive(true);
+    for (int i = 0; i < _structures.Count; i++) {
+      if ((new Vector2(_structures[i].position.x, _structures[i].position.z) - playerPosition).magnitude > _structureRenderDistance) _structures[i].gameObject.SetActive(false);
+      else _structures[i].gameObject.SetActive(true);
     }
   }
 

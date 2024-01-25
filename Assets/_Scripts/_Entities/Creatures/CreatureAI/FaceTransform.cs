@@ -8,14 +8,15 @@ namespace _Scripts._Entities.Creatures.CreatureAI
 	{
 		private Transform _transform;
 		private Transform _transformToFace;
-		private bool _lockX, _lockY, _lockZ;
+		private bool _lockX, _lockY, _lockZ, _away;
 
-		public FaceTransform(Transform transform, Transform transformToFace, bool lockX = false, bool lockY = false, bool lockZ = false) {
+		public FaceTransform(Transform transform, Transform transformToFace, bool lockX, bool lockY, bool lockZ, bool away) {
 			_transform = transform;
 			_transformToFace = transformToFace;
 			_lockX = lockX;
 			_lockY = lockY;
 			_lockZ = lockZ;
+			_away = away;
 		}
 
 		public override TreeNodeState Evaluate() {
@@ -32,7 +33,7 @@ namespace _Scripts._Entities.Creatures.CreatureAI
 
 			);
 
-			_transform.rotation = Quaternion.Euler(targetRotEuler);
+			_transform.rotation = _away ? Quaternion.Inverse(Quaternion.Euler(targetRotEuler)) : Quaternion.Euler(targetRotEuler);
 
 			_nodeState = TreeNodeState.SUCCESS;
 			return _nodeState;
