@@ -46,21 +46,24 @@ namespace Effects.TsushimaGrass
 			Matrix4x4[] objectToWorld = new Matrix4x4[worldPositions.Length];
 			for (int i = 0; i < worldPositions.Length; i++) {
 				Vector3 worldPosition = worldPositions[i];
-				objectToWorld[i] = Matrix4x4.TRS(worldPosition, Quaternion.identity, Vector3.one);
+				//TODO: Fix this
+				objectToWorld[i] = Matrix4x4.TRS(worldPosition, Quaternion.Euler(0, Random.Range(0, 360), 0), Vector3.one);
 			}
 			return objectToWorld;
 		}
 
-		private float FindMeshHeightAtLocalXZ(Mesh mesh, float x, float z) {
-			Vector3[] meshVerts = mesh.vertices;
-			int[] triangles = mesh.triangles;
-			float closestX = Single.PositiveInfinity;
-			float closestZ = Single.PositiveInfinity;
-			int closestTriangleIndexStart = 0;
-			for (int i = 0; i < triangles.Length / 3; i++) {
-				int triStart = triangles[i * 3];
-			}
-		}
+		// GetHeightValue inside WorldGenerator.cs, follow for base function
+        
+		// private float FindMeshHeightAtLocalXZ(Mesh mesh, float x, float z) {
+		// 	Vector3[] meshVerts = mesh.vertices;
+		// 	int[] triangles = mesh.triangles;
+		// 	float closestX = Single.PositiveInfinity;
+		// 	float closestZ = Single.PositiveInfinity;
+		// 	int closestTriangleIndexStart = 0;
+		// 	for (int i = 0; i < triangles.Length / 3; i++) {
+		// 		int triStart = triangles[i * 3];
+		// 	}
+		// }
 		
 		private Vector3[] GetPositions(int samplesX, int samplesZ) {
 			// left to right, forward to back
@@ -72,9 +75,9 @@ namespace Effects.TsushimaGrass
 			Vector3[] output = new Vector3[samplesZ * samplesX];
 			for (int z = 0; z < samplesZ; z++) {
 				for (int x = 0; x < samplesX; x++) {
-					float xOut = (xSpacing * x - xSpacing / 2) - sizeX / 2;
+					float xOut = (xSpacing * x + xSpacing / 2) - sizeX / 2;
 					float yOut = 0;
-					float zOut = (zSpacing * z - zSpacing / 2) - sizeZ / 2;
+					float zOut = (zSpacing * z + zSpacing / 2) - sizeZ / 2;
 					output[samplesX * z + x] = new Vector3(xOut, yOut, zOut);
 				}
 			}
