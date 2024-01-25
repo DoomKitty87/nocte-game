@@ -758,7 +758,7 @@ public class WorldGenerator : MonoBehaviour
     _currentlyGenerating--;
     if (_currentlyGenerating == 0 && _generateQueue.Count == 0) {
       _doneGenerating = true;
-      UpdateWaterMesh();
+      StartCoroutine(WaterMeshUpdate());
     }
   }
 
@@ -925,7 +925,7 @@ public class WorldGenerator : MonoBehaviour
     maxDistance = Mathf.Max(Mathf.Abs(x - _playerXChunkScale), Mathf.Abs(z - _playerZChunkScale));
     if (_enableColliders && maxDistance <= _colliderRange) UpdateCollider(index);
     _currentlyUpdating--;
-    if (_currentlyUpdating == 0 && _updateQueue.Count == 0) UpdateWaterMesh();
+    if (_currentlyUpdating == 0 && _updateQueue.Count == 0) StartCoroutine(WaterMeshUpdate());
   }
 
   #endregion
@@ -1010,6 +1010,71 @@ public class WorldGenerator : MonoBehaviour
         }
       }
     }
+  }
+
+  private IEnumerator WaterMeshUpdate() {
+    int vertexCount = 0;
+    int triangleCount = 0;
+    for (int i = 0; i < _tilePool.Length; i++) {
+      if (_tilePool[i].waterVertices == null) continue;
+      vertexCount += _tilePool[i].waterVertices.Length;
+      triangleCount += _tilePool[i].waterTriangles.Length;
+    }
+
+    NativeArray<Vector3> waterVertices = new NativeArray<Vector3>(vertexCount, Allocator.Persistent);
+    NativeArray<int> waterTriangles = new NativeArray<int>(triangleCount, Allocator.Persistent);
+    for (int i = 0, v = 0, t = 0; i < _tilePool.Length; i++) {
+      if (_tilePool[i].waterVertices == null) continue;
+      for (int j = 0; j < _tilePool[i].waterTriangles.Length; j++, t++) {
+        waterTriangles[t] = _tilePool[i].waterTriangles[j] + v;
+      }
+      for (int j = 0; j < _tilePool[i].waterVertices.Length; j++, v++) {
+        waterVertices[v] = _tilePool[i].waterVertices[j];
+      }
+    }
+
+    var meshDataArray = Mesh.AllocateWritableMeshData(1);
+    var meshData = meshDataArray[0];
+
+    WaterMeshJob meshJob = new WaterMeshJob {
+      vertices = waterVertices,
+      triangles = waterTriangles,
+      mesh = meshData
+    };
+
+    JobHandle handle = meshJob.Schedule();
+    while (!handle.IsCompleted) yield return null;
+    handle.Complete();
+
+    Mesh.ApplyAndDisposeWritableMeshData(meshDataArray, _waterMesh);
+
+    waterVertices.Dispose();
+    waterTriangles.Dispose();
+
+  }
+
+  private struct WaterMeshJob : IJob
+  {
+
+    [ReadOnly] public NativeArray<Vector3> vertices;
+    [ReadOnly] public NativeArray<int> triangles;
+
+    public MeshData mesh;
+
+    public void Execute() {
+      mesh.SetVertexBufferParams(vertices.Length, new VertexAttributeDescriptor(VertexAttribute.Position));
+
+      NativeArray<Vector3> positions = mesh.GetVertexData<Vector3>();
+      for (int i = 0; i < positions.Length; i++) positions[i] = vertices[i];
+      
+      mesh.SetIndexBufferParams(triangles.Length, IndexFormat.UInt32);
+      NativeArray<int> indices = mesh.GetIndexData<int>();
+      for (int i = 0; i < indices.Length; i++) indices[i] = triangles[i];
+
+      meshData.subMeshCount = 1;
+      meshData.SetSubMesh(0, new SubMeshDescriptor(0, indices.Length));
+    }
+
   }
 
   private void UpdateWaterMesh() {
