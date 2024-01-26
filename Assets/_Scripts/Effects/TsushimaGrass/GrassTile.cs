@@ -23,15 +23,13 @@ namespace Effects.TsushimaGrass
 		[Header("Global Set Dependencies")]
 		[SerializeField] private Mesh _grassMesh;
 		[SerializeField] private Material _renderingMaterial;
-		[Header("Auto Assigned Dependencies")]
-		[SerializeField] private MeshRenderer _terrainTileMeshRenderer;
-		[SerializeField] private MeshFilter _terrainTileMeshFilter;
 		
 		[Header("Settings")]
 		[SerializeField] private float distToPlayerCutoff = 1000f;
 		[Tooltip("Samples density texture this many times per tile, regardless of tile size. This is the amount of samples at LOD0.")]
 		[SerializeField] [Range(0, 100)]private int _samplesX, _samplesY;
 		[Tooltip("Amount of splits in one tile for LOD consideration and minimum tile size. 0 = 0, 1 = 4, 2 = 16, 3 = 32")]
+		[SerializeField] private float _tileSizeX, _tileSizeZ;
 		[SerializeField] [Range(0, 3)] private int _tileSplitFactor;
 
 		[Tooltip("Treats mesh bounds as if they were smaller on all sides by this value. Useful for when terrain tiles overlap.")]
