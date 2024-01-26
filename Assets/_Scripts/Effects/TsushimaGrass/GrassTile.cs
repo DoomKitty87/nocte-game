@@ -26,6 +26,7 @@ namespace Effects.TsushimaGrass
 		[Header("Auto Assigned Dependencies")]
 		[SerializeField] private MeshRenderer _terrainTileMeshRenderer;
 		[SerializeField] private MeshFilter _terrainTileMeshFilter;
+		
 		[Header("Settings")]
 		[SerializeField] private float distToPlayerCutoff = 1000f;
 		[Tooltip("Samples density texture this many times per tile, regardless of tile size. This is the amount of samples at LOD0.")]
@@ -70,6 +71,7 @@ namespace Effects.TsushimaGrass
 				samplesX = 1;
 				samplesZ = 1;
 			}
+			// On procgen tiles, the bounds are 0
 			float sizeX = _terrainTileMeshRenderer.bounds.size.x - _meshBoundsPadding;
 			float sizeZ = _terrainTileMeshRenderer.bounds.size.z - _meshBoundsPadding;
 			float xSpacing = sizeX / samplesX;
@@ -95,6 +97,7 @@ namespace Effects.TsushimaGrass
 		}
 
 		private void Start() {
+			#region Script Dep Null Checks 
 			if (_worldGenerator == null) {
 				Debug.LogWarning("GrassTile: No WorldGenerator found. Height sampling will return zero.");
 			}
@@ -112,6 +115,7 @@ namespace Effects.TsushimaGrass
 					_useGlobalConfig = false;
 				}
 			}
+			#endregion
 			if (_useGlobalConfig) {
 				_samplesX = _globalConfig._samplesX;
 				_samplesY = _globalConfig._samplesY;
@@ -127,9 +131,9 @@ namespace Effects.TsushimaGrass
 
 		private void Update() {
 
-			//  if (Vector3.Distance(transform.position, Camera.main.transform.position) > distToPlayerCutoff) {
-			// return;
-			//  }
+			if (Vector3.Distance(transform.position, Camera.main.transform.position) > distToPlayerCutoff) {
+				return;
+			}
 			if (_useGlobalConfig) {
 				_samplesX = _globalConfig._samplesX;
 				_samplesY = _globalConfig._samplesY;
@@ -139,6 +143,12 @@ namespace Effects.TsushimaGrass
 				distToPlayerCutoff = _globalConfig._distToPlayerCutoff;
 			}
 			Graphics.RenderMeshInstanced(_renderParams, _grassMesh, 0, _worldPosTransformMatrices);
+		}
+
+		private void OnDrawGizmosSelected() {
+			// foreach (Vector3 pos in GetGrassPositionsWorld(_samplesX, _samplesY)) {
+			// 	Gizmos.DrawSphere(pos, 1);
+			// }
 		}
 	}
 }
