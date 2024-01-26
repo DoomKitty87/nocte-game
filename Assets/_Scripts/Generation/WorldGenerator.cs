@@ -1,7 +1,8 @@
  using System;
 using UnityEngine;
 using System.Collections.Generic;
-using UnityEngine.Rendering.HighDefinition;
+ using Effects.TsushimaGrass;
+ using UnityEngine.Rendering.HighDefinition;
 using Matrix4x4 = UnityEngine.Matrix4x4;
 using Vector2 = UnityEngine.Vector2;
 using Vector3 = UnityEngine.Vector3;
@@ -180,7 +181,6 @@ public class WorldGenerator : MonoBehaviour
   [Header("Script Connections")]
   [SerializeField] private SecondaryStructures _structures;
   [SerializeField] private PlaceStructures _storyStructures;
-  [SerializeField] private GrassManager _grassManager;
 
   public int Seed { get; }
   public int Size { get; }
@@ -470,7 +470,6 @@ public class WorldGenerator : MonoBehaviour
       Vector2 playerPosXZ = new Vector2(playerPos.x, playerPos.z);
       _structures.CheckStructures(playerPosXZ);
       _storyStructures.CheckStructures(playerPosXZ);
-      if (_grassManager) _grassManager.GenerateGrass();
       _updateQueue.Sort((c1, c2) => (Mathf.Abs(_tilePool[c1].x - _playerXChunkScale) + Mathf.Abs(_tilePool[c1].z - _playerZChunkScale)).CompareTo(Mathf.Abs(_tilePool[c2].x - _playerXChunkScale) + Mathf.Abs(_tilePool[c2].z - _playerZChunkScale)));
       for (int x = 0; x < _tileCount; x++) {
         for (int z = 0; z < _tileCount; z++) { 
@@ -531,6 +530,8 @@ public class WorldGenerator : MonoBehaviour
     // If you need to put anything else (tag, components, etc) on the tile, do it here. If it needs to change every time the LOD is changed, do it in the UpdateTile function.
     go.tag = "Ground";
     go.layer = 6;
+    // GrassTile grass = go.AddComponent<GrassTile>();
+    // grass._useGlobalConfig = true;
     _structures.GenerateChunkStructures(new Vector2(x * _size * _resolution, z * _size * _resolution), new Vector2((x + 1) * _size * _resolution, (z + 1) * _size * _resolution));
     _generatedStructureTiles.Add(new Vector2(x, z));
     tile.mesh = msh;

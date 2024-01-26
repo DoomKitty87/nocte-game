@@ -11,8 +11,6 @@ GameObject:
   - component: {fileID: 8951891336655120199}
   - component: {fileID: 8819276947174590073}
   - component: {fileID: 7336471431426695701}
-  - component: {fileID: 8505195279874202923}
-  - component: {fileID: 3041882864952171724}
   m_Layer: 0
   m_Name: World Generator
   m_TagString: Untagged
@@ -75,6 +73,18 @@ MonoBehaviour:
     warpScaleScale: 1200
     warpScaleAmplitude: 0
     warpScaleMean: 2500
+    amplitudePower: 0
+    scaleMeanAmplitude: 0
+    sharpnessScaleAmplitude: 0
+    sharpnessAmplitudeAmplitude: 0
+    sharpnessMeanAmplitude: 0
+    amplitudeScaleAmplitude: 0
+    amplitudeAmplitudeAmplitude: 0
+    amplitudeMeanAmplitude: 0
+    warpStrengthAmplitudeAmplitude: 0
+    warpStrengthMeanAmplitude: 0
+    warpScaleMeanAmplitude: 0
+    amplitudePowerAmplitude: 0
   _refreshButton: 0
   _lodLevels:
   - distance: 2
@@ -166,10 +176,8 @@ MonoBehaviour:
       m_RotationOrder: 4
     obj: {fileID: 0}
   _lakePlaneHeight: 350
-  _lakeObject: {fileID: 0}
   _structures: {fileID: 0}
   _storyStructures: {fileID: 0}
-  _grassManager: {fileID: 0}
 --- !u!114 &7336471431426695701
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -188,6 +196,15 @@ MonoBehaviour:
   _rainCycleSpeed: 0
   _rainMaxIntensity: 0
   _maxWindSpeed: 0
+  _maxSpaceIntensity: 0
+  _maxAsteroidRate: 0
+  _spaceCycleSpeed: 0
+  _spaceCycleCurve:
+    serializedVersion: 2
+    m_Curve: []
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
   _cloudDensityCurve:
     serializedVersion: 2
     m_Curve:
@@ -246,38 +263,8 @@ MonoBehaviour:
   _cloudVolume: {fileID: 0}
   _sunTransform: {fileID: 0}
   _rainEffect: {fileID: 0}
---- !u!114 &8505195279874202923
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7828621975473438852}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b516345fd8f7d4d359fb3fc2617ff68f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _distance: 0
---- !u!114 &3041882864952171724
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7828621975473438852}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5da125e02a8f58f48b9988e50588d441, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _enableGrass: 0
-  _regenerateGrass: 0
-  _minBladeHeight: 0.2
-  _maxBladeHeight: 0.75
-  _scale: 0.5
-  _numberOfBladesPerTri: 1
-  _computeShader: {fileID: 0}
-  _terrainMesh: {fileID: 0}
-  _grassMesh: {fileID: 0}
-  _material: {fileID: 0}
+  _asteroidEffect: {fileID: 0}
+  _frameUpdateDelay: 0
+  _frameUpdateDelay2: 0
+  _sunAxis: {x: 0, y: 0, z: 0}
+  _spaceFactorInitial: 0

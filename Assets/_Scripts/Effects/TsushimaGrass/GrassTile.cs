@@ -15,15 +15,18 @@ namespace Effects.TsushimaGrass
 		
 		
 		// For now, lets implement this on CPU because I wanna solidify overall method
-
+    [Header("Global Config")]
+    public bool _useGlobalConfig;
+    [SerializeField] private GrassGlobalConfig _globalConfig;
 		[Header("Auto Assigned Dependencies")]
-		[SerializeField] private MeshRenderer _meshRenderer;
+		[SerializeField] private MeshRenderer _terrainTileMeshRenderer;
 		[SerializeField] private MeshFilter _terrainTileMeshFilter;
 		[Header("Dependencies")]
 		[SerializeField] private Mesh _grassMesh;
 		[SerializeField] private Material _renderingMaterial;
 
 		[Header("Settings")]
+    [SerializeField] private float distToPlayerCutoff = 1000f;
 		[Tooltip("Samples density texture this many times per tile, regardless of tile size. This is the amount of samples at LOD0.")]
 		[SerializeField, Range(0, 100)] private int _samplesX, _samplesY;
 		[Tooltip("Amount of splits in one tile for LOD consideration and minimum tile size. 0 = 0, 1 = 4, 2 = 16, 3 = 32")]
@@ -34,20 +37,19 @@ namespace Effects.TsushimaGrass
 		private RenderParams _renderParams;
 
 		// Compute this in compute shader when using RenderPrimitivesIndexed
-		private Matrix4x4[] _worldPosTransformMatrices;
+		// RenderPrimitivesIndexed requires:
+		// custom RenderParams.bounds
+		// RenderParams.matProps = MaterialPropertyBlock with 
 		
-		// Working up to GPU position calculation:
-		// 1 - CPU evenly spaced positions ----
-		// 2 - CPU jittered posiitons
-		// 3 - GPU of 1
-		// 4 - GPU of 2
+		
+		
+		private Matrix4x4[] _worldPosTransformMatrices;
 
 		private Matrix4x4[] WorldPositionsToMatrix(Vector3[] worldPositions) {
 			Matrix4x4[] objectToWorld = new Matrix4x4[worldPositions.Length];
 			for (int i = 0; i < worldPositions.Length; i++) {
 				Vector3 worldPosition = worldPositions[i];
-				//TODO: Fix this
-				objectToWorld[i] = Matrix4x4.TRS(worldPosition, Quaternion.Euler(0, Random.Range(0, 360), 0), Vector3.one);
+				objectToWorld[i] = Matrix4x4.TRS(worldPosition, Quaternion.Euler(0, 0, 0), Vector3.one);
 			}
 			return objectToWorld;
 		}
@@ -65,11 +67,11 @@ namespace Effects.TsushimaGrass
 		// 	}
 		// }
 		
-		private Vector3[] GetPositions(int samplesX, int samplesZ) {
+		private Vector3[] GetPositions(int samplesX, int samplesZ, float jitterX, float jitterZ) {
 			// left to right, forward to back
 			// lets hope the terrain tile is never rotated when instanced
-			float sizeX = _meshRenderer.bounds.size.x - _meshBoundsPadding;
-			float sizeZ = _meshRenderer.bounds.size.z - _meshBoundsPadding;
+			float sizeX = _terrainTileMeshRenderer.bounds.size.x - _meshBoundsPadding;
+			float sizeZ = _terrainTileMeshRenderer.bounds.size.z - _meshBoundsPadding;
 			float xSpacing = sizeX / samplesX;
 			float zSpacing = sizeZ / samplesZ;
 			Vector3[] output = new Vector3[samplesZ * samplesX];
@@ -83,34 +85,48 @@ namespace Effects.TsushimaGrass
 			}
 			return output;
 		}
-
-		private float MinOfVector3Components(Vector3 vector) {
-			float x = vector.x;
-			float y = vector.y;
-			float z = vector.z;
-			return x < y ? (x < z ? x : z) : (y < z ? y : z);
-		}
 		
 		//----------------------------------------------------------------------------------
 		
 		private void OnValidate() {
-			if (_meshBoundsPadding > MinOfVector3Components(_meshRenderer.bounds.extents)) {
-				_meshBoundsPadding = MinOfVector3Components(_meshRenderer.bounds.extents);
-			}
+
 			if (_terrainTileMeshFilter == null) {
 				_terrainTileMeshFilter = gameObject.GetComponent<MeshFilter>();
 			}
-			if (_meshRenderer == null) {
-				_meshRenderer = gameObject.GetComponent<MeshRenderer>();
+			if (_terrainTileMeshRenderer == null) {
+				_terrainTileMeshRenderer = gameObject.GetComponent<MeshRenderer>();
 			}
 		}
 
 		private void Start() {
-			_renderParams = new RenderParams(_renderingMaterial);
+		  if (_globalConfig == null) {
+			_globalConfig = GameObject.FindWithTag("GlobalObject").GetComponent<GrassGlobalConfig>();
+		  }
+		  if (_useGlobalConfig) {
+			_samplesX = _globalConfig._samplesX;
+			_samplesY = _globalConfig._samplesY;
+			_tileSplitFactor = _globalConfig._tileSplitFactor;
+			_grassMesh = _globalConfig._grassMesh;
+			_renderingMaterial = _globalConfig._renderingMaterial;
+			_meshBoundsPadding = _globalConfig._meshBoundsPadding;
+			distToPlayerCutoff = _globalConfig._distToPlayerCutoff;
+		  }
+		  _renderParams = new RenderParams(_renderingMaterial);
 		}
 
 		private void Update() {
-			_worldPosTransformMatrices = WorldPositionsToMatrix(GetPositions(_samplesX, _samplesY));
+      if (_useGlobalConfig) {
+        _samplesX = _globalConfig._samplesX;
+        _samplesY = _globalConfig._samplesY;
+        _tileSplitFactor = _globalConfig._tileSplitFactor;
+        _grassMesh = _globalConfig._grassMesh;
+        _meshBoundsPadding = _globalConfig._meshBoundsPadding;
+        distToPlayerCutoff = _globalConfig._distToPlayerCutoff;
+      }
+      if (Vector3.Distance(transform.position, Camera.main.transform.position) > distToPlayerCutoff) {
+        return;
+      }
+			_worldPosTransformMatrices = WorldPositionsToMatrix(GetPositions(_samplesX, _samplesY, 0, 0));
 			Graphics.RenderMeshInstanced(_renderParams, _grassMesh, 0, _worldPosTransformMatrices);
 		}
 	}
