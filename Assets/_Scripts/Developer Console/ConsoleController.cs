@@ -56,6 +56,8 @@ namespace Console
         }
 
         private void Awake() {
+            BackgroundInfo._enableCheats = _enableCheats;
+            
             SetupConsoleComponents();
         }
 
