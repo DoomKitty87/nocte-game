@@ -682,12 +682,11 @@ MonoBehaviour:
   _grassMesh: {fileID: -462981019419857548, guid: e9edbbe92ffc1e04a94817a23bc92820,
     type: 3}
   _renderingMaterial: {fileID: 2100000, guid: c4d98046d6a10394c8c7df596a52754e, type: 2}
-  _terrainTileMeshRenderer: {fileID: 764727107}
-  _terrainTileMeshFilter: {fileID: 764727108}
   distToPlayerCutoff: 1000
   _samplesX: 20
   _samplesY: 20
-  _tileSplitFactor: 0
+  _fallbackTileSizeX: 10
+  _fallbackTileSizeZ: 10
   _meshBoundsPadding: 0.36
 --- !u!64 &764727106
 MeshCollider:
@@ -920,7 +919,7 @@ Transform:
   m_GameObject: {fileID: 1219595222}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1, z: -10}
+  m_LocalPosition: {x: 0, y: 1, z: -9.29}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1141,12 +1140,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 94ee4247fa3f47f4b8046695a0aa7a5a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _tileSplitFactor: 0
-  _samplesX: 100
-  _samplesY: 45
+  _samplesX: 25
+  _samplesY: 25
+  _fallbackTileSizeX: 10
+  _fallbackTileSizeZ: 10
   _renderingMaterial: {fileID: 2100000, guid: c4d98046d6a10394c8c7df596a52754e, type: 2}
-  _meshBoundsPadding: 0
-  _distToPlayerCutoff: 0.28
+  _tileBoundsPadding: 0
+  _distToPlayerCutoff: 1000
   _grassMesh: {fileID: -462981019419857548, guid: e9edbbe92ffc1e04a94817a23bc92820,
     type: 3}
 --- !u!4 &1371078899
@@ -1217,12 +1217,11 @@ MonoBehaviour:
   _grassMesh: {fileID: -462981019419857548, guid: e9edbbe92ffc1e04a94817a23bc92820,
     type: 3}
   _renderingMaterial: {fileID: 2100000, guid: c4d98046d6a10394c8c7df596a52754e, type: 2}
-  _terrainTileMeshRenderer: {fileID: 1391260371}
-  _terrainTileMeshFilter: {fileID: 1391260372}
   distToPlayerCutoff: 1000
   _samplesX: 20
   _samplesY: 20
-  _tileSplitFactor: 0
+  _fallbackTileSizeX: 10
+  _fallbackTileSizeZ: 10
   _meshBoundsPadding: 0.36
 --- !u!64 &1391260370
 MeshCollider:
@@ -1504,12 +1503,11 @@ MonoBehaviour:
   _grassMesh: {fileID: -462981019419857548, guid: e9edbbe92ffc1e04a94817a23bc92820,
     type: 3}
   _renderingMaterial: {fileID: 2100000, guid: c4d98046d6a10394c8c7df596a52754e, type: 2}
-  _terrainTileMeshRenderer: {fileID: 1424418023}
-  _terrainTileMeshFilter: {fileID: 1424418024}
   distToPlayerCutoff: 1000
   _samplesX: 10
   _samplesY: 10
-  _tileSplitFactor: 0
+  _fallbackTileSizeX: 0
+  _fallbackTileSizeZ: 0
   _meshBoundsPadding: 0
 --- !u!1 &1590583877
 GameObject:
@@ -1564,12 +1562,11 @@ MonoBehaviour:
   _grassMesh: {fileID: -462981019419857548, guid: e9edbbe92ffc1e04a94817a23bc92820,
     type: 3}
   _renderingMaterial: {fileID: 2100000, guid: c4d98046d6a10394c8c7df596a52754e, type: 2}
-  _terrainTileMeshRenderer: {fileID: 1590583881}
-  _terrainTileMeshFilter: {fileID: 1590583882}
   distToPlayerCutoff: 1000
   _samplesX: 20
   _samplesY: 20
-  _tileSplitFactor: 0
+  _fallbackTileSizeX: 10
+  _fallbackTileSizeZ: 10
   _meshBoundsPadding: 0.36
 --- !u!64 &1590583880
 MeshCollider:
@@ -1698,12 +1695,11 @@ MonoBehaviour:
   _grassMesh: {fileID: -462981019419857548, guid: e9edbbe92ffc1e04a94817a23bc92820,
     type: 3}
   _renderingMaterial: {fileID: 2100000, guid: c4d98046d6a10394c8c7df596a52754e, type: 2}
-  _terrainTileMeshRenderer: {fileID: 1713143286}
-  _terrainTileMeshFilter: {fileID: 1713143287}
   distToPlayerCutoff: 1000
   _samplesX: 20
   _samplesY: 20
-  _tileSplitFactor: 0
+  _fallbackTileSizeX: 10
+  _fallbackTileSizeZ: 10
   _meshBoundsPadding: 0.36
 --- !u!64 &1713143285
 MeshCollider:

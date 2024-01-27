@@ -148,9 +148,9 @@ public class WorldGenerator : MonoBehaviour
   [Tooltip("Size of world in tiles.")]
   [SerializeField] private int _tileCount;
   [Tooltip("Vertices of each tile in world (lowest LOD).")]
-  [SerializeField] private int _size;
+  [SerializeField] public int _size;
   [Tooltip("Vertex spacing of each tile in world (lowest LOD).")]
-  [SerializeField] private float _resolution;
+  [SerializeField] public float _resolution;
   [Tooltip("Maximum chunk updates per frame.")]
   [SerializeField] private float _maxUpdatesPerFrame;
   [Tooltip("Enable or disable colliders.")]

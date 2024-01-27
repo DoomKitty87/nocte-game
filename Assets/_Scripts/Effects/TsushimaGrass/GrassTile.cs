@@ -1,5 +1,6 @@
 using System;
 using System.Numerics;
+using UnityEditor;
 
 namespace Effects.TsushimaGrass
 {
@@ -29,19 +30,20 @@ namespace Effects.TsushimaGrass
 		[Tooltip("Samples density texture this many times per tile, regardless of tile size. This is the amount of samples at LOD0.")]
 		[SerializeField] [Range(0, 100)]private int _samplesX, _samplesY;
 		[Tooltip("Amount of splits in one tile for LOD consideration and minimum tile size. 0 = 0, 1 = 4, 2 = 16, 3 = 32")]
-		[SerializeField] private float _tileSizeX, _tileSizeZ;
-		[SerializeField] [Range(0, 3)] private int _tileSplitFactor;
-
+		[SerializeField] private float _fallbackTileSizeX, _fallbackTileSizeZ;
 		[Tooltip("Treats mesh bounds as if they were smaller on all sides by this value. Useful for when terrain tiles overlap.")]
 		[SerializeField] private float _meshBoundsPadding;
 		
+		private float _tileSizeX, _tileSizeZ;
 		private RenderParams _renderParams;
 
 		// Compute this in compute shader when using RenderPrimitivesIndexed
 		// RenderPrimitivesIndexed requires:
 		// custom RenderParams.bounds
 		// RenderParams.matProps = MaterialPropertyBlock with 
-		
+
+		// for gizmo debugging
+		private Vector3[] _worldPos;
 		private Matrix4x4[] _worldPosTransformMatrices;
 
 		private Matrix4x4[] WorldPositionsToMatrix(Vector3[] worldPositions) {
@@ -69,21 +71,23 @@ namespace Effects.TsushimaGrass
 				samplesX = 1;
 				samplesZ = 1;
 			}
-			// On procgen tiles, the bounds are 0, so use tile size instead?
 			float sizeX = _tileSizeX - _meshBoundsPadding;
 			float sizeZ = _tileSizeZ - _meshBoundsPadding;
 			float xSpacing = sizeX / samplesX;
 			float zSpacing = sizeZ / samplesZ;
 			Vector3[] output = new Vector3[samplesZ * samplesX];
-			for (int z = 0; z < samplesZ; z++)
-			for (int x = 0; x < samplesX; x++) {
-				float xOut = xSpacing * x + xSpacing / 2 - sizeX / 2 + Random.Range(-0.1f, 0.1f);
-				float yOut = FindMeshHeightAtWorldXZ(x, z);
-				float zOut = zSpacing * z + zSpacing / 2 - sizeZ / 2 + Random.Range(-0.1f, 0.1f);
-				Vector3 localOut = new Vector3(xOut, yOut, zOut);
-				output[samplesX * z + x] = localOut + gameObject.transform.position;
+			for (int z = 0; z < samplesZ; z++) {
+				for (int x = 0; x < samplesX; x++) {
+					float xOut = xSpacing * x + xSpacing / 2 + Random.Range(-0.1f, 0.1f);
+					float yOut = FindMeshHeightAtWorldXZ(x, z);
+					float zOut = zSpacing * z + zSpacing / 2 + Random.Range(-0.1f, 0.1f);
+					// use if origin in center
+					// xOut -= sizeX / 2;
+					// zOut -= sizeZ / 2;
+					Vector3 localOut = new Vector3(xOut, yOut, zOut);
+					output[samplesX * z + x] = localOut + gameObject.transform.position;
+				}
 			}
-
 			return output;
 		}
 
@@ -92,7 +96,13 @@ namespace Effects.TsushimaGrass
 		private void Start() {
 			#region Script Dep Null Checks 
 			if (_worldGenerator == null) {
-				Debug.LogWarning("GrassTile: No WorldGenerator found. Height sampling will return zero.");
+				Debug.LogWarning("GrassTile: No WorldGenerator found. Height sampling will return zero. Using fallback tile size values.");
+				_tileSizeX = _fallbackTileSizeX;
+				_tileSizeZ = _fallbackTileSizeZ;
+			}
+			else {
+				_tileSizeX = _worldGenerator._size * _worldGenerator._resolution;
+				_tileSizeZ = _tileSizeX;
 			}
 			if (_globalConfig == null) {
 				GameObject gameObj = GameObject.FindWithTag("GlobalObject");
@@ -112,14 +122,16 @@ namespace Effects.TsushimaGrass
 			if (_useGlobalConfig) {
 				_samplesX = _globalConfig._samplesX;
 				_samplesY = _globalConfig._samplesY;
-				_tileSplitFactor = _globalConfig._tileSplitFactor;
+				_fallbackTileSizeX = _globalConfig._fallbackTileSizeX;
+				_fallbackTileSizeZ = _globalConfig._fallbackTileSizeZ;
 				_grassMesh = _globalConfig._grassMesh;
 				_renderingMaterial = _globalConfig._renderingMaterial;
-				_meshBoundsPadding = _globalConfig._meshBoundsPadding;
+				_meshBoundsPadding = _globalConfig._tileBoundsPadding;
 				distToPlayerCutoff = _globalConfig._distToPlayerCutoff;
 			}
 			_renderParams = new RenderParams(_renderingMaterial);
-			_worldPosTransformMatrices = WorldPositionsToMatrix(GetGrassPositionsWorld(_samplesX, _samplesY));
+			_worldPos = GetGrassPositionsWorld(_samplesX, _samplesY);
+			_worldPosTransformMatrices = WorldPositionsToMatrix(_worldPos);
 		}
 
 		private void Update() {
@@ -130,16 +142,19 @@ namespace Effects.TsushimaGrass
 			if (_useGlobalConfig) {
 				_samplesX = _globalConfig._samplesX;
 				_samplesY = _globalConfig._samplesY;
-				_tileSplitFactor = _globalConfig._tileSplitFactor;
+				_fallbackTileSizeX = _globalConfig._fallbackTileSizeX;
+				_fallbackTileSizeZ = _globalConfig._fallbackTileSizeZ;
 				_grassMesh = _globalConfig._grassMesh;
-				_meshBoundsPadding = _globalConfig._meshBoundsPadding;
+				_renderingMaterial = _globalConfig._renderingMaterial;
+				_meshBoundsPadding = _globalConfig._tileBoundsPadding;
 				distToPlayerCutoff = _globalConfig._distToPlayerCutoff;
 			}
 			Graphics.RenderMeshInstanced(_renderParams, _grassMesh, 0, _worldPosTransformMatrices);
 		}
 
 		private void OnDrawGizmosSelected() {
-			foreach (Vector3 pos in GetGrassPositionsWorld(_samplesX, _samplesY)) {
+			if (_worldPos == null) return;
+			foreach (Vector3 pos in _worldPos) {
 				Gizmos.DrawSphere(pos, 1);
 			}
 		}
