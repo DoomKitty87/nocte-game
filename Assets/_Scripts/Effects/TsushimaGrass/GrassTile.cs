@@ -59,7 +59,6 @@ namespace Effects.TsushimaGrass
 		// GetHeightValue inside WorldGenerator.cs, follow for base function
 
 		private float FindMeshHeightAtWorldXZ(float x, float z) {
-			if (_worldGenerator == null) return 0;
 			return _worldGenerator.GetHeightValue(new Vector2(x, z));
 		}
 
@@ -71,6 +70,7 @@ namespace Effects.TsushimaGrass
 				samplesX = 1;
 				samplesZ = 1;
 			}
+			Vector3 origin = transform.position;
 			float sizeX = _tileSizeX - _meshBoundsPadding;
 			float sizeZ = _tileSizeZ - _meshBoundsPadding;
 			float xSpacing = sizeX / samplesX;
@@ -79,8 +79,8 @@ namespace Effects.TsushimaGrass
 			for (int z = 0; z < samplesZ; z++) {
 				for (int x = 0; x < samplesX; x++) {
 					float xOut = xSpacing * x + xSpacing / 2 + Random.Range(-0.1f, 0.1f);
-					float yOut = FindMeshHeightAtWorldXZ(x, z);
 					float zOut = zSpacing * z + zSpacing / 2 + Random.Range(-0.1f, 0.1f);
+					float yOut = FindMeshHeightAtWorldXZ(xOut + origin.x, zOut + origin.z);
 					// use if origin in center
 					// xOut -= sizeX / 2;
 					// zOut -= sizeZ / 2;
