@@ -281,6 +281,7 @@ public class WorldGenerator : MonoBehaviour
       _tileCount++;
       Debug.LogWarning("Tile count must be odd. Increasing tile count by 1.");
     }
+    WorldGenInfo._tileEdgeSize = _size * _resolution;
     _maxPossibleHeight = _noiseParameters.amplitudeMean + _noiseParameters.amplitudeAmplitude;
     _waterMesh = new Mesh();
     _waterMesh.indexFormat = UnityEngine.Rendering.IndexFormat.UInt32;
