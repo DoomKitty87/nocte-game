@@ -69,9 +69,9 @@ namespace Effects.TsushimaGrass
 				samplesX = 1;
 				samplesZ = 1;
 			}
-			// On procgen tiles, the bounds are 0
-			float sizeX = _terrainTileMeshRenderer.bounds.size.x - _meshBoundsPadding;
-			float sizeZ = _terrainTileMeshRenderer.bounds.size.z - _meshBoundsPadding;
+			// On procgen tiles, the bounds are 0, so use tile size instead?
+			float sizeX = _tileSizeX - _meshBoundsPadding;
+			float sizeZ = _tileSizeZ - _meshBoundsPadding;
 			float xSpacing = sizeX / samplesX;
 			float zSpacing = sizeZ / samplesZ;
 			Vector3[] output = new Vector3[samplesZ * samplesX];
@@ -88,11 +88,6 @@ namespace Effects.TsushimaGrass
 		}
 
 		//----------------------------------------------------------------------------------
-
-		private void OnValidate() {
-			if (_terrainTileMeshFilter == null) _terrainTileMeshFilter = gameObject.GetComponent<MeshFilter>();
-			if (_terrainTileMeshRenderer == null) _terrainTileMeshRenderer = gameObject.GetComponent<MeshRenderer>();
-		}
 
 		private void Start() {
 			#region Script Dep Null Checks 
@@ -144,9 +139,9 @@ namespace Effects.TsushimaGrass
 		}
 
 		private void OnDrawGizmosSelected() {
-			// foreach (Vector3 pos in GetGrassPositionsWorld(_samplesX, _samplesY)) {
-			// 	Gizmos.DrawSphere(pos, 1);
-			// }
+			foreach (Vector3 pos in GetGrassPositionsWorld(_samplesX, _samplesY)) {
+				Gizmos.DrawSphere(pos, 1);
+			}
 		}
 	}
 }
