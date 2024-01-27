@@ -283,6 +283,11 @@ public class WorldGenerator : MonoBehaviour
   }
 
   private void Awake() {
+    if (_tileCount % 2 == 0) {
+      _tileCount++;
+      Debug.LogWarning("Tile count must be odd. Increasing tile count by 1.");
+    }
+    WorldGenInfo._tileEdgeSize = _size * _resolution;
     _maxPossibleHeight = _noiseParameters.amplitudeMean + _noiseParameters.amplitudeAmplitude;
     _waterMesh = new Mesh();
     _waterMesh.indexFormat = UnityEngine.Rendering.IndexFormat.UInt32;
@@ -979,6 +984,7 @@ public class WorldGenerator : MonoBehaviour
     handle.Complete();
 
     Mesh.ApplyAndDisposeWritableMeshData(meshDataArray, _waterMesh);
+    _waterMesh.RecalculateNormals();
 
     waterVertices.Dispose();
     waterTriangles.Dispose();
