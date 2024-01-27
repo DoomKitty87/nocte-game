@@ -1,5 +1,6 @@
 using System;
 using System.Numerics;
+using Unity.VisualScripting;
 using UnityEditor;
 
 namespace Effects.TsushimaGrass
@@ -45,7 +46,21 @@ namespace Effects.TsushimaGrass
 		// for gizmo debugging
 		private Vector3[] _worldPos;
 		private Matrix4x4[] _worldPosTransformMatrices;
+		
+		// ===== Graphics Buffers =====
+		private GraphicsBuffer _meshVertsBuffer;
+		private GraphicsBuffer _meshTrisBuffer;
+		// =====
 
+		private GraphicsBuffer[] MeshDataToBuffers(Mesh mesh) {
+			GraphicsBuffer[] output = new GraphicsBuffer[2];
+			output[0] = new GraphicsBuffer(GraphicsBuffer.Target.Structured, mesh.vertices.Length, sizeof(float) * 3);
+			output[0].SetData(mesh.vertices);
+			output[1] = new GraphicsBuffer(GraphicsBuffer.Target.Structured, mesh.triangles.Length, sizeof(int));
+			output[1].SetData(mesh.triangles);
+			return output;
+		}
+		
 		private Matrix4x4[] WorldPositionsToMatrix(Vector3[] worldPositions) {
 			Matrix4x4[] objectToWorld = new Matrix4x4[worldPositions.Length];
 			for (int i = 0; i < worldPositions.Length; i++) {
@@ -55,14 +70,10 @@ namespace Effects.TsushimaGrass
 
 			return objectToWorld;
 		}
-
-		// GetHeightValue inside WorldGenerator.cs, follow for base function
-
 		private float FindMeshHeightAtWorldXZ(float x, float z) {
 			return _worldGenerator.GetHeightValue(new Vector2(x, z));
 		}
-
-		private Vector3[] GetGrassPositionsWorld(int samplesX, int samplesZ) {
+		private Vector3[] CPUGetGrassPositionsWorld(int samplesX, int samplesZ) {
 			// left to right, forward to back
 			// lets hope the terrain tile is never rotated when instanced
 			if (samplesX <= 0 || samplesZ <= 0) {
@@ -130,7 +141,7 @@ namespace Effects.TsushimaGrass
 				distToPlayerCutoff = _globalConfig._distToPlayerCutoff;
 			}
 			_renderParams = new RenderParams(_renderingMaterial);
-			_worldPos = GetGrassPositionsWorld(_samplesX, _samplesY);
+			_worldPos = CPUGetGrassPositionsWorld(_samplesX, _samplesY);
 			_worldPosTransformMatrices = WorldPositionsToMatrix(_worldPos);
 		}
 
@@ -157,6 +168,13 @@ namespace Effects.TsushimaGrass
 			foreach (Vector3 pos in _worldPos) {
 				Gizmos.DrawSphere(pos, 1);
 			}
+		}
+
+		private void OnDestroy() {
+			_meshVertsBuffer?.Dispose();
+			_meshVertsBuffer = null;
+			_meshTrisBuffer?.Dispose();
+			_meshTrisBuffer = null;
 		}
 	}
 }
