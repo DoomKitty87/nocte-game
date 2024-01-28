@@ -53,15 +53,6 @@ namespace Effects.TsushimaGrass
 			trisIndexBuffer = new GraphicsBuffer(GraphicsBuffer.Target.Structured, mesh.triangles.Length, sizeof(int));
 			trisIndexBuffer.SetData(mesh.triangles);
 		}
-		
-		private Matrix4x4[] WorldPositionsToMatrix(Vector3[] worldPositions) {
-			Matrix4x4[] objectToWorld = new Matrix4x4[worldPositions.Length];
-			for (int i = 0; i < worldPositions.Length; i++) {
-				Vector3 worldPosition = worldPositions[i];
-				objectToWorld[i] = Matrix4x4.TRS(worldPosition, Quaternion.Euler(0, Random.Range(0, 365), 0), Vector3.one);
-			}
-			return objectToWorld;
-		}
 
 		private void GPUComputePositionsTo(out GraphicsBuffer outputBuffer, int samplesX, int samplesZ, float tileSizeX, float tileSizeZ, float padding) {
 			int kernelIndex = _positionCompute.FindKernel("ComputePosition");
@@ -72,12 +63,20 @@ namespace Effects.TsushimaGrass
 			_positionCompute.SetFloat(Shader.PropertyToID("_sizeZ"), tileSizeZ);
 			_positionCompute.SetFloat(Shader.PropertyToID("_padding"), padding);
 			int grassCount = samplesX * samplesZ;
-			outputBuffer = new GraphicsBuffer(GraphicsBuffer.Target.Structured, grassCount, sizeof(float) * 3);
+			outputBuffer = new GraphicsBuffer(GraphicsBuffer.Target.Structured, grassCount, sizeof(float) * 16);
 			_positionCompute.SetBuffer(kernelIndex, Shader.PropertyToID("_positionOutputBuffer"), outputBuffer);
 			_positionCompute.GetKernelThreadGroupSizes(kernelIndex, out uint threadX, out _, out _);
-			_positionCompute.Dispatch(kernelIndex, Mathf.CeilToInt(grassCount/threadX), 1, 1);
+			_positionCompute.Dispatch(kernelIndex, Mathf.CeilToInt((float)grassCount/(float)threadX), 1, 1);
 		}
 
+		private void DebugFloatArray(float[] array, int lim = 0) {
+			string output = "";
+			for (int i = 0; i < lim; i++) {
+				output += array[i] + ", ";
+			}
+			Debug.Log(output);
+		}
+		
 		//----------------------------------------------------------------------------------
 
 		private void Start() {
@@ -113,9 +112,10 @@ namespace Effects.TsushimaGrass
 				_fallbackTileSizeX = _globalConfig._fallbackTileSizeX;
 				_fallbackTileSizeZ = _globalConfig._fallbackTileSizeZ;
 				_grassMesh = _globalConfig._grassMesh;
-				_renderingShaderMat = _globalConfig._renderingMaterial;
+				_renderingShaderMat = _globalConfig._renderingShaderMat;
 				_meshBoundsPadding = _globalConfig._tileBoundsPadding;
 				distToPlayerCutoff = _globalConfig._distToPlayerCutoff;
+				_positionCompute = _globalConfig._positionCompute;
 			}
 			#endregion
 			GPUComputePositionsTo(out _grassPositionsBuffer, _samplesX, _samplesZ, _tileSizeX, _tileSizeZ, _meshBoundsPadding);
@@ -124,8 +124,7 @@ namespace Effects.TsushimaGrass
 			_renderParams.matProps = new MaterialPropertyBlock();
 			_renderParams.matProps.SetBuffer("_meshVertPositions", _meshVertsBuffer);
 			_renderParams.matProps.SetBuffer("_instancePositionMatrices", _grassPositionsBuffer);
-			// Change Y Bounds to height of tallest grass?
-			_renderParams.worldBounds = new Bounds(transform.position, new Vector3(_tileSizeX, _grassMesh.bounds.size.y, _tileSizeZ));
+			_renderParams.worldBounds = new Bounds(transform.position, new Vector3(_tileSizeX, 1000000, _tileSizeZ));
 		}
 
 		private void Update() {
@@ -136,9 +135,10 @@ namespace Effects.TsushimaGrass
 				_fallbackTileSizeX = _globalConfig._fallbackTileSizeX;
 				_fallbackTileSizeZ = _globalConfig._fallbackTileSizeZ;
 				_grassMesh = _globalConfig._grassMesh;
-				_renderingShaderMat = _globalConfig._renderingMaterial;
+				_renderingShaderMat = _globalConfig._renderingShaderMat;
 				_meshBoundsPadding = _globalConfig._tileBoundsPadding;
 				distToPlayerCutoff = _globalConfig._distToPlayerCutoff;
+				_positionCompute = _globalConfig._positionCompute;
 			}
 			#endregion
 			Graphics.RenderPrimitivesIndexed(_renderParams, MeshTopology.Triangles, _meshTrisBuffer, _meshTrisBuffer.count, instanceCount: _samplesX * _samplesZ);

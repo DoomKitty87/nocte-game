@@ -1141,13 +1141,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 94ee4247fa3f47f4b8046695a0aa7a5a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _samplesX: 25
-  _samplesY: 25
+  _samplesX: 2
+  _samplesY: 2
   _fallbackTileSizeX: 10
   _fallbackTileSizeZ: 10
-  _renderingMaterial: {fileID: 2100000, guid: 2bf9eee20975cfa45a2434e904df1419, type: 2}
   _tileBoundsPadding: 0
   _distToPlayerCutoff: 1000
+  _positionCompute: {fileID: 7200000, guid: 0f5e4ca7781bc44ceba456965bcf344e, type: 3}
+  _renderingShaderMat: {fileID: 2100000, guid: 2bf9eee20975cfa45a2434e904df1419, type: 2}
   _grassMesh: {fileID: -462981019419857548, guid: e9edbbe92ffc1e04a94817a23bc92820,
     type: 3}
 --- !u!4 &1371078899
@@ -1184,7 +1185,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1391260368
 Transform:
   m_ObjectHideFlags: 0
@@ -1531,7 +1532,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1590583878
 Transform:
   m_ObjectHideFlags: 0
@@ -1665,7 +1666,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1713143283
 Transform:
   m_ObjectHideFlags: 0

@@ -1,5 +1,7 @@
 // Each #kernel tells which function to compile; you can have many kernels
-#pragma kernel ComputeLocalPosition
+#pragma kernel ComputePosition
+// thanks elliot lmao
+#define TWO_PI 6.28318530718f
 
 uniform int _samplesX;
 uniform int _samplesZ;
@@ -37,22 +39,22 @@ float4x4 PositionToTransformMatrix(float3 position)
 	float y = position.y;
 	float z = position.z;
 	return float4x4(
-		x, 0, 0, 0,
-		0, y, 0, 0,
-		0, 0, z, 0,
+		1, 0, 0, x,
+		0, 1, 0, y,
+		0, 0, 1, z,
 		0, 0, 0, 1);
 }
 
 [numthreads(64,1,1)]
-void ComputeLocalPosition(uint3 id : SV_DispatchThreadID, uint3 groupId : SV_GroupID)
+void ComputePosition(uint3 id : SV_DispatchThreadID, uint3 groupId : SV_GroupID)
 {
-	int sampleIndex = 64 * groupId.x + id.x;
+	float sampleIndex = 64 * groupId.x + id.x;
 	float2 samplePosition;
 	samplePosition.y = floor(sampleIndex / _samplesX);
 	samplePosition.x = sampleIndex % _samplesX;
 	float xSpacing = _sizeX / _samplesX;
 	float zSpacing = _sizeZ / _samplesZ;
-	float3 worldPos = (samplePosition.x * xSpacing, 0, samplePosition.y * zSpacing) + _worldPosition;
-	
-	_positionOutputBuffer[sampleIndex];
+	float3 worldPos = float3(samplePosition.x * xSpacing, 0, samplePosition.y * zSpacing) + _worldPosition;
+	_positionOutputBuffer[sampleIndex] = mul(GetMatrixWithRotationY(randomRange(worldPos.xz, 0, TWO_PI)), PositionToTransformMatrix(worldPos));
+	_positionOutputBuffer[sampleIndex] = PositionToTransformMatrix(worldPos);
 }
