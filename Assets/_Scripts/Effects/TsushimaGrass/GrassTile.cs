@@ -62,6 +62,9 @@ namespace Effects.TsushimaGrass
 			_positionCompute.SetFloat(Shader.PropertyToID("_sizeX"), tileSizeX);
 			_positionCompute.SetFloat(Shader.PropertyToID("_sizeZ"), tileSizeZ);
 			_positionCompute.SetFloat(Shader.PropertyToID("_padding"), padding);
+			_positionCompute.SetFloat(Shader.PropertyToID("_worldX"), transform.position.x);
+			_positionCompute.SetFloat(Shader.PropertyToID("_worldY"), transform.position.y);
+			_positionCompute.SetFloat(Shader.PropertyToID("_worldZ"), transform.position.z);
 			int grassCount = samplesX * samplesZ;
 			outputBuffer = new GraphicsBuffer(GraphicsBuffer.Target.Structured, grassCount, sizeof(float) * 16);
 			_positionCompute.SetBuffer(kernelIndex, Shader.PropertyToID("_positionOutputBuffer"), outputBuffer);
