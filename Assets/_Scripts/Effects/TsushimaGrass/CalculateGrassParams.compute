@@ -11,7 +11,7 @@ uniform float _padding;
 uniform float3 _worldPosition;
 // ======
 RWStructuredBuffer<float4x4> _positionOutputBuffer;
-
+RWStructuredBuffer<float> _debugCPUReadbackBuffer;
 // Pseudo-random number between min and max, think its from shadergraph compiled code
 float randomRange(float2 seed, float min, float max)
 {
@@ -48,13 +48,16 @@ float4x4 PositionToTransformMatrix(float3 position)
 [numthreads(64,1,1)]
 void ComputePosition(uint3 id : SV_DispatchThreadID, uint3 groupId : SV_GroupID)
 {
-	float sampleIndex = 64 * groupId.x + id.x;
+	// instnace 4 is too far right, with odd samples 3 * 2
+	float sampleIndex = 64 * groupId.x + id.x; // 64 * 0 + 4 = 4
+	_debugCPUReadbackBuffer[id.x] = groupId.x;
 	float2 samplePosition;
-	samplePosition.y = floor(sampleIndex / _samplesX);
-	samplePosition.x = sampleIndex % _samplesX;
-	float xSpacing = _sizeX / _samplesX;
-	float zSpacing = _sizeZ / _samplesZ;
-	float3 worldPos = float3(samplePosition.x * xSpacing, 0, samplePosition.y * zSpacing) + _worldPosition;
+	samplePosition.y = floor(sampleIndex / _samplesX); // 4 / 3 = 1
+	samplePosition.x = sampleIndex % _samplesX; // 4 % 3 = 1
+	float xSpacing = _sizeX / _samplesX; // 1 / 3 = 0.333
+	float zSpacing = _sizeZ / _samplesZ; // 1 / 3 = 0.333
+	float3 worldPos = float3(samplePosition.x * xSpacing + xSpacing / 2, 0, samplePosition.y * zSpacing + zSpacing / 2) + _worldPosition; // float3(0.5, 0, 0.5) given world pos is 0,0,0
+	worldPos = worldPos + float3(-_sizeX / 2, 0, -_sizeZ / 2); // centerize, remove for proc gen
 	_positionOutputBuffer[sampleIndex] = mul(GetMatrixWithRotationY(randomRange(worldPos.xz, 0, TWO_PI)), PositionToTransformMatrix(worldPos));
 	_positionOutputBuffer[sampleIndex] = PositionToTransformMatrix(worldPos);
 }

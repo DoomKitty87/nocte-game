@@ -21,6 +21,7 @@ Shader "Custom/GrassCustomShader"
 
             StructuredBuffer<float3> _meshVertPositions;
             StructuredBuffer<float4x4> _instancePositionMatrices;
+            float _instanceCount;
 
             FragData vert(uint triIndex: SV_VertexID, uint instanceID : SV_InstanceID)
             {
@@ -32,13 +33,13 @@ Shader "Custom/GrassCustomShader"
                 float4 worldPos = mul(_instancePositionMatrices[instanceID], float4(vertexPosition, 1.0f));
                 // view space / clip space(?) -- do clip space vert adjustments here
                 output.vertexPosition = mul(UNITY_MATRIX_VP, worldPos);
-                output.vertexColor = float4(1/(instanceID + 0.01f), 0.0f, 0.0f, 1.0f);
+                output.vertexColor = float4(instanceID/_instanceCount, 0.0f, 0.0f, 1.0f);
                 return output;
             }
 
             float4 frag(FragData i) : SV_Target
             {
-                return float4(1, 0, 0, 1);
+                return i.vertexColor;
             }
             ENDCG
         }
