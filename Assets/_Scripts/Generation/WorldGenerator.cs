@@ -535,7 +535,7 @@ public class WorldGenerator : MonoBehaviour
     // If you need to put anything else (tag, components, etc) on the tile, do it here. If it needs to change every time the LOD is changed, do it in the UpdateTile function.
     go.tag = "Ground";
     go.layer = 6;
-    GrassTile grass = go.AddComponent<GrassTile>();
+    GrassTilePrimitives grass = go.AddComponent<GrassTilePrimitives>();
     grass._useGlobalConfig = true;
     grass._worldGenerator = this;
     _structures.GenerateChunkStructures(new Vector2(x * _size * _resolution, z * _size * _resolution), new Vector2((x + 1) * _size * _resolution, (z + 1) * _size * _resolution));

@@ -7,7 +7,7 @@ namespace Effects.TsushimaGrass
 {
 	using UnityEngine;
 
-	public class GrassTile : MonoBehaviour
+	public class GrassTilePrimitives : MonoBehaviour
 	{
 		// Tsushima divides single tile into smaller tiles based on lod, increasing sample (and blade count) near player
 		// (samples of grass density texture is constant per tile, regardless of size)
@@ -54,7 +54,7 @@ namespace Effects.TsushimaGrass
 			trisIndexBuffer.SetData(mesh.triangles);
 		}
 
-		private void GPUComputePositionsTo(out GraphicsBuffer outputBuffer, out GraphicsBuffer debug, int samplesX, int samplesZ, float tileSizeX, float tileSizeZ, float padding) {
+		private void GPUComputePositionsTo(out GraphicsBuffer outputBuffer, int samplesX, int samplesZ, float tileSizeX, float tileSizeZ, float padding) {
 			int kernelIndex = _positionCompute.FindKernel("ComputePosition");
 			// make the ids static later
 			_positionCompute.SetFloat(Shader.PropertyToID("_samplesX"), samplesX);
@@ -68,8 +68,6 @@ namespace Effects.TsushimaGrass
 			int grassCount = samplesX * samplesZ;
 			outputBuffer = new GraphicsBuffer(GraphicsBuffer.Target.Structured, grassCount, sizeof(float) * 16);
 			_positionCompute.SetBuffer(kernelIndex, Shader.PropertyToID("_positionOutputBuffer"), outputBuffer);
-			debug = new GraphicsBuffer(GraphicsBuffer.Target.Structured, 128, sizeof(float)); // @@@@@@@@@@@@@@@@@@@@
-			_positionCompute.SetBuffer(kernelIndex, "_debugCPUReadbackBuffer", debug); // @@@@@@@@@@@@@@@@@@@@
 			_positionCompute.GetKernelThreadGroupSizes(kernelIndex, out uint threadX, out _, out _);
 			_positionCompute.Dispatch(kernelIndex, Mathf.CeilToInt(grassCount/(float)threadX), 1, 1);
 		}
@@ -123,18 +121,12 @@ namespace Effects.TsushimaGrass
 				_positionCompute = _globalConfig._positionCompute;
 			}
 			#endregion
-			GraphicsBuffer debug; // @@@@@@@@@@@@@@@@@@@@
-			GPUComputePositionsTo(out _grassPositionsBuffer, out debug, _samplesX, _samplesZ, _tileSizeX, _tileSizeZ, _meshBoundsPadding);
-			float[] debugArray = new float[128]; // @@@@@@@@@@@@@@@@@@@@@
-			debug.GetData(debugArray); // @@@@@@@@@@@@@@@@@@@@@
-			DebugFloatArray(debugArray, 128); // @@@@@@@@@@@@@@@@@@@@@
-			debug.Dispose(); // @@@@@@@@@@@@@@@@@@@@@
+			GPUComputePositionsTo(out _grassPositionsBuffer, _samplesX, _samplesZ, _tileSizeX, _tileSizeZ, _meshBoundsPadding);
 			MeshDataToBuffers(_grassMesh, out _meshVertsBuffer, out _meshTrisBuffer);
 			_renderParams = new RenderParams(_renderingShaderMat);
 			_renderParams.matProps = new MaterialPropertyBlock();
 			_renderParams.matProps.SetBuffer("_meshVertPositions", _meshVertsBuffer);
 			_renderParams.matProps.SetBuffer("_instancePositionMatrices", _grassPositionsBuffer);
-			_renderParams.matProps.SetFloat("_instanceCount", _samplesX * _samplesZ);
 			_renderParams.worldBounds = new Bounds(transform.position, new Vector3(_tileSizeX, 1000000, _tileSizeZ));
 		}
 

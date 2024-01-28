@@ -49,6 +49,7 @@ float4x4 PositionToTransformMatrix(float3 position)
 		0, 0, 0, 1);
 }
 
+// could have made this a float4x4 but i forgot so this'll do
 float3 GetWorldPosition()
 {
 	return float3(_worldX, _worldY, _worldZ);
