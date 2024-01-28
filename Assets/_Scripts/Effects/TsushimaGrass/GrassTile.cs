@@ -24,41 +24,34 @@ namespace Effects.TsushimaGrass
 		[SerializeField] private GrassGlobalConfig _globalConfig;
 		[Header("Global Set Dependencies")]
 		[SerializeField] private Mesh _grassMesh;
-		[SerializeField] private Material _renderingMaterial;
+		[SerializeField] private Material _renderingShaderMat;
 		
 		[Header("Settings")]
 		[SerializeField] private float distToPlayerCutoff = 1000f;
-		[Tooltip("Samples density texture this many times per tile, regardless of tile size. This is the amount of samples at LOD0.")]
-		[SerializeField] [Range(0, 100)]private int _samplesX, _samplesY;
-		[Tooltip("Amount of splits in one tile for LOD consideration and minimum tile size. 0 = 0, 1 = 4, 2 = 16, 3 = 32")]
+		[SerializeField] [Range(0, 100)]private int _samplesX, _samplesZ;
 		[SerializeField] private float _fallbackTileSizeX, _fallbackTileSizeZ;
-		[Tooltip("Treats mesh bounds as if they were smaller on all sides by this value. Useful for when terrain tiles overlap.")]
 		[SerializeField] private float _meshBoundsPadding;
 		
 		private float _tileSizeX, _tileSizeZ;
 		private RenderParams _renderParams;
-
-		// Compute this in compute shader when using RenderPrimitivesIndexed
-		// RenderPrimitivesIndexed requires:
-		// custom RenderParams.bounds
-		// RenderParams.matProps = MaterialPropertyBlock with 
-
-		// for gizmo debugging
+		
 		private Vector3[] _worldPos;
 		private Matrix4x4[] _worldPosTransformMatrices;
 		
-		// ===== Graphics Buffers =====
+		// ===== Compute Shader + Buffers
+		[SerializeField] private ComputeShader _positionCompute;
+		// ===== Passed between (re-referenced)
+		private GraphicsBuffer _grassPositionsBuffer;
+		// ===== Material Shader + Buffers =====
 		private GraphicsBuffer _meshVertsBuffer;
 		private GraphicsBuffer _meshTrisBuffer;
 		// =====
 
-		private GraphicsBuffer[] MeshDataToBuffers(Mesh mesh) {
-			GraphicsBuffer[] output = new GraphicsBuffer[2];
-			output[0] = new GraphicsBuffer(GraphicsBuffer.Target.Structured, mesh.vertices.Length, sizeof(float) * 3);
-			output[0].SetData(mesh.vertices);
-			output[1] = new GraphicsBuffer(GraphicsBuffer.Target.Structured, mesh.triangles.Length, sizeof(int));
-			output[1].SetData(mesh.triangles);
-			return output;
+		private void MeshDataToBuffers(Mesh mesh, out GraphicsBuffer vertexPosBuffer, out GraphicsBuffer trisIndexBuffer) {
+			vertexPosBuffer = new GraphicsBuffer(GraphicsBuffer.Target.Structured, mesh.vertices.Length, sizeof(float) * 3);
+			vertexPosBuffer.SetData(mesh.vertices);
+			trisIndexBuffer = new GraphicsBuffer(GraphicsBuffer.Target.Structured, mesh.triangles.Length, sizeof(int));
+			trisIndexBuffer.SetData(mesh.triangles);
 		}
 		
 		private Matrix4x4[] WorldPositionsToMatrix(Vector3[] worldPositions) {
@@ -67,39 +60,22 @@ namespace Effects.TsushimaGrass
 				Vector3 worldPosition = worldPositions[i];
 				objectToWorld[i] = Matrix4x4.TRS(worldPosition, Quaternion.Euler(0, Random.Range(0, 365), 0), Vector3.one);
 			}
-
 			return objectToWorld;
 		}
-		private float FindMeshHeightAtWorldXZ(float x, float z) {
-			return _worldGenerator.GetHeightValue(new Vector2(x, z));
-		}
-		private Vector3[] CPUGetGrassPositionsWorld(int samplesX, int samplesZ) {
-			// left to right, forward to back
-			// lets hope the terrain tile is never rotated when instanced
-			if (samplesX <= 0 || samplesZ <= 0) {
-				Debug.LogWarning("SamplesX or SamplesZ cannot be zero!");
-				samplesX = 1;
-				samplesZ = 1;
-			}
-			Vector3 origin = transform.position;
-			float sizeX = _tileSizeX - _meshBoundsPadding;
-			float sizeZ = _tileSizeZ - _meshBoundsPadding;
-			float xSpacing = sizeX / samplesX;
-			float zSpacing = sizeZ / samplesZ;
-			Vector3[] output = new Vector3[samplesZ * samplesX];
-			for (int z = 0; z < samplesZ; z++) {
-				for (int x = 0; x < samplesX; x++) {
-					float xOut = xSpacing * x + xSpacing / 2 + Random.Range(-0.1f, 0.1f);
-					float zOut = zSpacing * z + zSpacing / 2 + Random.Range(-0.1f, 0.1f);
-					float yOut = FindMeshHeightAtWorldXZ(xOut + origin.x, zOut + origin.z);
-					// use if origin in center
-					// xOut -= sizeX / 2;
-					// zOut -= sizeZ / 2;
-					Vector3 localOut = new Vector3(xOut, yOut, zOut);
-					output[samplesX * z + x] = localOut + gameObject.transform.position;
-				}
-			}
-			return output;
+
+		private void GPUComputePositionsTo(out GraphicsBuffer outputBuffer, int samplesX, int samplesZ, float tileSizeX, float tileSizeZ, float padding) {
+			int kernelIndex = _positionCompute.FindKernel("ComputePosition");
+			// make the ids static later
+			_positionCompute.SetInt(Shader.PropertyToID("_samplesX"), samplesX);
+			_positionCompute.SetInt(Shader.PropertyToID("_samplesZ"), samplesZ);
+			_positionCompute.SetFloat(Shader.PropertyToID("_sizeX"), tileSizeX);
+			_positionCompute.SetFloat(Shader.PropertyToID("_sizeZ"), tileSizeZ);
+			_positionCompute.SetFloat(Shader.PropertyToID("_padding"), padding);
+			int grassCount = samplesX * samplesZ;
+			outputBuffer = new GraphicsBuffer(GraphicsBuffer.Target.Structured, grassCount, sizeof(float) * 3);
+			_positionCompute.SetBuffer(kernelIndex, Shader.PropertyToID("_positionOutputBuffer"), outputBuffer);
+			_positionCompute.GetKernelThreadGroupSizes(kernelIndex, out uint threadX, out _, out _);
+			_positionCompute.Dispatch(kernelIndex, Mathf.CeilToInt(grassCount/threadX), 1, 1);
 		}
 
 		//----------------------------------------------------------------------------------
@@ -130,37 +106,41 @@ namespace Effects.TsushimaGrass
 				}
 			}
 			#endregion
+			#region Globalconfig Assignment
 			if (_useGlobalConfig) {
 				_samplesX = _globalConfig._samplesX;
-				_samplesY = _globalConfig._samplesY;
+				_samplesZ = _globalConfig._samplesY;
 				_fallbackTileSizeX = _globalConfig._fallbackTileSizeX;
 				_fallbackTileSizeZ = _globalConfig._fallbackTileSizeZ;
 				_grassMesh = _globalConfig._grassMesh;
-				_renderingMaterial = _globalConfig._renderingMaterial;
+				_renderingShaderMat = _globalConfig._renderingMaterial;
 				_meshBoundsPadding = _globalConfig._tileBoundsPadding;
 				distToPlayerCutoff = _globalConfig._distToPlayerCutoff;
 			}
-			_renderParams = new RenderParams(_renderingMaterial);
-			_worldPos = CPUGetGrassPositionsWorld(_samplesX, _samplesY);
-			_worldPosTransformMatrices = WorldPositionsToMatrix(_worldPos);
+			#endregion
+			// GPUComputePositionsTo(out _grassPositionsBuffer, _samplesX, _samplesZ, _tileSizeX, _tileSizeZ, _meshBoundsPadding);
+			MeshDataToBuffers(_grassMesh, out _meshVertsBuffer, out _meshTrisBuffer);
+			_renderParams = new RenderParams(_renderingShaderMat);
+			_renderParams.matProps = new MaterialPropertyBlock();
+			_renderParams.matProps.SetBuffer("_vertexPositions", _meshVertsBuffer);
+			_renderParams.matProps.SetMatrix("_ObjectToWorld", Matrix4x4.Translate(new Vector3(0, 1, 0)));
+			_renderParams.matProps.SetFloat("_NumInstances", 10.0f);
 		}
 
 		private void Update() {
-
-			if (Vector3.Distance(transform.position, Camera.main.transform.position) > distToPlayerCutoff) {
-				return;
-			}
+			#region Global Config Assignment
 			if (_useGlobalConfig) {
 				_samplesX = _globalConfig._samplesX;
-				_samplesY = _globalConfig._samplesY;
+				_samplesZ = _globalConfig._samplesY;
 				_fallbackTileSizeX = _globalConfig._fallbackTileSizeX;
 				_fallbackTileSizeZ = _globalConfig._fallbackTileSizeZ;
 				_grassMesh = _globalConfig._grassMesh;
-				_renderingMaterial = _globalConfig._renderingMaterial;
+				_renderingShaderMat = _globalConfig._renderingMaterial;
 				_meshBoundsPadding = _globalConfig._tileBoundsPadding;
 				distToPlayerCutoff = _globalConfig._distToPlayerCutoff;
 			}
-			Graphics.RenderMeshInstanced(_renderParams, _grassMesh, 0, _worldPosTransformMatrices);
+			#endregion
+			Graphics.RenderPrimitivesIndexed(_renderParams, MeshTopology.Triangles, _meshTrisBuffer, _meshTrisBuffer.count, instanceCount: _samplesX * _samplesZ);
 		}
 
 		private void OnDrawGizmosSelected() {
@@ -171,6 +151,8 @@ namespace Effects.TsushimaGrass
 		}
 
 		private void OnDestroy() {
+			_grassPositionsBuffer?.Dispose();
+			_grassPositionsBuffer = null;
 			_meshVertsBuffer?.Dispose();
 			_meshVertsBuffer = null;
 			_meshTrisBuffer?.Dispose();
