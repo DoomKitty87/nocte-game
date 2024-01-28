@@ -54,21 +54,21 @@ namespace Effects.TsushimaGrass
 			trisIndexBuffer.SetData(mesh.triangles);
 		}
 
-		private void GPUComputePositionsTo(out GraphicsBuffer outputBuffer, int samplesX, int samplesZ, float tileSizeX, float tileSizeZ, float padding) {
+		private void GPUComputePositionsTo(out GraphicsBuffer outputBuffer, out GraphicsBuffer debug, int samplesX, int samplesZ, float tileSizeX, float tileSizeZ, float padding) {
 			int kernelIndex = _positionCompute.FindKernel("ComputePosition");
 			// make the ids static later
-			_positionCompute.SetInt(Shader.PropertyToID("_samplesX"), samplesX);
-			_positionCompute.SetInt(Shader.PropertyToID("_samplesZ"), samplesZ);
+			_positionCompute.SetFloat(Shader.PropertyToID("_samplesX"), samplesX);
+			_positionCompute.SetFloat(Shader.PropertyToID("_samplesZ"), samplesZ);
 			_positionCompute.SetFloat(Shader.PropertyToID("_sizeX"), tileSizeX);
 			_positionCompute.SetFloat(Shader.PropertyToID("_sizeZ"), tileSizeZ);
 			_positionCompute.SetFloat(Shader.PropertyToID("_padding"), padding);
 			int grassCount = samplesX * samplesZ;
 			outputBuffer = new GraphicsBuffer(GraphicsBuffer.Target.Structured, grassCount, sizeof(float) * 16);
 			_positionCompute.SetBuffer(kernelIndex, Shader.PropertyToID("_positionOutputBuffer"), outputBuffer);
-			_positionCompute.SetBuffer(kernelIndex, "_debugCPUReadbackBuffer",);
-			// TODO: make debug readback buffer to find groupid / sampleid problems
+			debug = new GraphicsBuffer(GraphicsBuffer.Target.Structured, 128, sizeof(float)); // @@@@@@@@@@@@@@@@@@@@
+			_positionCompute.SetBuffer(kernelIndex, "_debugCPUReadbackBuffer", debug); // @@@@@@@@@@@@@@@@@@@@
 			_positionCompute.GetKernelThreadGroupSizes(kernelIndex, out uint threadX, out _, out _);
-			_positionCompute.Dispatch(kernelIndex, Mathf.CeilToInt((float)grassCount/(float)threadX), 1, 1);
+			_positionCompute.Dispatch(kernelIndex, Mathf.CeilToInt(grassCount/(float)threadX), 1, 1);
 		}
 
 		private void DebugFloatArray(float[] array, int lim = 0) {
@@ -120,8 +120,12 @@ namespace Effects.TsushimaGrass
 				_positionCompute = _globalConfig._positionCompute;
 			}
 			#endregion
-			GPUComputePositionsTo(out _grassPositionsBuffer, _samplesX, _samplesZ, _tileSizeX, _tileSizeZ, _meshBoundsPadding);
-			
+			GraphicsBuffer debug; // @@@@@@@@@@@@@@@@@@@@
+			GPUComputePositionsTo(out _grassPositionsBuffer, out debug, _samplesX, _samplesZ, _tileSizeX, _tileSizeZ, _meshBoundsPadding);
+			float[] debugArray = new float[128]; // @@@@@@@@@@@@@@@@@@@@@
+			debug.GetData(debugArray); // @@@@@@@@@@@@@@@@@@@@@
+			DebugFloatArray(debugArray, 128); // @@@@@@@@@@@@@@@@@@@@@
+			debug.Dispose(); // @@@@@@@@@@@@@@@@@@@@@
 			MeshDataToBuffers(_grassMesh, out _meshVertsBuffer, out _meshTrisBuffer);
 			_renderParams = new RenderParams(_renderingShaderMat);
 			_renderParams.matProps = new MaterialPropertyBlock();
@@ -132,28 +136,6 @@ namespace Effects.TsushimaGrass
 		}
 
 		private void Update() {
-			#region Global Config Assignment
-			if (_useGlobalConfig) {
-				_samplesX = _globalConfig._samplesX;
-				_samplesZ = _globalConfig._samplesY;
-				_fallbackTileSizeX = _globalConfig._fallbackTileSizeX;
-				_fallbackTileSizeZ = _globalConfig._fallbackTileSizeZ;
-				_grassMesh = _globalConfig._grassMesh;
-				_renderingShaderMat = _globalConfig._renderingShaderMat;
-				_meshBoundsPadding = _globalConfig._tileBoundsPadding;
-				distToPlayerCutoff = _globalConfig._distToPlayerCutoff;
-				_positionCompute = _globalConfig._positionCompute;
-				// temp
-				GPUComputePositionsTo(out _grassPositionsBuffer, _samplesX, _samplesZ, _tileSizeX, _tileSizeZ, _meshBoundsPadding);
-				MeshDataToBuffers(_grassMesh, out _meshVertsBuffer, out _meshTrisBuffer);
-				_renderParams = new RenderParams(_renderingShaderMat);
-				_renderParams.matProps = new MaterialPropertyBlock();
-				_renderParams.matProps.SetBuffer("_meshVertPositions", _meshVertsBuffer);
-				_renderParams.matProps.SetBuffer("_instancePositionMatrices", _grassPositionsBuffer);
-				_renderParams.matProps.SetFloat("_instanceCount", _samplesX * _samplesZ);
-				_renderParams.worldBounds = new Bounds(transform.position, new Vector3(_tileSizeX, 1000000, _tileSizeZ));
-			}
-			#endregion
 			Graphics.RenderPrimitivesIndexed(_renderParams, MeshTopology.Triangles, _meshTrisBuffer, _meshTrisBuffer.count, instanceCount: _samplesX * _samplesZ);
 		}
 
