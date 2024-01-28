@@ -118,13 +118,14 @@ namespace Effects.TsushimaGrass
 				distToPlayerCutoff = _globalConfig._distToPlayerCutoff;
 			}
 			#endregion
-			// GPUComputePositionsTo(out _grassPositionsBuffer, _samplesX, _samplesZ, _tileSizeX, _tileSizeZ, _meshBoundsPadding);
+			GPUComputePositionsTo(out _grassPositionsBuffer, _samplesX, _samplesZ, _tileSizeX, _tileSizeZ, _meshBoundsPadding);
 			MeshDataToBuffers(_grassMesh, out _meshVertsBuffer, out _meshTrisBuffer);
 			_renderParams = new RenderParams(_renderingShaderMat);
 			_renderParams.matProps = new MaterialPropertyBlock();
-			_renderParams.matProps.SetBuffer("_vertexPositions", _meshVertsBuffer);
-			_renderParams.matProps.SetMatrix("_ObjectToWorld", Matrix4x4.Translate(new Vector3(0, 1, 0)));
-			_renderParams.matProps.SetFloat("_NumInstances", 10.0f);
+			_renderParams.matProps.SetBuffer("_meshVertPositions", _meshVertsBuffer);
+			_renderParams.matProps.SetBuffer("_instancePositionMatrices", _grassPositionsBuffer);
+			// Change Y Bounds to height of tallest grass?
+			_renderParams.worldBounds = new Bounds(transform.position, new Vector3(_tileSizeX, _grassMesh.bounds.size.y, _tileSizeZ));
 		}
 
 		private void Update() {

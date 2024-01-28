@@ -12,29 +12,32 @@ Shader "Custom/GrassCustomShader"
             #pragma vertex vert
             #pragma fragment frag
             
-            struct v2f
+            struct FragData
             {
-                float4 pos : SV_POSITION;
-                float4 color : COLOR0;
+                float4 vertexPosition : SV_POSITION;
+                float4 vertexColor : COLOR0;
             };
 
-            StructuredBuffer<float3> _vertexPositions;
-            uniform float4x4 _ObjectToWorld;
-            uniform float _NumInstances;
+            StructuredBuffer<float3> _meshVertPositions;
+            StructuredBuffer<float4x4> _instancePositionMatrices;
 
-            v2f vert(uint vertexID: SV_VertexID, uint instanceID : SV_InstanceID)
+            FragData vert(uint triIndex: SV_VertexID, uint instanceID : SV_InstanceID)
             {
-                v2f o;
-                float3 pos = _vertexPositions[vertexID];
-                float4 wpos = mul(_ObjectToWorld, float4(pos + float3(instanceID, 0, 0), 1.0f));
-                o.pos = mul(UNITY_MATRIX_VP, wpos);
-                o.color = float4(instanceID / _NumInstances, 0.0f, 0.0f, 0.0f);
-                return o;
+                FragData output;
+                float3 vertexPosition = _meshVertPositions[triIndex];
+                // local space - do wind curvature here
+                
+                // world space
+                float4 worldPos = mul(_instancePositionMatrices[instanceID], float4(vertexPosition, 1.0f));
+                // view space / clip space(?) -- do clip space vert adjustments here
+                output.vertexPosition = mul(UNITY_MATRIX_VP, worldPos);
+                output.vertexColor = float4(0.0f, 1.0f, 0.0f, 1.0f);
+                return output;
             }
 
-            float4 frag(v2f i) : SV_Target
+            float4 frag(FragData i) : SV_Target
             {
-                return i.color;
+                return i.vertexColor;
             }
             ENDCG
         }

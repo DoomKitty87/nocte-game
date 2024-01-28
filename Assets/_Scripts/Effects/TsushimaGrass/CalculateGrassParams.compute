@@ -1,0 +1,58 @@
+// Each #kernel tells which function to compile; you can have many kernels
+#pragma kernel ComputeLocalPosition
+
+uniform int _samplesX;
+uniform int _samplesZ;
+uniform float _sizeX;
+uniform float _sizeZ;
+uniform float _padding;
+uniform float3 _worldPosition;
+// ======
+RWStructuredBuffer<float4x4> _positionOutputBuffer;
+
+// Pseudo-random number between min and max, think its from shadergraph compiled code
+float randomRange(float2 seed, float min, float max)
+{
+	const float randNum = frac(sin(dot(seed, float2(12.9898, 78.233)))*143758.5453);
+	return lerp(min, max, randNum);
+}
+
+float4x4 GetMatrixWithRotationY(float angle)
+{
+	float s, c;
+	sincos(angle, s, c);
+
+	return float4x4
+	(
+		c, 0, s, 0,
+		0, 1, 0, 0,
+		-s, 0, c, 0,
+		0, 0, 0, 1
+	);
+}
+
+float4x4 PositionToTransformMatrix(float3 position)
+{
+	float x = position.x;
+	float y = position.y;
+	float z = position.z;
+	return float4x4(
+		x, 0, 0, 0,
+		0, y, 0, 0,
+		0, 0, z, 0,
+		0, 0, 0, 1);
+}
+
+[numthreads(64,1,1)]
+void ComputeLocalPosition(uint3 id : SV_DispatchThreadID, uint3 groupId : SV_GroupID)
+{
+	int sampleIndex = 64 * groupId.x + id.x;
+	float2 samplePosition;
+	samplePosition.y = floor(sampleIndex / _samplesX);
+	samplePosition.x = sampleIndex % _samplesX;
+	float xSpacing = _sizeX / _samplesX;
+	float zSpacing = _sizeZ / _samplesZ;
+	float3 worldPos = (samplePosition.x * xSpacing, 0, samplePosition.y * zSpacing) + _worldPosition;
+	
+	_positionOutputBuffer[sampleIndex];
+}
