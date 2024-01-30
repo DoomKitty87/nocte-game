@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 185.11647, g: 64.295235, b: 27.145483, a: 1}
+  m_IndirectSpecularColor: {r: 171.80428, g: 60.835217, b: 26.463139, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -207,6 +207,8 @@ MonoBehaviour:
   _jumpKey: 0
   _sprintKey: 304
   _crouchKey: 0
+  _maxStamina: 0
+  _currentStamina: 0
 --- !u!114 &22501994
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4071,6 +4073,8 @@ MonoBehaviour:
   _jumpKey: 0
   _sprintKey: 304
   _crouchKey: 0
+  _maxStamina: 100
+  _currentStamina: 99
 --- !u!114 &1563905647
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4089,6 +4093,7 @@ MonoBehaviour:
   _distanceChase: 75
   _distanceGoal: 2
   _range: 100
+  _staminaLimit: 1
   _attacks:
   - _attackDistance: 3
     _attackDamage: 700
@@ -4192,7 +4197,7 @@ Transform:
   m_GameObject: {fileID: 1563905645}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 800, z: 0}
+  m_LocalPosition: {x: 0, y: 1000, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -8682,7 +8687,7 @@ PrefabInstance:
     - target: {fileID: 8819276947174590073, guid: 862d92a67177d4c7b84ab88d6b6e0257,
         type: 3}
       propertyPath: _noiseParameters.warpStrengthMean
-      value: 50
+      value: 250
       objectReference: {fileID: 0}
     - target: {fileID: 8819276947174590073, guid: 862d92a67177d4c7b84ab88d6b6e0257,
         type: 3}

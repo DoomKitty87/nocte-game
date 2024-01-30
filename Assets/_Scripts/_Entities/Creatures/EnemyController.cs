@@ -46,6 +46,10 @@ public class EnemyController : MonoBehaviour
     public KeyCode _sprintKey = KeyCode.LeftShift;
     public KeyCode _crouchKey = KeyCode.LeftControl;
     
+    [Header("Stamina")]
+    public float _maxStamina;
+    public float _currentStamina;
+    
     #endregion
     
     #region Hidden Variables
@@ -68,6 +72,7 @@ public class EnemyController : MonoBehaviour
     private Transform _parent;
 
     private Vector3 _goalPos;
+    private Vector3 _denPos;
     
     public enum PlayerStates
     {
@@ -82,7 +87,7 @@ public class EnemyController : MonoBehaviour
         Frozen,
         NoClip
     }
-
+    
     #endregion
 
     private void Awake() {
@@ -158,6 +163,14 @@ public class EnemyController : MonoBehaviour
     
     public Vector2 GetGoalPos() {
         return _goalPos;
+    }
+
+    public void SetDenPos(Vector3 denPos) {
+        _denPos = denPos;
+    }
+    
+    public Vector3 GetDenPos() {
+        return _denPos;
     }
     
     #endregion
