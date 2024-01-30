@@ -1,4 +1,4 @@
-using System;
+     using System;
 using System.Numerics;
 using Unity.VisualScripting;
 using UnityEditor;
@@ -45,6 +45,8 @@ namespace Effects.TsushimaGrass
 		// ===== Material Shader + Buffers =====
 		private GraphicsBuffer _meshVertsBuffer;
 		private GraphicsBuffer _meshTrisBuffer;
+		private GraphicsBuffer.IndirectDrawIndexedArgs[] _renderCommandData;
+		private GraphicsBuffer _renderCommandBuffer;
 		// =====
 
 		private void MeshDataToBuffers(Mesh mesh, out GraphicsBuffer vertexPosBuffer, out GraphicsBuffer trisIndexBuffer) {
@@ -121,7 +123,9 @@ namespace Effects.TsushimaGrass
 				_positionCompute = _globalConfig._positionCompute;
 			}
 			#endregion
+			// Compute Shader
 			GPUComputePositionsTo(out _grassPositionsBuffer, _samplesX, _samplesZ, _tileSizeX, _tileSizeZ, _meshBoundsPadding);
+			// Render Material
 			MeshDataToBuffers(_grassMesh, out _meshVertsBuffer, out _meshTrisBuffer);
 			_renderParams = new RenderParams(_renderingShaderMat);
 			_renderParams.matProps = new MaterialPropertyBlock();
@@ -131,11 +135,7 @@ namespace Effects.TsushimaGrass
 		}
 
 		private void Update() {
-			return;
-			int calls = Mathf.CeilToInt(_samplesX * _samplesZ / 1000);
-			for (int i = 0; i < calls; i++) {
-				
-			}
+			Graphics.RenderMeshIndirect(_renderParams, _grassMesh, _renderCommandBuffer, 1);
 		}
 
 		private void OnDrawGizmosSelected() {
