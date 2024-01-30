@@ -960,6 +960,14 @@ public class WorldGenerator : MonoBehaviour
       }
     }
 
+    // WaterFlattenJob flattenJob = new WaterFlattenJob {
+    //   vertices = waterVertices
+    // };
+    //
+    // JobHandle handle = flattenJob.Schedule();
+    // while (!handle.IsCompleted) yield return null;
+    // handle.Complete();
+
     var meshDataArray = Mesh.AllocateWritableMeshData(1);
     var meshData = meshDataArray[0];
 
@@ -978,6 +986,27 @@ public class WorldGenerator : MonoBehaviour
 
     waterVertices.Dispose();
     waterTriangles.Dispose();
+
+  }
+
+  private struct WaterFlattenJob : IJob
+  {
+
+    public NativeArray<Vector3> vertices;
+
+    public void Execute() {
+      NativeArray<float> offsets = new NativeArray<float>(vertices.Length, Allocator.Temp);
+      for (int i = 0; i < vertices.Length; i++) {
+        offsets[i] = vertices[i].y;
+        for (int j = 0; j < vertices.Length; j++) {
+          offsets[i] = Mathf.Lerp(offsets[i], vertices[j].y, Mathf.Clamp(10 / Vector3.Distance(vertices[i], vertices[j]), 0, 1));
+        }
+      }
+
+      for (int i = 0; i < vertices.Length; i++) vertices[i] = new Vector3(vertices[i].x, offsets[i], vertices[i].z);
+
+      offsets.Dispose();
+    }
 
   }
 
