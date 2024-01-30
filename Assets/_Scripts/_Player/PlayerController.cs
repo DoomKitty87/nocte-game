@@ -184,6 +184,7 @@ public class PlayerController : MonoBehaviour
                 break;
             
             case PlayerStates.Driving:
+                DisableColliders();
                 _useVelocity = false;
                 _useGravity = false;
                 break;
