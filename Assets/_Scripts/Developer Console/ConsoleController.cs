@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using Console.Commands;
 using UnityEngine;
 
@@ -85,8 +86,15 @@ namespace Console
         }
 
         private void SetupConsoleComponents() {
-            var consoleUI = _console.GetComponentInChildren<ConsoleUI>();
-            consoleUI.Setup(GetCommands());
+            ConsoleUI consoleUI;
+            try {
+                consoleUI = _console.GetComponentInChildren<ConsoleUI>();
+                consoleUI.Setup(GetCommands());
+            }
+            catch {
+                Debug.LogWarning("No consoleUI object in ConsoleController.");
+                this.enabled = false;
+            }
         }
 
         private void ReadKeyInput() {
