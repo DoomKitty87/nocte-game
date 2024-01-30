@@ -36,7 +36,7 @@ public class PlayerCameraController : MonoBehaviour
         Cursor.visible = false;
     }
 
-    private void Update() {
+    private void LateUpdate() {
         if (_freezeOnTimescale0 && Time.timeScale == 0 || _playerFreeze) return;
         Look();
     }

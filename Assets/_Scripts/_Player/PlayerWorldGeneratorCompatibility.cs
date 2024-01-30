@@ -1,4 +1,7 @@
 using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.ComponentModel;
 using UnityEngine;
 using UnityEngine.VFX;
 
@@ -14,7 +17,10 @@ public class PlayerWorldGeneratorCompatibility : MonoBehaviour
     
     
     private void Awake() {
-        if (enabled && _worldGeneratorObject == null) throw new NullReferenceException("No WorldGeneratorObject found.");
+        if (enabled && _worldGeneratorObject == null) {
+            Debug.LogWarning("No WorldGeneratorObject found.");
+            this.enabled = false;
+        }
 
         _playerController = GetComponent<PlayerController>();
     }
