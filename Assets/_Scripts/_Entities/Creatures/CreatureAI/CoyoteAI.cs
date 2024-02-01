@@ -33,6 +33,7 @@ namespace _Scripts._Entities.Creatures.CreatureAI
 			_creatureCombat = gameObject.GetComponent<CreatureCombat>();
 			return new Noder(new List<TreeNode> {
 				new Sequencer(new List<TreeNode> {
+					new Invertor(new CheckState(_controller, EnemyController.PlayerStates.Air)),
 					new Invertor(new StaminaLessThan(_controller, _staminaLimit)),
 					new Selector(new List<TreeNode> {
 						new Sequencer (new List<TreeNode> {
@@ -68,14 +69,14 @@ namespace _Scripts._Entities.Creatures.CreatureAI
 						new PlaceRandomGoal(_controller, _transform, _range)
 					}),
 				}),
-				new Sequencer(new List<TreeNode> { // places den after lack of stamina
+				new Sequencer(new List<TreeNode> { // goes to den after lack of stamina
 					new StaminaLessThan(_controller, _staminaLimit),
-					new CheckDenExists(_controller),
 					new FaceDen(_controller, _transform, true, false, true),
 					new SetMovementToDirection(_transform.forward, _controller),
 					new SetState(_controller, EnemyController.PlayerStates.Walking)
 				}),
 				new Sequencer(new List<TreeNode> {
+					new CheckState(_controller, EnemyController.PlayerStates.Idle),
 					new Invertor(new CheckDenExists(_controller)),
 					new PlaceDen(_controller, _transform)
 				})

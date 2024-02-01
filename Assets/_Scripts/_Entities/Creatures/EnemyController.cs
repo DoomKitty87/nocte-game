@@ -8,7 +8,7 @@ public class EnemyController : MonoBehaviour
     [HideInInspector] public bool _disableMovement;
     
     [Header("State")]
-    [SerializeField, Tooltip("Player's current state")] private PlayerStates _state;
+    [SerializeField, Tooltip("Player's current state")] public PlayerStates _state;
     public PlayerStates State {
         get => _state;
         set => SetState(value);
@@ -213,6 +213,7 @@ public class EnemyController : MonoBehaviour
 
     private void Update() {
         UpdateStates();
+        Debug.Log(_denPos);
     }
 
     private void FixedUpdate() {
