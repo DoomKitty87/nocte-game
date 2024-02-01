@@ -216,9 +216,11 @@ public class PlayerController : MonoBehaviour
 
         if (State is PlayerStates.Frozen or PlayerStates.Noclip or PlayerStates.Grappling or PlayerStates.Driving)
             return;
-        if (_currentWaterHeight > transform.position.y - _collider.bounds.size.y / 2
-            || WorldGenInfo._lakePlaneHeight > transform.position.y - _collider.bounds.size.y / 2)
-            SetState(PlayerStates.Swimming);
+        if (_worldGen != null) {
+            if (_currentWaterHeight > transform.position.y - _collider.bounds.size.y / 2
+                || WorldGenInfo._lakePlaneHeight > transform.position.y - _collider.bounds.size.y / 2)
+                SetState(PlayerStates.Swimming);
+        }
         else if (!_grounded)
             SetState(PlayerStates.Air);
         else if (Vector3.Distance(_velocity, Vector3.zero) < 0.1f && _inputVectorNormalized == Vector3.zero)
