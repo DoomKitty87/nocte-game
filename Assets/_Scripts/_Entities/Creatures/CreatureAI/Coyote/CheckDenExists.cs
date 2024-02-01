@@ -13,7 +13,7 @@ namespace _Scripts._Entities.Creatures.CreatureAI
     }
 
     public override TreeNodeState Evaluate() {
-      _nodeState = _controller.GetDenPos() != null ? TreeNodeState.SUCCESS : TreeNodeState.FAILED;
+      _nodeState = _controller.GetDenPos() != Vector3.zero ? TreeNodeState.SUCCESS : TreeNodeState.FAILED;
       return _nodeState;
     }
   }
