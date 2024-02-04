@@ -213,7 +213,7 @@ public class EnemyController : MonoBehaviour
 
     private void Update() {
         UpdateStates();
-        Debug.Log(_denPos);
+        // Debug.Log(_denPos);
     }
 
     private void FixedUpdate() {

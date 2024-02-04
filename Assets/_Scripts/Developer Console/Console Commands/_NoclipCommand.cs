@@ -1,4 +1,5 @@
 using System;
+using UnityEngine;
 
 namespace Console.Commands
 {
@@ -32,10 +33,13 @@ namespace Console.Commands
                 _currentWrongMsg = _wrongInputMsg;
                 return false;
             }
-
-            int value = int.Parse(arg);
-
-            if (TryValue(value)) {
+            
+            if (arg == "toggle") {
+                ToggleNoclip();
+                return true;
+            } 
+            if (TryValue(arg)) {
+                int value = int.Parse(arg);
                 if (value == 1) {
                     _currentSuccessMessage = BuildSuccessMessage("enabled");
                     PlayerController.Instance.State = PlayerController.PlayerStates.Noclip;
@@ -51,24 +55,35 @@ namespace Console.Commands
                 _currentWrongMsg = _wrongInputMsg;
                 return false;
             }
-            
-            
         }
 
         private bool TryType(string input) {
             if (int.TryParse(input, out int value)) 
                 return true;
-
+            if (input == "toggle") 
+                return true;
             return false;
         }
 
-        private bool TryValue(float value) {
+        private bool TryValue(string arg) {
+            int value = int.Parse(arg);
             if (value is 0 or 1) 
                 return true;
             else
                 return false;
         }
 
+        private void ToggleNoclip() {
+            if (PlayerController.Instance.State == PlayerController.PlayerStates.Noclip) {
+                PlayerController.Instance.State = PlayerController.PlayerStates.Idle;
+                BuildSuccessMessage("disabled");
+            }
+            else {
+                PlayerController.Instance.State = PlayerController.PlayerStates.Noclip;
+                BuildSuccessMessage("enabled");
+            }
+        }
+        
         private string BuildCallbackMessage() =>
             // TODO: Fix this
             $"noclip -> {(PlayerController.Instance.State == PlayerController.PlayerStates.Noclip ? 1 : 0)}";

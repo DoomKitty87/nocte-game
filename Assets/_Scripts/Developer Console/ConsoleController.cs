@@ -13,6 +13,7 @@ namespace Console
         private ConsoleUI _consoleUI;
 
         public KeyCode _consoleKey = KeyCode.BackQuote;
+        public KeyCode _noclipKey = KeyCode.V;
 
         private static Action _consoleOpen;
         private static Action _consoleClosed;
@@ -100,6 +101,10 @@ namespace Console
         private void ReadKeyInput() {
             if (Input.GetKeyDown(_consoleKey))
                 SwapConsoleState();
+
+            if (Input.GetKeyDown(_noclipKey) && BackgroundInfo._enableCheats && !_console.activeInHierarchy) {
+                _consoleUI.ApplyCommand("noclip toggle");
+            }
 
             if (_console.activeInHierarchy && Input.GetKeyDown(KeyCode.UpArrow)) 
                 _consoleUI.GetPreviousMessage(1);
