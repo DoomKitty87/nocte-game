@@ -35,8 +35,8 @@ namespace _Scripts._Entities.Creatures.CreatureAI
 				new Sequencer(new List<TreeNode> {
 					new Invertor(new CheckState(_controller, EnemyController.PlayerStates.Air)),
 					new Invertor(new StaminaLessThan(_controller, _staminaLimit)),
-					new Selector(new List<TreeNode> {
-						new Sequencer (new List<TreeNode> {
+					new Sequencer(new List<TreeNode> {
+						new Sequencer(new List<TreeNode> {
 							new DistanceTransformLessThan(_transform, _playerTransform, _distanceAttack),
 							new SetState(_controller, EnemyController.PlayerStates.Idle),
 							new UseAttack(_creatureCombat, _attacks[0])
