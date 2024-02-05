@@ -26,11 +26,7 @@ void dummy(){
 
 // ----------------------------------------------------------------------------------
 
-struct InstanceData {
-	float4x4 m;
-};
-
-StructuredBuffer<InstanceData> _PerInstanceData;
+StructuredBuffer<float4x4> _instancePositionMatrices;
 // Stores the matrices (and possibly other data) sent from the C# side via material.SetBuffer, in Start/OnEnable.
 // See : https://gist.github.com/Cyanilux/e7afdc5c65094bfd0827467f8e4c3c54
 
@@ -44,9 +40,9 @@ StructuredBuffer<InstanceData> _PerInstanceData;
 	// https://github.com/TwoTailsGames/Unity-Built-in-Shaders/blob/master/CGIncludes/UnityStandardParticleInstancing.cginc
 
 	void vertInstancingMatrices(inout float4x4 objectToWorld, out float4x4 worldToObject) {
-		InstanceData data = _PerInstanceData[unity_InstanceID];
+		float4x4 worldMatrix = _instancePositionMatrices[unity_InstanceID];
 
-		objectToWorld = mul(objectToWorld, data.m);
+		objectToWorld = mul(objectToWorld, worldMatrix);
 
 		// Transform matrix (override current)
 		// I prefer keeping positions relative to the bounds passed into DrawMeshInstancedIndirect so use the above instead
@@ -73,7 +69,7 @@ StructuredBuffer<InstanceData> _PerInstanceData;
 	}
 
 	void vertInstancingSetup() {
-		vertInstancingMatrices(unity_ObjectToWorld, unity_WorldToObject);
+		vertInstancingMatrices(UNITY_MATRIX_M, UNITY_MATRIX_I_M);
 	}
 
 #endif

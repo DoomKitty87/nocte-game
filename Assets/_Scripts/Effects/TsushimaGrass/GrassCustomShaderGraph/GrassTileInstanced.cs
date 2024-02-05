@@ -2,8 +2,9 @@
 using System.Numerics;
 using Unity.VisualScripting;
 using UnityEditor;
+     using UnityEngine.Rendering;
 
-namespace Effects.TsushimaGrass
+     namespace Effects.TsushimaGrass
 {
 	using UnityEngine;
 
@@ -15,8 +16,7 @@ namespace Effects.TsushimaGrass
 		// The overall tile will be the terrain tile, making terrain tile size largest LOD
 		// Tsushima divides tiles into 3 LODs, quarters, eighths, sixteenths. Can have combination of divisions to fill single tile
 
-
-		// For now, lets implement this on CPU because I wanna solidify overall method
+		
 		[Header("Dependencies")]
 		public WorldGenerator _worldGenerator;
 		[Header("Global Config")]
@@ -45,8 +45,8 @@ namespace Effects.TsushimaGrass
 		// ===== Material Shader + Buffers =====
 		private GraphicsBuffer _meshVertsBuffer;
 		private GraphicsBuffer _meshTrisBuffer;
-		private GraphicsBuffer.IndirectDrawIndexedArgs[] _renderCommandData;
 		private GraphicsBuffer _renderCommandBuffer;
+		private GraphicsBuffer.IndirectDrawIndexedArgs[] _renderCommandData;
 		// =====
 
 		private void MeshDataToBuffers(Mesh mesh, out GraphicsBuffer vertexPosBuffer, out GraphicsBuffer trisIndexBuffer) {
@@ -126,16 +126,20 @@ namespace Effects.TsushimaGrass
 			// Compute Shader
 			GPUComputePositionsTo(out _grassPositionsBuffer, _samplesX, _samplesZ, _tileSizeX, _tileSizeZ, _meshBoundsPadding);
 			// Render Material
-			MeshDataToBuffers(_grassMesh, out _meshVertsBuffer, out _meshTrisBuffer);
 			_renderParams = new RenderParams(_renderingShaderMat);
 			_renderParams.matProps = new MaterialPropertyBlock();
-			_renderParams.matProps.SetBuffer("_meshVertPositions", _meshVertsBuffer);
 			_renderParams.matProps.SetBuffer("_instancePositionMatrices", _grassPositionsBuffer);
 			_renderParams.worldBounds = new Bounds(transform.position, new Vector3(_tileSizeX, 1000000, _tileSizeZ));
+			int commandCount = 1;
+			_renderCommandBuffer = new GraphicsBuffer(GraphicsBuffer.Target.IndirectArguments, commandCount, GraphicsBuffer.IndirectDrawIndexedArgs.size);
+			_renderCommandData = new GraphicsBuffer.IndirectDrawIndexedArgs[commandCount];
+			_renderCommandData[0].indexCountPerInstance = _grassMesh.GetIndexCount(0);
+			_renderCommandData[0].instanceCount = (uint)_samplesX * (uint)_samplesZ;
+			_renderCommandBuffer.SetData(_renderCommandData);
 		}
 
 		private void Update() {
-			Graphics.RenderMeshIndirect(_renderParams, _grassMesh, _renderCommandBuffer, 1);
+			Graphics.RenderMeshIndirect(_renderParams, _grassMesh, _renderCommandBuffer);
 		}
 
 		private void OnDrawGizmosSelected() {
