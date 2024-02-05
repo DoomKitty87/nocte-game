@@ -135,6 +135,10 @@ namespace Console
             LogText(builder.ToString().TrimEnd(' '));
         }
 
+        public void ApplyCommand(string input) {
+            _console.ProcessInput(input);
+        }
+        
         public void GetPreviousMessage(int value) {
             int length = _inputs.Count;
             if (length >= 1024) {
