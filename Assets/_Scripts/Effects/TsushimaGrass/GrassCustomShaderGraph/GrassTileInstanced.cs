@@ -1,5 +1,6 @@
      using System;
-using System.Numerics;
+     using System.Collections.Generic;
+     using System.Numerics;
 using Unity.VisualScripting;
 using UnityEditor;
      using UnityEngine.Rendering;
@@ -45,8 +46,7 @@ using UnityEditor;
 		// ===== Material Shader + Buffers =====
 		private GraphicsBuffer _meshVertsBuffer;
 		private GraphicsBuffer _meshTrisBuffer;
-		private GraphicsBuffer _renderCommandBuffer;
-		private GraphicsBuffer.IndirectDrawIndexedArgs[] _renderCommandData;
+		private List<Matrix4x4> _objToWorldPlaceholders;
 		// =====
 
 		private void MeshDataToBuffers(Mesh mesh, out GraphicsBuffer vertexPosBuffer, out GraphicsBuffer trisIndexBuffer) {
@@ -130,16 +130,11 @@ using UnityEditor;
 			_renderParams.matProps = new MaterialPropertyBlock();
 			_renderParams.matProps.SetBuffer("_instancePositionMatrices", _grassPositionsBuffer);
 			_renderParams.worldBounds = new Bounds(transform.position, new Vector3(_tileSizeX, 1000000, _tileSizeZ));
-			int commandCount = 1;
-			_renderCommandBuffer = new GraphicsBuffer(GraphicsBuffer.Target.IndirectArguments, commandCount, GraphicsBuffer.IndirectDrawIndexedArgs.size);
-			_renderCommandData = new GraphicsBuffer.IndirectDrawIndexedArgs[commandCount];
-			_renderCommandData[0].indexCountPerInstance = _grassMesh.GetIndexCount(0);
-			_renderCommandData[0].instanceCount = (uint)_samplesX * (uint)_samplesZ;
-			_renderCommandBuffer.SetData(_renderCommandData);
+			_objToWorldPlaceholders = new List<Matrix4x4>(1) { Matrix4x4.identity };
 		}
 
 		private void Update() {
-			Graphics.RenderMeshIndirect(_renderParams, _grassMesh, _renderCommandBuffer);
+			Graphics.RenderMeshInstanced(_renderParams, _grassMesh, 0, _objToWorldPlaceholders, _samplesX * _samplesZ);
 		}
 
 		private void OnDrawGizmosSelected() {
