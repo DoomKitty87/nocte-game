@@ -446,7 +446,7 @@ public static class AmalgamNoise
     return height;
   }
 
-  public static float[] GetPositions(float[] xPositions, float[] zPositions, int octaves, float lacunarity, float persistence, float sharpnessScale, float sharpnessAmplitude, float sharpnessMean, float scaleScale, float scaleAmplitude, float scaleMean, float amplitudeScale, float amplitudeAmplitude, float amplitudeMean, float warpStrengthScale, float warpStrengthAmplitude, float warpStrengthMean, float warpScaleScale, float warpScaleAmplitude, float warpScaleMean, float amplitudePower) {
+  public static float[] GetPositionParallel(float[] xPositions, float[] zPositions, int octaves, float lacunarity, float persistence, float sharpnessScale, float sharpnessAmplitude, float sharpnessMean, float scaleScale, float scaleAmplitude, float scaleMean, float amplitudeScale, float amplitudeAmplitude, float amplitudeMean, float warpStrengthScale, float warpStrengthAmplitude, float warpStrengthMean, float warpScaleScale, float warpScaleAmplitude, float warpScaleMean, float amplitudePower) {
     NativeArray<float> output = new NativeArray<float>(xPositions.Length, Allocator.TempJob);
     NativeArray<float> xInputs = new NativeArray<float>(xPositions.Length, Allocator.TempJob);
     NativeArray<float> zInputs = new NativeArray<float>(xPositions.Length, Allocator.TempJob);
@@ -456,6 +456,46 @@ public static class AmalgamNoise
       inputX = xInputs,
       inputZ = zInputs,
       octaves = octaves,
+      lacunarity = lacunarity,
+      persistence = persistence,
+      sharpnessScale = 1f / sharpnessScale,
+      sharpnessAmplitude = sharpnessAmplitude,
+      sharpnessMean = sharpnessMean,
+      scaleScale = 1f / scaleScale,
+      scaleAmplitude = scaleAmplitude,
+      scaleMean = scaleMean,
+      amplitudeScale = 1f / amplitudeScale,
+      amplitudeAmplitude = amplitudeAmplitude,
+      amplitudeMean = amplitudeMean,
+      warpStrengthScale = 1f / warpStrengthScale,
+      warpStrengthAmplitude = warpStrengthAmplitude,
+      warpStrengthMean = warpStrengthMean,
+      warpScaleScale = 1f / warpScaleScale,
+      warpScaleAmplitude = warpScaleAmplitude,
+      warpScaleMean = warpScaleMean,
+      amplitudePower = amplitudePower,
+      output = output
+    };
+    JobHandle handle = job.Schedule(xPositions.Length, 16);
+    handle.Complete();
+    float[] values = new float[xPositions.Length];
+    for (int i = 0; i < values.Length; i++) values[i] = output[i];
+    output.Dispose();
+    xInputs.Dispose();
+    zInputs.Dispose();
+    return values;
+  }
+    
+  public static float[] GetPositionParallel(float[] xPositions, float[] zPositions) {
+    NativeArray<float> output = new NativeArray<float>(xPositions.Length, Allocator.TempJob);
+    NativeArray<float> xInputs = new NativeArray<float>(xPositions.Length, Allocator.TempJob);
+    NativeArray<float> zInputs = new NativeArray<float>(xPositions.Length, Allocator.TempJob);
+    for (int i = 0; i < xPositions.Length; i++) xInputs[i] = xPositions[i];
+    for (int i = 0; i < xPositions.Length; i++) zInputs[i] = zPositions[i];
+    NoiseJobPoint job = new NoiseJobPoint {
+      inputX = xInputs,
+      inputZ = zInputs,
+      octaves = WorldGenInfo.AmalgamNoiseParams.octaves,
       lacunarity = lacunarity,
       persistence = persistence,
       sharpnessScale = 1f / sharpnessScale,

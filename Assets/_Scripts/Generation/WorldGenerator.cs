@@ -1,15 +1,8 @@
-using System;
 using UnityEngine;
 using System.Collections.Generic;
-using UnityEngine.Rendering.HighDefinition;
-using Matrix4x4 = UnityEngine.Matrix4x4;
 using Vector2 = UnityEngine.Vector2;
 using Vector3 = UnityEngine.Vector3;
-using Vector4 = UnityEngine.Vector4;
-using Math = System.Math;
-using Unity.Mathematics;
 using Unity.Jobs;
-using Unity.Burst;
 using Unity.Collections;
 using UnityEngine.Rendering;
 using IEnumerator = System.Collections.IEnumerator;
@@ -39,76 +32,7 @@ public class WorldGenerator : MonoBehaviour
     public int factor;
   }
 
-  [System.Serializable]
-  private struct AmalgamNoiseParams
-  {
 
-    [Tooltip("Iterations of noise layered for final result.")]
-    public int octaves;
-    [Tooltip("Scale change factor between octaves.")]
-    public float lacunarity;        
-    [Tooltip("Amplitude change factor between octaves.")]
-    public float persistence;        
-    [Tooltip("Scale of sharpness noise permutation.")]
-    public float sharpnessScale;        
-    [Tooltip("Amplitude of sharpness noise permutation.")]
-    public float sharpnessAmplitude;        
-    [Tooltip("Midpoint value of sharpness.")]
-    public float sharpnessMean;        
-    [Tooltip("Scale of scale noise permutation.")]
-    public float scaleScale;        
-    [Tooltip("Amplitude of scale noise permutation.")]
-    public float scaleAmplitude;        
-    [Tooltip("Midpoint value of scale.")]
-    public float scaleMean;
-    [Tooltip("Scale of amplitude noise permutation.")]
-    public float amplitudeScale;        
-    [Tooltip("Amplitude of amplitude noise permutation.")]
-    public float amplitudeAmplitude;         
-    [Tooltip("Midpoint value of amplitude.")]
-    public float amplitudeMean;       
-    [Tooltip("Scale of warp strength noise permutation.")]
-    public float warpStrengthScale;         
-    [Tooltip("Amplitude of warp strength noise permutation.")]
-    public float warpStrengthAmplitude;       
-    [Tooltip("Midpoint value of warp strength.")]
-    public float warpStrengthMean;        
-    [Tooltip("Scale of warp scale noise permutation.")]
-    public float warpScaleScale;      
-    [Tooltip("Amplitude of warp scale noise permutation.")]
-    public float warpScaleAmplitude;
-    [Tooltip("Midpoint value of warp scale.")]
-    public float warpScaleMean;
-    public float amplitudePower;
-
-    [Header("Parameters for seed-based perturbation.")]
-    public float scaleMeanAmplitude;
-    public float sharpnessScaleAmplitude; 
-    public float sharpnessAmplitudeAmplitude;
-    public float sharpnessMeanAmplitude;
-    public float amplitudeScaleAmplitude;
-    public float amplitudeAmplitudeAmplitude;
-    public float amplitudeMeanAmplitude;
-    public float warpStrengthAmplitudeAmplitude; 
-    public float warpStrengthMeanAmplitude;
-    public float warpScaleMeanAmplitude;
-    public float amplitudePowerAmplitude;
-
-    public void Perturb(int seed) {
-      scaleMean += (Mathf.PerlinNoise(seed % 296.13f, seed % 906.13f)) * scaleMeanAmplitude;
-      sharpnessScale += (Mathf.PerlinNoise(seed % 751.92f, seed % 601.93f)) * sharpnessScaleAmplitude;
-      sharpnessAmplitude += (Mathf.PerlinNoise(seed % 968.01f, seed % 981.24f) - 0.5f) * sharpnessAmplitudeAmplitude;
-      sharpnessMean += (Mathf.PerlinNoise(seed % 214.25f, seed % 591.85f)) * sharpnessMeanAmplitude;
-      amplitudeScale += (Mathf.PerlinNoise(seed % 172.82f, seed % 918.96f)) * amplitudeScaleAmplitude;
-      amplitudeAmplitude += (Mathf.PerlinNoise(seed % 619.34f, seed % 729.14f) - 0.5f) * amplitudeAmplitudeAmplitude;
-      amplitudeMean += (Mathf.PerlinNoise(seed % 481.83f, seed % 389.06f)) * amplitudeMeanAmplitude;
-      warpStrengthAmplitude += (Mathf.PerlinNoise(seed % 195.12f, seed % 702.18f) - 0.5f) * warpStrengthAmplitudeAmplitude;
-      warpStrengthMean += (Mathf.PerlinNoise(seed % 810.53f, seed % 109.52f) - 0.5f) * warpStrengthMeanAmplitude;
-      warpScaleMeanAmplitude += (Mathf.PerlinNoise(seed % 639.14f, seed % 561.92f)) * warpScaleMeanAmplitude;
-      amplitudePower += (Mathf.PerlinNoise(seed % 591.03f, seed % 329.51f) - 0.5f) * amplitudePowerAmplitude;
-    }
-
-  }
 
   [System.Serializable]
   private struct RiverParams 
@@ -160,7 +84,7 @@ public class WorldGenerator : MonoBehaviour
   [SerializeField] private int _forceBakeThreshold;
   [Tooltip("Material for world mesh.")]
   [SerializeField] private Material _material;
-  [SerializeField] private AmalgamNoiseParams _noiseParameters;
+  [SerializeField] private WorldGenInfo.AmalgamNoiseParams _noiseParameters;
   [Tooltip("Refresh world generation.")]
 
   [SerializeField] private bool _refreshButton = false;
@@ -293,6 +217,7 @@ public class WorldGenerator : MonoBehaviour
     // Debug.Log(_seed);
     // Seed-based terrain parameter changes
     _noiseParameters.Perturb(_seed);
+
   }
 
   private void Start()  {
