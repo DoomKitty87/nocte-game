@@ -134,7 +134,7 @@ using UnityEditor;
 		}
 
 		private void Update() {
-			Graphics.RenderMeshInstanced(_renderParams, _grassMesh, 0, _objToWorldPlaceholders, _samplesX * _samplesZ);
+			Graphics.DrawMeshInstanced(_grassMesh, 0, _renderingShaderMat, _objToWorldPlaceholders.ToArray(), _samplesX * _samplesZ, _renderParams.matProps);
 		}
 
 		private void OnDrawGizmosSelected() {
