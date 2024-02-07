@@ -4,8 +4,7 @@
 using Unity.VisualScripting;
 using UnityEditor;
      using UnityEngine.Rendering;
-
-     namespace Effects.TsushimaGrass
+namespace Effects.TsushimaGrass
 {
 	using UnityEngine;
 
@@ -133,7 +132,15 @@ using UnityEditor;
 			_objToWorldPlaceholders = new List<Matrix4x4>(1) { Matrix4x4.identity };
 		}
 
+		private const int instanceGroupSize = 1000;
+		private int groupIndex = 0;
+
+		private void RenderGrassMesh() {
+			// TODO
+		}
+		
 		private void Update() {
+			
 			Graphics.DrawMeshInstanced(_grassMesh, 0, _renderingShaderMat, _objToWorldPlaceholders.ToArray(), _samplesX * _samplesZ, _renderParams.matProps);
 		}
 
