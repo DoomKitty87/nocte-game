@@ -5,6 +5,7 @@ using Unity.Collections;
 using static Unity.Mathematics.noise;
 using Unity.Mathematics;
 using System;
+using static WorldGenInfo.AmalgamNoiseParams;
 
 public static class AmalgamNoise
 {
@@ -399,32 +400,32 @@ public static class AmalgamNoise
     return values;
   }
 
-  public static float GetPosition(float xPosition, float zPosition, int octaves, float lacunarity, float persistence, float sharpnessScale, float sharpnessAmplitude, float sharpnessMean, float scaleScale, float scaleAmplitude, float scaleMean, float amplitudeScale, float amplitudeAmplitude, float amplitudeMean, float warpStrengthScale, float warpStrengthAmplitude, float warpStrengthMean, float warpScaleScale, float warpScaleAmplitude, float warpScaleMean, float amplitudePower) {
-    sharpnessScale = 1f / sharpnessScale;
-    scaleScale = 1f / scaleScale;
-    amplitudeScale = 1f / amplitudeScale;
-    warpStrengthScale = 1f / warpStrengthScale;
-    warpScaleScale = 1f / warpScaleScale;
-    float sharpnessValue = sharpnessMean + sharpnessAmplitude * Mathf.Pow(snoise(new float2(xPosition * sharpnessScale, zPosition * sharpnessScale)), 3);
-    float secondarySharpness = sharpnessAmplitude / 5 * snoise(new float2(xPosition * sharpnessScale * 5, zPosition * sharpnessScale * 5));
+  public static float GetPosition(float xPosition, float zPosition) {
+    float sharpnessScale = 1f / NOISEPARAMS_sharpnessScale;
+    float scaleScale = 1f / NOISEPARAMS_scaleScale;
+    float amplitudeScale = 1f / NOISEPARAMS_amplitudeScale;
+    float warpStrengthScale = 1f / NOISEPARAMS_warpStrengthScale;
+    float warpScaleScale = 1f / NOISEPARAMS_warpScaleScale;
+    float sharpnessValue = NOISEPARAMS_sharpnessMean + NOISEPARAMS_sharpnessAmplitude * Mathf.Pow(snoise(new float2(xPosition * sharpnessScale, zPosition * sharpnessScale)), 3);
+    float secondarySharpness = NOISEPARAMS_sharpnessAmplitude / 5 * snoise(new float2(xPosition * sharpnessScale * 5, zPosition * sharpnessScale * 5));
     sharpnessValue += secondarySharpness;
-    float scaleValue = scaleMean + scaleAmplitude * snoise(new float2(xPosition * scaleScale, zPosition * scaleScale));
+    float scaleValue = NOISEPARAMS_scaleMean + NOISEPARAMS_scaleAmplitude * snoise(new float2(xPosition * scaleScale, zPosition * scaleScale));
     float amplitudeValue = snoise(new float2(xPosition * amplitudeScale, zPosition * amplitudeScale));
     if (amplitudeValue < 0) amplitudeValue = Mathf.Abs(amplitudeValue) * 0.3f;
-    amplitudeValue = Mathf.Pow(amplitudeValue, amplitudePower);
+    amplitudeValue = Mathf.Pow(amplitudeValue, NOISEPARAMS_amplitudePower);
     float amplitudeValue0 = amplitudeValue;
-    amplitudeValue = amplitudeMean + amplitudeAmplitude * amplitudeValue;
-    float warpStrengthValue = warpStrengthMean + warpStrengthAmplitude * snoise(new float2(xPosition * warpStrengthScale, zPosition * warpStrengthScale));
-    float warpScaleValue = warpScaleMean + warpScaleAmplitude * snoise(new float2(xPosition * warpScaleScale, zPosition * warpScaleScale));
+    amplitudeValue = NOISEPARAMS_amplitudeMean + NOISEPARAMS_amplitudeAmplitude * amplitudeValue;
+    float warpStrengthValue = NOISEPARAMS_warpStrengthMean + NOISEPARAMS_warpStrengthAmplitude * snoise(new float2(xPosition * warpStrengthScale, zPosition * warpStrengthScale));
+    float warpScaleValue = NOISEPARAMS_warpScaleMean + NOISEPARAMS_warpScaleAmplitude * snoise(new float2(xPosition * warpScaleScale, zPosition * warpScaleScale));
     if (scaleValue != 0) scaleValue = 1f / scaleValue;
     if (warpScaleValue != 0) warpScaleValue = 1f / warpScaleValue;
 
     float height = 0;
     float normalization = 0;
 
-    for (int i = 0; i < octaves; i++) {
-      float octaveScale = Mathf.Pow(lacunarity, i);
-      float octaveAmp = Mathf.Pow(persistence, i);
+    for (int i = 0; i < NOISEPARAMS_octaves; i++) {
+      float octaveScale = Mathf.Pow(NOISEPARAMS_lacunarity, i);
+      float octaveAmp = Mathf.Pow(NOISEPARAMS_persistence, i);
       float x = xPosition * scaleValue * octaveScale;
       float y = zPosition * scaleValue * octaveScale;
       float warpValue = warpStrengthValue * snoise(new float2(x * warpScaleValue, y * warpScaleValue));
@@ -445,46 +446,6 @@ public static class AmalgamNoise
     height *= amplitudeValue;
     return height;
   }
-
-  public static float[] GetPositionParallel(float[] xPositions, float[] zPositions, int octaves, float lacunarity, float persistence, float sharpnessScale, float sharpnessAmplitude, float sharpnessMean, float scaleScale, float scaleAmplitude, float scaleMean, float amplitudeScale, float amplitudeAmplitude, float amplitudeMean, float warpStrengthScale, float warpStrengthAmplitude, float warpStrengthMean, float warpScaleScale, float warpScaleAmplitude, float warpScaleMean, float amplitudePower) {
-    NativeArray<float> output = new NativeArray<float>(xPositions.Length, Allocator.TempJob);
-    NativeArray<float> xInputs = new NativeArray<float>(xPositions.Length, Allocator.TempJob);
-    NativeArray<float> zInputs = new NativeArray<float>(xPositions.Length, Allocator.TempJob);
-    for (int i = 0; i < xPositions.Length; i++) xInputs[i] = xPositions[i];
-    for (int i = 0; i < xPositions.Length; i++) zInputs[i] = zPositions[i];
-    NoiseJobPoint job = new NoiseJobPoint {
-      inputX = xInputs,
-      inputZ = zInputs,
-      octaves = octaves,
-      lacunarity = lacunarity,
-      persistence = persistence,
-      sharpnessScale = 1f / sharpnessScale,
-      sharpnessAmplitude = sharpnessAmplitude,
-      sharpnessMean = sharpnessMean,
-      scaleScale = 1f / scaleScale,
-      scaleAmplitude = scaleAmplitude,
-      scaleMean = scaleMean,
-      amplitudeScale = 1f / amplitudeScale,
-      amplitudeAmplitude = amplitudeAmplitude,
-      amplitudeMean = amplitudeMean,
-      warpStrengthScale = 1f / warpStrengthScale,
-      warpStrengthAmplitude = warpStrengthAmplitude,
-      warpStrengthMean = warpStrengthMean,
-      warpScaleScale = 1f / warpScaleScale,
-      warpScaleAmplitude = warpScaleAmplitude,
-      warpScaleMean = warpScaleMean,
-      amplitudePower = amplitudePower,
-      output = output
-    };
-    JobHandle handle = job.Schedule(xPositions.Length, 16);
-    handle.Complete();
-    float[] values = new float[xPositions.Length];
-    for (int i = 0; i < values.Length; i++) values[i] = output[i];
-    output.Dispose();
-    xInputs.Dispose();
-    zInputs.Dispose();
-    return values;
-  }
     
   public static float[] GetPositionParallel(float[] xPositions, float[] zPositions) {
     NativeArray<float> output = new NativeArray<float>(xPositions.Length, Allocator.TempJob);
@@ -492,28 +453,31 @@ public static class AmalgamNoise
     NativeArray<float> zInputs = new NativeArray<float>(xPositions.Length, Allocator.TempJob);
     for (int i = 0; i < xPositions.Length; i++) xInputs[i] = xPositions[i];
     for (int i = 0; i < xPositions.Length; i++) zInputs[i] = zPositions[i];
+    
+    
+    
     NoiseJobPoint job = new NoiseJobPoint {
       inputX = xInputs,
       inputZ = zInputs,
-      octaves = WorldGenInfo.AmalgamNoiseParams.octaves,
-      lacunarity = lacunarity,
-      persistence = persistence,
-      sharpnessScale = 1f / sharpnessScale,
-      sharpnessAmplitude = sharpnessAmplitude,
-      sharpnessMean = sharpnessMean,
-      scaleScale = 1f / scaleScale,
-      scaleAmplitude = scaleAmplitude,
-      scaleMean = scaleMean,
-      amplitudeScale = 1f / amplitudeScale,
-      amplitudeAmplitude = amplitudeAmplitude,
-      amplitudeMean = amplitudeMean,
-      warpStrengthScale = 1f / warpStrengthScale,
-      warpStrengthAmplitude = warpStrengthAmplitude,
-      warpStrengthMean = warpStrengthMean,
-      warpScaleScale = 1f / warpScaleScale,
-      warpScaleAmplitude = warpScaleAmplitude,
-      warpScaleMean = warpScaleMean,
-      amplitudePower = amplitudePower,
+      octaves = NOISEPARAMS_octaves,
+      lacunarity = NOISEPARAMS_lacunarity,
+      persistence = NOISEPARAMS_persistence,
+      sharpnessScale = 1f / NOISEPARAMS_sharpnessScale,
+      sharpnessAmplitude = NOISEPARAMS_sharpnessAmplitude,
+      sharpnessMean = NOISEPARAMS_sharpnessMean,
+      scaleScale = 1f / NOISEPARAMS_scaleScale,
+      scaleAmplitude = NOISEPARAMS_scaleAmplitude,
+      scaleMean = NOISEPARAMS_scaleMean,
+      amplitudeScale = 1f / NOISEPARAMS_amplitudeScale,
+      amplitudeAmplitude = NOISEPARAMS_amplitudeAmplitude,
+      amplitudeMean = NOISEPARAMS_amplitudeMean,
+      warpStrengthScale = 1f / NOISEPARAMS_warpStrengthScale,
+      warpStrengthAmplitude = NOISEPARAMS_warpStrengthAmplitude,
+      warpStrengthMean = NOISEPARAMS_warpStrengthMean,
+      warpScaleScale = 1f / NOISEPARAMS_warpScaleScale,
+      warpScaleAmplitude = NOISEPARAMS_warpScaleAmplitude,
+      warpScaleMean = NOISEPARAMS_warpScaleMean,
+      amplitudePower = NOISEPARAMS_amplitudePower,
       output = output
     };
     JobHandle handle = job.Schedule(xPositions.Length, 16);

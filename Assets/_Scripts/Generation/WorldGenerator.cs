@@ -7,6 +7,7 @@ using Unity.Collections;
 using UnityEngine.Rendering;
 using IEnumerator = System.Collections.IEnumerator;
 using static AmalgamNoise;
+using static WorldGenInfo.AmalgamNoiseParams;
 
 public class WorldGenerator : MonoBehaviour
 {
@@ -32,7 +33,41 @@ public class WorldGenerator : MonoBehaviour
     public int factor;
   }
 
+  [System.Serializable]
+  public struct NoiseParametersWrapper
+  {
+    public int octaves;
+    public float lacunarity;
+    public float persistence;
+    public float sharpnessScale;        
+    public float sharpnessAmplitude;        
+    public float sharpnessMean;        
+    public float scaleScale;        
+    public float scaleAmplitude;        
+    public float scaleMean;
+    public float amplitudeScale;        
+    public float amplitudeAmplitude;         
+    public float amplitudeMean;       
+    public float warpStrengthScale;         
+    public float warpStrengthAmplitude;       
+    public float warpStrengthMean;        
+    public float warpScaleScale;      
+    public float warpScaleAmplitude;
+    public float warpScaleMean;
+    public float amplitudePower;
 
+    public float scaleMeanAmplitude;
+    public float sharpnessScaleAmplitude; 
+    public float sharpnessAmplitudeAmplitude;
+    public float sharpnessMeanAmplitude;
+    public float amplitudeScaleAmplitude;
+    public float amplitudeAmplitudeAmplitude;
+    public float amplitudeMeanAmplitude;
+    public float warpStrengthAmplitudeAmplitude; 
+    public float warpStrengthMeanAmplitude;
+    public float warpScaleMeanAmplitude;
+    public float amplitudePowerAmplitude;
+  }
 
   [System.Serializable]
   private struct RiverParams 
@@ -84,7 +119,7 @@ public class WorldGenerator : MonoBehaviour
   [SerializeField] private int _forceBakeThreshold;
   [Tooltip("Material for world mesh.")]
   [SerializeField] private Material _material;
-  [SerializeField] private WorldGenInfo.AmalgamNoiseParams _noiseParameters;
+  public NoiseParametersWrapper _noiseParameters;
   [Tooltip("Refresh world generation.")]
 
   [SerializeField] private bool _refreshButton = false;
@@ -141,11 +176,7 @@ public class WorldGenerator : MonoBehaviour
   #region Public Fetch Functions
 
   public float GetHeightValue(Vector2 worldPosition) {
-    float heightVal = AmalgamNoise.GetPosition(worldPosition.x + _seed, worldPosition.y + _seed, _noiseParameters.octaves, _noiseParameters.lacunarity, _noiseParameters.persistence, _noiseParameters.sharpnessScale,
-      _noiseParameters.sharpnessAmplitude, _noiseParameters.sharpnessMean, _noiseParameters.scaleScale, _noiseParameters.scaleAmplitude,
-      _noiseParameters.scaleMean, _noiseParameters.amplitudeScale, _noiseParameters.amplitudeAmplitude, _noiseParameters.amplitudeMean,
-      _noiseParameters.warpStrengthScale, _noiseParameters.warpStrengthAmplitude, _noiseParameters.warpStrengthMean,
-      _noiseParameters.warpScaleScale, _noiseParameters.warpScaleAmplitude, _noiseParameters.warpScaleMean, _noiseParameters.amplitudePower);
+    float heightVal = AmalgamNoise.GetPosition(worldPosition.x + _seed, worldPosition.y + _seed);
     heightVal -= _riverParameters.heightCurve.Evaluate(heightVal / _maxPossibleHeight) * (_riverParameters.noiseCurve.Evaluate(AmalgamNoise.GetRiverValue(
         worldPosition.x + _seed % 216812, worldPosition.y + _seed % 216812, _riverParameters.scale, _riverParameters.octaves, _riverParameters.lacunarity, _riverParameters.persistence, _riverParameters.warpScale, _riverParameters.warpStrength)) * _riverParameters.amplitude);
     return heightVal;
@@ -157,11 +188,7 @@ public class WorldGenerator : MonoBehaviour
   }
 
   public float GetWaterHeight(Vector2 worldPosition) {
-    float heightVal = AmalgamNoise.GetPosition(worldPosition.x + _seed, worldPosition.y + _seed, _noiseParameters.octaves, _noiseParameters.lacunarity, _noiseParameters.persistence, _noiseParameters.sharpnessScale,
-      _noiseParameters.sharpnessAmplitude, _noiseParameters.sharpnessMean, _noiseParameters.scaleScale, _noiseParameters.scaleAmplitude,
-      _noiseParameters.scaleMean, _noiseParameters.amplitudeScale, _noiseParameters.amplitudeAmplitude, _noiseParameters.amplitudeMean,
-      _noiseParameters.warpStrengthScale, _noiseParameters.warpStrengthAmplitude, _noiseParameters.warpStrengthMean,
-      _noiseParameters.warpScaleScale, _noiseParameters.warpScaleAmplitude, _noiseParameters.warpScaleMean, _noiseParameters.amplitudePower);
+    float heightVal = AmalgamNoise.GetPosition(worldPosition.x + _seed, worldPosition.y + _seed);
     float waterFactor = _riverParameters.heightCurve.Evaluate(heightVal / _maxPossibleHeight) * _riverParameters.noiseCurve.Evaluate(AmalgamNoise.GetRiverValue(
         worldPosition.x + _seed % 216812, worldPosition.y + _seed % 216812, _riverParameters.scale, _riverParameters.octaves, _riverParameters.lacunarity, _riverParameters.persistence, _riverParameters.warpScale, _riverParameters.warpStrength));
     return waterFactor == 0 ? -1 : (heightVal - _riverParameters.waterLevel);
@@ -206,17 +233,50 @@ public class WorldGenerator : MonoBehaviour
       Debug.LogWarning("Tile count must be odd. Increasing tile count by 1.");
     }
     WorldGenInfo._tileEdgeSize = _size * _resolution;
-    _maxPossibleHeight = _noiseParameters.amplitudeMean + _noiseParameters.amplitudeAmplitude;
+    _maxPossibleHeight = NOISEPARAMS_amplitudeMean + NOISEPARAMS_amplitudeAmplitude;
     _waterMesh = new Mesh();
     _waterMesh.indexFormat = UnityEngine.Rendering.IndexFormat.UInt32;
     _riverParameters.obj.GetComponent<MeshFilter>().mesh = _waterMesh;
     WorldGenInfo._seed = _seed;
     WorldGenInfo._maxUpdatesPerFrame = _maxUpdatesPerFrame;
     WorldGenInfo._lakePlaneHeight = _lakePlaneHeight - _riverParameters.waterLevel;
-    _seed = int.Parse(Hash128.Compute(_seed).ToString().Substring(0, 6), System.Globalization.NumberStyles.HexNumber);
+    float _finalSeed = int.Parse(Hash128.Compute(_seed).ToString().Substring(0, 6), System.Globalization.NumberStyles.HexNumber);
     // Debug.Log(_seed);
     // Seed-based terrain parameter changes
-    _noiseParameters.Perturb(_seed);
+
+    NOISEPARAMS_octaves = _noiseParameters.octaves;
+    NOISEPARAMS_lacunarity = _noiseParameters.lacunarity;
+    NOISEPARAMS_persistence = _noiseParameters.persistence;
+    NOISEPARAMS_sharpnessScale = _noiseParameters.sharpnessScale;        
+    NOISEPARAMS_sharpnessAmplitude = _noiseParameters.sharpnessAmplitude;        
+    NOISEPARAMS_sharpnessMean = _noiseParameters.sharpnessMean;        
+    NOISEPARAMS_scaleScale = _noiseParameters.scaleScale;        
+    NOISEPARAMS_scaleAmplitude = _noiseParameters.scaleAmplitude;        
+    NOISEPARAMS_scaleMean = _noiseParameters.scaleMean;
+    NOISEPARAMS_amplitudeScale = _noiseParameters.amplitudeScale;        
+    NOISEPARAMS_amplitudeAmplitude = _noiseParameters.amplitudeAmplitude;         
+    NOISEPARAMS_amplitudeMean = _noiseParameters.amplitudeMean;       
+    NOISEPARAMS_warpStrengthScale = _noiseParameters.warpStrengthScale;         
+    NOISEPARAMS_warpStrengthAmplitude = _noiseParameters.warpStrengthAmplitude;       
+    NOISEPARAMS_warpStrengthMean = _noiseParameters.warpStrengthMean;        
+    NOISEPARAMS_warpScaleScale = _noiseParameters.warpScaleScale;      
+    NOISEPARAMS_warpScaleAmplitude = _noiseParameters.warpScaleAmplitude;
+    NOISEPARAMS_warpScaleMean = _noiseParameters.warpScaleMean;
+    NOISEPARAMS_amplitudePower = _noiseParameters.amplitudePower;
+
+    NOISEPARAMS_scaleMeanAmplitude = _noiseParameters.scaleMeanAmplitude;
+    NOISEPARAMS_sharpnessScaleAmplitude = _noiseParameters.sharpnessScaleAmplitude; 
+    NOISEPARAMS_sharpnessAmplitudeAmplitude = _noiseParameters.sharpnessMeanAmplitude;
+    NOISEPARAMS_sharpnessMeanAmplitude = _noiseParameters.sharpnessMeanAmplitude;
+    NOISEPARAMS_amplitudeScaleAmplitude = _noiseParameters.amplitudeScaleAmplitude;
+    NOISEPARAMS_amplitudeAmplitudeAmplitude = _noiseParameters.amplitudeAmplitudeAmplitude;
+    NOISEPARAMS_amplitudeMeanAmplitude = _noiseParameters.amplitudeMeanAmplitude;
+    NOISEPARAMS_warpStrengthAmplitudeAmplitude = _noiseParameters.warpStrengthAmplitudeAmplitude; 
+    NOISEPARAMS_warpStrengthMeanAmplitude = _noiseParameters.warpStrengthMeanAmplitude;
+    NOISEPARAMS_warpScaleMeanAmplitude = _noiseParameters.warpScaleMeanAmplitude;
+    NOISEPARAMS_amplitudePowerAmplitude = _noiseParameters.amplitudePowerAmplitude;
+    
+    WorldGenInfo.AmalgamNoiseParams.Perturb(_seed);
 
   }
 
@@ -472,25 +532,25 @@ public class WorldGenerator : MonoBehaviour
       zOffset = z * _size * _resolution + _seed,
       xResolution = tmpRes,
       zResolution = tmpRes,
-      octaves = _noiseParameters.octaves,
-      lacunarity = _noiseParameters.lacunarity,
-      persistence = _noiseParameters.persistence,
-      sharpnessScale = 1f / _noiseParameters.sharpnessScale,
-      sharpnessAmplitude = _noiseParameters.sharpnessAmplitude,
-      sharpnessMean = _noiseParameters.sharpnessMean,
-      scaleScale = 1f / _noiseParameters.scaleScale,
-      scaleAmplitude = _noiseParameters.scaleAmplitude,
-      scaleMean = _noiseParameters.scaleMean,
-      amplitudeScale = 1f / _noiseParameters.amplitudeScale,
-      amplitudeAmplitude = _noiseParameters.amplitudeAmplitude,
-      amplitudeMean = _noiseParameters.amplitudeMean,
-      warpStrengthScale = 1f / _noiseParameters.warpStrengthScale,
-      warpStrengthAmplitude = _noiseParameters.warpStrengthAmplitude,
-      warpStrengthMean = _noiseParameters.warpStrengthMean,
-      warpScaleScale = 1f / _noiseParameters.warpScaleScale,
-      warpScaleAmplitude = _noiseParameters.warpScaleAmplitude,
-      warpScaleMean = _noiseParameters.warpScaleMean,
-      amplitudePower = _noiseParameters.amplitudePower,
+      octaves = NOISEPARAMS_octaves,
+      lacunarity = NOISEPARAMS_lacunarity,
+      persistence = NOISEPARAMS_persistence,
+      sharpnessScale = 1f / NOISEPARAMS_sharpnessScale,
+      sharpnessAmplitude = NOISEPARAMS_sharpnessAmplitude,
+      sharpnessMean = NOISEPARAMS_sharpnessMean,
+      scaleScale = 1f / NOISEPARAMS_scaleScale,
+      scaleAmplitude = NOISEPARAMS_scaleAmplitude,
+      scaleMean = NOISEPARAMS_scaleMean,
+      amplitudeScale = 1f / NOISEPARAMS_amplitudeScale,
+      amplitudeAmplitude = NOISEPARAMS_amplitudeAmplitude,
+      amplitudeMean = NOISEPARAMS_amplitudeMean,
+      warpStrengthScale = 1f / NOISEPARAMS_warpStrengthScale,
+      warpStrengthAmplitude = NOISEPARAMS_warpStrengthAmplitude,
+      warpStrengthMean = NOISEPARAMS_warpStrengthMean,
+      warpScaleScale = 1f / NOISEPARAMS_warpScaleScale,
+      warpScaleAmplitude = NOISEPARAMS_warpScaleAmplitude,
+      warpScaleMean = NOISEPARAMS_warpScaleMean,
+      amplitudePower = NOISEPARAMS_amplitudePower,
       output = output
     };
     JobHandle handle = job.Schedule(tmpSize * tmpSize, 64);
@@ -632,25 +692,25 @@ public class WorldGenerator : MonoBehaviour
       zOffset = z * _size * _resolution + _seed,
       xResolution = tmpRes,
       zResolution = tmpRes,
-      octaves = _noiseParameters.octaves,
-      lacunarity = _noiseParameters.lacunarity,
-      persistence = _noiseParameters.persistence,
-      sharpnessScale = 1f / _noiseParameters.sharpnessScale,
-      sharpnessAmplitude = _noiseParameters.sharpnessAmplitude,
-      sharpnessMean = _noiseParameters.sharpnessMean,
-      scaleScale = 1f / _noiseParameters.scaleScale,
-      scaleAmplitude = _noiseParameters.scaleAmplitude,
-      scaleMean = _noiseParameters.scaleMean,
-      amplitudeScale = 1f / _noiseParameters.amplitudeScale,
-      amplitudeAmplitude = _noiseParameters.amplitudeAmplitude,
-      amplitudeMean = _noiseParameters.amplitudeMean,
-      warpStrengthScale = 1f / _noiseParameters.warpStrengthScale,
-      warpStrengthAmplitude = _noiseParameters.warpStrengthAmplitude,
-      warpStrengthMean = _noiseParameters.warpStrengthMean,
-      warpScaleScale = 1f / _noiseParameters.warpScaleScale,
-      warpScaleAmplitude = _noiseParameters.warpScaleAmplitude,
-      warpScaleMean = _noiseParameters.warpScaleMean,
-      amplitudePower = _noiseParameters.amplitudePower,
+      octaves = NOISEPARAMS_octaves,
+      lacunarity = NOISEPARAMS_lacunarity,
+      persistence = NOISEPARAMS_persistence,
+      sharpnessScale = 1f / NOISEPARAMS_sharpnessScale,
+      sharpnessAmplitude = NOISEPARAMS_sharpnessAmplitude,
+      sharpnessMean = NOISEPARAMS_sharpnessMean,
+      scaleScale = 1f / NOISEPARAMS_scaleScale,
+      scaleAmplitude = NOISEPARAMS_scaleAmplitude,
+      scaleMean = NOISEPARAMS_scaleMean,
+      amplitudeScale = 1f / NOISEPARAMS_amplitudeScale,
+      amplitudeAmplitude = NOISEPARAMS_amplitudeAmplitude,
+      amplitudeMean = NOISEPARAMS_amplitudeMean,
+      warpStrengthScale = 1f / NOISEPARAMS_warpStrengthScale,
+      warpStrengthAmplitude = NOISEPARAMS_warpStrengthAmplitude,
+      warpStrengthMean = NOISEPARAMS_warpStrengthMean,
+      warpScaleScale = 1f / NOISEPARAMS_warpScaleScale,
+      warpScaleAmplitude = NOISEPARAMS_warpScaleAmplitude,
+      warpScaleMean = NOISEPARAMS_warpScaleMean,
+      amplitudePower = NOISEPARAMS_amplitudePower,
       output = output
     };
     JobHandle handle = job.Schedule(tmpSize * tmpSize, 64);
