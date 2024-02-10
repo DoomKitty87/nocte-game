@@ -6,16 +6,27 @@ using UnityEngine;
 public class InstanceObject : MonoBehaviour
 {
     [SerializeField] private GameObject _testPrefab;
-    public Vector2[] positions;
-    public int numberOfInstances;
+    private Vector2[] positions;
+    public int numberOfInstancesInOneDirection;
+    public float distanceBetweenInstance;
 
     private WorldGenInfo.AmalgamNoiseParams _noiseParams;
 
+    private void Awake() {
+        positions = new Vector2[numberOfInstancesInOneDirection * numberOfInstancesInOneDirection];
+
+        int currentInstance = 0;
+        for (int i = 0; i < numberOfInstancesInOneDirection; i++) {
+            for (int j = 0; j < numberOfInstancesInOneDirection; j++) {
+                positions[currentInstance] = new Vector2(i * distanceBetweenInstance, j * distanceBetweenInstance);
+                currentInstance++;
+            }
+        }
+    }
+
     private void Start() {
-        for (int i = 0; i < numberOfInstances; i++) {
-            positions[i].x = 5f;
-            positions[i].y = 5 * i;
-            Instantiate(_testPrefab, new Vector3(positions[i].x, AmalgamNoise.GetPosition(positions[i].x + , positions[i].y), positions[i].y), Quaternion.identity);
+        for (int i = 0; i < positions.Length; i++) {
+            Instantiate(_testPrefab, new Vector3(positions[i].x, AmalgamNoise.GetPosition(positions[i].x, positions[i].y), positions[i].y), Quaternion.identity);
         }
     }
 }

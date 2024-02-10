@@ -454,8 +454,6 @@ public static class AmalgamNoise
     for (int i = 0; i < xPositions.Length; i++) xInputs[i] = xPositions[i];
     for (int i = 0; i < xPositions.Length; i++) zInputs[i] = zPositions[i];
     
-    
-    
     NoiseJobPoint job = new NoiseJobPoint {
       inputX = xInputs,
       inputZ = zInputs,
