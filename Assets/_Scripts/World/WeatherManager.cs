@@ -105,7 +105,8 @@ public class WeatherManager : MonoBehaviour
     _clouds.shapeFactor.value = _weatherState.y;
     _environment.windSpeed.value = _weatherState.z * _maxWindSpeed;
     _rainEffect.SetInt("RainRate", (int) (_weatherState.z * _rainMaxIntensity));
-    _physicalSky.spaceEmissionMultiplier.value = nightFactor * _maxSpaceIntensity * _spaceCycleCurve.Evaluate(_spacePhaseMajor);
+    _physicalSky.spaceEmissionMultiplier.value = nightFactor;//  * _maxSpaceIntensity; // * _spaceCycleCurve.Evaluate(_spacePhaseMajor);
+    Debug.Log(nightFactor);
     _asteroidEffect.SetFloat("SpawnRate", nightFactor * _maxAsteroidRate);
   }
 }

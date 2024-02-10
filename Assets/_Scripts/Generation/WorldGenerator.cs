@@ -175,8 +175,8 @@ public class WorldGenerator : MonoBehaviour
 
   #region Public Fetch Functions
 
-  public float GetHeightValue(Vector2 worldPosition) {
-    float heightVal = AmalgamNoise.GetPosition(worldPosition.x + _seed, worldPosition.y + _seed);
+  public float GetHeightValue(Vector2 worldPosition) { 
+    float heightVal = AmalgamNoise.GetPosition(worldPosition.x, worldPosition.y);
     heightVal -= _riverParameters.heightCurve.Evaluate(heightVal / _maxPossibleHeight) * (_riverParameters.noiseCurve.Evaluate(AmalgamNoise.GetRiverValue(
         worldPosition.x + _seed % 216812, worldPosition.y + _seed % 216812, _riverParameters.scale, _riverParameters.octaves, _riverParameters.lacunarity, _riverParameters.persistence, _riverParameters.warpScale, _riverParameters.warpStrength)) * _riverParameters.amplitude);
     return heightVal;
@@ -188,7 +188,7 @@ public class WorldGenerator : MonoBehaviour
   }
 
   public float GetWaterHeight(Vector2 worldPosition) {
-    float heightVal = AmalgamNoise.GetPosition(worldPosition.x + _seed, worldPosition.y + _seed);
+    float heightVal = AmalgamNoise.GetPosition(worldPosition.x, worldPosition.y);
     float waterFactor = _riverParameters.heightCurve.Evaluate(heightVal / _maxPossibleHeight) * _riverParameters.noiseCurve.Evaluate(AmalgamNoise.GetRiverValue(
         worldPosition.x + _seed % 216812, worldPosition.y + _seed % 216812, _riverParameters.scale, _riverParameters.octaves, _riverParameters.lacunarity, _riverParameters.persistence, _riverParameters.warpScale, _riverParameters.warpStrength));
     return waterFactor == 0 ? -1 : (heightVal - _riverParameters.waterLevel);
@@ -241,6 +241,7 @@ public class WorldGenerator : MonoBehaviour
     WorldGenInfo._maxUpdatesPerFrame = _maxUpdatesPerFrame;
     WorldGenInfo._lakePlaneHeight = _lakePlaneHeight - _riverParameters.waterLevel;
     _seed = int.Parse(Hash128.Compute(_seed).ToString().Substring(0, 6), System.Globalization.NumberStyles.HexNumber);
+    WorldGenInfo._hashedSeed = _seed;
     // Debug.Log(_seed);
     // Seed-based terrain parameter changes
 

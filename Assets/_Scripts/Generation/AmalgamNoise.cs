@@ -355,6 +355,9 @@ public static class AmalgamNoise
   }
 
   public static float GetRiverValue(float xPosition, float zPosition, float scale, int octaves, float lacunarity, float persistence, float warpScale, float warpStrength) {
+    xPosition += WorldGenInfo._hashedSeed;
+    zPosition += WorldGenInfo._hashedSeed;
+    
     scale = 1f / scale;
     warpScale = 1f / warpScale;
     float value = 0;
@@ -401,6 +404,8 @@ public static class AmalgamNoise
   }
 
   public static float GetPosition(float xPosition, float zPosition) {
+    xPosition += WorldGenInfo._hashedSeed;
+    zPosition += WorldGenInfo._hashedSeed;
     float sharpnessScale = 1f / NOISEPARAMS_sharpnessScale;
     float scaleScale = 1f / NOISEPARAMS_scaleScale;
     float amplitudeScale = 1f / NOISEPARAMS_amplitudeScale;
@@ -448,6 +453,9 @@ public static class AmalgamNoise
   }
     
   public static float[] GetPositionParallel(float[] xPositions, float[] zPositions) {
+    foreach (int i in xPositions) xPositions[i] += WorldGenInfo._hashedSeed;
+    foreach (int i in zPositions) zPositions[i] += WorldGenInfo._hashedSeed;
+    
     NativeArray<float> output = new NativeArray<float>(xPositions.Length, Allocator.TempJob);
     NativeArray<float> xInputs = new NativeArray<float>(xPositions.Length, Allocator.TempJob);
     NativeArray<float> zInputs = new NativeArray<float>(xPositions.Length, Allocator.TempJob);
