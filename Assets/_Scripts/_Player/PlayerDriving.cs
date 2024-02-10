@@ -24,6 +24,8 @@ public class PlayerDriving : MonoBehaviour
   }
 
   private void Update() {
+    if (PlayerController.Instance.State is PlayerController.PlayerStates.Frozen or PlayerController.PlayerStates.Noclip)
+      return;
     if (Input.GetKeyDown(_vehicleKey) && _hasVehicle && !_inVehicle) EnterVehicle(_availableVehicles[0]);
     else if (Input.GetKeyDown(_vehicleKey) && _inVehicle) ExitVehicle();
   }

@@ -41,6 +41,11 @@ public class PlaceStructures : MonoBehaviour
   };
 
   private void Start() {
+    // Bug fix with race issue
+    Invoke(nameof(LateStart), 0.1f);
+  }
+
+  private void LateStart() {
     float offsetAngle = Mathf.PerlinNoise(_worldGen._seed % 681, _worldGen._seed % 918) * Mathf.PI * 2;
     Vector3 positionOffset = new Vector3(Mathf.Cos(offsetAngle), 0, Mathf.Sin(offsetAngle)) * (Mathf.PerlinNoise(_worldGen._seed % 6913, _worldGen._seed % 1052) - 0.5f) * _centerOffsetRadiusAmplitude;
     _structurePositions = new Vector3[_outerStructures.Length + 1];
