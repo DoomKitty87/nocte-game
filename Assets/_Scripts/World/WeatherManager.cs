@@ -85,7 +85,7 @@ public class WeatherManager : MonoBehaviour
     _weatherPhases.z %= 1;
     _spacePhase %= 1;
     _spacePhaseMajor %= 1;
-    float nightFactor = Mathf.SmoothStep(1, 0, Mathf.Pow(_weatherState.x > 0.5f ? 1 - _weatherState.x : _weatherState.x, 1.25f) * 4);
+    float nightFactor = LerpSkyBrightness(_weatherState.x);
     if (_updateCounter2 < _frameUpdateDelay2) {
       _updateCounter2++;
     } else {
@@ -105,8 +105,20 @@ public class WeatherManager : MonoBehaviour
     _clouds.shapeFactor.value = _weatherState.y;
     _environment.windSpeed.value = _weatherState.z * _maxWindSpeed;
     _rainEffect.SetInt("RainRate", (int) (_weatherState.z * _rainMaxIntensity));
-    _physicalSky.spaceEmissionMultiplier.value = nightFactor;//  * _maxSpaceIntensity; // * _spaceCycleCurve.Evaluate(_spacePhaseMajor);
-    Debug.Log(nightFactor);
+    _physicalSky.spaceEmissionMultiplier.value = nightFactor * _maxSpaceIntensity; // * _spaceCycleCurve.Evaluate(_spacePhaseMajor); BROKEN needs fixing
     _asteroidEffect.SetFloat("SpawnRate", nightFactor * _maxAsteroidRate);
+  }
+  
+  float LerpSkyBrightness(float value) {
+    // Corrects for offset value
+    value -= 0.25f;
+    if (value < 0) value += 1f;
+    
+    // Scales value to be between 0 and 2 for proper lerp
+    value *= 2;
+    
+    if (value > 1f) value = 2 - value;
+    value = _spaceCycleCurve.Evaluate(value);
+    return value;
   }
 }

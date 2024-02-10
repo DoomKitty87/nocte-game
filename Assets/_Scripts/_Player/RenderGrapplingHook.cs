@@ -55,7 +55,7 @@ public class RenderGrapplingHook : MonoBehaviour
         
         _spring.SetDamper(_damper);
         _spring.SetStrength(_strength);
-        _spring.Update(Time.fixedDeltaTime);
+        _spring.Update(Time.deltaTime);
 
         var grapplePoint = _playerGrapple._grapplePoint;
         var gunTipPosition = _playerGrapple._gunEnd.position;
@@ -80,36 +80,24 @@ public class Spring {
     private float _value;
 
     public void Update(float deltaTime) {
+        deltaTime = Mathf.Clamp(deltaTime, 0.008f, 0.012f);
         var direction = _target - _value >= 0 ? 1f : -1f;
         var force = Mathf.Abs(_target - _value) * _strength;
         _velocity += (force * direction - _velocity * _damper) * deltaTime;
         _value += _velocity * deltaTime;
     }
-
-    public void Reset() {
-        _velocity = 0f;
-        _value = 0f;
-    }
         
-    public void SetValue(float value) {
-        this._value = value;
-    }
-        
-    public void SetTarget(float target) {
+    public void SetTarget(float target) =>
         this._target = target;
-    }
 
-    public void SetDamper(float damper) {
+    public void SetDamper(float damper) =>
         this._damper = damper;
-    }
         
-    public void SetStrength(float strength) {
+    public void SetStrength(float strength) =>
         this._strength = strength;
-    }
 
-    public void SetVelocity(float velocity) {
+    public void SetVelocity(float velocity) =>
         this._velocity = velocity;
-    }
         
     public float Value => _value;
 }

@@ -11,7 +11,7 @@ public class PlayerGrapple : MonoBehaviour
     [SerializeField] private LayerMask _grapplable;
     
     private PlayerController _playerController;
-    public Rigidbody _rb;
+    private Rigidbody _rb;
     
     [Header("Grappling")]
     [SerializeField] private float _maxGrappleDistance;
@@ -34,9 +34,9 @@ public class PlayerGrapple : MonoBehaviour
     [SerializeField] private float _grapplingCoolDown;
     private float _grapplingCoolDownTimer;
 
-    public bool _renderGrapple;
+    [HideInInspector] public bool _renderGrapple;
     
-    public bool _currentlyGrappling;
+    [HideInInspector] public bool _currentlyGrappling;
 
     private bool _frozen;
 
