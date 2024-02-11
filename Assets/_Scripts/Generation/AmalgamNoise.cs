@@ -451,6 +451,56 @@ public static class AmalgamNoise
     height *= amplitudeValue;
     return height;
   }
+  
+    public static float GetPosition(Vector2 position) {
+    position += Vector2.one * WorldGenInfo._hashedSeed;
+    float xPosition = position.x;
+    float zPosition = position.y;
+    float sharpnessScale = 1f / NOISEPARAMS_sharpnessScale;
+    float scaleScale = 1f / NOISEPARAMS_scaleScale;
+    float amplitudeScale = 1f / NOISEPARAMS_amplitudeScale;
+    float warpStrengthScale = 1f / NOISEPARAMS_warpStrengthScale;
+    float warpScaleScale = 1f / NOISEPARAMS_warpScaleScale;
+    float sharpnessValue = NOISEPARAMS_sharpnessMean + NOISEPARAMS_sharpnessAmplitude * Mathf.Pow(snoise(new float2(xPosition * sharpnessScale, zPosition * sharpnessScale)), 3);
+    float secondarySharpness = NOISEPARAMS_sharpnessAmplitude / 5 * snoise(new float2(xPosition * sharpnessScale * 5, zPosition * sharpnessScale * 5));
+    sharpnessValue += secondarySharpness;
+    float scaleValue = NOISEPARAMS_scaleMean + NOISEPARAMS_scaleAmplitude * snoise(new float2(xPosition * scaleScale, zPosition * scaleScale));
+    float amplitudeValue = snoise(new float2(xPosition * amplitudeScale, zPosition * amplitudeScale));
+    if (amplitudeValue < 0) amplitudeValue = Mathf.Abs(amplitudeValue) * 0.3f;
+    amplitudeValue = Mathf.Pow(amplitudeValue, NOISEPARAMS_amplitudePower);
+    float amplitudeValue0 = amplitudeValue;
+    amplitudeValue = NOISEPARAMS_amplitudeMean + NOISEPARAMS_amplitudeAmplitude * amplitudeValue;
+    float warpStrengthValue = NOISEPARAMS_warpStrengthMean + NOISEPARAMS_warpStrengthAmplitude * snoise(new float2(xPosition * warpStrengthScale, zPosition * warpStrengthScale));
+    float warpScaleValue = NOISEPARAMS_warpScaleMean + NOISEPARAMS_warpScaleAmplitude * snoise(new float2(xPosition * warpScaleScale, zPosition * warpScaleScale));
+    if (scaleValue != 0) scaleValue = 1f / scaleValue;
+    if (warpScaleValue != 0) warpScaleValue = 1f / warpScaleValue;
+
+    float height = 0;
+    float normalization = 0;
+
+    for (int i = 0; i < NOISEPARAMS_octaves; i++) {
+      float octaveScale = Mathf.Pow(NOISEPARAMS_lacunarity, i);
+      float octaveAmp = Mathf.Pow(NOISEPARAMS_persistence, i);
+      float x = xPosition * scaleValue * octaveScale;
+      float y = zPosition * scaleValue * octaveScale;
+      float warpValue = warpStrengthValue * snoise(new float2(x * warpScaleValue, y * warpScaleValue));
+      float sample = snoise(new float2(x + warpValue, y + warpValue));
+      float samplehigh = sample * (2 - sample);
+      float samplelow = sample * sample * (0.5f + (0.5f * sample));
+      sample = Mathf.Lerp(samplelow, samplehigh, amplitudeValue0 + 0.5f);
+      float billow = Mathf.Abs(sample);
+      float ridge = 1 - billow;
+      sample = Mathf.Lerp(billow, ridge, sharpnessValue);
+      sample *= octaveAmp;
+      height += sample;
+      normalization += octaveAmp;
+    }
+    
+    height /= normalization;
+    height = height * height * (3.0f - 2.0f * height);
+    height *= amplitudeValue;
+    return height;
+  }
     
   public static float[] GetPositionParallel(float[] xPositions, float[] zPositions) {
     foreach (int i in xPositions) xPositions[i] += WorldGenInfo._hashedSeed;
