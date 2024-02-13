@@ -17,30 +17,27 @@ public class InstanceObjects : MonoBehaviour
 
     // Temporary test case
     private void Start() {
-        for (int i = 0; i < 5000; i++) {
-            for (int j = 0; j < 5000; j++) {
-                _instanceObjects.AddObject(new Vector2(i * 5 - 12500, j * 5 - 12500), FoliageType.TestObject);
+        for (int i = 0; i < 500; i++) {
+            for (int j = 0; j < 500; j++) {
+                _instanceObjects.AddObject(new Vector2(i * 5 - 1250, j * 5 - 1250), FoliageType.TestObject);
             }
         }
     }
 
     private void Update() {
         _playerPositionXZ = new Vector2(_playerTransform.position.x, _playerTransform.position.z);
-        
-        int numberOfChunks = _instanceObjects.ChunksDictionary.Count;
-        int numberOfTypes = _instanceObjects.FoliageDataDictionary.Count;
 
         // For each chunk
         foreach (FoliageChunk chunk in _instanceObjects.ChunksDictionary.Values) {
             // For each type in given chunk
             foreach (List<FoliageData> type in chunk.FoliageTypePerChunk.Values) {
                 // For each type of foliage in given chunk
-                RenderObject(chunk, type);
+                RenderObject(type);
             }
         }
     }
 
-    private void RenderObject(FoliageChunk chunk, List<FoliageData> typeOfFoliage) {
+    private void RenderObject(List<FoliageData> typeOfFoliage) {
         FoliageData firstData = typeOfFoliage[0];
         FoliageType type = firstData.Type;
         FoliageMetaData metaData = _instanceObjects.GetFoliageMetaData(type);
@@ -62,7 +59,7 @@ public class InstanceObjects : MonoBehaviour
             lodLevels[lodLevel].Add(data);
         }
 
-        for (int i = 0; i < lodLevels.Length; i++) {
+        for (int i = 0; i < lodLevels.Length - 1; i++) {
             if (lodLevels[i].Count == 0) continue;
             
             Material mat = metaData._lodData[i]._material;
@@ -76,7 +73,7 @@ public class InstanceObjects : MonoBehaviour
                 Vector2 positionXZ = lodLevels[i][j].Position;
                 Vector3 positionXYZ = new Vector3(
                     positionXZ.x,
-                    0, //AmalgamNoise.GetPosition(positionXZ),
+                    0, // AmalgamNoise.GetPosition(positionXZ),
                     positionXZ.y
                 );
                 
