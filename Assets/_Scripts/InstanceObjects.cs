@@ -17,7 +17,11 @@ public class InstanceObjects : MonoBehaviour
 
     // Temporary test case
     private void Start() {
-        _instanceObjects.AddObject(new Vector2(0, 0), FoliageType.TestObject);
+        for (int i = 0; i < 5000; i++) {
+            for (int j = 0; j < 5000; j++) {
+                _instanceObjects.AddObject(new Vector2(i * 5 - 12500, j * 5 - 12500), FoliageType.TestObject);
+            }
+        }
     }
 
     private void Update() {
@@ -59,27 +63,26 @@ public class InstanceObjects : MonoBehaviour
         }
 
         for (int i = 0; i < lodLevels.Length; i++) {
+            if (lodLevels[i].Count == 0) continue;
+            
             Material mat = metaData._lodData[i]._material;
             Mesh mesh = metaData._lodData[i]._mesh;
             
             RenderParams rp = new RenderParams(mat);
 
-            Matrix4x4[] instData = new Matrix4x4[lodLevels[i].Length];
+            Matrix4x4[] instData = new Matrix4x4[lodLevels[i].Count];
 
-            for (int i = 0; i < numberOfObjects; i++) {
-                Mesh mesh = _instanceObjects.GetFoliageData(type[i].Type).GetLODData(0).Item1;
-                Material material = _instanceObjects.GetFoliageData(type[i].Type).GetLODData(0).Item2;
-                Vector3 position = new Vector3(
-                    type[i].Position.x,
-                    AmalgamNoise.GetPosition(type[i].Position),
-                    type[i].Position.y
+            for (int j = 0; j < instData.Length; j++) {
+                Vector2 positionXZ = lodLevels[i][j].Position;
+                Vector3 positionXYZ = new Vector3(
+                    positionXZ.x,
+                    AmalgamNoise.GetPosition(positionXZ),
+                    positionXZ.y
                 );
-
-
-                instData[i] = Matrix4x4.Translate(position);
+                
+                instData[j] = Matrix4x4.Translate(positionXYZ);
             }
-
-
+            
             Graphics.RenderMeshInstanced(rp, mesh, 0, instData);
         }
     }
@@ -98,7 +101,7 @@ public class InstanceObjects : MonoBehaviour
             if (distance < ranges[i]) return i;
         }
 
-        return ranges.Length;
+        return ranges.Length - 1;
     }
 
 }
