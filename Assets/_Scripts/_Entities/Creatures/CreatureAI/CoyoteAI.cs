@@ -7,7 +7,7 @@ using Vector3 = UnityEngine.Vector3;
 namespace _Scripts._Entities.Creatures.CreatureAI
 {
 	// TODO: Make debug Tree node
-	
+	// stupid arborescent behavior tree
 	
 	// Define leaf nodes here
 	[RequireComponent(typeof(Transform))]
@@ -26,7 +26,7 @@ namespace _Scripts._Entities.Creatures.CreatureAI
 		[SerializeField] private float _range;
 		[SerializeField] private float _staminaLimit;
 		[SerializeField] private List<CreatureAttack> _attacks;
-
+		
 		protected override TreeNode SetupTree() {
 			_transform = transform;
 			_controller = gameObject.GetComponent<EnemyController>();
@@ -35,11 +35,12 @@ namespace _Scripts._Entities.Creatures.CreatureAI
 				new Sequencer(new List<TreeNode> {
 					new Invertor(new CheckState(_controller, EnemyController.PlayerStates.Air)),
 					new Invertor(new StaminaLessThan(_controller, _staminaLimit)),
-					new Sequencer(new List<TreeNode> {
-						new Sequencer(new List<TreeNode> {
+					new Selector(new List<TreeNode> {
+						new Sequencer(new List<TreeNode> { // checks if very close to player and attacks
 							new DistanceTransformLessThan(_transform, _playerTransform, _distanceAttack),
 							new SetState(_controller, EnemyController.PlayerStates.Idle),
-							new UseAttack(_creatureCombat, _attacks[0])
+							new UseAttack(_creatureCombat, _attacks[0]),
+							new ChangeStamina(_controller, -50)
 						}),
 						new Sequencer(new List<TreeNode> {  // checks if the enemy is close to the player and starts chasing
 							new DistanceTransformLessThan(_transform, _playerTransform, _distanceChase),
@@ -74,6 +75,10 @@ namespace _Scripts._Entities.Creatures.CreatureAI
 					new FaceDen(_controller, _transform, true, false, true),
 					new SetMovementToDirection(_transform.forward, _controller),
 					new SetState(_controller, EnemyController.PlayerStates.Walking)
+				}),
+				new Sequencer(new List<TreeNode> {
+					new DistanceDenLessThan(_controller, _transform, _distanceHeal),
+					new ChangeStamina(_controller, 3 * Time.deltaTime)
 				}),
 				new Sequencer(new List<TreeNode> {
 					new CheckState(_controller, EnemyController.PlayerStates.Idle),

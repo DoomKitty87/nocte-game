@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 183.87643, g: 70.6695, b: 35.230167, a: 1}
+  m_IndirectSpecularColor: {r: 182.0218, g: 70.52961, b: 34.929844, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -1222,7 +1222,7 @@ MonoBehaviour:
   _distanceChase: 75
   _distanceGoal: 2
   _range: 100
-  _staminaLimit: 1
+  _staminaLimit: 10
   _attacks:
   - _attackDistance: 3
     _attackDamage: 700
@@ -5080,6 +5080,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Coyote
+      objectReference: {fileID: 0}
+    - target: {fileID: 215941538251631203, guid: 4f0c4f8f2522c1b4db46748c86b130a2,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3742992579667184917, guid: 4f0c4f8f2522c1b4db46748c86b130a2,
         type: 3}
