@@ -98,6 +98,36 @@ namespace Effects.TsushimaGrass
 			_positionCompute = _globalConfig._positionCompute;
 		}
 		
+		private Matrix4x4[] FillPlaceholderArrayWithIdent(int count) {
+			Matrix4x4[] output = new Matrix4x4[count];
+			for (int i = 0; i < count; i++) {
+				output[i] = Matrix4x4.identity;
+			}
+			// this doesn't work, look into more later
+			output[0] = new Matrix4x4(
+				new Vector4(1, 0, 0, 10),
+				new Vector4(0, 1, 0, 1000),
+				new Vector4(0, 0, 1, 10),
+				new Vector4(0, 0, 0, 1)
+			);
+			output[1] = new Matrix4x4(
+				new Vector4(1, 0, 0, -10),
+				new Vector4(0, 1, 0, -1000),
+				new Vector4(0, 0, 1, -10),
+				new Vector4(0, 0, 0, 1)
+			);
+			return output;
+		}
+		private const int instanceGroupSize = 1000;
+		private void RenderGrassMesh() {
+			int grassCount = _samplesX * _samplesZ;
+			int groupIndex = 0;
+			_renderParams.matProps.SetBuffer("_instancePositionMatrices", _grassPositionsBuffer);
+			_renderParams.matProps.SetFloat("_instanceGroupID", groupIndex);
+			_renderParams.worldBounds = new Bounds(transform.position, new Vector3(10000, 1000000, 10000));
+			Graphics.DrawMeshInstanced(_grassMesh, 0, _renderingShaderMat, FillPlaceholderArrayWithIdent(1000), 1000, _renderParams.matProps);
+		}
+		
 		//----------------------------------------------------------------------------------
 
 		private void Start() {
@@ -132,24 +162,6 @@ namespace Effects.TsushimaGrass
 			// Render Material
 			_renderParams = new RenderParams(_renderingShaderMat);
 			_renderParams.matProps = new MaterialPropertyBlock();
-		}
-		
-		private Matrix4x4[] FillPlaceholderArrayWithIdent(int count) {
-			Matrix4x4[] output = new Matrix4x4[count];
-			for (int i = 0; i < count; i++) {
-				output[i] = Matrix4x4.identity;
-			}
-			return output;
-		}
-		
-		private const int instanceGroupSize = 1000;
-		private void RenderGrassMesh() {
-			int grassCount = _samplesX * _samplesZ;
-			int groupIndex = 0;
-			_renderParams.matProps.SetBuffer("_instancePositionMatrices", _grassPositionsBuffer);
-			_renderParams.matProps.SetFloat("_instanceGroupID", groupIndex);
-			_renderParams.worldBounds = new Bounds(transform.position, new Vector3(_tileSizeX, 1000000, _tileSizeZ));
-			Graphics.DrawMeshInstanced(_grassMesh, 0, _renderingShaderMat, FillPlaceholderArrayWithIdent(5), 5, _renderParams.matProps);
 		}
 		
 		private void Update() {
