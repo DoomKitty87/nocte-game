@@ -45,7 +45,6 @@ namespace Effects.TsushimaGrass
 		// ===== Material Shader + Buffers =====
 		private GraphicsBuffer _meshVertsBuffer;
 		private GraphicsBuffer _meshTrisBuffer;
-		private List<Matrix4x4> _objToWorldPlaceholders;
 		// =====
 
 		private void MeshDataToBuffers(Mesh mesh, out GraphicsBuffer vertexPosBuffer, out GraphicsBuffer trisIndexBuffer) {
@@ -73,6 +72,12 @@ namespace Effects.TsushimaGrass
 			_positionCompute.Dispatch(kernelIndex, Mathf.CeilToInt(grassCount/(float)threadX), 1, 1);
 		}
 
+		private void DebugFloatBuffer(GraphicsBuffer matrixBuffer, int limit = 10) {
+			float[] debug = new float[limit];
+			matrixBuffer.GetData(debug);
+			DebugFloatArray(debug, limit);
+		}
+		
 		private void DebugFloatArray(float[] array, int lim = 0) {
 			string output = "";
 			for (int i = 0; i < lim; i++) {
@@ -80,20 +85,23 @@ namespace Effects.TsushimaGrass
 			}
 			Debug.Log(output);
 		}
+
+		private void AssignGlobalConfig() {
+			_samplesX = _globalConfig._samplesX;
+			_samplesZ = _globalConfig._samplesY;
+			_fallbackTileSizeX = _globalConfig._fallbackTileSizeX;
+			_fallbackTileSizeZ = _globalConfig._fallbackTileSizeZ;
+			_grassMesh = _globalConfig._grassMesh;
+			_renderingShaderMat = _globalConfig._renderingShaderMat;
+			_meshBoundsPadding = _globalConfig._tileBoundsPadding;
+			distToPlayerCutoff = _globalConfig._distToPlayerCutoff;
+			_positionCompute = _globalConfig._positionCompute;
+		}
 		
 		//----------------------------------------------------------------------------------
 
 		private void Start() {
 			#region Script Dep Null Checks 
-			if (_worldGenerator == null) {
-				Debug.LogWarning("GrassTile: No WorldGenerator found. Height sampling will return zero. Using fallback tile size values.");
-				_tileSizeX = _fallbackTileSizeX;
-				_tileSizeZ = _fallbackTileSizeZ;
-			}
-			else {
-				_tileSizeX = _worldGenerator._size * _worldGenerator._resolution;
-				_tileSizeZ = _tileSizeX;
-			}
 			if (_globalConfig == null) {
 				GameObject gameObj = GameObject.FindWithTag("GlobalObject");
 				if (gameObj != null) {
@@ -108,18 +116,15 @@ namespace Effects.TsushimaGrass
 					_useGlobalConfig = false;
 				}
 			}
-			#endregion
-			#region Globalconfig Assignment
-			if (_useGlobalConfig) {
-				_samplesX = _globalConfig._samplesX;
-				_samplesZ = _globalConfig._samplesY;
-				_fallbackTileSizeX = _globalConfig._fallbackTileSizeX;
-				_fallbackTileSizeZ = _globalConfig._fallbackTileSizeZ;
-				_grassMesh = _globalConfig._grassMesh;
-				_renderingShaderMat = _globalConfig._renderingShaderMat;
-				_meshBoundsPadding = _globalConfig._tileBoundsPadding;
-				distToPlayerCutoff = _globalConfig._distToPlayerCutoff;
-				_positionCompute = _globalConfig._positionCompute;
+			if (_globalConfig != null) AssignGlobalConfig();
+			if (_worldGenerator == null) {
+				Debug.LogWarning("GrassTile: No WorldGenerator found. Height sampling will return zero. Using fallback tile size values.");
+				_tileSizeX = _fallbackTileSizeX;
+				_tileSizeZ = _fallbackTileSizeZ;
+			}
+			else {
+				_tileSizeX = _worldGenerator._size * _worldGenerator._resolution;
+				_tileSizeZ = _tileSizeX;
 			}
 			#endregion
 			// Compute Shader
@@ -127,21 +132,28 @@ namespace Effects.TsushimaGrass
 			// Render Material
 			_renderParams = new RenderParams(_renderingShaderMat);
 			_renderParams.matProps = new MaterialPropertyBlock();
-			_renderParams.matProps.SetBuffer("_instancePositionMatrices", _grassPositionsBuffer);
-			_renderParams.worldBounds = new Bounds(transform.position, new Vector3(_tileSizeX, 1000000, _tileSizeZ));
-			_objToWorldPlaceholders = new List<Matrix4x4>(1) { Matrix4x4.identity };
 		}
-
+		
+		private Matrix4x4[] FillPlaceholderArrayWithIdent(int count) {
+			Matrix4x4[] output = new Matrix4x4[count];
+			for (int i = 0; i < count; i++) {
+				output[i] = Matrix4x4.identity;
+			}
+			return output;
+		}
+		
 		private const int instanceGroupSize = 1000;
-		private int groupIndex = 0;
-
 		private void RenderGrassMesh() {
-			// TODO
+			int grassCount = _samplesX * _samplesZ;
+			int groupIndex = 0;
+			_renderParams.matProps.SetBuffer("_instancePositionMatrices", _grassPositionsBuffer);
+			_renderParams.matProps.SetFloat("_instanceGroupID", groupIndex);
+			_renderParams.worldBounds = new Bounds(transform.position, new Vector3(_tileSizeX, 1000000, _tileSizeZ));
+			Graphics.DrawMeshInstanced(_grassMesh, 0, _renderingShaderMat, FillPlaceholderArrayWithIdent(5), 5, _renderParams.matProps);
 		}
 		
 		private void Update() {
-			
-			Graphics.DrawMeshInstanced(_grassMesh, 0, _renderingShaderMat, _objToWorldPlaceholders.ToArray(), _samplesX * _samplesZ, _renderParams.matProps);
+			RenderGrassMesh();
 		}
 
 		private void OnDrawGizmosSelected() {

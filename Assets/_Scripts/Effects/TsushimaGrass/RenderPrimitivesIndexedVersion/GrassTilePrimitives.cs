@@ -59,8 +59,8 @@ namespace Effects.TsushimaGrass
 			// make the ids static later
 			_positionCompute.SetFloat(Shader.PropertyToID("_samplesX"), samplesX);
 			_positionCompute.SetFloat(Shader.PropertyToID("_samplesZ"), samplesZ);
-			_positionCompute.SetFloat(Shader.PropertyToID("_sizeX"), tileSizeX);
-			_positionCompute.SetFloat(Shader.PropertyToID("_sizeZ"), tileSizeZ);
+			_positionCompute.SetFloat(Shader.PropertyToID("_sizeX"), _fallbackTileSizeX);
+			_positionCompute.SetFloat(Shader.PropertyToID("_sizeZ"), _fallbackTileSizeZ);
 			_positionCompute.SetFloat(Shader.PropertyToID("_padding"), padding);
 			_positionCompute.SetFloat(Shader.PropertyToID("_worldX"), transform.position.x);
 			_positionCompute.SetFloat(Shader.PropertyToID("_worldY"), transform.position.y);
@@ -72,6 +72,12 @@ namespace Effects.TsushimaGrass
 			_positionCompute.Dispatch(kernelIndex, Mathf.CeilToInt(grassCount/(float)threadX), 1, 1);
 		}
 
+		private void DebugFloatBuffer(GraphicsBuffer matrixBuffer, int limit = 10) {
+			float[] debug = new float[limit];
+			matrixBuffer.GetData(debug);
+			DebugFloatArray(debug, limit);
+		}
+		
 		private void DebugFloatArray(float[] array, int lim = 0) {
 			string output = "";
 			for (int i = 0; i < lim; i++) {
