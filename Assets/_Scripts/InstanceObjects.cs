@@ -76,7 +76,7 @@ public class InstanceObjects : MonoBehaviour
                 Vector2 positionXZ = lodLevels[i][j].Position;
                 Vector3 positionXYZ = new Vector3(
                     positionXZ.x,
-                    AmalgamNoise.GetPosition(positionXZ),
+                    0, //AmalgamNoise.GetPosition(positionXZ),
                     positionXZ.y
                 );
                 
