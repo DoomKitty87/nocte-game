@@ -284,6 +284,79 @@ public static class AmalgamNoise
     }
   }
 
+  [BurstCompile]
+  private struct FoliageNoise : IJobParallelFor
+  {
+    
+    [ReadOnly] public int octaves;
+    [ReadOnly] public float scale;
+    [ReadOnly] public float persistence;
+    [ReadOnly] public float lacunarity;
+    [ReadOnly] public float warpStrength;
+    [ReadOnly] public float warpScale;
+
+    [ReadOnly] public float threshold;
+
+    [ReadOnly] public float resolution;
+    [ReadOnly] public float xOffset;
+    [ReadOnly] public float zOffset;
+    [ReadOnly] public int size;
+
+    [WriteOnly] public NativeArray<bool> output;
+
+    public void Execute(index) {
+      float x = (index % size) * resolution + xOffset;
+      float z = (index / size) * resolution + zOffset;
+      float value = 0;
+      float normalization = 0;
+
+      for (int i = 0; i < octaves; i++) {
+        float octaveScale = Mathf.Pow(lacunarity, i);
+        float octaveAmp = Mathf.Pow(persistence, i);
+        float oX = x * scale * octaveScale;
+        float oZ = z * scale * octaveScale;
+        float warp = snoise(new float2(oX * warpScale, oZ * warpScale)) * warpStrength;
+        oX += warp;
+        oZ += warp;
+        value += snoise(new float2(oX, oZ)) * octaveAmp;
+        normalization += octaveAmp;
+      }
+
+      value /= normalization;
+      if (value >= threshold) output[index] = true;
+      else output[index] = false;
+    }
+  }
+
+  public static Vector2[] GenerateFoliage(Vector2 corner1, Vector2 corner2, int samples, int octaves, float scale, float persistence, float lacunarity, float warpStrength, float warpScale, float threshold) {
+    float resolution = Math.Abs(corner2.x - corner1.x) / samples;
+    NativeArray<bool> output = new NativeArray<float>(samples * samples, Allocator.TempJob);
+    FoliageNoise job = new FoliageNoise {
+      size = samples,
+      xOffset = corner1.x,
+      zOffset = corner1.y,
+      resolution = resolution,
+      octaves = octaves,
+      lacunarity = lacunarity,
+      persistence = persistence,
+      scale = 1f / scale,
+      warpStrength = warpStrength,
+      warpScale = 1f / warpScale,
+      threshold = threshold,
+      output = output
+    };
+    JobHandle handle = job.Schedule(output.Length, samples);
+    handle.Complete();
+    int positions = 0;
+    for (int i = 0; i < output.Length; i++) if (output[i]) positions++;
+    Vector2[] foliage = new Vector2[positions];
+    for (int i = 0, j = 0; i < output.Length; i++) if (output[i]) {
+      foliage[j] = new Vector2(i % samples * resolution, i / samples * resolution);
+      j++;
+    }
+    return foliage;
+  }
+
   public static Vector3[] GenerateTerrain(int size, int lodFactor, float xOffset, float zOffset, float xResolution, float zResolution, int octaves, float lacunarity, float persistence, float sharpnessScale, float sharpnessAmplitude, float sharpnessMean, float scaleScale, float scaleAmplitude, float scaleMean, float amplitudeScale, float amplitudeAmplitude, float amplitudeMean, float warpStrengthScale, float warpStrengthAmplitude, float warpStrengthMean, float warpScaleScale, float warpScaleAmplitude, float warpScaleMean, float amplitudePower) {
     size = size * lodFactor + 5;
     NativeArray<float> output = new NativeArray<float>(size * size, Allocator.TempJob);
