@@ -6,9 +6,10 @@ using UnityEngine.Serialization;
 public class InstanceObjects : MonoBehaviour
 {
     public Transform _playerTransform;
-    private Vector2 _playerPositionXZ;
     
     private InstanceObjectsHandler _instanceObjects;
+
+    public int numberOfInstancesSquared = 5;
 
     private void Awake() {
         _instanceObjects = new InstanceObjectsHandler();
@@ -17,21 +18,16 @@ public class InstanceObjects : MonoBehaviour
 
     // Temporary test case
     private void Start() {
-        for (int i = 0; i < 500; i++) {
-            for (int j = 0; j < 500; j++) {
-                _instanceObjects.AddObject(new Vector2(i * 5 - 1250, j * 5 - 1250), FoliageType.TestObject);
+        for (int i = 0; i < numberOfInstancesSquared; i++) {
+            for (int j = 0; j < numberOfInstancesSquared; j++) {
+                _instanceObjects.AddObject(new Vector2(i * 5 - (numberOfInstancesSquared / 2 * 5), j * 5 - (numberOfInstancesSquared / 2 * 5)), FoliageType.TestObject);
             }
         }
     }
 
     private void Update() {
-        _playerPositionXZ = new Vector2(_playerTransform.position.x, _playerTransform.position.z);
-
-        // For each chunk
         foreach (FoliageChunk chunk in _instanceObjects.ChunksDictionary.Values) {
-            // For each type in given chunk
             foreach (List<FoliageData> type in chunk.FoliageTypePerChunk.Values) {
-                // For each type of foliage in given chunk
                 RenderObject(type);
             }
         }
@@ -70,36 +66,36 @@ public class InstanceObjects : MonoBehaviour
             Matrix4x4[] instData = new Matrix4x4[lodLevels[i].Count];
 
             for (int j = 0; j < instData.Length; j++) {
-                Vector2 positionXZ = lodLevels[i][j].Position;
-                Vector3 positionXYZ = new Vector3(
-                    positionXZ.x,
-                    0, // AmalgamNoise.GetPosition(positionXZ),
-                    positionXZ.y
-                );
-                
-                instData[j] = Matrix4x4.Translate(positionXYZ);
+                instData[j] = Matrix4x4.Translate(lodLevels[i][j].Position);
             }
             
-            Graphics.RenderMeshInstanced(rp, mesh, 0, instData);
+            // Graphics.RenderMeshInstanced(rp, mesh, 0, instData);
         }
     }
 
     private void BuildLODRanges(FoliageMetaData data, int numberOfLODRanges, ref float[] array) {
         for (int i = 0; i < numberOfLODRanges; i++) {
-            array[i] = data._lodData[i]._lodRange;
+            array[i] = data._lodData[i]._lodRange * data._lodData[i]._lodRange; // Squared due to DistanceSquared function
         }
     }
 
-    private int GetLODRange(Vector2 pos, float[] ranges) {
-        float distance = Vector2.Distance(_playerPositionXZ, pos);
+    private int GetLODRange(Vector3 pos, float[] ranges) {
+        float distance = DistanceSquared(_playerTransform.position, pos);
         
         // Searches for LOD range, if none are found then defaults to last range.
         for (int i = 0; i < ranges.Length - 1; i++) {
+            // Debug.Log(ranges[i]);
             if (distance < ranges[i]) return i;
         }
 
         return ranges.Length - 1;
     }
 
+    private float DistanceSquared(Vector3 vector1, Vector3 vector2) {
+        Vector3 diff = vector2 - vector1;
+        float distance = (diff.x * diff.x) + (diff.y * diff.y) + (diff.z * diff.z);
+        return distance;
+    }
+    
 }
 

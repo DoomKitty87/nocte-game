@@ -81,8 +81,11 @@ public class FoliageChunk // Might at some point incorporate this with other Chu
             FoliageTypePerChunk[type] = new List<FoliageData>();
         }
 
-        FoliageTypePerChunk[type].Add(new FoliageData(position, type));
+        FoliageTypePerChunk[type].Add(new FoliageData(GetWorldPosition(position), type));
     }
+
+    private Vector3 GetWorldPosition(Vector2 position) =>
+        new (position.x, AmalgamNoise.GetPosition(position), position.y);
 }
 
 public enum FoliageType
@@ -101,10 +104,10 @@ public enum FoliageType
 /// </summary>
 public class FoliageData
 {
-    public Vector2 Position;
+    public Vector3 Position;
     public FoliageType Type;
 
-    public FoliageData(Vector2 position, FoliageType type)
+    public FoliageData(Vector3 position, FoliageType type)
     {
         this.Position = position;
         this.Type = type;

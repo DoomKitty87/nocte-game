@@ -37,8 +37,4 @@ public class FoliageMetaData : ScriptableObject
         
     return ((lodMesh != null && lodMat != null) ? (mesh: lodMesh, material: lodMat) : (null, null));
   }
-
-  public float GetRange(int lodLevel) {
-    return _lodData[lodLevel]._lodRange;
-  }
 }
