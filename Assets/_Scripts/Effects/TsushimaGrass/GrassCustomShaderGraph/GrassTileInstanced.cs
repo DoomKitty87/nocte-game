@@ -118,14 +118,18 @@ namespace Effects.TsushimaGrass
 			);
 			return output;
 		}
-		private const int instanceGroupSize = 1000;
+		private const int instanceGroupSize = 10;
 		private void RenderGrassMesh() {
 			int grassCount = _samplesX * _samplesZ;
-			int groupIndex = 0;
+			int instanceGroupCount = Mathf.CeilToInt(grassCount / (float)instanceGroupSize);
 			_renderParams.matProps.SetBuffer("_instancePositionMatrices", _grassPositionsBuffer);
-			_renderParams.matProps.SetFloat("_instanceGroupID", groupIndex);
-			_renderParams.worldBounds = new Bounds(transform.position, new Vector3(10000, 1000000, 10000));
-			Graphics.DrawMeshInstanced(_grassMesh, 0, _renderingShaderMat, FillPlaceholderArrayWithIdent(1000), 1000, _renderParams.matProps);
+			for (int i = 0; i < instanceGroupCount; i++) {
+				_renderParams.matProps.SetFloat("_instanceGroupID", i);
+				int instanceCount = Mathf.Min(instanceGroupSize, grassCount - i * instanceGroupSize);
+				// bounds are calculated based off of matrix positions - see documentation
+				// _renderParams.worldBounds = new Bounds(transform.position, new Vector3(10000, 1000000, 10000));
+				Graphics.DrawMeshInstanced(_grassMesh, 0, _renderingShaderMat, FillPlaceholderArrayWithIdent(instanceCount), instanceCount, _renderParams.matProps);
+			}
 		}
 		
 		//----------------------------------------------------------------------------------
