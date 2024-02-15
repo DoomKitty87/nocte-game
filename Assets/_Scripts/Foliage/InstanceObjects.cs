@@ -35,8 +35,7 @@ public class InstanceObjects : MonoBehaviour
     }
 
     private void Update() {
-        TestRenderObject();
-        return;
+        // TestRenderObject();
         
         foreach (FoliageChunk chunk in _instanceObjects.ChunksDictionary.Values) {
             foreach (List<FoliageData> type in chunk.FoliageTypePerChunk.Values) {
@@ -94,7 +93,8 @@ public class InstanceObjects : MonoBehaviour
                 instData[j] = Matrix4x4.Translate(lodLevels[i][j].Position);
             }
             
-            Graphics.DrawMeshInstancedIndirect(_instanceMesh, 0, _instanceMaterial, new Bounds(Vector3.zero, Vector3.one * 1000), _argsBuffer);
+            Graphics.RenderMeshInstanced(rp, mesh, 0, instData);
+            
         }
     }
 
@@ -105,7 +105,6 @@ public class InstanceObjects : MonoBehaviour
     }
 
     private int GetLODRange(Vector3 pos, float[] ranges) {
-        return 0;
         float distance = DistanceSquared(_playerTransform.position, pos);
         
         // Searches for LOD range, if none are found then defaults to last range.
