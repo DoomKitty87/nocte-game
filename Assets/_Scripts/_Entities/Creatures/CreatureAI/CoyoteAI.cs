@@ -77,7 +77,7 @@ namespace _Scripts._Entities.Creatures.CreatureAI
 					new SetState(_controller, EnemyController.PlayerStates.Walking)
 				}),
 				new Sequencer(new List<TreeNode> {
-					new DistanceDenLessThan(_controller, _transform, _distanceHeal),
+					//new DistanceDenLessThan(_controller, _transform, _distanceHeal),
 					new ChangeStamina(_controller, 3 * Time.deltaTime)
 				}),
 				new Sequencer(new List<TreeNode> {
