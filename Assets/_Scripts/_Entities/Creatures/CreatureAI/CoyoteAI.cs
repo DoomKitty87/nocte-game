@@ -23,6 +23,7 @@ namespace _Scripts._Entities.Creatures.CreatureAI
 		[SerializeField] private float _distanceAttack;
 		[SerializeField] private float _distanceChase;
 		[SerializeField] private float _distanceGoal;
+		[SerializeField] private float _distanceHeal;
 		[SerializeField] private float _range;
 		[SerializeField] private float _staminaLimit;
 		[SerializeField] private List<CreatureAttack> _attacks;
@@ -35,12 +36,15 @@ namespace _Scripts._Entities.Creatures.CreatureAI
 				new Sequencer(new List<TreeNode> {
 					new Invertor(new CheckState(_controller, EnemyController.PlayerStates.Air)),
 					new Invertor(new StaminaLessThan(_controller, _staminaLimit)),
+					new ChangeStamina(_controller, 0.1f * Time.deltaTime),
 					new Selector(new List<TreeNode> {
 						new Sequencer(new List<TreeNode> { // checks if very close to player and attacks
 							new DistanceTransformLessThan(_transform, _playerTransform, _distanceAttack),
 							new SetState(_controller, EnemyController.PlayerStates.Idle),
 							new UseAttack(_creatureCombat, _attacks[0]),
-							new ChangeStamina(_controller, -50)
+							new ChangeStamina(_controller, -20),
+							new SetState(_controller, EnemyController.PlayerStates.Idle),
+							
 						}),
 						new Sequencer(new List<TreeNode> {  // checks if the enemy is close to the player and starts chasing
 							new DistanceTransformLessThan(_transform, _playerTransform, _distanceChase),
@@ -76,11 +80,12 @@ namespace _Scripts._Entities.Creatures.CreatureAI
 					new SetMovementToDirection(_transform.forward, _controller),
 					new SetState(_controller, EnemyController.PlayerStates.Walking)
 				}),
-				new Sequencer(new List<TreeNode> {
-					//new DistanceDenLessThan(_controller, _transform, _distanceHeal),
+				new Sequencer(new List<TreeNode> { // refills stamina
+					new StaminaLessThan(_controller, _staminaLimit),
+					new DistanceDenLessThan(_controller, _transform, _distanceHeal),
 					new ChangeStamina(_controller, 3 * Time.deltaTime)
 				}),
-				new Sequencer(new List<TreeNode> {
+				new Sequencer(new List<TreeNode> {  // places den on spawn
 					new CheckState(_controller, EnemyController.PlayerStates.Idle),
 					new Invertor(new CheckDenExists(_controller)),
 					new PlaceDen(_controller, _transform)

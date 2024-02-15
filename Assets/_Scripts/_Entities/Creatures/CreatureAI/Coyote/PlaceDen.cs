@@ -17,7 +17,7 @@ namespace _Scripts._Entities.Creatures.CreatureAI
     public override TreeNodeState Evaluate() {
       _controller.SetDenPos(_transform.position);
       GameObject den = GameObject.CreatePrimitive(PrimitiveType.Cube);
-      den.transform.position = _transform.position;
+      den.transform.position = _transform.position - new Vector3(0, 3, 0);
       return TreeNodeState.SUCCESS;
     }
   }

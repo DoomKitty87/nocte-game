@@ -213,7 +213,7 @@ public class EnemyController : MonoBehaviour
 
     private void Update() {
         UpdateStates();
-        // Debug.Log(_denPos);
+        _currentStamina = Mathf.Clamp(_currentStamina, 0, _maxStamina);
     }
 
     private void FixedUpdate() {
