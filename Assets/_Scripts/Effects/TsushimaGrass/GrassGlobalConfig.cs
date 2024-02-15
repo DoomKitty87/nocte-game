@@ -13,6 +13,8 @@ namespace Effects.TsushimaGrass
 		public float _fallbackTileSizeX, _fallbackTileSizeZ;
 		public float _tileBoundsPadding;
 		public float _distToPlayerCutoff;
+		public bool _castShadowsOn;
+		public bool _recieveShadowsOn;
 		[Header("Dependencies")]
 		public ComputeShader _positionCompute;
 		public Material _renderingShaderMat;

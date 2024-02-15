@@ -17,31 +17,24 @@ namespace Effects.TsushimaGrass
 
 		// The overall tile will be the terrain tile, making terrain tile size largest LOD
 		// Tsushima divides tiles into 3 LODs, quarters, eighths, sixteenths. Can have combination of divisions to fill single tile
-
-
+		
 		[Header("Dependencies")]
 		public WorldGenerator _worldGenerator;
-
 		[Header("Global Config")]
 		public bool _useGlobalConfig;
-
 		[SerializeField] private GrassGlobalConfig _globalConfig;
-
 		[Header("Global Set Dependencies")]
 		[SerializeField] private Mesh _grassMesh;
-
 		[SerializeField] private Material _renderingShaderMat;
-
 		[Header("Settings")]
 		[SerializeField] private float distToPlayerCutoff = 1000f;
-
 		[SerializeField] [Range(0, 100)] private int _samplesX, _samplesZ;
 		[SerializeField] private float _fallbackTileSizeX, _fallbackTileSizeZ;
 		[SerializeField] private float _meshBoundsPadding;
-
+		[SerializeField] private bool _castShadowsOn;
+		[SerializeField] private bool _recieveShadowsOn;
 		private float _tileSizeX, _tileSizeZ;
 		private RenderParams _renderParams;
-
 		private Vector3[] _worldPos;
 		private Matrix4x4[] _worldPosTransformMatrices;
 
@@ -50,10 +43,11 @@ namespace Effects.TsushimaGrass
 
 		// ===== Passed between (re-referenced)
 		private GraphicsBuffer _grassPositionsBuffer;
-
 		// ===== Material Shader + Buffers =====
 		private GraphicsBuffer _meshVertsBuffer;
 		private GraphicsBuffer _meshTrisBuffer;
+		private ComputeBuffer _argsBuffer;
+		private uint[] args = { 0, 0, 0, 0, 0 };
 		// =====
 
 		private void MeshDataToBuffers(
@@ -118,6 +112,8 @@ namespace Effects.TsushimaGrass
 			_meshBoundsPadding = _globalConfig._tileBoundsPadding;
 			distToPlayerCutoff = _globalConfig._distToPlayerCutoff;
 			_positionCompute = _globalConfig._positionCompute;
+			_recieveShadowsOn = _globalConfig._recieveShadowsOn;
+			_castShadowsOn = _globalConfig._castShadowsOn;
 		}
 
 		private Matrix4x4[] FillPlaceholderArrayWithIdent(int count) {
@@ -138,12 +134,10 @@ namespace Effects.TsushimaGrass
 			);
 			return output;
 		}
+		
+		private const int instanceGroupSize = 10;
 
-		private bool _renderingGrass = false;
-		private const int instanceGroupSize = 500;
-
-		private IEnumerator RenderGrassMesh() {
-			_renderingGrass = true;
+		private void RenderGrassMesh() {
 			int grassCount = _samplesX * _samplesZ;
 			int instanceGroupCount = Mathf.CeilToInt(grassCount / (float)instanceGroupSize);
 			_renderParams.matProps.SetBuffer("_instancePositionMatrices", _grassPositionsBuffer);
@@ -153,10 +147,10 @@ namespace Effects.TsushimaGrass
 				int instanceCount = Mathf.Min(instanceGroupSize, grassCount - i * instanceGroupSize);
 				// bounds are calculated based off of matrix positions - see documentation
 				Bounds grassBounds = new Bounds(transform.position, new Vector3(10000, 1000000, 10000));
-				Graphics.DrawMeshInstancedIndirect(_grassMesh, 0, _renderingShaderMat, grassBounds, );
-				yield return null;
+				args[1] = (uint)instanceCount;
+				_argsBuffer.SetData(args);
+				Graphics.DrawMeshInstancedIndirect(_grassMesh, 0, _renderingShaderMat, grassBounds, _argsBuffer, 0, _renderParams.matProps, _castShadowsOn ? ShadowCastingMode.On : ShadowCastingMode.Off, _recieveShadowsOn);
 			}
-			_renderingGrass = false;
 		}
 
 		//----------------------------------------------------------------------------------
@@ -202,11 +196,22 @@ namespace Effects.TsushimaGrass
 			// Render Material
 			_renderParams = new RenderParams(_renderingShaderMat);
 			_renderParams.matProps = new MaterialPropertyBlock();
+			_argsBuffer = new ComputeBuffer(1, args.Length * sizeof(uint), ComputeBufferType.IndirectArguments);
+			// Indirect args
+			if (_grassMesh != null) {
+				args[0] = (uint)_grassMesh.GetIndexCount(0);
+				args[1] = 0;
+				args[2] = (uint)_grassMesh.GetIndexStart(0);
+				args[3] = (uint)_grassMesh.GetBaseVertex(0);
+			}
+			else
+			{
+				args[0] = args[1] = args[2] = args[3] = 0;
+			}
 		}
 
 		private void Update() {
-			if (_renderingGrass) return;
-			StartCoroutine(RenderGrassMesh());
+			RenderGrassMesh();
 		}
 
 		private void OnDrawGizmosSelected() {
@@ -221,6 +226,8 @@ namespace Effects.TsushimaGrass
 			_meshVertsBuffer = null;
 			_meshTrisBuffer?.Dispose();
 			_meshTrisBuffer = null;
+			_argsBuffer?.Dispose();
+			_argsBuffer = null;
 		}
 	}
 }
