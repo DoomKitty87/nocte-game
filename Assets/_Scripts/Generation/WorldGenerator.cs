@@ -1,7 +1,8 @@
-using System;
+ using System;
 using UnityEngine;
 using System.Collections.Generic;
-using UnityEngine.Rendering.HighDefinition;
+ using Effects.TsushimaGrass;
+ using UnityEngine.Rendering.HighDefinition;
 using Matrix4x4 = UnityEngine.Matrix4x4;
 using Vector2 = UnityEngine.Vector2;
 using Vector3 = UnityEngine.Vector3;
@@ -143,13 +144,13 @@ public class WorldGenerator : MonoBehaviour
 
   [Header("World Generation")]
   [Tooltip("Seed for world generation.")]
-  public int _seed;
+  [SerializeField] private int _seed;
   [Tooltip("Size of world in tiles.")]
   [SerializeField] private int _tileCount;
   [Tooltip("Vertices of each tile in world (lowest LOD).")]
-  [SerializeField] private int _size;
+  [SerializeField] public int _size;
   [Tooltip("Vertex spacing of each tile in world (lowest LOD).")]
-  [SerializeField] private float _resolution;
+  [SerializeField] public float _resolution;
   [Tooltip("Maximum chunk updates per frame.")]
   [SerializeField] private float _maxUpdatesPerFrame;
   [Tooltip("Enable or disable colliders.")]
@@ -181,6 +182,10 @@ public class WorldGenerator : MonoBehaviour
   [SerializeField] private SecondaryStructures _structures;
   [SerializeField] private PlaceStructures _storyStructures;
 
+  public int Seed { get; }
+  public int Size { get; }
+  public float Resolution { get; }
+  
   #endregion
 
   #region Internal Variables
@@ -218,12 +223,12 @@ public class WorldGenerator : MonoBehaviour
 
   public float GetHeightValue(Vector2 worldPosition) {
     float heightVal = AmalgamNoise.GetPosition(worldPosition.x + _seed, worldPosition.y + _seed, _noiseParameters.octaves, _noiseParameters.lacunarity, _noiseParameters.persistence, _noiseParameters.sharpnessScale,
-      _noiseParameters.sharpnessAmplitude, _noiseParameters.sharpnessMean, _noiseParameters.scaleScale, _noiseParameters.scaleAmplitude,
-      _noiseParameters.scaleMean, _noiseParameters.amplitudeScale, _noiseParameters.amplitudeAmplitude, _noiseParameters.amplitudeMean,
-      _noiseParameters.warpStrengthScale, _noiseParameters.warpStrengthAmplitude, _noiseParameters.warpStrengthMean,
-      _noiseParameters.warpScaleScale, _noiseParameters.warpScaleAmplitude, _noiseParameters.warpScaleMean, _noiseParameters.amplitudePower);
+    _noiseParameters.sharpnessAmplitude, _noiseParameters.sharpnessMean, _noiseParameters.scaleScale, _noiseParameters.scaleAmplitude,
+    _noiseParameters.scaleMean, _noiseParameters.amplitudeScale, _noiseParameters.amplitudeAmplitude, _noiseParameters.amplitudeMean,
+    _noiseParameters.warpStrengthScale, _noiseParameters.warpStrengthAmplitude, _noiseParameters.warpStrengthMean,
+    _noiseParameters.warpScaleScale, _noiseParameters.warpScaleAmplitude, _noiseParameters.warpScaleMean, _noiseParameters.amplitudePower);
     heightVal -= _riverParameters.heightCurve.Evaluate(heightVal / _maxPossibleHeight) * (_riverParameters.noiseCurve.Evaluate(AmalgamNoise.GetRiverValue(
-        worldPosition.x + _seed % 216812, worldPosition.y + _seed % 216812, _riverParameters.scale, _riverParameters.octaves, _riverParameters.lacunarity, _riverParameters.persistence, _riverParameters.warpScale, _riverParameters.warpStrength)) * _riverParameters.amplitude);
+    worldPosition.x + _seed % 216812, worldPosition.y + _seed % 216812, _riverParameters.scale, _riverParameters.octaves, _riverParameters.lacunarity, _riverParameters.persistence, _riverParameters.warpScale, _riverParameters.warpStrength)) * _riverParameters.amplitude);
     return heightVal;
   }
 
@@ -247,22 +252,23 @@ public class WorldGenerator : MonoBehaviour
     return _seed;
   }
 
-  public (Vector3[][], Vector2[]) GetVertices(int distance) {
-    int included = 0;
-    for (int i = 0; i < _tileCount * _tileCount; i++) {
-      if (Mathf.Sqrt(Mathf.Pow(_tilePool[i].x, 2) + Mathf.Pow(_tilePool[i].z, 2)) <= distance) included++;
-    }
-    Vector3[][] vertices = new Vector3[included][];
-    Vector2[] positions = new Vector2[included];
-    for (int i = 0, j = 0; i < _tileCount * _tileCount; i++) {
-      if (Mathf.Sqrt(Mathf.Pow(_tilePool[i].x, 2) + Mathf.Pow(_tilePool[i].z, 2)) <= distance) {
-        vertices[j] = _tilePool[i].mesh.vertices;
-        positions[j] = new Vector2(_tilePool[i].obj.transform.position.x, _tilePool[i].obj.transform.position.z);
-        j++;
+  public (Mesh[], Vector3[]) GetVertices(int distance) {
+    int numberOfChunks = (2 * distance - 1) * (2 * distance - 1);
+
+    Mesh[] meshes = new Mesh[numberOfChunks];
+    Vector3[] positions = new Vector3[numberOfChunks];
+    int currentTile = 0;
+
+    for (int i = 0; i < distance * 2 - 1; i++) {
+      for (int j = 0; j < distance * 2 - 1; j++) {
+        WorldTile tile = _tilePool[_tilePositions[((_tileCount - 1) / 2) - (distance - 1) + i, ((_tileCount - 1) / 2) - (distance - 1) + j]];
+        meshes[currentTile] = tile.mesh;
+        positions[currentTile] = tile.obj.transform.position;
+        currentTile++;
       }
     }
 
-    return (vertices, positions);
+    return (meshes, positions);
   }
 
   #endregion
@@ -466,8 +472,9 @@ public class WorldGenerator : MonoBehaviour
     }
 
     if (deltaZ != 0 || deltaX != 0) {
-      _structures.CheckStructures(new Vector2(playerPos.x, playerPos.z));
-      _storyStructures.CheckStructures(new Vector2(playerPos.x, playerPos.z));
+      Vector2 playerPosXZ = new Vector2(playerPos.x, playerPos.z);
+      _structures.CheckStructures(playerPosXZ);
+      _storyStructures.CheckStructures(playerPosXZ);
       _updateQueue.Sort((c1, c2) => (Mathf.Abs(_tilePool[c1].x - _playerXChunkScale) + Mathf.Abs(_tilePool[c1].z - _playerZChunkScale)).CompareTo(Mathf.Abs(_tilePool[c2].x - _playerXChunkScale) + Mathf.Abs(_tilePool[c2].z - _playerZChunkScale)));
       for (int x = 0; x < _tileCount; x++) {
         for (int z = 0; z < _tileCount; z++) { 
@@ -528,6 +535,8 @@ public class WorldGenerator : MonoBehaviour
     // If you need to put anything else (tag, components, etc) on the tile, do it here. If it needs to change every time the LOD is changed, do it in the UpdateTile function.
     go.tag = "Ground";
     go.layer = 6;
+    // GrassTilePrimitives grass = go.AddComponent<GrassTilePrimitives>();
+    // grass._worldGenerator = this;
     _structures.GenerateChunkStructures(new Vector2(x * _size * _resolution, z * _size * _resolution), new Vector2((x + 1) * _size * _resolution, (z + 1) * _size * _resolution));
     _generatedStructureTiles.Add(new Vector2(x, z));
     tile.mesh = msh;

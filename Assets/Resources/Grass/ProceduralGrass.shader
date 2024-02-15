@@ -8,7 +8,7 @@ Shader "Custom/ProceduralGrass"
     }
     SubShader
     {
-        Tags { "RenderType"="Opaque" "Queue" = "Geometry"}
+        Tags { "RenderType"="Opaque" "Queue" = "Transparent"}
 
         Pass
         {
@@ -33,6 +33,7 @@ Shader "Custom/ProceduralGrass"
 
             sampler2D _BaseTex;
             float4 _BaseColor, _TipColor;
+            // Buffers get set in C# script, 
             StructuredBuffer<float3> _Positions;
             StructuredBuffer<float3> _Normals;
             StructuredBuffer<float2> _UVs;

@@ -41,15 +41,15 @@ public class PlaceStructures : MonoBehaviour
   };
 
   private void Start() {
-    float offsetAngle = Mathf.PerlinNoise(_worldGen._seed % 681, _worldGen._seed % 918) * Mathf.PI * 2;
-    Vector3 positionOffset = new Vector3(Mathf.Cos(offsetAngle), 0, Mathf.Sin(offsetAngle)) * (Mathf.PerlinNoise(_worldGen._seed % 6913, _worldGen._seed % 1052) - 0.5f) * _centerOffsetRadiusAmplitude;
+    float offsetAngle = Mathf.PerlinNoise(_worldGen.Seed % 681, _worldGen.Seed % 918) * Mathf.PI * 2;
+    Vector3 positionOffset = new Vector3(Mathf.Cos(offsetAngle), 0, Mathf.Sin(offsetAngle)) * (Mathf.PerlinNoise(_worldGen.Seed % 6913, _worldGen.Seed % 1052) - 0.5f) * _centerOffsetRadiusAmplitude;
     _structurePositions = new Vector3[_outerStructures.Length + 1];
     Vector3 mainPosition = positionOffset;
     mainPosition.y = _worldGen.GetHeightValue(new Vector2(mainPosition.x, mainPosition.z));
     int s = 1;
     while (mainPosition.y > _heightCutoff) {
-      offsetAngle = Mathf.PerlinNoise(_worldGen._seed % (s * 32.5619f), _worldGen._seed % (s * 81.3229f)) * Mathf.PI * 2;
-      positionOffset = new Vector3(Mathf.Cos(offsetAngle), 0, Mathf.Sin(offsetAngle)) * (Mathf.PerlinNoise(_worldGen._seed % (s * 91.5619f), _worldGen._seed % (s * 81.3229f)) - 0.5f) * _centerOffsetRadiusAmplitude;
+      offsetAngle = Mathf.PerlinNoise(_worldGen.Seed % (s * 32.5619f), _worldGen.Seed % (s * 81.3229f)) * Mathf.PI * 2;
+      positionOffset = new Vector3(Mathf.Cos(offsetAngle), 0, Mathf.Sin(offsetAngle)) * (Mathf.PerlinNoise(_worldGen.Seed % (s * 91.5619f), _worldGen.Seed % (s * 81.3229f)) - 0.5f) * _centerOffsetRadiusAmplitude;
       mainPosition = positionOffset;
       mainPosition.y = _worldGen.GetHeightValue(new Vector2(mainPosition.x, mainPosition.z));
       s++;
@@ -124,14 +124,14 @@ public class PlaceStructures : MonoBehaviour
     }
 
     for (int i = 0; i < _outerStructures.Length; i++) {
-      float nodeRotation = Mathf.PerlinNoise(_worldGen._seed % (395.956f * (i + 1)), _worldGen._seed % (928.132f * (i + 1))) * Mathf.PI * 2;
-      float nodeRadius = _nodeDistance * (Mathf.PerlinNoise(_worldGen._seed % (156.292f * (i + 1)), _worldGen._seed % (613.671f * (i + 1))) + 0.5f);
+      float nodeRotation = Mathf.PerlinNoise(_worldGen.Seed % (395.956f * (i + 1)), _worldGen.Seed % (928.132f * (i + 1))) * Mathf.PI * 2;
+      float nodeRadius = _nodeDistance * (Mathf.PerlinNoise(_worldGen.Seed % (156.292f * (i + 1)), _worldGen.Seed % (613.671f * (i + 1))) + 0.5f);
       Vector3 outPosition = new Vector3(nodeRadius * Mathf.Cos(nodeRotation), 0, nodeRadius * Mathf.Sin(nodeRotation)) + positionOffset;
       outPosition.y = _worldGen.GetHeightValue(new Vector2(outPosition.x, outPosition.z));
       s = 1;
       while (outPosition.y > _heightCutoff) {
-        nodeRotation = Mathf.PerlinNoise(_worldGen._seed % (891.623f * (i + 1) * s), _worldGen._seed % (476.193f * (i + 1) * s)) * Mathf.PI * 2;
-        nodeRadius = _nodeDistance * (Mathf.PerlinNoise(_worldGen._seed % (998.132f * (i + 1) * s), _worldGen._seed % (319.254f * (i + 1) * s)) + 0.5f);
+        nodeRotation = Mathf.PerlinNoise(_worldGen.Seed % (891.623f * (i + 1) * s), _worldGen.Seed % (476.193f * (i + 1) * s)) * Mathf.PI * 2;
+        nodeRadius = _nodeDistance * (Mathf.PerlinNoise(_worldGen.Seed % (998.132f * (i + 1) * s), _worldGen.Seed % (319.254f * (i + 1) * s)) + 0.5f);
         outPosition = new Vector3(nodeRadius * Mathf.Cos(nodeRotation), 0, nodeRadius * Mathf.Sin(nodeRotation)) + positionOffset;
         outPosition.y = _worldGen.GetHeightValue(new Vector2(outPosition.x, outPosition.z));
         s++;

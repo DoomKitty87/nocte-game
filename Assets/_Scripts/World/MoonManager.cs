@@ -36,10 +36,10 @@ public class MoonManager : MonoBehaviour
     for (int i = 0; i < _moons.Length; i++)
     {
       _moons[i].initialRotation = _moons[i].moon.localRotation;
-      _moons[i].phase = Mathf.PerlinNoise(_worldGenerator._seed + i * 42.235f, _worldGenerator._seed + i * 17.532f) * 2 * Mathf.PI;
-      _moons[i].orbitAxis += new Vector3(Mathf.Sin(_worldGenerator._seed * 0.529f + i) * _moons[i].offsetAmplitude, _moons[i].yBias * Mathf.Tan(_worldGenerator._seed * 0.185f + i), Mathf.Cos(_worldGenerator._seed * 0.328f + i) * _moons[i].offsetAmplitude);
-      _moons[i].spinPhase = Mathf.PerlinNoise(_worldGenerator._seed + i * 12.291f, _worldGenerator._seed + i * 91.215f) * 2 * Mathf.PI;
-      _moons[i].spinAxis += new Vector3(Mathf.Sin(_worldGenerator._seed * 5.123f + i) * _moons[i].offsetAmplitude, _moons[i].yBias * Mathf.Tan(_worldGenerator._seed * 8.519f + i), Mathf.Cos(_worldGenerator._seed * 2.614f + i) * _moons[i].spinOffsetAmplitude);
+      _moons[i].phase = Mathf.PerlinNoise(_worldGenerator.Seed + i * 42.235f, _worldGenerator.Seed + i * 17.532f) * 2 * Mathf.PI;
+      _moons[i].orbitAxis += new Vector3(Mathf.Sin(_worldGenerator.Seed * 0.529f + i) * _moons[i].offsetAmplitude, _moons[i].yBias * Mathf.Tan(_worldGenerator.Seed * 0.185f + i), Mathf.Cos(_worldGenerator.Seed * 0.328f + i) * _moons[i].offsetAmplitude);
+      _moons[i].spinPhase = Mathf.PerlinNoise(_worldGenerator.Seed + i * 12.291f, _worldGenerator.Seed + i * 91.215f) * 2 * Mathf.PI;
+      _moons[i].spinAxis += new Vector3(Mathf.Sin(_worldGenerator.Seed * 5.123f + i) * _moons[i].offsetAmplitude, _moons[i].yBias * Mathf.Tan(_worldGenerator.Seed * 8.519f + i), Mathf.Cos(_worldGenerator.Seed * 2.614f + i) * _moons[i].spinOffsetAmplitude);
     }
     if (_orbitVisualizer) _orbitVisualizer.Initialize();
   }
