@@ -83,33 +83,33 @@ public class PlaceStructures : MonoBehaviour
     List<Vector3> vertices = new List<Vector3>();
     List<int> triangles = new List<int>();
 
-    if (heighte < mainPosition.y) {
-      for (int j = 0; j < _beamWindingOrder.Length; j++) {
-        triangles.Add(_beamWindingOrder[j] + vertices.Count);
-      }
-      vertices.AddRange(GeneratePillar(new Vector3(mainPosition.x + bounds.x / 2, heighte - _groundInset, mainPosition.z + bounds.y / 2), new Vector3(mainPosition.x + bounds.x / 2, mainPosition.y, mainPosition.z + bounds.y / 2)));
-    }
-
-    if (heightf < mainPosition.y) {
-      for (int j = 0; j < _beamWindingOrder.Length; j++) {
-        triangles.Add(_beamWindingOrder[j] + vertices.Count);
-      }
-      vertices.AddRange(GeneratePillar(new Vector3(mainPosition.x - bounds.x / 2, heightf - _groundInset, mainPosition.z + bounds.y / 2), new Vector3(mainPosition.x - bounds.x / 2, mainPosition.y, mainPosition.z + bounds.y / 2)));
-    }
-
-    if (heightg < mainPosition.y) {
-      for (int j = 0; j < _beamWindingOrder.Length; j++) {
-        triangles.Add(_beamWindingOrder[j] + vertices.Count);
-      }
-      vertices.AddRange(GeneratePillar(new Vector3(mainPosition.x - bounds.x / 2, heightg - _groundInset, mainPosition.z - bounds.y / 2), new Vector3(mainPosition.x - bounds.x / 2, mainPosition.y, mainPosition.z - bounds.y / 2)));
-    }
-
-    if (heighth < mainPosition.y) {
-      for (int j = 0; j < _beamWindingOrder.Length; j++) {
-        triangles.Add(_beamWindingOrder[j] + vertices.Count);
-      }
-      vertices.AddRange(GeneratePillar(new Vector3(mainPosition.x + bounds.x / 2, heighth - _groundInset, mainPosition.z - bounds.y / 2), new Vector3(mainPosition.x + bounds.x / 2, mainPosition.y, mainPosition.z - bounds.y / 2)));
-    }
+    // if (heighte < mainPosition.y) {
+    //   for (int j = 0; j < _beamWindingOrder.Length; j++) {
+    //     triangles.Add(_beamWindingOrder[j] + vertices.Count);
+    //   }
+    //   vertices.AddRange(GeneratePillar(new Vector3(mainPosition.x + bounds.x / 2, heighte - _groundInset, mainPosition.z + bounds.y / 2), new Vector3(mainPosition.x + bounds.x / 2, mainPosition.y, mainPosition.z + bounds.y / 2)));
+    // }
+    //
+    // if (heightf < mainPosition.y) {
+    //   for (int j = 0; j < _beamWindingOrder.Length; j++) {
+    //     triangles.Add(_beamWindingOrder[j] + vertices.Count);
+    //   }
+    //   vertices.AddRange(GeneratePillar(new Vector3(mainPosition.x - bounds.x / 2, heightf - _groundInset, mainPosition.z + bounds.y / 2), new Vector3(mainPosition.x - bounds.x / 2, mainPosition.y, mainPosition.z + bounds.y / 2)));
+    // }
+    //
+    // if (heightg < mainPosition.y) {
+    //   for (int j = 0; j < _beamWindingOrder.Length; j++) {
+    //     triangles.Add(_beamWindingOrder[j] + vertices.Count);
+    //   }
+    //   vertices.AddRange(GeneratePillar(new Vector3(mainPosition.x - bounds.x / 2, heightg - _groundInset, mainPosition.z - bounds.y / 2), new Vector3(mainPosition.x - bounds.x / 2, mainPosition.y, mainPosition.z - bounds.y / 2)));
+    // }
+    //
+    // if (heighth < mainPosition.y) {
+    //   for (int j = 0; j < _beamWindingOrder.Length; j++) {
+    //     triangles.Add(_beamWindingOrder[j] + vertices.Count);
+    //   }
+    //   vertices.AddRange(GeneratePillar(new Vector3(mainPosition.x + bounds.x / 2, heighth - _groundInset, mainPosition.z - bounds.y / 2), new Vector3(mainPosition.x + bounds.x / 2, mainPosition.y, mainPosition.z - bounds.y / 2)));
+    // }
 
     if (vertices.Count > 0) {
       GameObject supportBeams = new GameObject();
@@ -192,33 +192,33 @@ public class PlaceStructures : MonoBehaviour
       vertices = new List<Vector3>();
       triangles = new List<int>();
 
-      if (heighte < outPosition.y) {
-        for (int j = 0; j < _beamWindingOrder.Length; j++) {
-          triangles.Add(_beamWindingOrder[j] + vertices.Count);
-        }
-        vertices.AddRange(GeneratePillar(new Vector3(outPosition.x + bounds.x / 2, heighte - _groundInset, outPosition.z + bounds.y / 2), new Vector3(outPosition.x + bounds.x / 2, outPosition.y, outPosition.z + bounds.y / 2)));
-      }
-
-      if (heightf < outPosition.y) {
-        for (int j = 0; j < _beamWindingOrder.Length; j++) {
-          triangles.Add(_beamWindingOrder[j] + vertices.Count);
-        }
-        vertices.AddRange(GeneratePillar(new Vector3(outPosition.x - bounds.x / 2, heightf - _groundInset, outPosition.z + bounds.y / 2), new Vector3(outPosition.x - bounds.x / 2, outPosition.y, outPosition.z + bounds.y / 2)));
-      }
-
-      if (heightg < outPosition.y) {
-        for (int j = 0; j < _beamWindingOrder.Length; j++) {
-          triangles.Add(_beamWindingOrder[j] + vertices.Count);
-        }
-        vertices.AddRange(GeneratePillar(new Vector3(outPosition.x - bounds.x / 2, heightg - _groundInset, outPosition.z - bounds.y / 2), new Vector3(outPosition.x - bounds.x / 2, outPosition.y, outPosition.z - bounds.y / 2)));
-      }
-
-      if (heighth < outPosition.y) {
-        for (int j = 0; j < _beamWindingOrder.Length; j++) {
-          triangles.Add(_beamWindingOrder[j] + vertices.Count);
-        }
-        vertices.AddRange(GeneratePillar(new Vector3(outPosition.x + bounds.x / 2, heighth - _groundInset, outPosition.z - bounds.y / 2), new Vector3(outPosition.x + bounds.x / 2, outPosition.y, outPosition.z - bounds.y / 2)));
-      }
+      // if (heighte < outPosition.y) {
+      //   for (int j = 0; j < _beamWindingOrder.Length; j++) {
+      //     triangles.Add(_beamWindingOrder[j] + vertices.Count);
+      //   }
+      //   vertices.AddRange(GeneratePillar(new Vector3(outPosition.x + bounds.x / 2, heighte - _groundInset, outPosition.z + bounds.y / 2), new Vector3(outPosition.x + bounds.x / 2, outPosition.y, outPosition.z + bounds.y / 2)));
+      // }
+      //
+      // if (heightf < outPosition.y) {
+      //   for (int j = 0; j < _beamWindingOrder.Length; j++) {
+      //     triangles.Add(_beamWindingOrder[j] + vertices.Count);
+      //   }
+      //   vertices.AddRange(GeneratePillar(new Vector3(outPosition.x - bounds.x / 2, heightf - _groundInset, outPosition.z + bounds.y / 2), new Vector3(outPosition.x - bounds.x / 2, outPosition.y, outPosition.z + bounds.y / 2)));
+      // }
+      //
+      // if (heightg < outPosition.y) {
+      //   for (int j = 0; j < _beamWindingOrder.Length; j++) {
+      //     triangles.Add(_beamWindingOrder[j] + vertices.Count);
+      //   }
+      //   vertices.AddRange(GeneratePillar(new Vector3(outPosition.x - bounds.x / 2, heightg - _groundInset, outPosition.z - bounds.y / 2), new Vector3(outPosition.x - bounds.x / 2, outPosition.y, outPosition.z - bounds.y / 2)));
+      // }
+      //
+      // if (heighth < outPosition.y) {
+      //   for (int j = 0; j < _beamWindingOrder.Length; j++) {
+      //     triangles.Add(_beamWindingOrder[j] + vertices.Count);
+      //   }
+      //   vertices.AddRange(GeneratePillar(new Vector3(outPosition.x + bounds.x / 2, heighth - _groundInset, outPosition.z - bounds.y / 2), new Vector3(outPosition.x + bounds.x / 2, outPosition.y, outPosition.z - bounds.y / 2)));
+      // }
 
       if (vertices.Count > 0) {
         GameObject supportBeams = new GameObject();
