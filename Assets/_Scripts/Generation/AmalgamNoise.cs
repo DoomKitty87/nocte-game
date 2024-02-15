@@ -304,7 +304,7 @@ public static class AmalgamNoise
 
     [WriteOnly] public NativeArray<bool> output;
 
-    public void Execute(index) {
+    public void Execute(int index) {
       float x = (index % size) * resolution + xOffset;
       float z = (index / size) * resolution + zOffset;
       float value = 0;
@@ -330,7 +330,7 @@ public static class AmalgamNoise
 
   public static Vector2[] GenerateFoliage(Vector2 corner1, Vector2 corner2, int samples, int octaves, float scale, float persistence, float lacunarity, float warpStrength, float warpScale, float threshold) {
     float resolution = Math.Abs(corner2.x - corner1.x) / samples;
-    NativeArray<bool> output = new NativeArray<float>(samples * samples, Allocator.TempJob);
+    NativeArray<bool> output = new NativeArray<bool>(samples * samples, Allocator.TempJob);
     FoliageNoise job = new FoliageNoise {
       size = samples,
       xOffset = corner1.x,
