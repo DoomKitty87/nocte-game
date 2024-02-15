@@ -135,22 +135,29 @@ namespace Effects.TsushimaGrass
 			return output;
 		}
 		
-		private const int instanceGroupSize = 10;
+		// private const int instanceGroupSize = 10;
 
 		private void RenderGrassMesh() {
 			int grassCount = _samplesX * _samplesZ;
-			int instanceGroupCount = Mathf.CeilToInt(grassCount / (float)instanceGroupSize);
 			_renderParams.matProps.SetBuffer("_instancePositionMatrices", _grassPositionsBuffer);
-			for (int i = 0; i < instanceGroupCount; i++) {
-				_renderParams.matProps.SetFloat("_instanceGroupID", i);
-				_renderParams.matProps.SetFloat("_instancesPerGroup", instanceGroupSize);
-				int instanceCount = Mathf.Min(instanceGroupSize, grassCount - i * instanceGroupSize);
-				// bounds are calculated based off of matrix positions - see documentation
-				Bounds grassBounds = new Bounds(transform.position, new Vector3(10000, 1000000, 10000));
-				args[1] = (uint)instanceCount;
-				_argsBuffer.SetData(args);
-				Graphics.DrawMeshInstancedIndirect(_grassMesh, 0, _renderingShaderMat, grassBounds, _argsBuffer, 0, _renderParams.matProps, _castShadowsOn ? ShadowCastingMode.On : ShadowCastingMode.Off, _recieveShadowsOn);
-			}
+			Bounds grassBounds = new Bounds(transform.position, new Vector3(10000, 1000000, 10000));
+			args[1] = (uint)grassCount;
+			_argsBuffer.SetData(args);
+			Graphics.DrawMeshInstancedIndirect(_grassMesh, 0, _renderingShaderMat, grassBounds, _argsBuffer, 0, _renderParams.matProps, _castShadowsOn ? ShadowCastingMode.On : ShadowCastingMode.Off, _recieveShadowsOn);
+			
+			// batched version
+			// int instanceGroupCount = Mathf.CeilToInt(grassCount / (float)instanceGroupSize);
+			// for (int i = 0; i < instanceGroupCount; i++) {
+			// 	_renderParams.matProps.SetFloat("_instanceGroupID", i);
+			// 	_renderParams.matProps.SetFloat("_instancesPerGroup", instanceGroupSize);
+			// 	int instanceCount = Mathf.Min(instanceGroupSize, grassCount - i * instanceGroupSize);
+			// 	// bounds are calculated based off of matrix positions - see documentation
+			// 	Bounds grassBounds = new Bounds(transform.position, new Vector3(10000, 1000000, 10000));
+			// 	args[1] = (uint)instanceCount;
+			// 	_argsBuffer.SetData(args);
+			// 	Graphics.DrawMeshInstancedIndirect(_grassMesh, 0, _renderingShaderMat, grassBounds, _argsBuffer, 0, _renderParams.matProps, _castShadowsOn ? ShadowCastingMode.On : ShadowCastingMode.Off, _recieveShadowsOn);
+			// }
+
 		}
 
 		//----------------------------------------------------------------------------------
