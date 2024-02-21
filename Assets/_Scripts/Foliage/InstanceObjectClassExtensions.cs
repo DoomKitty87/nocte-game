@@ -33,7 +33,7 @@ public class InstanceObjectsHandler
     }
 
     public void RemoveChunk(Vector2 position) {
-        // Glorified TryRemove()
+        // Glorified TryRemove
         var key = GetChunkPosition(position);
         if (ChunksDictionary.TryGetValue(key, out _)) {
             ChunksDictionary.Remove(key);
@@ -73,6 +73,9 @@ public class InstanceObjectsHandler
 public class FoliageChunk // Might at some point incorporate this with other Chunk class?
 {
     public readonly Dictionary<FoliageType, List<FoliageData>> FoliageTypePerChunk = new Dictionary<FoliageType, List<FoliageData>>();
+
+    public int xPosition = ;
+    public int zPosition = ;
 
     public void AddObject(Vector2 position, FoliageType type)
     {
