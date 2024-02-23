@@ -17,9 +17,13 @@ public class InstanceObjects : MonoBehaviour
 
     private Matrix4x4[] instData;
 
+    public float chunkWidth;
+
     private void Awake() {
         _instanceObjects = new InstanceObjectsHandler();
         _instanceObjects.InitializeDictionary();
+
+        WorldGenInfo._foliageChunkWidth = chunkWidth;
     }
 
     // Temporary test case
@@ -39,7 +43,7 @@ public class InstanceObjects : MonoBehaviour
         
         foreach (FoliageChunk chunk in _instanceObjects.ChunksDictionary.Values) {
             foreach (List<FoliageData> type in chunk.FoliageTypePerChunk.Values) {
-                RenderObject(type);
+                RenderObject(type, chunk);
             }
         }
     }
@@ -57,44 +61,42 @@ public class InstanceObjects : MonoBehaviour
         Graphics.RenderMeshInstanced(rp, mes, 0, instData);
     }
     
-    private void RenderObject(List<FoliageData> typeOfFoliage) {
+    private void RenderObject(List<FoliageData> typeOfFoliage, FoliageChunk chunk) {
         FoliageData firstData = typeOfFoliage[0];
         FoliageType type = firstData.Type;
         FoliageMetaData metaData = _instanceObjects.GetFoliageMetaData(type);
-        
+        int numberOfFoliage = typeOfFoliage.Count;
+
         // TODO: Optimize this by precalculating number of possible LOD in chunk
         int numberOfLODRanges = _instanceObjects.GetFoliageMetaData(firstData.Type)._lodData.Length;
         float[] lodRanges = new float[numberOfLODRanges];
-        List<FoliageData>[] lodLevels = new List<FoliageData>[numberOfLODRanges];
-        
 
         BuildLODRanges(metaData, numberOfLODRanges, ref lodRanges);
-
-        for (int i = 0; i < lodLevels.Length; i++) {
-            lodLevels[i] = new List<FoliageData>();
-        }
         
-        foreach (FoliageData data in typeOfFoliage) {
-            int lodLevel = GetLODRange(data.Position, lodRanges);
-            lodLevels[lodLevel].Add(data);
-        }
+        int lodLevel = GetLODRange(chunk.position, lodRanges);
 
-        for (int i = 0; i < lodLevels.Length - 1; i++) {
-            if (lodLevels[i].Count == 0) continue;
+        if (lodLevel == chunk.previousLODLevel) {
+            FoliageRenderingData data = chunk.renderData;
             
-            Material mat = metaData._lodData[i]._material;
-            Mesh mesh = metaData._lodData[i]._mesh;
-            
+            Graphics.RenderMeshInstanced(data.rp, data.mesh, 0, data.instData);
+
+        }
+        else {
+            chunk.previousLODLevel = lodLevel;
+            if (lodLevel == -1) return;
+
+            Material mat = metaData._lodData[lodLevel]._material;
+            Mesh mesh = metaData._lodData[lodLevel]._mesh;
+
             RenderParams rp = new RenderParams(mat);
 
-            Matrix4x4[] instData = new Matrix4x4[lodLevels[i].Count];
+            instData = new Matrix4x4[numberOfFoliage];
 
-            for (int j = 0; j < instData.Length; j++) {
-                instData[j] = Matrix4x4.Translate(lodLevels[i][j].Position);
+            for (int i = 0; i < instData.Length; i++) {
+                instData[i] = Matrix4x4.Translate(typeOfFoliage[i].Position);
             }
             
             Graphics.RenderMeshInstanced(rp, mesh, 0, instData);
-            
         }
     }
 
@@ -108,12 +110,12 @@ public class InstanceObjects : MonoBehaviour
         float distance = DistanceSquared(_playerTransform.position, pos);
         
         // Searches for LOD range, if none are found then defaults to last range.
-        for (int i = 0; i < ranges.Length - 1; i++) {
+        for (int i = 0; i < ranges.Length; i++) {
             // Debug.Log(ranges[i]);
             if (distance < ranges[i]) return i;
         }
 
-        return ranges.Length - 1;
+        return -1;
     }
 
     private float DistanceSquared(Vector3 vector1, Vector3 vector2) {

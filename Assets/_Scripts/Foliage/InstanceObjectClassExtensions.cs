@@ -4,7 +4,7 @@ using UnityEngine;
 
 /// <summary>
 /// Class used to handle all chunk fetching/settings.
-/// Contains a dictionary of all chunks, looked up by position value in worldspace.
+/// Contains a dictionary of all chunks, looked up by position value in world space.
 /// Also contains dictionary linking FoliageTypes to FoliageMetaData so FoliageMetaData doesn't need to be passed
 /// between objects.
 ///
@@ -23,7 +23,7 @@ public class InstanceObjectsHandler
     {
         var chunkPosition = GetChunkPosition(position);
         
-        ChunksDictionary.TryAdd(chunkPosition, new FoliageChunk());
+        ChunksDictionary.TryAdd(chunkPosition, new FoliageChunk(position, chunkPosition));
 
         ChunksDictionary[chunkPosition].AddObject(position, type);
     }
@@ -42,8 +42,8 @@ public class InstanceObjectsHandler
 
     private Vector2Int GetChunkPosition(Vector2 position)
     {
-        return new Vector2Int(Mathf.FloorToInt(position.x / WorldGenInfo._tileEdgeSize),
-                              Mathf.FloorToInt(position.y / WorldGenInfo._tileEdgeSize));
+        return new Vector2Int(Mathf.FloorToInt(position.x / WorldGenInfo._foliageChunkWidth),
+                              Mathf.FloorToInt(position.y / WorldGenInfo._foliageChunkWidth));
     }
 
     public void InitializeDictionary() {
@@ -74,9 +74,19 @@ public class FoliageChunk // Might at some point incorporate this with other Chu
 {
     public readonly Dictionary<FoliageType, List<FoliageData>> FoliageTypePerChunk = new Dictionary<FoliageType, List<FoliageData>>();
 
-    public int xPosition = ;
-    public int zPosition = ;
+    public Vector3 position;
+    public int previousLODLevel = -2;
 
+    public FoliageRenderingData renderData;
+    
+    public FoliageChunk(Vector2 position, Vector2Int chunkIndex) {
+        Vector2 positionXZ = position * WorldGenInfo._foliageChunkWidth + Vector2.one * (WorldGenInfo._foliageChunkWidth / 2); // Offsetting position to be center of chunk
+        float yPosition = AmalgamNoise.GetPosition(position);
+        this.position = new Vector3(positionXZ.x, yPosition, positionXZ.y);
+
+        this.renderData = new FoliageRenderingData();
+    }
+    
     public void AddObject(Vector2 position, FoliageType type)
     {
         if (!FoliageTypePerChunk.ContainsKey(type))
@@ -89,6 +99,14 @@ public class FoliageChunk // Might at some point incorporate this with other Chu
 
     private Vector3 GetWorldPosition(Vector2 position) =>
         new (position.x, AmalgamNoise.GetPosition(position), position.y);
+}
+
+public class FoliageRenderingData
+{
+    public Material mat;
+    public Mesh mesh;
+    public RenderParams rp;
+    public Matrix4x4[] instData;
 }
 
 public enum FoliageType
