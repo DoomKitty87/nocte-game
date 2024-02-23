@@ -16,7 +16,6 @@ public class PlaceStructures : MonoBehaviour
   [SerializeField] private Material _beamMaterial;
   [SerializeField] private float _groundInset;
   [SerializeField] private int _structureRenderDistance = 2500; // [World Units]
-  [SerializeField] private GameObject _roadObject;
   [SerializeField] private float _centerOffsetRadiusAmplitude;
   [SerializeField] private float _heightCutoff;
   [SerializeField] private float _roadResolution;
@@ -111,17 +110,17 @@ public class PlaceStructures : MonoBehaviour
     //   vertices.AddRange(GeneratePillar(new Vector3(mainPosition.x + bounds.x / 2, heighth - _groundInset, mainPosition.z - bounds.y / 2), new Vector3(mainPosition.x + bounds.x / 2, mainPosition.y, mainPosition.z - bounds.y / 2)));
     // }
 
-    if (vertices.Count > 0) {
-      GameObject supportBeams = new GameObject();
-      MeshRenderer mr = supportBeams.AddComponent<MeshRenderer>();
-      mr.material = _beamMaterial;
-      MeshFilter msh = supportBeams.AddComponent<MeshFilter>();
-      msh.mesh = new Mesh();
-      msh.mesh.vertices = vertices.ToArray();
-      msh.mesh.triangles = triangles.ToArray();
-      supportBeams.AddComponent<MeshCollider>();
-      supportBeams.transform.parent = go.transform;
-    }
+    // if (vertices.Count > 0) {
+    //   GameObject supportBeams = new GameObject();
+    //   MeshRenderer mr = supportBeams.AddComponent<MeshRenderer>();
+    //   mr.material = _beamMaterial;
+    //   MeshFilter msh = supportBeams.AddComponent<MeshFilter>();
+    //   msh.mesh = new Mesh();
+    //   msh.mesh.vertices = vertices.ToArray();
+    //   msh.mesh.triangles = triangles.ToArray();
+    //   supportBeams.AddComponent<MeshCollider>();
+    //   supportBeams.transform.parent = go.transform;
+    // }
 
     for (int i = 0; i < _outerStructures.Length; i++) {
       float nodeRotation = Mathf.PerlinNoise(_worldGen.Seed % (395.956f * (i + 1)), _worldGen.Seed % (928.132f * (i + 1))) * Mathf.PI * 2;
@@ -153,8 +152,9 @@ public class PlaceStructures : MonoBehaviour
       Color[] roadVertexColors = new Color[roadPlane.Length * 2];
       for (int j = 0; j < roadPlane.Length; j++) {
         roadPlane3[j] = new Vector3(roadPlane[j].x, _worldGen.GetHeightValue(roadPlane[j]), roadPlane[j].y) + Vector3.up * _roadWaterImpact * _worldGen.GetRiverValue(roadPlane[j]);
-        roadVertexColors[j] = new Color(_worldGen.GetRiverValue(roadPlane[j]), 0, 0, 0);
-        roadVertexColors[j + roadPlane.Length] = new Color(_worldGen.GetRiverValue(roadPlane[j]), 0, 0, 0);
+        if (roadPlane3[j].y < WorldGenInfo._lakePlaneHeight) roadPlane3[j].y = WorldGenInfo._lakePlaneHeight;
+        roadVertexColors[j] = new Color(roadPlane3[j].y < WorldGenInfo._lakePlaneHeight ? 1 : _worldGen.GetRiverValue(roadPlane[j]), 0, 0, 0);
+        roadVertexColors[j + roadPlane.Length] = new Color(roadPlane3[j].y < WorldGenInfo._lakePlaneHeight ? 1 : _worldGen.GetRiverValue(roadPlane[j]), 0, 0, 0);
       }
 
       Mesh road = RoadGenerator.MeshFromPlane(roadPlane3, _roadDepth, _roadInset, _roadBevel);
@@ -220,17 +220,17 @@ public class PlaceStructures : MonoBehaviour
       //   vertices.AddRange(GeneratePillar(new Vector3(outPosition.x + bounds.x / 2, heighth - _groundInset, outPosition.z - bounds.y / 2), new Vector3(outPosition.x + bounds.x / 2, outPosition.y, outPosition.z - bounds.y / 2)));
       // }
 
-      if (vertices.Count > 0) {
-        GameObject supportBeams = new GameObject();
-        MeshRenderer mr = supportBeams.AddComponent<MeshRenderer>();
-        mr.material = _beamMaterial;
-        MeshFilter msh = supportBeams.AddComponent<MeshFilter>();
-        msh.mesh = new Mesh();
-        msh.mesh.vertices = vertices.ToArray();
-        msh.mesh.triangles = triangles.ToArray();
-        supportBeams.AddComponent<MeshCollider>();
-        supportBeams.transform.parent = go.transform;
-      }
+      // if (vertices.Count > 0) {
+      //   GameObject supportBeams = new GameObject();
+      //   MeshRenderer mr = supportBeams.AddComponent<MeshRenderer>();
+      //   mr.material = _beamMaterial;
+      //   MeshFilter msh = supportBeams.AddComponent<MeshFilter>();
+      //   msh.mesh = new Mesh();
+      //   msh.mesh.vertices = vertices.ToArray();
+      //   msh.mesh.triangles = triangles.ToArray();
+      //   supportBeams.AddComponent<MeshCollider>();
+      //   supportBeams.transform.parent = go.transform;
+      // }
 
       go.transform.parent = transform;
       _structures.Add(go.transform);

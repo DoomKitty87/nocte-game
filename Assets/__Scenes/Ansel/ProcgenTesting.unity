@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 188.89229, g: 71.33137, b: 35.70003, a: 1}
+  m_IndirectSpecularColor: {r: 196.84879, g: 73.030464, b: 35.746555, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -5521,7 +5521,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &1849557961
 Transform:
   m_ObjectHideFlags: 0
@@ -5560,10 +5560,8 @@ MonoBehaviour:
     type: 3}
   _groundInset: 5
   _structureRenderDistance: 2500
-  _roadObject: {fileID: 4150674377287508502, guid: 730c5440c1dd74f64a1065e15b475275,
-    type: 3}
   _centerOffsetRadiusAmplitude: 5000
-  _heightCutoff: 500
+  _heightCutoff: 2000
   _roadResolution: 2
   _roadWidth: 25
   _roadDepth: 5
@@ -8583,7 +8581,7 @@ PrefabInstance:
     - target: {fileID: 8819276947174590073, guid: 862d92a67177d4c7b84ab88d6b6e0257,
         type: 3}
       propertyPath: _lakePlaneHeight
-      value: 450
+      value: 425
       objectReference: {fileID: 0}
     - target: {fileID: 8819276947174590073, guid: 862d92a67177d4c7b84ab88d6b6e0257,
         type: 3}
