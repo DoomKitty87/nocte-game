@@ -78,7 +78,7 @@ public class FoliageChunk // Might at some point incorporate this with other Chu
     public int previousLODLevel = -2;
     
     public FoliageChunk(Vector2 position) {
-        Vector2 positionXZ = position; // + Vector2.one * (WorldGenInfo._foliageChunkWidth / 2); // Offsetting position to be center of chunk
+        Vector2 positionXZ = position + Vector2.one * (WorldGenInfo._foliageChunkWidth / 2); // Offsetting position to be center of chunk
         float yPosition = AmalgamNoise.GetPosition(position);
         this.position = new Vector3(positionXZ.x, yPosition, positionXZ.y);
     }
@@ -99,24 +99,52 @@ public class FoliageChunk // Might at some point incorporate this with other Chu
 
 public class FoliageRenderingData
 {
-    public Material mat = null;
-    public Mesh mesh = new Mesh();
+    public Mesh stashedMesh;
+    
     public RenderParams rp = new RenderParams();
-    public Matrix4x4[] instData = Array.Empty<Matrix4x4>();
+    public Vector4[] positions = Array.Empty<Vector4>(); // Must be assigned due to Length check
 
-    // Should be called when more foliage is added to a chunk, only on render
-    public void FillInstanceData(Vector3[] positions) {
-        instData = new Matrix4x4[positions.Length];
-        for (int i = 0; i < positions.Length; i++) {
-            instData[i] = Matrix4x4.Translate(positions[i]);
+    public GraphicsBuffer commandBuf;
+    private GraphicsBuffer.IndirectDrawIndexedArgs[] commandData;
+
+    public int commandCount = 0;
+    
+    private static readonly int ObjectToWorld = Shader.PropertyToID("_ObjectToWorld");
+    private static readonly int Positions = Shader.PropertyToID("_Positions");
+
+    // Should be called when more foliage is added to a chunk, also only on render
+    public void FillInstanceData(List<FoliageData> data) {
+        commandCount = data.Count;
+
+        DestroySelf();
+        
+        commandBuf = new GraphicsBuffer(GraphicsBuffer.Target.IndirectArguments, commandCount, GraphicsBuffer.IndirectDrawIndexedArgs.size);
+        commandData = new GraphicsBuffer.IndirectDrawIndexedArgs[commandCount];
+
+        positions = new Vector4[commandCount];
+        for (int i = 0; i < data.Count; i++) {
+            positions[i] = (Vector4)(data[i].Position);
         }
     }
 
-    public void FillInstanceData(List<FoliageData> data) {
-        instData = new Matrix4x4[data.Count];
-        for (int i = 0; i < data.Count; i++) {
-            instData[i] = Matrix4x4.Translate(data[i].Position);
-        }
+    public void UpdateLOD((Mesh, Material) tuple, Vector3 chunkPosition) {
+        Mesh mesh = tuple.Item1;
+        Material mat = tuple.Item2;
+        rp = new RenderParams(mat);
+        rp.worldBounds = new Bounds(chunkPosition, Vector3.one * 1000);
+        rp.matProps = new MaterialPropertyBlock();
+        rp.matProps.SetMatrix(ObjectToWorld, Matrix4x4.Translate(Vector3.zero));
+        rp.matProps.SetVectorArray(Positions, positions);
+        commandData[0].indexCountPerInstance = mesh.GetIndexCount(0);
+        commandData[0].instanceCount = (uint)commandCount;
+        commandBuf.SetData(commandData);
+
+        stashedMesh = mesh;
+    }
+
+    public void DestroySelf() {
+        commandBuf?.Release();
+        commandBuf = null;
     }
 }
 
