@@ -47,7 +47,7 @@ public class SecondaryStructures : MonoBehaviour
   }
 
   private float PSRHash(Vector2 position) {
-    return Mathf.Clamp(Mathf.PerlinNoise(position.x * 52.341f + _worldGen._seed % 1000, position.y * 26.758f + _worldGen._seed % 1000), 0.0001f, 1);
+    return Mathf.Clamp(Mathf.PerlinNoise(position.x * 52.341f + _worldGen.Seed % 1000, position.y * 26.758f + _worldGen.Seed % 1000), 0.0001f, 1);
   }
 
 }

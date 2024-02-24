@@ -3,6 +3,8 @@
 StructuredBuffer<int> _TerrainTriangles;
 StructuredBuffer<float3> _TerrainPositions;
 
+uniform float4x4 _ChunkPosition;
+
 RWStructuredBuffer<float4x4> _TransformMatrices;
 uniform int _TerrainTriangleCount;
 uniform float _Scale;
@@ -16,7 +18,7 @@ uniform float _NumberOfBladesPerTri;
 // Pseudo-random number between min and max
 float randomRange(float2 seed, float min, float max)
 {
-	float randNum = frac(sin(dot(seed, float2(12.9898, 78.233)))*43758.5453);
+	const float randNum = frac(sin(dot(seed, float2(12.9898, 78.233)))*143758.5453);
     return lerp(min, max, randNum);
 }
 
@@ -73,5 +75,5 @@ void CalculateBladePositions (uint3 id : SV_DispatchThreadID)
 
     const float4x4 randomRotationMatrix = rotateY(randomRange(seed1, 0.0f, TWO_PI));
 
-    _TransformMatrices[id.x] = mul(_TerrainObjectToWorld, mul(grassTransformMatrix, randomRotationMatrix));
+    _TransformMatrices[id.x] = mul(_ChunkPosition, mul(_TerrainObjectToWorld, mul(grassTransformMatrix, randomRotationMatrix)));
 }

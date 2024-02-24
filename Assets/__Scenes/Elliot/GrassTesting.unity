@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 262.30203, g: 324.99054, b: 430.14313, a: 1}
+  m_IndirectSpecularColor: {r: 261.80057, g: 324.3278, b: 429.24698, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -1087,7 +1087,7 @@ GameObject:
   - component: {fileID: 1424418025}
   - component: {fileID: 1424418024}
   - component: {fileID: 1424418023}
-  - component: {fileID: 1424418021}
+  - component: {fileID: 1424418026}
   m_Layer: 0
   m_Name: Grass
   m_TagString: Untagged
@@ -1095,28 +1095,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1424418021
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1424418020}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5da125e02a8f58f48b9988e50588d441, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _enableGrass: 1
-  _regenerateGrass: 1
-  _minBladeHeight: 0.5
-  _maxBladeHeight: 0.75
-  _scale: 0.225
-  _numberOfBladesPerTri: 1
-  _computeShader: {fileID: 0}
-  _terrainMesh: {fileID: 0}
-  _grassMesh: {fileID: 0}
-  _material: {fileID: 0}
 --- !u!23 &1424418023
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -1184,6 +1162,28 @@ Transform:
   m_Children: []
   m_Father: {fileID: 673101082}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1424418026
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1424418020}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ba3ce9bc2a8946549bbc1e0c83698b68, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _meshRenderer: {fileID: 1424418023}
+  _terrainTileMesh: {fileID: -2441658414131813105, guid: f96b7895831c6a644aacbd0129650a44,
+    type: 3}
+  _grassMesh: {fileID: -462981019419857548, guid: e9edbbe92ffc1e04a94817a23bc92820,
+    type: 3}
+  _renderingMaterial: {fileID: 2100000, guid: c4d98046d6a10394c8c7df596a52754e, type: 2}
+  _samplesX: 6
+  _samplesY: 6
+  _tileSplitFactor: 0
+  _meshBoundsPadding: 0
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

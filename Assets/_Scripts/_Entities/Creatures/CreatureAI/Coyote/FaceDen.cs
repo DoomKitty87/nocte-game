@@ -23,8 +23,8 @@ namespace _Scripts._Entities.Creatures.CreatureAI
     public override TreeNodeState Evaluate() {
       Quaternion originalRot = _transform.rotation;
       Vector3 originalRotEuler = originalRot.eulerAngles;
-      Vector2 goalPosition = _controller.GetDenPos();
-      Vector3 directionToTarget = new Vector3(goalPosition.x, 0, goalPosition.y)  - _transform.position;
+      Vector3 denPosition = _controller.GetDenPos();
+      Vector3 directionToTarget = new Vector3(denPosition.x, denPosition.y, denPosition.z)  - _transform.position;
       Quaternion targetRot = Quaternion.LookRotation(directionToTarget, Vector3.up);
       Vector3 targetRotEuler = targetRot.eulerAngles;
 

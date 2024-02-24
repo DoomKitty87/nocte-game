@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 176.79085, g: 68.360054, b: 34.13294, a: 1}
+  m_IndirectSpecularColor: {r: 183.69783, g: 70.273125, b: 35.22922, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -4102,6 +4102,7 @@ MonoBehaviour:
   _distanceAttack: 3
   _distanceChase: 75
   _distanceGoal: 2
+  _distanceHeal: 0
   _range: 100
   _staminaLimit: 1
   _attacks:
@@ -5459,7 +5460,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _mainCamera: {fileID: 492074379}
   _weaponContainer: {fileID: 867096628}
-  _currentWeaponItem: {fileID: 11400000, guid: f934c09f3e6a39d47bc7178b71e69bdd, type: 2}
+  _currentWeaponItem: {fileID: 11400000, guid: dc95d4731caee0d47921b965cee96a44, type: 2}
   _weaponInstance: {fileID: 0}
   _instanceScript: {fileID: 0}
   _weaponUI: {fileID: 1829040298}
@@ -5552,23 +5553,21 @@ MonoBehaviour:
   _centralStructure: {fileID: 919132149155446097, guid: e30265bac54dc452faabf2f5ef0e78bd,
     type: 3}
   _outerStructures:
-  - {fileID: 919132149155446097, guid: e30265bac54dc452faabf2f5ef0e78bd, type: 3}
+  - {fileID: 2579545386004284078, guid: 598ee2d86be1f4a708d9ea9d7a10b55c, type: 3}
   _nodeDistance: 8000
   _beamWidth: 5
   _beamMaterial: {fileID: -6478536213147159724, guid: e30265bac54dc452faabf2f5ef0e78bd,
     type: 3}
   _groundInset: 5
   _structureRenderDistance: 2500
-  _roadObject: {fileID: 4150674377287508502, guid: 730c5440c1dd74f64a1065e15b475275,
-    type: 3}
   _centerOffsetRadiusAmplitude: 5000
-  _heightCutoff: 500
+  _heightCutoff: 2000
   _roadResolution: 2
   _roadWidth: 25
   _roadDepth: 5
   _roadInset: 9
   _roadBevel: 0.5
-  _roadWaterImpact: 25
+  _roadWaterImpact: 100
   _roadNoiseAmplitude: 50
   _roadMaterial: {fileID: 2100000, guid: 0b575891d2861ca4f964e919cca70067, type: 2}
 --- !u!114 &1849557963
@@ -8158,6 +8157,11 @@ PrefabInstance:
       propertyPath: _biomes.Array.data[2].noiseLayers.Array.data[0].primaryEase.m_Curve.Array.data[1].tangentMode
       value: 34
       objectReference: {fileID: 0}
+    - target: {fileID: 3041882864952171724, guid: 862d92a67177d4c7b84ab88d6b6e0257,
+        type: 3}
+      propertyPath: _numberOfBladesPerTri
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 7336471431426695701, guid: 862d92a67177d4c7b84ab88d6b6e0257,
         type: 3}
       propertyPath: m_Enabled
@@ -8519,10 +8523,15 @@ PrefabInstance:
       propertyPath: m_Name
       value: Holder
       objectReference: {fileID: 0}
+    - target: {fileID: 8505195279874202923, guid: 862d92a67177d4c7b84ab88d6b6e0257,
+        type: 3}
+      propertyPath: _distance
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 8819276947174590073, guid: 862d92a67177d4c7b84ab88d6b6e0257,
         type: 3}
       propertyPath: _seed
-      value: 2
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 8819276947174590073, guid: 862d92a67177d4c7b84ab88d6b6e0257,
         type: 3}
@@ -8561,13 +8570,18 @@ PrefabInstance:
       objectReference: {fileID: 1849557963}
     - target: {fileID: 8819276947174590073, guid: 862d92a67177d4c7b84ab88d6b6e0257,
         type: 3}
+      propertyPath: _grassManager
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 8819276947174590073, guid: 862d92a67177d4c7b84ab88d6b6e0257,
+        type: 3}
       propertyPath: _refreshButton
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8819276947174590073, guid: 862d92a67177d4c7b84ab88d6b6e0257,
         type: 3}
       propertyPath: _lakePlaneHeight
-      value: 450
+      value: 425
       objectReference: {fileID: 0}
     - target: {fileID: 8819276947174590073, guid: 862d92a67177d4c7b84ab88d6b6e0257,
         type: 3}

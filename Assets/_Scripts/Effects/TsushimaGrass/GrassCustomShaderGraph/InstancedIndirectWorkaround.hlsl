@@ -1,0 +1,3 @@
+void vertInstancingSetup() {
+    return;
+}
