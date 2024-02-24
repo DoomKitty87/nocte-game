@@ -659,8 +659,8 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
+  m_LocalScale: {x: 100, y: 100, z: 100}
+  m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 673101082}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -1140,10 +1140,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 94ee4247fa3f47f4b8046695a0aa7a5a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _samplesX: 100
-  _samplesY: 100
-  _fallbackTileSizeX: 10
-  _fallbackTileSizeZ: 10
+  _samplesX: 5000
+  _samplesY: 500
+  _fallbackTileSizeX: 1000
+  _fallbackTileSizeZ: 1000
   _tileBoundsPadding: 0
   _distToPlayerCutoff: 1000
   _castShadowsOn: 0

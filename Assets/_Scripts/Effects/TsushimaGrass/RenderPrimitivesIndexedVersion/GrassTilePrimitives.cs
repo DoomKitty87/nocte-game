@@ -137,6 +137,7 @@ namespace Effects.TsushimaGrass
 		}
 
 		private void Update() {
+			if (Vector3.Distance(Camera.main.transform.position, transform.position) > distToPlayerCutoff) return;
 			Graphics.RenderPrimitivesIndexed(_renderParams, MeshTopology.Triangles, _meshTrisBuffer, _meshTrisBuffer.count, instanceCount: _samplesX * _samplesZ);
 		}
 

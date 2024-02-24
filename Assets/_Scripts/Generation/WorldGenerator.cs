@@ -537,6 +537,7 @@ public class WorldGenerator : MonoBehaviour
     go.layer = 6;
     GrassTilePrimitives grass = go.AddComponent<GrassTilePrimitives>();
     grass._worldGenerator = this;
+    grass._useGlobalConfig = true;
     _structures.GenerateChunkStructures(new Vector2(x * _size * _resolution, z * _size * _resolution), new Vector2((x + 1) * _size * _resolution, (z + 1) * _size * _resolution));
     _generatedStructureTiles.Add(new Vector2(x, z));
     tile.mesh = msh;
