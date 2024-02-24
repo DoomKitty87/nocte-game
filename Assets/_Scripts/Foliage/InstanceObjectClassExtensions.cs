@@ -23,7 +23,7 @@ public class InstanceObjectsHandler
     {
         var chunkPosition = GetChunkPosition(position);
         
-        ChunksDictionary.TryAdd(chunkPosition, new FoliageChunk(position, chunkPosition));
+        ChunksDictionary.TryAdd(chunkPosition, new FoliageChunk(position));
 
         ChunksDictionary[chunkPosition].AddObject(position, type);
     }
@@ -72,29 +72,25 @@ public class InstanceObjectsHandler
 /// </summary>
 public class FoliageChunk // Might at some point incorporate this with other Chunk class?
 {
-    public readonly Dictionary<FoliageType, List<FoliageData>> FoliageTypePerChunk = new Dictionary<FoliageType, List<FoliageData>>();
+    public readonly Dictionary<FoliageType, (List<FoliageData>, FoliageRenderingData)> FoliageTypePerChunk = new Dictionary<FoliageType, (List<FoliageData>, FoliageRenderingData)>();
 
     public Vector3 position;
     public int previousLODLevel = -2;
-
-    public FoliageRenderingData renderData;
     
-    public FoliageChunk(Vector2 position, Vector2Int chunkIndex) {
-        Vector2 positionXZ = position * WorldGenInfo._foliageChunkWidth + Vector2.one * (WorldGenInfo._foliageChunkWidth / 2); // Offsetting position to be center of chunk
+    public FoliageChunk(Vector2 position) {
+        Vector2 positionXZ = position; // + Vector2.one * (WorldGenInfo._foliageChunkWidth / 2); // Offsetting position to be center of chunk
         float yPosition = AmalgamNoise.GetPosition(position);
         this.position = new Vector3(positionXZ.x, yPosition, positionXZ.y);
-
-        this.renderData = new FoliageRenderingData();
     }
     
     public void AddObject(Vector2 position, FoliageType type)
     {
         if (!FoliageTypePerChunk.ContainsKey(type))
         {
-            FoliageTypePerChunk[type] = new List<FoliageData>();
+            FoliageTypePerChunk[type] = (new List<FoliageData>(), new FoliageRenderingData());
         }
 
-        FoliageTypePerChunk[type].Add(new FoliageData(GetWorldPosition(position), type));
+        FoliageTypePerChunk[type].Item1.Add(new FoliageData(GetWorldPosition(position), type));
     }
 
     private Vector3 GetWorldPosition(Vector2 position) =>
@@ -103,10 +99,25 @@ public class FoliageChunk // Might at some point incorporate this with other Chu
 
 public class FoliageRenderingData
 {
-    public Material mat;
-    public Mesh mesh;
-    public RenderParams rp;
-    public Matrix4x4[] instData;
+    public Material mat = null;
+    public Mesh mesh = new Mesh();
+    public RenderParams rp = new RenderParams();
+    public Matrix4x4[] instData = Array.Empty<Matrix4x4>();
+
+    // Should be called when more foliage is added to a chunk, only on render
+    public void FillInstanceData(Vector3[] positions) {
+        instData = new Matrix4x4[positions.Length];
+        for (int i = 0; i < positions.Length; i++) {
+            instData[i] = Matrix4x4.Translate(positions[i]);
+        }
+    }
+
+    public void FillInstanceData(List<FoliageData> data) {
+        instData = new Matrix4x4[data.Count];
+        for (int i = 0; i < data.Count; i++) {
+            instData[i] = Matrix4x4.Translate(data[i].Position);
+        }
+    }
 }
 
 public enum FoliageType
