@@ -26,14 +26,14 @@ Shader "ExampleShader"
 
             uniform float4x4 _ObjectToWorld;
 
-            float3 _Positions[1000];
+            float3 _Positions[4088];
 
             v2f vert(appdata_base v, uint svInstanceID : SV_InstanceID)
             {
                 InitIndirectDrawArgs(0);
                 v2f o;
                 uint instanceID = GetIndirectInstanceID(svInstanceID);
-                const float4 wpos = mul(_ObjectToWorld, v.vertex + float4(float3(_Positions[instanceID]), 0));
+                float4 wpos = mul(_ObjectToWorld, v.vertex + float4(float3(_Positions[instanceID]), 0));
                 o.pos = mul(UNITY_MATRIX_VP, wpos);
                 o.color = _Color;
                 return o;

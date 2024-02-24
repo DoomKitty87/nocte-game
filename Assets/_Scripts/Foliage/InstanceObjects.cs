@@ -15,9 +15,14 @@ public class InstanceObjects : MonoBehaviour
     
     public float chunkWidth;
 
+    public int framesPerChunkUpdate = 5;
+    private int currentFrame = 0;
+    
     public bool render = true;
     
     private void Awake() {
+        currentFrame = framesPerChunkUpdate;
+        
         _instanceObjects = new InstanceObjectsHandler();
         _instanceObjects.InitializeDictionary();
 
@@ -31,20 +36,31 @@ public class InstanceObjects : MonoBehaviour
                 _instanceObjects.AddObject(new Vector2(
                     i * instanceDensity - (numberOfInstancesSquared / 2 * instanceDensity), 
                     j * instanceDensity - (numberOfInstancesSquared / 2 * instanceDensity)
-                    ), FoliageType.TestObject);
+                    ), FoliageType.Tree);
             }
         }
     }
 
     private void Update() {
+        currentFrame++;
+        
         foreach (FoliageChunk chunk in _instanceObjects.ChunksDictionary.Values) {
             foreach (var type in chunk.FoliageTypePerChunk.Values) {
                 RenderObject(type.Item1, type.Item2, chunk);
             }
         }
+
+        if (currentFrame >= framesPerChunkUpdate) currentFrame = 0;
     }
     
     private void RenderObject(List<FoliageData> typeOfFoliage, FoliageRenderingData data, FoliageChunk chunk) {
+        if (currentFrame != framesPerChunkUpdate) { 
+            if (!data.hasInitialized) return;
+            
+            if (render) Graphics.RenderMeshIndirect(data.rp, data.stashedMesh, data.commandBuf, data.commandCount);
+            return;
+        }
+        
         FoliageData firstData = typeOfFoliage[0];
         FoliageType type = firstData.Type;
         FoliageMetaData metaData = _instanceObjects.GetFoliageMetaData(type);

@@ -99,6 +99,8 @@ public class FoliageChunk // Might at some point incorporate this with other Chu
 
 public class FoliageRenderingData
 {
+    public bool hasInitialized = false;
+    
     public Mesh stashedMesh;
     
     public RenderParams rp = new RenderParams();
@@ -114,6 +116,8 @@ public class FoliageRenderingData
 
     // Should be called when more foliage is added to a chunk, also only on render
     public void FillInstanceData(List<FoliageData> data) {
+        hasInitialized = true;
+        
         commandCount = data.Count;
 
         DestroySelf();
