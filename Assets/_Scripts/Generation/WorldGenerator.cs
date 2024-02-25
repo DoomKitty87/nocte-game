@@ -182,7 +182,7 @@ public class WorldGenerator : MonoBehaviour
   [SerializeField] private SecondaryStructures _structures;
   [SerializeField] private PlaceStructures _storyStructures;
 
-  public int Seed { get; }
+  public int Seed { get { return _seed; } }
   public int Size { get; }
   public float Resolution { get; }
   

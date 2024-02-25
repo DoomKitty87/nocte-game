@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 183.31467, g: 70.53332, b: 35.1469, a: 1}
+  m_IndirectSpecularColor: {r: 175.83678, g: 68.415855, b: 33.934063, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -6048,6 +6048,11 @@ PrefabInstance:
       propertyPath: _enableCheats
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 1286559563203328310, guid: 807785f75a4cabf4883bf2cc8fe88221,
+        type: 3}
+      propertyPath: _grapplable.m_Bits
+      value: 65
+      objectReference: {fileID: 0}
     - target: {fileID: 1333633713862141535, guid: 807785f75a4cabf4883bf2cc8fe88221,
         type: 3}
       propertyPath: m_Enabled
@@ -6067,6 +6072,11 @@ PrefabInstance:
         type: 3}
       propertyPath: _swimmingSpeed
       value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 1652764659241275410, guid: 807785f75a4cabf4883bf2cc8fe88221,
+        type: 3}
+      propertyPath: _groundMask.m_Bits
+      value: 65
       objectReference: {fileID: 0}
     - target: {fileID: 1652764659241275410, guid: 807785f75a4cabf4883bf2cc8fe88221,
         type: 3}
@@ -6495,6 +6505,7 @@ MonoBehaviour:
     type: 3}
   _outerStructures:
   - {fileID: 2579545386004284078, guid: 598ee2d86be1f4a708d9ea9d7a10b55c, type: 3}
+  - {fileID: 8610528419109309939, guid: c2f5aad09bc80ec49a60347b2622961f, type: 3}
   _nodeDistance: 8000
   _beamWidth: 5
   _beamMaterial: {fileID: -6478536213147159724, guid: e30265bac54dc452faabf2f5ef0e78bd,
