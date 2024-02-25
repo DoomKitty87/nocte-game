@@ -31,6 +31,7 @@ namespace Effects.TsushimaGrass
 		[SerializeField] [Range(0, 100)]private int _samplesX, _samplesZ;
 		[SerializeField] private float _fallbackTileSizeX, _fallbackTileSizeZ;
 		[SerializeField] private float _meshBoundsPadding;
+		[SerializeField][Range(0, 5)] private int _chunkSplitFactor = 1;
 		
 		private float _tileSizeX, _tileSizeZ;
 		private RenderParams _renderParams;
@@ -54,22 +55,45 @@ namespace Effects.TsushimaGrass
 			trisIndexBuffer.SetData(mesh.triangles);
 		}
 
-		private void GPUComputePositionsTo(out GraphicsBuffer outputBuffer, int samplesX, int samplesZ, float tileSizeX, float tileSizeZ, float padding) {
+		private void GPUComputePositionsTo(out GraphicsBuffer outputBuffer, Vector3 center, int samplesX, int samplesZ, float tileSizeX, float tileSizeZ, float padding) {
 			int kernelIndex = _positionCompute.FindKernel("ComputePosition");
 			// make the ids static later
 			_positionCompute.SetFloat(Shader.PropertyToID("_samplesX"), samplesX);
 			_positionCompute.SetFloat(Shader.PropertyToID("_samplesZ"), samplesZ);
-			_positionCompute.SetFloat(Shader.PropertyToID("_sizeX"), _fallbackTileSizeX);
-			_positionCompute.SetFloat(Shader.PropertyToID("_sizeZ"), _fallbackTileSizeZ);
+			_positionCompute.SetFloat(Shader.PropertyToID("_sizeX"), tileSizeX);
+			_positionCompute.SetFloat(Shader.PropertyToID("_sizeZ"), tileSizeZ);
 			_positionCompute.SetFloat(Shader.PropertyToID("_padding"), padding);
-			_positionCompute.SetFloat(Shader.PropertyToID("_worldX"), transform.position.x);
-			_positionCompute.SetFloat(Shader.PropertyToID("_worldY"), transform.position.y);
-			_positionCompute.SetFloat(Shader.PropertyToID("_worldZ"), transform.position.z);
+			_positionCompute.SetFloat(Shader.PropertyToID("_worldX"), center.x);
+			_positionCompute.SetFloat(Shader.PropertyToID("_worldY"), center.y);
+			_positionCompute.SetFloat(Shader.PropertyToID("_worldZ"), center.z);
 			int grassCount = samplesX * samplesZ;
 			outputBuffer = new GraphicsBuffer(GraphicsBuffer.Target.Structured, grassCount, sizeof(float) * 16);
 			_positionCompute.SetBuffer(kernelIndex, Shader.PropertyToID("_positionOutputBuffer"), outputBuffer);
 			_positionCompute.GetKernelThreadGroupSizes(kernelIndex, out uint threadX, out _, out _);
 			_positionCompute.Dispatch(kernelIndex, Mathf.CeilToInt(grassCount/(float)threadX), 1, 1);
+		}
+
+		private void SendChunksToComputeShader(int chunkSplitFactor, out GraphicsBuffer outputBuffer, int samplesX, int samplesZ, float tileSizeX, float tileSizeZ, float padding) {
+			if (chunkSplitFactor == 0) {
+				GPUComputePositionsTo(out outputBuffer, transform.position, samplesX, samplesZ, tileSizeX, tileSizeZ, padding);
+				return;
+			}
+			// TODO: padding
+			int splitFactor = chunkSplitFactor * 2;
+			for (int z = 0; z < splitFactor; z++) {
+				for (int x = 0; x < splitFactor; x++) {
+					int chunkSamplesX = samplesX / splitFactor;
+					int chunkSamplesZ = samplesZ / splitFactor;
+					Vector3 center = new Vector3(
+						(tileSizeX / splitFactor) * x,
+						0,
+						(tileSizeZ / splitFactor) * z
+					);
+					float chunkTileSizeX = tileSizeX / splitFactor;
+					float chunkTileSizeZ = tileSizeZ / splitFactor;
+					// GPUComputePositionsTo();
+				}
+			}
 		}
 
 		private void DebugFloatBuffer(GraphicsBuffer matrixBuffer, int limit = 10) {
@@ -90,15 +114,6 @@ namespace Effects.TsushimaGrass
 
 		private void Start() {
 			#region Script Dep Null Checks 
-			if (_worldGenerator == null) {
-				Debug.LogWarning("GrassTile: No WorldGenerator found. Height sampling will return zero. Using fallback tile size values.");
-				_tileSizeX = _fallbackTileSizeX;
-				_tileSizeZ = _fallbackTileSizeZ;
-			}
-			else {
-				_tileSizeX = _worldGenerator._size * _worldGenerator._resolution;
-				_tileSizeZ = _tileSizeX;
-			}
 			if (_globalConfig == null) {
 				GameObject gameObj = GameObject.FindWithTag("GlobalObject");
 				if (gameObj != null) {
@@ -113,7 +128,6 @@ namespace Effects.TsushimaGrass
 					_useGlobalConfig = false;
 				}
 			}
-			#endregion
 			#region Globalconfig Assignment
 			if (_useGlobalConfig) {
 				_samplesX = _globalConfig._samplesX;
@@ -127,7 +141,19 @@ namespace Effects.TsushimaGrass
 				_positionCompute = _globalConfig._positionCompute;
 			}
 			#endregion
-			GPUComputePositionsTo(out _grassPositionsBuffer, _samplesX, _samplesZ, _tileSizeX, _tileSizeZ, _meshBoundsPadding);
+			if (_worldGenerator == null) {
+				Debug.LogWarning("GrassTile: No WorldGenerator found. Height sampling will return zero. Using fallback tile size values.");
+				_tileSizeX = _fallbackTileSizeX;
+				_tileSizeZ = _fallbackTileSizeZ;
+			}
+			else {
+				_tileSizeX = _worldGenerator._size * _worldGenerator._resolution;
+				_tileSizeZ = _tileSizeX;
+			}
+			
+			#endregion
+			
+			// SendChunksToComputeShader(_chunkSplitFactor, out _grassPositionsBuffer, _samplesX, _samplesZ, _tileSizeX, _tileSizeZ, _meshBoundsPadding);
 			MeshDataToBuffers(_grassMesh, out _meshVertsBuffer, out _meshTrisBuffer);
 			_renderParams = new RenderParams(_renderingShaderMat);
 			_renderParams.matProps = new MaterialPropertyBlock();
