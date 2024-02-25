@@ -10,6 +10,8 @@ public class OnHealthInitializeEvent : UnityEvent<float> {}
 public class OnHealthChangedEvent : UnityEvent<float, float, float> {}
 [Serializable]
 public class OnDamageEvent : UnityEvent<Vector3> {}
+[Serializable]
+public class OnHealEvent : UnityEvent {}
 public class HealthInterface : MonoBehaviour
 {
 
@@ -29,6 +31,7 @@ public class HealthInterface : MonoBehaviour
   [Tooltip("OnHealthZero()")] public UnityEvent _onHealthZero;
   [Tooltip("OnHealthChanged(healthBeforeDamage, _currentHealth, _maxHealth) Doesn't fire when health changes to a value below zero.")] public OnHealthChangedEvent _onHealthChanged;
   [Tooltip("OnDamage(hitPosition)")] public OnDamageEvent _onDamage;
+  [Tooltip("OnHeal()")] public OnHealEvent _onHeal;
 
   private void OnValidate() {
     _currentHealth = _maxHealth;
@@ -40,6 +43,7 @@ public class HealthInterface : MonoBehaviour
   }
 
   public void Heal(float healPoints) {
+    _onHeal?.Invoke();
     float initialHealth = _currentHealth;
     if (_currentHealth + healPoints >= _maxHealth) _currentHealth = _maxHealth;
     else _currentHealth += healPoints;

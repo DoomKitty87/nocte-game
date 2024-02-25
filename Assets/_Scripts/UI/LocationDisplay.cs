@@ -4,8 +4,7 @@ using TMPro;
 public class LocationDisplay : MonoBehaviour
 {
 
-  [SerializeField] private TextMeshProUGUI _latitude;
-  [SerializeField] private TextMeshProUGUI _longitude;
+  [SerializeField] private TextMeshProUGUI _location;
   [SerializeField] private TextMeshProUGUI _elevation;
 
   [SerializeField] private Transform _player;
@@ -26,8 +25,9 @@ public class LocationDisplay : MonoBehaviour
     Vector2 position = new Vector2(_player.position.x / _gpsScale + _positionOffset.x, _player.position.z / _gpsScale + _positionOffset.y);
     position.x = position.x % 360 - 180;
     position.y = position.y % 360 - 180;
-    _latitude.text = "N" + (position.x).ToString("F4") + "°";
-    _longitude.text = "E" + (position.y).ToString("F4") + "°";
-    _elevation.text = "Altitude - " + (_player.position.y + _altitudeOffset).ToString("F2") + "M ASL";
+    string lattext = "N" + (position.x).ToString("F4") + "°";
+    string longtext = "E" + (position.y).ToString("F4") + "°";
+    _location.text = "LOCATION - " + lattext + " " + longtext;
+    _elevation.text = "ALTITUDE - " + (_player.position.y + _altitudeOffset).ToString("F2") + "M ASL";
   }
 } 
