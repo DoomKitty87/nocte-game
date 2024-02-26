@@ -324,12 +324,82 @@ public static class AmalgamNoise
       }
 
       value /= normalization;
+      value = (value + 1) / 2;
       if (value >= threshold) output[index] = true;
       else output[index] = false;
     }
   }
 
-  public static Vector2[] GenerateFoliage(Vector2 corner1, Vector2 corner2, int samples, int octaves, float scale, float persistence, float lacunarity, float warpStrength, float warpScale, float threshold) {
+  [BurstCompile]
+  private struct FoliageJitter : IJobParallelFor
+  {
+
+    [ReadOnly] public float resolution;
+    [ReadOnly] public float xOffset;
+    [ReadOnly] public float zOffset;
+    [ReadOnly] public int size;
+
+    [WriteOnly] public NativeArray<float> output1;
+    [WriteOnly] public NativeArray<float> output2;
+
+    public void Execute(int index) {
+      float x = (index % size) * resolution + xOffset;
+      float z = (index / size) * resolution + zOffset;
+      output1[index] = snoise(new float2(x, z));
+      output2[index] = snoise(new float2(x + 5183, z + 8124));
+    }
+  }
+
+  public static Vector2[] GenerateFoliage(Vector2 corner1, Vector2 corner2, int samples, int octaves, float scale, float persistence, float lacunarity, float warpStrength, float warpScale, float threshold, float jitter) {
+    float resolution = Math.Abs(corner2.x - corner1.x) / samples;
+    NativeArray<bool> output = new NativeArray<bool>(samples * samples, Allocator.TempJob);
+    FoliageNoise job = new FoliageNoise {
+      size = samples,
+      xOffset = corner1.x,
+      zOffset = corner1.y,
+      resolution = resolution,
+      octaves = octaves,
+      lacunarity = lacunarity,
+      persistence = persistence,
+      scale = 1f / scale,
+      warpStrength = warpStrength,
+      warpScale = 1f / warpScale,
+      threshold = threshold,
+      output = output
+    };
+    JobHandle handle = job.Schedule(output.Length, samples);
+    handle.Complete();
+    NativeArray<float> output1 = new NativeArray<float>(samples * samples, Allocator.TempJob);
+    NativeArray<float> output2 = new NativeArray<float>(samples * samples, Allocator.TempJob);
+    FoliageJitter job2 = new FoliageJitter {
+      size = samples,
+      xOffset = corner1.x,
+      zOffset = corner1.y,
+      resolution = resolution,
+      output1 = output1,
+      output2 = output2
+    };
+    handle = job2.Schedule(output1.Length, samples);
+    handle.Complete();
+    int positions = 0;
+    for (int i = 0; i < output.Length; i++) if (output[i]) positions++;
+    Vector2[] foliage = new Vector2[positions];
+    for (int i = 0, j = 0; i < output.Length; i++) if (output[i]) {
+      foliage[j] = new Vector2(i % samples * resolution, i / samples * resolution) + corner1 + new Vector2(output1[i], output2[i]) * jitter;
+      j++;
+    }
+    return foliage;
+  }
+  
+  // Samples = sqrt(density)
+  public static Vector2[] GenerateFoliage(Vector2 corner1, Vector2 corner2, int samples) {
+    int octaves = 1;
+    float scale = 2000f;
+    float persistence = 0.5f;
+    float lacunarity = 2f;
+    float warpStrength = 0f;
+    float warpScale = 1000f;
+    float threshold = 0.5f;
     float resolution = Math.Abs(corner2.x - corner1.x) / samples;
     NativeArray<bool> output = new NativeArray<bool>(samples * samples, Allocator.TempJob);
     FoliageNoise job = new FoliageNoise {
@@ -352,7 +422,7 @@ public static class AmalgamNoise
     for (int i = 0; i < output.Length; i++) if (output[i]) positions++;
     Vector2[] foliage = new Vector2[positions];
     for (int i = 0, j = 0; i < output.Length; i++) if (output[i]) {
-      foliage[j] = new Vector2(i % samples * resolution, i / samples * resolution);
+      foliage[j] = new Vector2(i % samples * resolution, i / samples * resolution) + corner1;
       j++;
     }
     return foliage;

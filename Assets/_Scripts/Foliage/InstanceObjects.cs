@@ -7,9 +7,12 @@ public class InstanceObjects : MonoBehaviour
     
     private InstanceObjectsHandler _instanceObjects;
 
-    public int numberOfInstancesSquared = 5;
-    public int instanceDensity = 5;
+    public int numberOfChunksInOneDirection = 5;
+    
+    // public int numberOfInstancesSquared = 5;
+    // public int instanceDensity = 5;
 
+    public int foliagePerChunk = 1000;
     
     public float chunkWidth;
 
@@ -29,14 +32,36 @@ public class InstanceObjects : MonoBehaviour
 
     // Temporary test case
     private void Start() {
+
+        int samples = Mathf.FloorToInt(Mathf.Sqrt(foliagePerChunk));
+        
+        for (int i = 0; i < numberOfChunksInOneDirection; i++) {
+            for (int j = 0; j < numberOfChunksInOneDirection; j++) {
+                Vector2[] positions = AmalgamNoise.GenerateFoliage(
+                    new Vector2(-(chunkWidth * numberOfChunksInOneDirection / 2) + chunkWidth * i,
+                        -(chunkWidth * numberOfChunksInOneDirection / 2) + chunkWidth * j),
+                new Vector2(-(chunkWidth * numberOfChunksInOneDirection / 2) + chunkWidth * (i + 1),
+                    -(chunkWidth * numberOfChunksInOneDirection / 2) + chunkWidth * (j + 1)),
+                    samples, 10, 2000, 0.9f, 2, 0.005f, 1500, 0.5f, 10
+                );
+                // 
+                foreach (Vector2 pos in positions) _instanceObjects.AddObject(new Vector2(
+                    pos.x,
+                    pos.y),
+                    FoliageType.Tree);
+            }
+        }
+        
+        /*
         for (int i = 0; i < numberOfInstancesSquared; i++) {
             for (int j = 0; j < numberOfInstancesSquared; j++) {
                 _instanceObjects.AddObject(new Vector2(
                     i * instanceDensity - (numberOfInstancesSquared / 2 * instanceDensity), 
                     j * instanceDensity - (numberOfInstancesSquared / 2 * instanceDensity)
-                    ), FoliageType.Tree);
+                    ), FoliageType.TestObject);
             }
         }
+        */
     }
 
     private void Update() {
