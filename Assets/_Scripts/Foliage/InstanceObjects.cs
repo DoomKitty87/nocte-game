@@ -48,7 +48,7 @@ public class InstanceObjects : MonoBehaviour
                 foreach (Vector2 pos in positions) _instanceObjects.AddObject(new Vector2(
                     pos.x,
                     pos.y),
-                    FoliageType.Tree);
+                    FoliageType.TestObject);
             }
         }
         

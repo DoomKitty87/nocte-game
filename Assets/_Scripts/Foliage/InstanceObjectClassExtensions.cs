@@ -40,10 +40,10 @@ public class InstanceObjectsHandler
         }
     }
 
-    private Vector2Int GetChunkPosition(Vector2 position)
-    {
-        return new Vector2Int(Mathf.FloorToInt(position.x / WorldGenInfo._foliageChunkWidth),
-                              Mathf.FloorToInt(position.y / WorldGenInfo._foliageChunkWidth));
+    private Vector2Int GetChunkPosition(Vector2 position) {
+        float width = WorldGenInfo._foliageChunkWidth;
+        return new Vector2Int(Mathf.FloorToInt((position.x - width / 2) / width),
+                              Mathf.FloorToInt((position.y - width / 2) / width));
     }
 
     public void InitializeDictionary() {

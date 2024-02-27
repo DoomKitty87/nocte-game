@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 262.38358, g: 325.10843, b: 430.30963, a: 1}
+  m_IndirectSpecularColor: {r: 262.30203, g: 324.99054, b: 430.14313, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -257,12 +257,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mesh: {fileID: -5495902117074765545, guid: 44ef9dc220b13481a8adfc1c906a83ba, type: 3}
   mat: {fileID: 2100000, guid: 9c503abef163cea458efcf68a4ccde8e, type: 2}
-  positions:
-  - {x: 5, y: 3, z: 4, w: 0}
-  - {x: 2, y: 3, z: 3, w: 0}
-  - {x: 3, y: 5, z: 2, w: 0}
-  - {x: 3, y: 5, z: 4, w: 0}
-  - {x: 3, y: 7, z: 6, w: 0}
+  length: 15
+  distance: 1
+  chunks: 1
+  chunksDistance: 50
 --- !u!4 &1268437667
 Transform:
   m_ObjectHideFlags: 0
@@ -525,6 +523,7 @@ GameObject:
   - component: {fileID: 1857067416}
   - component: {fileID: 1857067415}
   - component: {fileID: 1857067418}
+  - component: {fileID: 1857067419}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -738,6 +737,23 @@ MonoBehaviour:
       enableFptlForForwardOpaque: 0
       enableBigTilePrepass: 0
       isFptlEnabled: 0
+--- !u!114 &1857067419
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1857067414}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 618b0e3f6c65dd247a4a016150006c57, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_LookSpeedController: 120
+  m_LookSpeedMouse: 4
+  m_MoveSpeed: 10
+  m_MoveSpeedIncrement: 2.5
+  m_Turbo: 10
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

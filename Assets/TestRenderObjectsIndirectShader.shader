@@ -2,7 +2,7 @@ Shader "ExampleShader"
 {
     Properties
     {
-        _Color ("Color", Color) = (0, 0, 0, 0)
+        _Color ("Color", Color) = (0, 0, 0, 1)
     }
     SubShader
     {

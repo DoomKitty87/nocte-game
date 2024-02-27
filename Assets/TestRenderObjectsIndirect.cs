@@ -7,7 +7,13 @@ public class TestRenderObjectsIndirect : MonoBehaviour
     public Mesh mesh;
     public Material mat;
 
-    public Vector4[] positions;
+    public int length = 10;
+    public float distance = 2.5f;
+
+    public int chunks = 1;
+    public float chunksDistance = 50;
+    
+    private Vector4[,] positions;
 
     private int commandCount;
     
@@ -17,8 +23,23 @@ public class TestRenderObjectsIndirect : MonoBehaviour
     private static readonly int Positions = Shader.PropertyToID("_Positions");
 
     private RenderParams rp;
-    
+
     void Start() {
+
+        positions = new Vector4[chunks, length * length * length];
+
+        for (int n = 0; n < chunks; n++) {
+            int count = 0;
+            for (int i = 0; i < length; i++) {
+                for (int j = 0; j < length; j++) {
+                    for (int k = 0; k < length; k++) {
+                        positions[n, count] = new Vector3(i * distance + n * chunksDistance, j * distance, k * distance);
+                        count++;
+                    }
+                }
+            }
+        }
+
         commandCount = positions.Length;
         
         commandBuf = new GraphicsBuffer(GraphicsBuffer.Target.IndirectArguments, commandCount, GraphicsBuffer.IndirectDrawIndexedArgs.size);
@@ -41,7 +62,6 @@ public class TestRenderObjectsIndirect : MonoBehaviour
 
     void Update()
     {
-
         Graphics.RenderMeshIndirect(rp, mesh, commandBuf, commandCount);
     }
 }
