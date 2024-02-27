@@ -43,12 +43,12 @@ public class TestRenderObjectsIndirect : MonoBehaviour
         commandCount = positions.Length;
         
         commandBuf = new GraphicsBuffer(GraphicsBuffer.Target.IndirectArguments, commandCount, GraphicsBuffer.IndirectDrawIndexedArgs.size);
-        commandData = new GraphicsBuffer.IndirectDrawIndexedArgs[commandCount];
+        // commandData = new GraphicsBuffer.IndirectDrawIndexedArgs[commandCount];
         
         rp = new RenderParams(mat);
         rp.matProps = new MaterialPropertyBlock();
         rp.matProps.SetMatrix(ObjectToWorld, Matrix4x4.Translate(Vector3.zero));
-        rp.matProps.SetVectorArray(Positions, positions);
+        // rp.matProps.SetVectorArray(Positions, positions);
         commandData[0].indexCountPerInstance = mesh.GetIndexCount(0);
         commandData[0].instanceCount = (uint)commandCount;
         commandBuf.SetData(commandData);

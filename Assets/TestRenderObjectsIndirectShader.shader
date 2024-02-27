@@ -8,12 +8,17 @@ Shader "ExampleShader"
     {
         Pass
         {
+            Tags
+            {
+                "RenderType"="Opaque"
+            }
+            
             CGPROGRAM
             #pragma vertex vert
             #pragma fragment frag
+            #pragma multi_compile_instancing
 
             #include "UnityCG.cginc"
-            #define UNITY_INDIRECT_DRAW_ARGS IndirectDrawIndexedArgs
             #include "UnityIndirect.cginc"
 
             struct v2f
@@ -24,17 +29,14 @@ Shader "ExampleShader"
 
             fixed4 _Color;
 
-            uniform float4x4 _ObjectToWorld;
-
-            float3 _Positions[4088];
+            StructuredBuffer<float4> position_buffer;
 
             v2f vert(appdata_base v, uint svInstanceID : SV_InstanceID)
             {
-                InitIndirectDrawArgs(0);
+                float4 position = position_buffer[svInstanceID];
+
                 v2f o;
-                uint instanceID = GetIndirectInstanceID(svInstanceID);
-                float4 wpos = mul(_ObjectToWorld, v.vertex + float4(float3(_Positions[instanceID]), 0));
-                o.pos = mul(UNITY_MATRIX_VP, wpos);
+                o.pos = mul(UNITY_MATRIX_VP, float4(v.vertex.xyz + position.xyz, 1.0f));
                 o.color = _Color;
                 return o;
             }

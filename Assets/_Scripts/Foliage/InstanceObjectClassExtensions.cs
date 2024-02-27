@@ -72,7 +72,7 @@ public class InstanceObjectsHandler
 /// </summary>
 public class FoliageChunk // Might at some point incorporate this with other Chunk class?
 {
-    public readonly Dictionary<FoliageType, (List<FoliageData>, FoliageRenderingData)> FoliageTypePerChunk = new Dictionary<FoliageType, (List<FoliageData>, FoliageRenderingData)>();
+    public readonly Dictionary<FoliageType, (List<FoliageData>, RenderFoliage)> FoliageTypePerChunk = new Dictionary<FoliageType, (List<FoliageData>, RenderFoliage)>();
 
     public Vector3 position;
     public int previousLODLevel = -2;
@@ -87,7 +87,8 @@ public class FoliageChunk // Might at some point incorporate this with other Chu
     {
         if (!FoliageTypePerChunk.ContainsKey(type))
         {
-            FoliageTypePerChunk[type] = (new List<FoliageData>(), new FoliageRenderingData());
+            FoliageTypePerChunk[type] = (new List<FoliageData>(), new RenderFoliage());
+            FoliageTypePerChunk[type].Item2.Initialize(); // Initialize new renderer
         }
 
         FoliageTypePerChunk[type].Item1.Add(new FoliageData(GetWorldPosition(position), type));
@@ -175,5 +176,57 @@ public class FoliageData
     {
         this.Position = position;
         this.Type = type;
+    }
+}
+
+public class RenderFoliage
+{
+    
+    public Mesh _instanceMesh;
+    public Material _instanceMaterial;
+    public Vector3 _chunkPosition;
+    
+    private readonly uint[] _args = { 0, 0, 0, 0, 0 };
+    private ComputeBuffer _argsBuffer;
+    public int _count = 0;
+
+    private ComputeBuffer _positionsBuffer;
+
+    private static readonly int PositionBuffer = Shader.PropertyToID("position_buffer");
+
+    public void Initialize() {
+        _argsBuffer = new ComputeBuffer(1, _args.Length * sizeof(uint), ComputeBufferType.IndirectArguments);
+    }
+    
+    public void Render() {
+        Graphics.DrawMeshInstancedIndirect(_instanceMesh, 0, _instanceMaterial, new Bounds(Vector3.zero, Vector3.one * 1000), _argsBuffer);
+    }
+
+    private void Disable() {
+        _positionsBuffer?.Release();
+        _positionsBuffer = null;
+
+        _argsBuffer.Release();
+        _argsBuffer = null;
+    }
+
+    public void UpdateBuffer(Vector3[] positions3, Vector3 chunkPosition) {
+        _count = positions3.Length;
+        
+        _positionsBuffer?.Release();
+        _positionsBuffer = new ComputeBuffer(_count, 16);
+
+        var positions4 = new Vector4[_count];
+        for (int i = 0; i < _count; i++) positions4[i] = positions3[i];
+        
+        _positionsBuffer.SetData(positions4);
+        _instanceMaterial.SetBuffer(PositionBuffer, _positionsBuffer);
+
+        _args[0] = _instanceMesh.GetIndexCount(0);
+        _args[1] = (uint)_count;
+        _args[2] = _instanceMesh.GetIndexStart(0);
+        _args[3] = _instanceMesh.GetBaseVertex(0);
+        
+        _argsBuffer.SetData(_args);
     }
 }

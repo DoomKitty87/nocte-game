@@ -44,24 +44,13 @@ public class InstanceObjects : MonoBehaviour
                     -(chunkWidth * numberOfChunksInOneDirection / 2) + chunkWidth * (j + 1)),
                     samples, 10, 2000, 0.9f, 2, 0.005f, 1500, 0.5f, 10
                 );
-                // 
+                
                 foreach (Vector2 pos in positions) _instanceObjects.AddObject(new Vector2(
                     pos.x,
                     pos.y),
                     FoliageType.TestObject);
             }
         }
-        
-        /*
-        for (int i = 0; i < numberOfInstancesSquared; i++) {
-            for (int j = 0; j < numberOfInstancesSquared; j++) {
-                _instanceObjects.AddObject(new Vector2(
-                    i * instanceDensity - (numberOfInstancesSquared / 2 * instanceDensity), 
-                    j * instanceDensity - (numberOfInstancesSquared / 2 * instanceDensity)
-                    ), FoliageType.TestObject);
-            }
-        }
-        */
     }
 
     private void Update() {
@@ -76,13 +65,11 @@ public class InstanceObjects : MonoBehaviour
         if (currentFrame >= framesPerChunkUpdate) currentFrame = 0;
     }
     
-    private void RenderObject(List<FoliageData> typeOfFoliage, FoliageRenderingData data, FoliageChunk chunk) {
-        if (currentFrame != framesPerChunkUpdate) { 
-            if (!data.hasInitialized) return;
-            
-            if (render) Graphics.RenderMeshIndirect(data.rp, data.stashedMesh, data.commandBuf, data.commandCount);
-            return;
-        }
+    private void RenderObject(List<FoliageData> typeOfFoliage, RenderFoliage renderer, FoliageChunk chunk) {
+        // if (currentFrame != framesPerChunkUpdate) { 
+        //     if (render) renderer.Render();
+        //     return;
+        // }
         
         FoliageData firstData = typeOfFoliage[0];
         FoliageType type = firstData.Type;
@@ -96,35 +83,41 @@ public class InstanceObjects : MonoBehaviour
         
         int lodLevel = GetLODRange(chunk.position, lodRanges);
 
+        Vector3[] positions = new Vector3[numberOfFoliage];
+
+        for (int i = 0; i < numberOfFoliage; i++) {
+            positions[i] = typeOfFoliage[i].Position;
+        }
         
         if (lodLevel == chunk.previousLODLevel) {
             // If the chunk doesnt change LOD range, take stashed data
             if (lodLevel == -1) return; // Break out of rendering look if LOD is out of range
             
-            if (data.positions.Length != numberOfFoliage) data.FillInstanceData(typeOfFoliage); 
+            if (renderer._count != numberOfFoliage) renderer.UpdateBuffer(positions, chunk.position); 
 
-            if (render) Graphics.RenderMeshIndirect(data.rp, data.stashedMesh, data.commandBuf, data.commandCount);
+            if (render) renderer.Render();
         }
         else {
             if (lodLevel == -1) return; // Break out of rendering look if LOD is out of range
             
-            if (data.positions.Length != numberOfFoliage) data.FillInstanceData(typeOfFoliage); 
-            
-            (Mesh, Material) Tuple = metaData.GetLODData(lodLevel);
+            var tuple = metaData.GetLODData(lodLevel);
             // If not, reassign data
-            data.UpdateLOD(Tuple, chunk.position);
+            renderer._instanceMesh = tuple.Item1;
+            renderer._instanceMaterial = tuple.Item2;
+            renderer.UpdateBuffer(positions, chunk.position);
             
-            if (render) Graphics.RenderMeshIndirect(data.rp, data.stashedMesh, data.commandBuf, data.commandCount);
+            if (render) renderer.Render();
         }
     }
 
-    private void BuildLODRanges(FoliageMetaData data, int numberOfLODRanges, ref float[] array) {
+    private static void BuildLODRanges(FoliageMetaData data, int numberOfLODRanges, ref float[] array) {
         for (int i = 0; i < numberOfLODRanges; i++) {
             array[i] = data._lodData[i]._lodRange;
         }
     }
 
     private int GetLODRange(Vector3 pos, float[] ranges) {
+        return 1;
         float distance = Vector3.Distance(_playerTransform.position, pos);
         
         // Searches for LOD range, if none are found then defaults to last range.
