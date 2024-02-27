@@ -14,6 +14,7 @@ uniform float _worldY;
 uniform float _worldZ;
 // ======
 RWStructuredBuffer<float4x4> _positionOutputBuffer;
+uniform uint _indexOffset;
 // RWStructuredBuffer<float> _debugCPUReadbackBuffer;
 
 // Pseudo-random number between min and max, from shadergraph compiled code(?)
@@ -69,5 +70,5 @@ void ComputePosition(uint3 id : SV_DispatchThreadID)
 	worldPos.z += randomRange(float2(id.x, id.x % 0.52), -zSpacing / 2, zSpacing / 2);
 	worldPos = worldPos + float3(-_sizeX / 2, 0, -_sizeZ / 2); // centerize, remove for proc gen
 	float4x4 rotMatrix = GetMatrixWithRotationY(randomRange(worldPos.xz, 0, TWO_PI));
-	_positionOutputBuffer[sampleIndex] = mul(PositionToTransformMatrix(worldPos), rotMatrix); //(x, y) applies x then y, do not use the function notation in the 3blue1brown video, it is wrong
+	_positionOutputBuffer[sampleIndex + _indexOffset] = mul(PositionToTransformMatrix(worldPos), rotMatrix); //(x, y) applies x then y, do not use the function notation in the 3blue1brown video, it is wrong
 }
