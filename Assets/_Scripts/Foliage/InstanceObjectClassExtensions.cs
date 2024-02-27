@@ -88,7 +88,7 @@ public class FoliageChunk // Might at some point incorporate this with other Chu
         if (!FoliageTypePerChunk.ContainsKey(type))
         {
             FoliageTypePerChunk[type] = (new List<FoliageData>(), new RenderFoliage());
-            FoliageTypePerChunk[type].Item2.Initialize(); // Initialize new renderer
+            // FoliageTypePerChunk[type].Item2.Initialize(); // Initialize new renderer
         }
 
         FoliageTypePerChunk[type].Item1.Add(new FoliageData(GetWorldPosition(position), type));
@@ -136,7 +136,7 @@ public class FoliageRenderingData
         Mesh mesh = tuple.Item1;
         Material mat = tuple.Item2;
         rp = new RenderParams(mat);
-        rp.worldBounds = new Bounds(chunkPosition, Vector3.one * 1000);
+        rp.worldBounds = new Bounds(Vector3.zero, Vector3.one * 10000);
         rp.matProps = new MaterialPropertyBlock();
         rp.matProps.SetMatrix(ObjectToWorld, Matrix4x4.Translate(Vector3.zero));
         rp.matProps.SetVectorArray(Positions, positions);
@@ -181,6 +181,7 @@ public class FoliageData
 
 public class RenderFoliage
 {
+    public bool _initialized;
     
     public Mesh _instanceMesh;
     public Material _instanceMaterial;
@@ -194,12 +195,16 @@ public class RenderFoliage
 
     private static readonly int PositionBuffer = Shader.PropertyToID("position_buffer");
 
-    public void Initialize() {
+    public RenderFoliage() {
+        Initialize();
+    }
+    
+    private void Initialize() {
         _argsBuffer = new ComputeBuffer(1, _args.Length * sizeof(uint), ComputeBufferType.IndirectArguments);
     }
     
     public void Render() {
-        Graphics.DrawMeshInstancedIndirect(_instanceMesh, 0, _instanceMaterial, new Bounds(Vector3.zero, Vector3.one * 1000), _argsBuffer);
+        if (_initialized) Graphics.DrawMeshInstancedIndirect(_instanceMesh, 0, _instanceMaterial, new Bounds(Vector3.zero, Vector3.one * 1000), _argsBuffer);
     }
 
     private void Disable() {
@@ -211,6 +216,8 @@ public class RenderFoliage
     }
 
     public void UpdateBuffer(Vector3[] positions3, Vector3 chunkPosition) {
+        if (!_initialized) return;
+        
         _count = positions3.Length;
         
         _positionsBuffer?.Release();

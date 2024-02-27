@@ -42,7 +42,7 @@ public class InstanceObjects : MonoBehaviour
                         -(chunkWidth * numberOfChunksInOneDirection / 2) + chunkWidth * j),
                 new Vector2(-(chunkWidth * numberOfChunksInOneDirection / 2) + chunkWidth * (i + 1),
                     -(chunkWidth * numberOfChunksInOneDirection / 2) + chunkWidth * (j + 1)),
-                    samples, 10, 2000, 0.9f, 2, 0.005f, 1500, 0.5f, 10
+                    samples, 10, 2000, 0.9f, 2, 0.005f, 1500, 0.5f, 0
                 );
                 
                 foreach (Vector2 pos in positions) _instanceObjects.AddObject(new Vector2(
@@ -65,11 +65,12 @@ public class InstanceObjects : MonoBehaviour
         if (currentFrame >= framesPerChunkUpdate) currentFrame = 0;
     }
     
-    private void RenderObject(List<FoliageData> typeOfFoliage, RenderFoliage renderer, FoliageChunk chunk) {
+    private void RenderObject(List<FoliageData> typeOfFoliage, RenderFoliage rd, FoliageChunk chunk) {
         // if (currentFrame != framesPerChunkUpdate) { 
         //     if (render) renderer.Render();
         //     return;
         // }
+        
         
         FoliageData firstData = typeOfFoliage[0];
         FoliageType type = firstData.Type;
@@ -88,25 +89,32 @@ public class InstanceObjects : MonoBehaviour
         for (int i = 0; i < numberOfFoliage; i++) {
             positions[i] = typeOfFoliage[i].Position;
         }
+
+        Debug.Log(positions.Length);
+        
+        rd.UpdateBuffer(positions, Vector3.zero);
+
         
         if (lodLevel == chunk.previousLODLevel) {
             // If the chunk doesnt change LOD range, take stashed data
             if (lodLevel == -1) return; // Break out of rendering look if LOD is out of range
             
-            if (renderer._count != numberOfFoliage) renderer.UpdateBuffer(positions, chunk.position); 
+            if (rd._count != numberOfFoliage) rd.UpdateBuffer(positions, chunk.position); 
 
-            if (render) renderer.Render();
+            if (render) rd.Render();
         }
         else {
             if (lodLevel == -1) return; // Break out of rendering look if LOD is out of range
             
             var tuple = metaData.GetLODData(lodLevel);
             // If not, reassign data
-            renderer._instanceMesh = tuple.Item1;
-            renderer._instanceMaterial = tuple.Item2;
-            renderer.UpdateBuffer(positions, chunk.position);
+            rd._instanceMesh = tuple.Item1;
+            rd._instanceMaterial = tuple.Item2;
+            rd._initialized = true;
             
-            if (render) renderer.Render();
+            rd.UpdateBuffer(positions, chunk.position);
+            
+            if (render) rd.Render();
         }
     }
 
@@ -117,7 +125,7 @@ public class InstanceObjects : MonoBehaviour
     }
 
     private int GetLODRange(Vector3 pos, float[] ranges) {
-        return 1;
+        return 0;
         float distance = Vector3.Distance(_playerTransform.position, pos);
         
         // Searches for LOD range, if none are found then defaults to last range.
