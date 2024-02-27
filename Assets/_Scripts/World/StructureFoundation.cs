@@ -15,7 +15,7 @@ public class StructureFoundation : MonoBehaviour
 
     Mesh gomesh = gameObject.GetComponent<MeshFilter>().mesh;
 
-    Vector2 centermin = new Vector2(gomesh.bounds.min.x + gomesh.bounds.size.x / 2 + transform.position.x, gomesh.bounds.min.z + gomesh.bounds.size.z / 2 + transform.position.z);
+    Vector2 centermin = new Vector2(gomesh.bounds.center.x + transform.position.x, gomesh.bounds.center.z + transform.position.z);
     float halfx = gomesh.bounds.size.x / 2 * transform.localScale.x;
     float halfz = gomesh.bounds.size.z / 2 * transform.localScale.z;
     float y = gomesh.bounds.min.y * transform.localScale.y + transform.position.y;
@@ -35,41 +35,43 @@ public class StructureFoundation : MonoBehaviour
     vertices[6] = new Vector3(corner3.x, WorldGenInfo._worldGenerator.GetHeightValue(new Vector2(corner3.x, corner3.z)), corner3.z);
     vertices[7] = new Vector3(corner4.x, WorldGenInfo._worldGenerator.GetHeightValue(new Vector2(corner4.x, corner4.z)), corner4.z);
 
-    triangles[0] = 0;
+    triangles[0] = 4;
     triangles[1] = 1;
-    triangles[2] = 4;
+    triangles[2] = 0;
 
-    triangles[3] = 1;
+    triangles[3] = 4;
     triangles[4] = 5;
-    triangles[5] = 4;
+    triangles[5] = 1;
 
-    triangles[6] = 1;
+    triangles[6] = 5;
     triangles[7] = 2;
-    triangles[8] = 5;
+    triangles[8] = 1;
 
-    triangles[9] = 2;
+    triangles[9] = 5;
     triangles[10] = 6;
-    triangles[11] = 5;
+    triangles[11] = 2;
 
-    triangles[12] = 2;
+    triangles[12] = 6;
     triangles[13] = 3;
-    triangles[14] = 6;
+    triangles[14] = 2;
 
-    triangles[15] = 3;
+    triangles[15] = 6;
     triangles[16] = 7;
-    triangles[17] = 6;
+    triangles[17] = 3;
 
-    triangles[18] = 3;
+    triangles[18] = 7;
     triangles[19] = 0;
-    triangles[20] = 7;
+    triangles[20] = 3;
 
-    triangles[21] = 0;
+    triangles[21] = 7;
     triangles[22] = 4;
-    triangles[23] = 7;
+    triangles[23] = 0;
 
     Mesh msh = new Mesh();
     msh.vertices = vertices;
     msh.triangles = triangles;
+    msh.RecalculateNormals();
+    msh.RecalculateBounds();
     go.AddComponent<MeshFilter>().mesh = msh;
     go.AddComponent<MeshRenderer>().material = _material;
     go.AddComponent<MeshCollider>().sharedMesh = msh;
