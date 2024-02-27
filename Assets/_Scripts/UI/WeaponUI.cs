@@ -5,12 +5,12 @@ using TMPro;
 public class WeaponUI : MonoBehaviour
 {
 
-  [SerializeField] private TextMeshProUGUI _ammoCurrent;
-  [SerializeField] private TextMeshProUGUI _ammoMax;
+  [SerializeField] private TextMeshProUGUI _ammoText;
+  [SerializeField] private Image _ammoIcon;
 
   public void UpdateAmmoCount((float, float) ammoData) {
-    _ammoCurrent.text = ammoData.Item1.ToString();
-    _ammoMax.text = ammoData.Item2.ToString();
+    _ammoText.text = ammoData.Item1.ToString();
+    _ammoIcon.fillAmount = ammoData.Item1 / ammoData.Item2;
   }
 
 }

@@ -182,7 +182,7 @@ public class WorldGenerator : MonoBehaviour
   [SerializeField] private SecondaryStructures _structures;
   [SerializeField] private PlaceStructures _storyStructures;
 
-  public int Seed { get; }
+  public int Seed { get { return _seed; } }
   public int Size { get; }
   public float Resolution { get; }
   
@@ -295,6 +295,7 @@ public class WorldGenerator : MonoBehaviour
     WorldGenInfo._seed = _seed;
     WorldGenInfo._maxUpdatesPerFrame = _maxUpdatesPerFrame;
     WorldGenInfo._lakePlaneHeight = _lakePlaneHeight - _riverParameters.waterLevel;
+    WorldGenInfo._worldGenerator = this;
     _seed = int.Parse(Hash128.Compute(_seed).ToString().Substring(0, 6), System.Globalization.NumberStyles.HexNumber);
     // Debug.Log(_seed);
     // Seed-based terrain parameter changes

@@ -12,17 +12,17 @@ public class TapesMenu : MonoBehaviour
 
   private InventoryManager.AudioTape[] _tapes;
 
-  private void OnEnable() {
+  public void UpdateTapes() {
     _tapeAudioSource.Stop();
     _tapes = _inventory.GetOwnedTapes();
-    for (int i = _tapeHolder.childCount; i >= 0; i--) {
-      Destroy(_tapeHolder.GetChild(i));
+    for (int i = _tapeHolder.childCount; i > 0; i--) {
+      Destroy(_tapeHolder.GetChild(i - 1).gameObject);
     }
     for (int i = 0; i < _tapes.Length; i++) {
       GameObject tape = Instantiate(_tapePrefab);
       tape.transform.parent = _tapeHolder;
-      tape.GetComponent<Image>().sprite = _tapes[i].icon;
-      tape.GetComponent<TextMeshProUGUI>().text = _tapes[i].name;
+      tape.transform.GetChild(0).gameObject.GetComponent<Image>().sprite = _tapes[i].icon;
+      tape.transform.GetChild(1).gameObject.GetComponent<TextMeshProUGUI>().text = _tapes[i].name;
     }
   }
 

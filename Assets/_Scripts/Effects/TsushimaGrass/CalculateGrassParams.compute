@@ -61,7 +61,7 @@ void ComputePosition(uint3 id : SV_DispatchThreadID)
 	uint sampleIndex = id.x; // useless, but reminds me that id takes into account the number of groups so i never have to suffer again
 	float2 samplePosition;
 	samplePosition.y = floor(sampleIndex / _samplesX);
-	samplePosition.x = sampleIndex % _samplesX; // never mod by floats, inaccuracies cause issues godddddddddddddddddddddddd
+	samplePosition.x = sampleIndex % _samplesX; // never mod by floats, inaccuracies cause issues
 	float xSpacing = _sizeX / _samplesX; 
 	float zSpacing = _sizeZ / _samplesZ; 
 	float3 worldPos = float3(samplePosition.x * xSpacing + xSpacing / 2, 0, samplePosition.y * zSpacing + zSpacing / 2) + GetWorldPosition();

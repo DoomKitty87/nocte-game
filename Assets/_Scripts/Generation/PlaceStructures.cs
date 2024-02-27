@@ -121,16 +121,20 @@ public class PlaceStructures : MonoBehaviour
     //   supportBeams.AddComponent<MeshCollider>();
     //   supportBeams.transform.parent = go.transform;
     // }
-
+    float[] rotations = new float[_outerStructures.Length];
     for (int i = 0; i < _outerStructures.Length; i++) {
-      float nodeRotation = Mathf.PerlinNoise(_worldGen.Seed % (395.956f * (i + 1)), _worldGen.Seed % (928.132f * (i + 1))) * Mathf.PI * 2;
-      float nodeRadius = _nodeDistance * (Mathf.PerlinNoise(_worldGen.Seed % (156.292f * (i + 1)), _worldGen.Seed % (613.671f * (i + 1))) + 0.5f);
+      float nodeRotation = Mathf.PerlinNoise(_worldGen.Seed % (395.956f * (i * 58 + 1)), _worldGen.Seed % (928.132f * (i * 81 + 1))) * Mathf.PI * 2;
+      for (int j = 0; j < i; j++) {
+        if (Mathf.Abs(nodeRotation - rotations[j]) < Mathf.PI / 4) nodeRotation += Mathf.PI / 2;
+      }
+      rotations[i] = nodeRotation;
+      float nodeRadius = _nodeDistance * (Mathf.PerlinNoise(_worldGen.Seed % (156.292f * (i * 91 + 1)), _worldGen.Seed % (613.671f * (i * 26 + 1))) + 0.5f);
       Vector3 outPosition = new Vector3(nodeRadius * Mathf.Cos(nodeRotation), 0, nodeRadius * Mathf.Sin(nodeRotation)) + positionOffset;
       outPosition.y = _worldGen.GetHeightValue(new Vector2(outPosition.x, outPosition.z));
-      s = 1;
+      s = 1 + (i * 1000);
       while (outPosition.y > _heightCutoff) {
-        nodeRotation = Mathf.PerlinNoise(_worldGen.Seed % (891.623f * (i + 1) * s), _worldGen.Seed % (476.193f * (i + 1) * s)) * Mathf.PI * 2;
-        nodeRadius = _nodeDistance * (Mathf.PerlinNoise(_worldGen.Seed % (998.132f * (i + 1) * s), _worldGen.Seed % (319.254f * (i + 1) * s)) + 0.5f);
+        nodeRotation = Mathf.PerlinNoise(_worldGen.Seed % (891.623f * (i * 71 + 1) * s), _worldGen.Seed % (476.193f * (i * 23 + 1) * s)) * Mathf.PI * 2;
+        nodeRadius = _nodeDistance * (Mathf.PerlinNoise(_worldGen.Seed % (998.132f * (i * 61 + 1) * s), _worldGen.Seed % (319.254f * (i * 42 + 1) * s)) + 0.5f);
         outPosition = new Vector3(nodeRadius * Mathf.Cos(nodeRotation), 0, nodeRadius * Mathf.Sin(nodeRotation)) + positionOffset;
         outPosition.y = _worldGen.GetHeightValue(new Vector2(outPosition.x, outPosition.z));
         s++;
@@ -141,7 +145,7 @@ public class PlaceStructures : MonoBehaviour
       int roadPoints = Mathf.FloorToInt(Vector2.Distance(mainPosition2, outPosition2) / _roadResolution);
       Vector2[] roadPath = new Vector2[roadPoints + 2];
       for (int j = 1; j < roadPoints + 1; j++) {
-        roadPath[j] = Vector2.Lerp(mainPosition2, outPosition2, (float) j / roadPoints);
+        roadPath[j] = Vector2.Lerp(mainPosition2, outPosition2, (float) j / (roadPoints + 1));
       }
 
       roadPath[0] = mainPosition2;
