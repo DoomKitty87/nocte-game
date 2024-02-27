@@ -112,21 +112,6 @@
       },
       "url": "https://packages.unity.com"
     },
-    "com.unity.dots.editor": {
-      "version": "0.12.0-preview.6",
-      "depth": 0,
-      "source": "registry",
-      "dependencies": {
-        "com.unity.entities": "0.17.0-preview.41",
-        "com.unity.properties": "1.6.0-preview",
-        "com.unity.serialization": "1.6.1-preview",
-        "com.unity.properties.ui": "1.6.1-preview",
-        "com.unity.jobs": "0.8.0-preview.23",
-        "com.unity.burst": "1.4.1",
-        "com.unity.test-framework.performance": "2.3.1-preview"
-      },
-      "url": "https://packages.unity.com"
-    },
     "com.unity.editorcoroutines": {
       "version": "1.0.0",
       "depth": 1,
@@ -154,12 +139,13 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.entities.graphics": {
-      "version": "1.0.0-exp.8",
-      "depth": 1,
+      "version": "1.0.16",
+      "depth": 0,
       "source": "registry",
       "dependencies": {
-        "com.unity.entities": "1.0.0-exp.8",
-        "com.unity.render-pipelines.core": "14.0.3"
+        "com.unity.entities": "1.0.16",
+        "com.unity.modules.particlesystem": "1.0.0",
+        "com.unity.render-pipelines.core": "14.0.7"
       },
       "url": "https://packages.unity.com"
     },
@@ -185,16 +171,6 @@
       "source": "registry",
       "dependencies": {
         "com.unity.test-framework": "1.1.9"
-      },
-      "url": "https://packages.unity.com"
-    },
-    "com.unity.jobs": {
-      "version": "0.8.0-preview.23",
-      "depth": 1,
-      "source": "registry",
-      "dependencies": {
-        "com.unity.collections": "0.15.0-preview.21",
-        "com.unity.mathematics": "1.2.1"
       },
       "url": "https://packages.unity.com"
     },
@@ -239,27 +215,6 @@
       "dependencies": {},
       "url": "https://packages.unity.com"
     },
-    "com.unity.properties": {
-      "version": "2.1.0-exp.3",
-      "depth": 1,
-      "source": "registry",
-      "dependencies": {
-        "com.unity.test-framework.performance": "2.8.0-preview"
-      },
-      "url": "https://packages.unity.com"
-    },
-    "com.unity.properties.ui": {
-      "version": "2.0.0-exp.11",
-      "depth": 1,
-      "source": "registry",
-      "dependencies": {
-        "com.unity.properties": "2.0.0-exp.11",
-        "com.unity.serialization": "2.0.0-exp.11",
-        "com.unity.modules.uielements": "1.0.0",
-        "com.unity.test-framework.performance": "2.8.0-preview"
-      },
-      "url": "https://packages.unity.com"
-    },
     "com.unity.render-pipelines.core": {
       "version": "16.0.4",
       "depth": 1,
@@ -298,15 +253,6 @@
       "dependencies": {
         "com.unity.render-pipelines.core": "16.0.4"
       }
-    },
-    "com.unity.rendering.hybrid": {
-      "version": "0.61.0-preview.7",
-      "depth": 0,
-      "source": "registry",
-      "dependencies": {
-        "com.unity.entities.graphics": "1.0.0-exp.8"
-      },
-      "url": "https://packages.unity.com"
     },
     "com.unity.rendering.light-transport": {
       "version": "1.0.0",
