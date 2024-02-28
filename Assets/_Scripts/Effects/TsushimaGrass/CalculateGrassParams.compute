@@ -13,7 +13,9 @@ uniform float _worldX;
 uniform float _worldY;
 uniform float _worldZ;
 // ======
-RWTexture2D<float> _tileHeightmapTexture;
+Texture2D<float> _tileHeightmapTexture;
+SamplerState sampler_tileHeightmapTexture;
+
 uniform uint _tileHeightmapTextureWidth;
 uniform uint _chunkSplitFactor;
 // ======
@@ -62,9 +64,9 @@ float3 GetWorldPosition()
 
 float GetHeightmapAtWorldPosition(float2 position)
 {
-	float2 uv = ((position.x - _worldX) / _sizeX, (position.y - _worldZ) / _sizeZ);
+	float2 uv = float2((position.x - _worldX) / _sizeX, (position.y - _worldZ) / _sizeZ);
 	// return uv.x * 10;
-	return -_tileHeightmapTexture.Load(int3(uv, 0)).r;
+	return _tileHeightmapTexture.SampleLevel(sampler_tileHeightmapTexture, uv, 0);
 }
 
 [numthreads(64,1,1)]

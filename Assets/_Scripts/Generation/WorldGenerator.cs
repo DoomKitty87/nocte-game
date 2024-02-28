@@ -588,17 +588,12 @@ public class WorldGenerator : MonoBehaviour
       vertices[i] = new Vector3((i % tmpSize - 1) * tmpRes, output[i], (i / tmpSize - 1) * tmpRes);
     }
     tempTex.SetPixelData(output, 0);
-    RenderTexture tileHeightmap = new RenderTexture(tmpSize, tmpSize, 0, RenderTextureFormat.RFloat, RenderTextureReadWrite.Linear);
-    tileHeightmap.enableRandomWrite = true;
-    tileHeightmap.filterMode = FilterMode.Bilinear;
-    tileHeightmap.Create();
-    RenderTexture.active = tileHeightmap;
-    Graphics.Blit(tempTex, tileHeightmap);
+    tempTex.Apply();
     output.Dispose();
     GrassTilePrimitives grass = go.AddComponent<GrassTilePrimitives>();
     grass._worldGenerator = this;
     grass._useGlobalConfig = true;
-    grass._tileHeightmap = tileHeightmap;
+    grass._tileHeightmap = tempTex;
     int sideLength0 = (int) Mathf.Sqrt(vertices.Length) - 1;
     NativeArray<int> triangles = new NativeArray<int>(sideLength0 * sideLength0 * 6, Allocator.Persistent);
     int vert = 0;

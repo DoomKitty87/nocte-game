@@ -21,7 +21,7 @@ namespace Effects.TsushimaGrass
 		// For now, lets implement this on CPU because I wanna solidify overall method
 		[Header("Dependencies")]
 		public WorldGenerator _worldGenerator;
-		public RenderTexture _tileHeightmap;
+		public Texture2D _tileHeightmap;
 		[Header("Global Config")]
 		public bool _useGlobalConfig;
 		[SerializeField] private GrassGlobalConfig _globalConfig;
@@ -148,7 +148,7 @@ namespace Effects.TsushimaGrass
 		
 		//----------------------------------------------------------------------------------
 
-		private void Start() {
+		public void Start() {
 			#region Script Dep Null Checks 
 			if (_globalConfig == null) {
 				GameObject gameObj = GameObject.FindWithTag("GlobalObject");
