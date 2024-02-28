@@ -583,8 +583,10 @@ public class WorldGenerator : MonoBehaviour
     while (!handle.IsCompleted) yield return null;
     handle.Complete();
     NativeArray<Vector3> vertices = new NativeArray<Vector3>(tmpSize * tmpSize, Allocator.Persistent);
+    Texture2D tex = new Texture2D(tmpSize, tmpSize);
     for (int i = 0; i < tmpSize * tmpSize; i++) {
       vertices[i] = new Vector3((i % tmpSize - 1) * tmpRes, output[i], (i / tmpSize - 1) * tmpRes);
+      tex.SetPixel(i % tmpSize, i / tmpSize, new Color(output[i], output[i], output[i]));
     }
     output.Dispose();
 
