@@ -58,7 +58,9 @@ float4x4 PositionToTransformMatrix(float3 position)
 // TODO: fix this 
 float GetHeightmapAtWorldPosition(float2 position)
 {
-	float2 uv = float2((position.x - _tilePivotWorldPosition.x) / _sizeX, (position.y - _tilePivotWorldPosition.z) / _sizeZ) / (_chunkSplitFactor * 2);
+  float fac = (_tileHeightmapTextureWidth) / (_tileHeightmapTextureWidth - 1);
+	float2 uv = float2((position.x - _tilePivotWorldPosition.x) / _sizeX, (position.y - _tilePivotWorldPosition.z) / _sizeZ) / (_chunkSplitFactor * 2) / fac;
+  uv += 0.5 / _tileHeightmapTextureWidth;
 	return _tileHeightmapTexture.SampleLevel(sampler_tileHeightmapTexture, uv, 0);
 }
 
