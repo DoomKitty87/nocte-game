@@ -15,6 +15,7 @@ namespace Effects.TsushimaGrass
 		public float _distToPlayerCutoff;
 		public bool _castShadowsOn;
 		public bool _recieveShadowsOn;
+		[Range(0, 8)] public int _chunkSplitFactor; 
 		[Header("Dependencies")]
 		public ComputeShader _positionCompute;
 		public Material _renderingShaderMat;

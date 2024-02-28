@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Numerics;
 using Unity.VisualScripting;
@@ -32,7 +33,7 @@ namespace Effects.TsushimaGrass
 		[SerializeField] [Range(0, 100)]private int _samplesX, _samplesZ;
 		[SerializeField] private float _fallbackTileSizeX, _fallbackTileSizeZ;
 		[SerializeField] private float _meshBoundsPadding;
-		[SerializeField][Range(0, 5)] private int _chunkSplitFactor = 1;
+		[SerializeField][Range(0, 10)] private int _chunkSplitFactor = 1;
 		
 		private float _tileSizeX, _tileSizeZ;
 		private RenderParams _renderParams;
@@ -98,16 +99,28 @@ namespace Effects.TsushimaGrass
 				GPUComputePositionsTo(outputBuffer, 0, transform.position, samplesX, samplesZ, tileSizeX, tileSizeZ, padding);
 				return;
 			}
-			float newSizeX = tileSizeX - (padding * 2);
-			float newSizeZ = tileSizeZ - (padding * 2);
+			float sizeXNoPadding = tileSizeX - (padding * 2);
+			float sizeZNoPadding = tileSizeZ - (padding * 2);
 			int indexOffset = 0;
+			float floatChunkSplitFactor = (float)chunkSplitFactor;
 			for (int z = 0; z < chunkSplitFactor * 2; z++) {
 				for (int x = 0; x < chunkSplitFactor * 2; x++) {
-					Vector2 topLeft = new Vector2(newSizeX * (x / chunkSplitFactor * 2) + padding, newSizeX * (z / chunkSplitFactor * 2) + padding);
-					Vector2 topRight = new Vector2(newSizeX * (x + 1 / chunkSplitFactor * 2) + padding, newSizeX * (z / chunkSplitFactor * 2) + padding);
-					Vector2 bottomLeft = new Vector2(newSizeX * (x / chunkSplitFactor * 2) + padding, newSizeX * (z + 1 / chunkSplitFactor * 2) + padding);
-					Vector2 bottomRight = new Vector2(newSizeX * (x + 2 / chunkSplitFactor * 2) + padding, newSizeX * (z + 1 / chunkSplitFactor * 2) + padding);
-					// GPUComputePositionsTo(outputBuffer, );
+					// Vector2 topLeft = new Vector2(sizeXNoPadding * (x / (chunkSplitFactor * 2)) + padding, sizeZNoPadding * (z / (chunkSplitFactor * 2)) + padding);
+					// Vector2 topRight = new Vector2(sizeXNoPadding * (x + 1 / (chunkSplitFactor * 2)) + padding, sizeZNoPadding * (z / (chunkSplitFactor * 2)) + padding);
+					// Vector2 bottomLeft = new Vector2(sizeXNoPadding * (x / (chunkSplitFactor * 2)) + padding, sizeZNoPadding * (z + 1 / (chunkSplitFactor * 2)) + padding);
+					// Vector2 bottomRight = new Vector2(sizeXNoPadding * (x + 1 / (chunkSplitFactor * 2)) + padding, sizeZNoPadding * (z + 1 / (chunkSplitFactor * 2)) + padding);
+					Vector2 topLeft = new Vector2(sizeXNoPadding * (x / (floatChunkSplitFactor * 2)) + padding, sizeZNoPadding * (z / (floatChunkSplitFactor * 2)) + padding);
+					Vector2 topRight = new Vector2(sizeXNoPadding * ((x + 1) / (floatChunkSplitFactor * 2)) + padding, sizeZNoPadding * (z / (floatChunkSplitFactor * 2)) + padding);
+					Vector2 bottomLeft = new Vector2(sizeXNoPadding * (x / (floatChunkSplitFactor * 2)) + padding, sizeZNoPadding * ((z + 1) / (floatChunkSplitFactor * 2)) + padding);
+					Vector2 bottomRight = new Vector2(sizeXNoPadding * ((x + 1) / (floatChunkSplitFactor * 2)) + padding, sizeZNoPadding * ((z + 1) / (floatChunkSplitFactor * 2)) + padding);
+					Vector2 chunkCenter = AverageElements(new List<Vector2> { topLeft, topRight, bottomLeft, bottomRight });
+					int chunkSamplesX = samplesX / (chunkSplitFactor * 2);
+					int chunkSamplesZ = samplesZ / (chunkSplitFactor * 2);
+					float chunkSizeX = sizeXNoPadding / (floatChunkSplitFactor * 2);
+					float chunkSizeZ = sizeZNoPadding / (floatChunkSplitFactor * 2);
+					GPUComputePositionsTo(outputBuffer, indexOffset, new Vector3(chunkCenter.x, 0, chunkCenter.y) + transform.position, chunkSamplesX, chunkSamplesZ, chunkSizeX, chunkSizeZ, 0);
+					// print($"Index Offset: {indexOffset}, ABCD: [{topLeft},{topRight},{bottomLeft},{bottomRight}], Chunk Center: {chunkCenter}, Chunk Samples: {chunkSamplesX}x{chunkSamplesZ}, Chunk Size: {chunkSizeX}x{chunkSizeZ}");
+					indexOffset += chunkSamplesX * chunkSamplesZ;
 				}
 			}
 		}
@@ -155,6 +168,7 @@ namespace Effects.TsushimaGrass
 				_meshBoundsPadding = _globalConfig._tileBoundsPadding;
 				distToPlayerCutoff = _globalConfig._distToPlayerCutoff;
 				_positionCompute = _globalConfig._positionCompute;
+				_chunkSplitFactor = _globalConfig._chunkSplitFactor;
 			}
 			#endregion
 			if (_worldGenerator == null) {
@@ -168,17 +182,19 @@ namespace Effects.TsushimaGrass
 			}
 			
 			#endregion
-			
-			// SendChunksToComputeShader(_chunkSplitFactor, out _grassPositionsBuffer, _samplesX, _samplesZ, _tileSizeX, _tileSizeZ, _meshBoundsPadding);
+			_grassPositionsBuffer = new GraphicsBuffer(GraphicsBuffer.Target.Structured, _samplesX * _samplesZ, sizeof(float) * 16);
+			SendChunksToComputeShader(_grassPositionsBuffer, _chunkSplitFactor, _samplesX, _samplesZ, _tileSizeX, _tileSizeZ, _meshBoundsPadding);
 			MeshDataToBuffers(_grassMesh, out _meshVertsBuffer, out _meshTrisBuffer);
 			_renderParams = new RenderParams(_renderingShaderMat);
 			_renderParams.matProps = new MaterialPropertyBlock();
 			_renderParams.matProps.SetBuffer("_meshVertPositions", _meshVertsBuffer);
 			_renderParams.matProps.SetBuffer("_instancePositionMatrices", _grassPositionsBuffer);
 			_renderParams.worldBounds = new Bounds(transform.position, new Vector3(_tileSizeX, 1000000, _tileSizeZ));
+			
 		}
-
+		
 		private void Update() {
+			// if (Vector2.Distance(new Vector2(transform.position.x, transform.position.z), new Vector2(Camera.main.transform.position.x, Camera.main.transform.position.z)) > distToPlayerCutoff) return;
 			Graphics.RenderPrimitivesIndexed(_renderParams, MeshTopology.Triangles, _meshTrisBuffer, _meshTrisBuffer.count, instanceCount: _samplesX * _samplesZ);
 		}
 

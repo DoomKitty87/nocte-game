@@ -66,8 +66,8 @@ void ComputePosition(uint3 id : SV_DispatchThreadID)
 	float xSpacing = _sizeX / _samplesX; 
 	float zSpacing = _sizeZ / _samplesZ; 
 	float3 worldPos = float3(samplePosition.x * xSpacing + xSpacing / 2, 0, samplePosition.y * zSpacing + zSpacing / 2) + GetWorldPosition();
-	worldPos.x += randomRange(float2(id.x, id.x % 0.35), -xSpacing / 2, xSpacing / 2);
-	worldPos.z += randomRange(float2(id.x, id.x % 0.52), -zSpacing / 2, zSpacing / 2);
+	worldPos.x += randomRange(float2(id.x, id.x % 0.35) + GetWorldPosition().xz, -xSpacing / 2, xSpacing / 2);
+	worldPos.z += randomRange(float2(id.x, id.x % 0.52) + GetWorldPosition().xz, -zSpacing / 2, zSpacing / 2);
 	worldPos = worldPos + float3(-_sizeX / 2, 0, -_sizeZ / 2); // centerize, remove for proc gen
 	float4x4 rotMatrix = GetMatrixWithRotationY(randomRange(worldPos.xz, 0, TWO_PI));
 	_positionOutputBuffer[sampleIndex + _indexOffset] = mul(PositionToTransformMatrix(worldPos), rotMatrix); //(x, y) applies x then y, do not use the function notation in the 3blue1brown video, it is wrong

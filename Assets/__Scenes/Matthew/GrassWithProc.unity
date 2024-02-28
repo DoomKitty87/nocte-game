@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 184.79755, g: 69.83926, b: 34.26882, a: 1}
+  m_IndirectSpecularColor: {r: 177.04414, g: 68.27888, b: 34.039062, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -845,13 +845,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _samplesX: 1000
-  _samplesY: 100
+  _samplesY: 1000
   _fallbackTileSizeX: 0
   _fallbackTileSizeZ: 0
   _tileBoundsPadding: 0
-  _distToPlayerCutoff: 1000
+  _distToPlayerCutoff: 500
   _castShadowsOn: 0
   _recieveShadowsOn: 0
+  _chunkSplitFactor: 1
   _positionCompute: {fileID: 7200000, guid: 0f5e4ca7781bc44ceba456965bcf344e, type: 3}
   _renderingShaderMat: {fileID: 2100000, guid: 2bf9eee20975cfa45a2434e904df1419, type: 2}
   _grassMesh: {fileID: -462981019419857548, guid: e9edbbe92ffc1e04a94817a23bc92820,
@@ -1466,8 +1467,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 42b9af7c200d79242b6ba2ae61747d30, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _latitude: {fileID: 695168183}
-  _longitude: {fileID: 1346589278}
+  _location: {fileID: 0}
   _elevation: {fileID: 397695008}
   _player: {fileID: 108523971}
   _gpsScale: 10000
@@ -5546,6 +5546,9 @@ MonoBehaviour:
   _onDamage:
     m_PersistentCalls:
       m_Calls: []
+  _onHeal:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!114 &1829040298
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5558,8 +5561,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d13ee61495449144aa45f155db00abac, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _ammoCurrent: {fileID: 676665780}
-  _ammoMax: {fileID: 1748459590}
+  _ammoText: {fileID: 0}
+  _ammoIcon: {fileID: 0}
 --- !u!1 &1849557960
 GameObject:
   m_ObjectHideFlags: 0

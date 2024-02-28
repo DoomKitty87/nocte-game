@@ -659,7 +659,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 100, y: 100, z: 100}
+  m_LocalScale: {x: 96, y: 96, z: 96}
   m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 673101082}
@@ -756,11 +756,12 @@ MonoBehaviour:
   _grassMesh: {fileID: 0}
   _renderingShaderMat: {fileID: 0}
   distToPlayerCutoff: 1000
-  _samplesX: 0
-  _samplesZ: 0
-  _fallbackTileSizeX: 0
-  _fallbackTileSizeZ: 0
+  _samplesX: 100
+  _samplesZ: 100
+  _fallbackTileSizeX: 960
+  _fallbackTileSizeZ: 960
   _meshBoundsPadding: 0
+  _chunkSplitFactor: 1
   _positionCompute: {fileID: 0}
 --- !u!1 &787646538
 GameObject:
@@ -1141,13 +1142,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _samplesX: 5000
-  _samplesY: 500
-  _fallbackTileSizeX: 1000
-  _fallbackTileSizeZ: 1000
+  _samplesY: 5000
+  _fallbackTileSizeX: 960
+  _fallbackTileSizeZ: 960
   _tileBoundsPadding: 0
   _distToPlayerCutoff: 1000
   _castShadowsOn: 0
   _recieveShadowsOn: 0
+  _chunkSplitFactor: 2
   _positionCompute: {fileID: 7200000, guid: 0f5e4ca7781bc44ceba456965bcf344e, type: 3}
   _renderingShaderMat: {fileID: 2100000, guid: 2bf9eee20975cfa45a2434e904df1419, type: 2}
   _grassMesh: {fileID: -462981019419857548, guid: e9edbbe92ffc1e04a94817a23bc92820,
@@ -1161,7 +1163,7 @@ Transform:
   m_GameObject: {fileID: 1371078897}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 13.46934, y: 6.653803, z: -9.855426}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1299,6 +1301,7 @@ MonoBehaviour:
   _fallbackTileSizeX: 0
   _fallbackTileSizeZ: 0
   _meshBoundsPadding: 0
+  _chunkSplitFactor: 1
   _positionCompute: {fileID: 0}
 --- !u!1 &1415500141
 GameObject:
@@ -1512,6 +1515,7 @@ MonoBehaviour:
   _fallbackTileSizeX: 0
   _fallbackTileSizeZ: 0
   _meshBoundsPadding: 0
+  _chunkSplitFactor: 1
   _positionCompute: {fileID: 0}
 --- !u!1 &1590583877
 GameObject:
@@ -1645,6 +1649,7 @@ MonoBehaviour:
   _fallbackTileSizeX: 0
   _fallbackTileSizeZ: 0
   _meshBoundsPadding: 0
+  _chunkSplitFactor: 1
   _positionCompute: {fileID: 0}
 --- !u!1 &1713143282
 GameObject:
@@ -1778,6 +1783,7 @@ MonoBehaviour:
   _fallbackTileSizeX: 0
   _fallbackTileSizeZ: 0
   _meshBoundsPadding: 0
+  _chunkSplitFactor: 1
   _positionCompute: {fileID: 0}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
