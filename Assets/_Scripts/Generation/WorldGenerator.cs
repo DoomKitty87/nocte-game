@@ -583,11 +583,17 @@ public class WorldGenerator : MonoBehaviour
     while (!handle.IsCompleted) yield return null;
     handle.Complete();
     NativeArray<Vector3> vertices = new NativeArray<Vector3>(tmpSize * tmpSize, Allocator.Persistent);
-    Texture2D tempTex = new Texture2D(tmpSize, tmpSize, TextureFormat.RFloat, false, true);
-    for (int i = 0; i < tmpSize * tmpSize; i++) {
+    Texture2D tempTex = new Texture2D(tmpSize - 4, tmpSize - 4, TextureFormat.RFloat, false, true);
+    float[] dataTrimmed = new float[(tmpSize - 4) * (tmpSize - 4)];
+    tempTex.wrapMode = TextureWrapMode.Clamp;
+    for (int i = 0, n = 0; i < tmpSize * tmpSize; i++) {
       vertices[i] = new Vector3((i % tmpSize - 1) * tmpRes, output[i], (i / tmpSize - 1) * tmpRes);
+      if (i % tmpSize > 0 && i % tmpSize < tmpSize - 3 && i / tmpSize > 0 && i / tmpSize < tmpSize - 3) {
+        dataTrimmed[n] = output[i];
+        n++;
+      }
     }
-    tempTex.SetPixelData(output, 0);
+    tempTex.SetPixelData(dataTrimmed, 0);
     tempTex.Apply();
     output.Dispose();
     GrassTilePrimitives grass = go.AddComponent<GrassTilePrimitives>();
