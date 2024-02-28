@@ -21,6 +21,7 @@ namespace Effects.TsushimaGrass
 		// For now, lets implement this on CPU because I wanna solidify overall method
 		[Header("Dependencies")]
 		public WorldGenerator _worldGenerator;
+		public RenderTexture _tileHeightmap;
 		[Header("Global Config")]
 		public bool _useGlobalConfig;
 		[SerializeField] private GrassGlobalConfig _globalConfig;
@@ -69,10 +70,16 @@ namespace Effects.TsushimaGrass
 			_positionCompute.SetFloat(Shader.PropertyToID("_worldY"), center.y);
 			_positionCompute.SetFloat(Shader.PropertyToID("_worldZ"), center.z);
 			_positionCompute.SetFloat(Shader.PropertyToID("_indexOffset"), (uint)indexOffset);
+			_positionCompute.SetTexture(kernelIndex, Shader.PropertyToID("_tileHeightmapTexture"), _tileHeightmap);
+			_positionCompute.SetInt(Shader.PropertyToID("_tileHeightmapTextureWidth"), _tileHeightmap.width);
+			_positionCompute.SetInt(Shader.PropertyToID("_chunkSplitFactor"), _chunkSplitFactor);
 			int grassCount = samplesX * samplesZ;
 			_positionCompute.SetBuffer(kernelIndex, Shader.PropertyToID("_positionOutputBuffer"), outputBuffer);
+			GraphicsBuffer debugBuffer = new GraphicsBuffer(GraphicsBuffer.Target.Structured, samplesX * samplesZ, sizeof(float));
+			_positionCompute.SetBuffer(kernelIndex, Shader.PropertyToID("_debugCPUReadbackBuffer"), debugBuffer);
 			_positionCompute.GetKernelThreadGroupSizes(kernelIndex, out uint threadX, out _, out _);
 			_positionCompute.Dispatch(kernelIndex, Mathf.CeilToInt(grassCount/(float)threadX), 1, 1);
+			DebugFloatBuffer(debugBuffer);
 		}
 
 		// this sucks, will fix later
@@ -125,19 +132,19 @@ namespace Effects.TsushimaGrass
 			}
 		}
 
-		// private void DebugFloatBuffer(GraphicsBuffer matrixBuffer, int limit = 10) {
-		// 	float[] debug = new float[limit];
-		// 	matrixBuffer.GetData(debug);
-		// 	DebugFloatArray(debug, limit);
-		// }
-		//
-		// private void DebugFloatArray(float[] array, int lim = 0) {
-		// 	string output = "";
-		// 	for (int i = 0; i < lim; i++) {
-		// 		output += array[i] + ", ";
-		// 	}
-		// 	Debug.Log(output);
-		// }
+		private void DebugFloatBuffer(GraphicsBuffer matrixBuffer, int limit = 10) {
+			float[] debug = new float[limit];
+			matrixBuffer.GetData(debug);
+			DebugFloatArray(debug, limit);
+		}
+		
+		private void DebugFloatArray(float[] array, int lim = 0) {
+			string output = "";
+			for (int i = 0; i < lim; i++) {
+				output += array[i] + ", ";
+			}
+			Debug.Log(output);
+		}
 		
 		//----------------------------------------------------------------------------------
 

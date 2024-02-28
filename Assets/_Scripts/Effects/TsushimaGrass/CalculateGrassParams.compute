@@ -13,9 +13,13 @@ uniform float _worldX;
 uniform float _worldY;
 uniform float _worldZ;
 // ======
+RWTexture2D<float> _tileHeightmapTexture;
+uniform uint _tileHeightmapTextureWidth;
+uniform uint _chunkSplitFactor;
+// ======
 RWStructuredBuffer<float4x4> _positionOutputBuffer;
 uniform uint _indexOffset;
-// RWStructuredBuffer<float> _debugCPUReadbackBuffer;
+RWStructuredBuffer<float> _debugCPUReadbackBuffer;
 
 // Pseudo-random number between min and max, from shadergraph compiled code(?)
 float randomRange(float2 seed, float min, float max)
@@ -56,6 +60,13 @@ float3 GetWorldPosition()
 	return float3(_worldX, _worldY, _worldZ);
 }
 
+float GetHeightmapAtWorldPosition(float2 position)
+{
+	float2 uv = ((position.x - _worldX) / _sizeX, (position.y - _worldZ) / _sizeZ);
+	// return uv.x * 10;
+	return -_tileHeightmapTexture.Load(int3(uv, 0)).r;
+}
+
 [numthreads(64,1,1)]
 void ComputePosition(uint3 id : SV_DispatchThreadID)
 {
@@ -68,7 +79,9 @@ void ComputePosition(uint3 id : SV_DispatchThreadID)
 	float3 worldPos = float3(samplePosition.x * xSpacing + xSpacing / 2, 0, samplePosition.y * zSpacing + zSpacing / 2) + GetWorldPosition();
 	worldPos.x += randomRange(float2(id.x, id.x % 0.35) + GetWorldPosition().xz, -xSpacing / 2, xSpacing / 2);
 	worldPos.z += randomRange(float2(id.x, id.x % 0.52) + GetWorldPosition().xz, -zSpacing / 2, zSpacing / 2);
+	worldPos.y = GetHeightmapAtWorldPosition(worldPos.xz);
 	worldPos = worldPos + float3(-_sizeX / 2, 0, -_sizeZ / 2); // centerize, remove for proc gen
 	float4x4 rotMatrix = GetMatrixWithRotationY(randomRange(worldPos.xz, 0, TWO_PI));
 	_positionOutputBuffer[sampleIndex + _indexOffset] = mul(PositionToTransformMatrix(worldPos), rotMatrix); //(x, y) applies x then y, do not use the function notation in the 3blue1brown video, it is wrong
+	_debugCPUReadbackBuffer[sampleIndex + _indexOffset] = worldPos.y;
 }

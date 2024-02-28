@@ -1,6 +1,7 @@
  using System;
 using UnityEngine;
 using System.Collections.Generic;
+ using System.Linq;
  using Effects.TsushimaGrass;
  using UnityEngine.Rendering.HighDefinition;
 using Matrix4x4 = UnityEngine.Matrix4x4;
@@ -12,7 +13,9 @@ using Unity.Mathematics;
 using Unity.Jobs;
 using Unity.Burst;
 using Unity.Collections;
-using UnityEngine.Rendering;
+ using Unity.VisualScripting;
+ using UnityEngine.Experimental.Rendering;
+ using UnityEngine.Rendering;
 using IEnumerator = System.Collections.IEnumerator;
 using static AmalgamNoise;
 
@@ -536,9 +539,6 @@ public class WorldGenerator : MonoBehaviour
     // If you need to put anything else (tag, components, etc) on the tile, do it here. If it needs to change every time the LOD is changed, do it in the UpdateTile function.
     go.tag = "Ground";
     go.layer = 6;
-    GrassTilePrimitives grass = go.AddComponent<GrassTilePrimitives>();
-    grass._worldGenerator = this;
-    grass._useGlobalConfig = true;
     _structures.GenerateChunkStructures(new Vector2(x * _size * _resolution, z * _size * _resolution), new Vector2((x + 1) * _size * _resolution, (z + 1) * _size * _resolution));
     _generatedStructureTiles.Add(new Vector2(x, z));
     tile.mesh = msh;
@@ -583,13 +583,22 @@ public class WorldGenerator : MonoBehaviour
     while (!handle.IsCompleted) yield return null;
     handle.Complete();
     NativeArray<Vector3> vertices = new NativeArray<Vector3>(tmpSize * tmpSize, Allocator.Persistent);
-    Texture2D tex = new Texture2D(tmpSize, tmpSize);
+    Texture2D tempTex = new Texture2D(tmpSize, tmpSize, TextureFormat.RFloat, false, true);
     for (int i = 0; i < tmpSize * tmpSize; i++) {
       vertices[i] = new Vector3((i % tmpSize - 1) * tmpRes, output[i], (i / tmpSize - 1) * tmpRes);
-      tex.SetPixel(i % tmpSize, i / tmpSize, new Color(output[i], output[i], output[i]));
     }
+    tempTex.SetPixelData(output, 0);
+    RenderTexture tileHeightmap = new RenderTexture(tmpSize, tmpSize, 0, RenderTextureFormat.RFloat, RenderTextureReadWrite.Linear);
+    tileHeightmap.enableRandomWrite = true;
+    tileHeightmap.filterMode = FilterMode.Bilinear;
+    tileHeightmap.Create();
+    RenderTexture.active = tileHeightmap;
+    Graphics.Blit(tempTex, tileHeightmap);
     output.Dispose();
-
+    GrassTilePrimitives grass = go.AddComponent<GrassTilePrimitives>();
+    grass._worldGenerator = this;
+    grass._useGlobalConfig = true;
+    grass._tileHeightmap = tileHeightmap;
     int sideLength0 = (int) Mathf.Sqrt(vertices.Length) - 1;
     NativeArray<int> triangles = new NativeArray<int>(sideLength0 * sideLength0 * 6, Allocator.Persistent);
     int vert = 0;
