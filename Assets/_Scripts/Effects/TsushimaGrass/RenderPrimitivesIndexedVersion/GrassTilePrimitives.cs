@@ -58,7 +58,7 @@ namespace Effects.TsushimaGrass
 			trisIndexBuffer.SetData(mesh.triangles);
 		}
 
-		private void GPUComputePositionsTo(GraphicsBuffer outputBuffer, int indexOffset, Vector3 center, int samplesX, int samplesZ, float tileSizeX, float tileSizeZ, float padding) {
+		private void GPUComputePositionsTo(GraphicsBuffer outputBuffer, int indexOffset, Vector3 pivot, int samplesX, int samplesZ, float tileSizeX, float tileSizeZ, float padding) {
 			int kernelIndex = _positionCompute.FindKernel("ComputePosition");
 			// make the ids static later
 			_positionCompute.SetFloat(Shader.PropertyToID("_samplesX"), samplesX);
@@ -66,9 +66,8 @@ namespace Effects.TsushimaGrass
 			_positionCompute.SetFloat(Shader.PropertyToID("_sizeX"), tileSizeX);
 			_positionCompute.SetFloat(Shader.PropertyToID("_sizeZ"), tileSizeZ);
 			_positionCompute.SetFloat(Shader.PropertyToID("_padding"), padding);
-			_positionCompute.SetFloat(Shader.PropertyToID("_worldX"), center.x);
-			_positionCompute.SetFloat(Shader.PropertyToID("_worldY"), center.y);
-			_positionCompute.SetFloat(Shader.PropertyToID("_worldZ"), center.z);
+			_positionCompute.SetVector(Shader.PropertyToID("_tilePivotWorldPosition"), transform.position);
+			_positionCompute.SetVector(Shader.PropertyToID("_chunkPivotWorldPosition"), pivot);
 			_positionCompute.SetFloat(Shader.PropertyToID("_indexOffset"), (uint)indexOffset);
 			_positionCompute.SetTexture(kernelIndex, Shader.PropertyToID("_tileHeightmapTexture"), _tileHeightmap);
 			_positionCompute.SetInt(Shader.PropertyToID("_tileHeightmapTextureWidth"), _tileHeightmap.width);
@@ -120,7 +119,8 @@ namespace Effects.TsushimaGrass
 					Vector2 topRight = new Vector2(sizeXNoPadding * ((x + 1) / (floatChunkSplitFactor * 2)) + padding, sizeZNoPadding * (z / (floatChunkSplitFactor * 2)) + padding);
 					Vector2 bottomLeft = new Vector2(sizeXNoPadding * (x / (floatChunkSplitFactor * 2)) + padding, sizeZNoPadding * ((z + 1) / (floatChunkSplitFactor * 2)) + padding);
 					Vector2 bottomRight = new Vector2(sizeXNoPadding * ((x + 1) / (floatChunkSplitFactor * 2)) + padding, sizeZNoPadding * ((z + 1) / (floatChunkSplitFactor * 2)) + padding);
-					Vector2 chunkCenter = AverageElements(new List<Vector2> { topLeft, topRight, bottomLeft, bottomRight });
+					// Vector2 chunkCenter = AverageElements(new List<Vector2> { topLeft, topRight, bottomLeft, bottomRight });
+					Vector2 chunkCenter = topLeft;
 					int chunkSamplesX = samplesX / (chunkSplitFactor * 2);
 					int chunkSamplesZ = samplesZ / (chunkSplitFactor * 2);
 					float chunkSizeX = sizeXNoPadding / (floatChunkSplitFactor * 2);

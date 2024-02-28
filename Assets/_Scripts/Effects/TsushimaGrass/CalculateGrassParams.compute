@@ -9,9 +9,8 @@ uniform uint _samplesZ;
 uniform float _sizeX;
 uniform float _sizeZ;
 uniform float _padding;
-uniform float _worldX;
-uniform float _worldY;
-uniform float _worldZ;
+uniform float3 _tilePivotWorldPosition;
+uniform float3 _chunkPivotWorldPosition;
 // ======
 Texture2D<float> _tileHeightmapTexture;
 SamplerState sampler_tileHeightmapTexture;
@@ -56,16 +55,10 @@ float4x4 PositionToTransformMatrix(float3 position)
 		0, 0, 0, 1);
 }
 
-// could have made this a float4x4 but i forgot so this'll do
-float3 GetWorldPosition()
-{
-	return float3(_worldX, _worldY, _worldZ);
-}
-
+// TODO: fix this 
 float GetHeightmapAtWorldPosition(float2 position)
 {
-	float2 uv = float2((position.x - _worldX) / _sizeX, (position.y - _worldZ) / _sizeZ);
-	// return uv.x * 10;
+	float2 uv = float2((position.x - _tilePivotWorldPosition.x) / _sizeX, (position.y - _tilePivotWorldPosition.z) / _sizeZ) / (_chunkSplitFactor * 2); 
 	return _tileHeightmapTexture.SampleLevel(sampler_tileHeightmapTexture, uv, 0);
 }
 
@@ -78,11 +71,11 @@ void ComputePosition(uint3 id : SV_DispatchThreadID)
 	samplePosition.x = sampleIndex % _samplesX; // never mod by floats, inaccuracies cause issues
 	float xSpacing = _sizeX / _samplesX; 
 	float zSpacing = _sizeZ / _samplesZ; 
-	float3 worldPos = float3(samplePosition.x * xSpacing + xSpacing / 2, 0, samplePosition.y * zSpacing + zSpacing / 2) + GetWorldPosition();
-	worldPos.x += randomRange(float2(id.x, id.x % 0.35) + GetWorldPosition().xz, -xSpacing / 2, xSpacing / 2);
-	worldPos.z += randomRange(float2(id.x, id.x % 0.52) + GetWorldPosition().xz, -zSpacing / 2, zSpacing / 2);
+	float3 worldPos = float3(samplePosition.x * xSpacing + xSpacing / 2, 0, samplePosition.y * zSpacing + zSpacing / 2) + _chunkPivotWorldPosition;
+	worldPos.x += randomRange(float2(id.x, id.x % 0.35) + _chunkPivotWorldPosition.xz, -xSpacing / 2, xSpacing / 2);
+	worldPos.z += randomRange(float2(id.x, id.x % 0.52) + _chunkPivotWorldPosition.xz, -zSpacing / 2, zSpacing / 2);
 	worldPos.y = GetHeightmapAtWorldPosition(worldPos.xz);
-	worldPos = worldPos + float3(-_sizeX / 2, 0, -_sizeZ / 2); // centerize, remove for proc gen
+	// worldPos = worldPos + float3(-_sizeX / 2, 0, -_sizeZ / 2); // centerize, remove for proc gen
 	float4x4 rotMatrix = GetMatrixWithRotationY(randomRange(worldPos.xz, 0, TWO_PI));
 	_positionOutputBuffer[sampleIndex + _indexOffset] = mul(PositionToTransformMatrix(worldPos), rotMatrix); //(x, y) applies x then y, do not use the function notation in the 3blue1brown video, it is wrong
 	_debugCPUReadbackBuffer[sampleIndex + _indexOffset] = worldPos.y;
