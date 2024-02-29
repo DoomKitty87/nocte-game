@@ -12,14 +12,12 @@ Shader "Custom/GrassCustomShader"
             CGPROGRAM
             #pragma vertex vert
             #pragma fragment frag
-            
+
+            StructuredBuffer<uint> _lodIndexBuffer;
             StructuredBuffer<float4x4> _instancePositionMatrices;
             StructuredBuffer<float> _debugBuffer;
             float _instanceCount;
-            // LODS
-            StructuredBuffer<float3> _LOD0VertPositions;
-            float3 _cameraWorldPosition;
-            float _LOD1Distance;
+            StructuredBuffer<float3> _vertexPositions;
 
             struct FragData
             {
@@ -30,14 +28,14 @@ Shader "Custom/GrassCustomShader"
             FragData vert(uint triIndex: SV_VertexID, uint instanceID : SV_InstanceID)
             {
                 FragData output;
-                float3 vertexPosition = _LOD0VertPositions[triIndex];
+                float3 vertexPosition = _vertexPositions[triIndex];
                 // local space - do wind curvature here
                 
                 // world space
                 float4 worldPos = mul(_instancePositionMatrices[instanceID], float4(vertexPosition, 1.0f));
                 // view space / clip space(?) -- do clip space vert adjustments here
                 output.vertexPosition = mul(UNITY_MATRIX_VP, worldPos);
-                output.vertexColor = float4(0.0f, 3.0f, 0.0f, 0.0f);
+                output.vertexColor = _lodIndexBuffer[instanceID] == 1 ? float4(0.0f, 0.0f, 5.0f, 1.0f) : float4(0.0f, 3.0f, 0.0f, 1.0f);
                 return output;
             }
 
