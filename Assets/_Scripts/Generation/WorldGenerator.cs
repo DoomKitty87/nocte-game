@@ -586,6 +586,7 @@ public class WorldGenerator : MonoBehaviour
     Texture2D tempTex = new Texture2D(tmpSize - 4, tmpSize - 4, TextureFormat.RFloat, false, true);
     float[] dataTrimmed = new float[(tmpSize - 4) * (tmpSize - 4)];
     tempTex.wrapMode = TextureWrapMode.Clamp;
+    tempTex.filterMode = FilterMode.Point;
     for (int i = 0, n = 0; i < tmpSize * tmpSize; i++) {
       vertices[i] = new Vector3((i % tmpSize - 1) * tmpRes, output[i], (i / tmpSize - 1) * tmpRes);
       if (i % tmpSize > 0 && i % tmpSize < tmpSize - 3 && i / tmpSize > 0 && i / tmpSize < tmpSize - 3) {
