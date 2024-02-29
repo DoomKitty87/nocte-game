@@ -1,26 +1,30 @@
 // Each #kernel tells which function to compile; you can have many kernels
 #pragma kernel ComputePosition
-// thanks elliot lmao
+// thanks elliot
 #define TWO_PI 6.28318530718f
 #define DEG_TO_RAD 0.01745329251f
-
+// ====== Settings
 uniform uint _samplesX;
 uniform uint _samplesZ;
 uniform float _sizeX;
 uniform float _sizeZ;
 uniform float _padding;
+// ====== Depends
 uniform float3 _tilePivotWorldPosition;
 uniform float3 _chunkPivotWorldPosition;
-// ======
+// ====== Chunking / Heightmap
 Texture2D<float> _tileHeightmapTexture;
 SamplerState sampler_tileHeightmapTexture;
-
 uniform uint _tileHeightmapTextureWidth;
 uniform uint _chunkSplitFactor;
-// ======
+// ====== Output
 RWStructuredBuffer<float4x4> _positionOutputBuffer;
+// RWStructuredBuffer<float> _debugCPUReadbackBuffer;
 uniform uint _indexOffset;
-RWStructuredBuffer<float> _debugCPUReadbackBuffer;
+
+
+// ======
+
 
 // Pseudo-random number between min and max, from shadergraph compiled code(?)
 float randomRange(float2 seed, float min, float max)
@@ -55,7 +59,6 @@ float4x4 PositionToTransformMatrix(float3 position)
 		0, 0, 0, 1);
 }
 
-// TODO: fix this 
 float GetHeightmapAtWorldPosition(float2 position)
 {
   // Transform to align to texture
@@ -89,7 +92,6 @@ float GetHeightmapAtWorldPosition(float2 position)
     float w3 = 1 - w1 - w2;
 
     val = w1 * pointC + w2 * pointA + w3 * pointB;
-
   }
 	return val;
 }
@@ -110,5 +112,5 @@ void ComputePosition(uint3 id : SV_DispatchThreadID)
 	// worldPos = worldPos + float3(-_sizeX / 2, 0, -_sizeZ / 2); // centerize, remove for proc gen
 	float4x4 rotMatrix = GetMatrixWithRotationY(randomRange(worldPos.xz, 0, TWO_PI));
 	_positionOutputBuffer[sampleIndex + _indexOffset] = mul(PositionToTransformMatrix(worldPos), rotMatrix); //(x, y) applies x then y, do not use the function notation in the 3blue1brown video, it is wrong
-	_debugCPUReadbackBuffer[sampleIndex + _indexOffset] = worldPos.y;
+	// _debugCPUReadbackBuffer[sampleIndex + _indexOffset] = worldPos.y;
 }

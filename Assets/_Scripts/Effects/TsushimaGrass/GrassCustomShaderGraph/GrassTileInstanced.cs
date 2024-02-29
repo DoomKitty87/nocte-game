@@ -107,7 +107,7 @@ namespace Effects.TsushimaGrass
 			_samplesZ = _globalConfig._samplesY;
 			_fallbackTileSizeX = _globalConfig._fallbackTileSizeX;
 			_fallbackTileSizeZ = _globalConfig._fallbackTileSizeZ;
-			_grassMesh = _globalConfig._grassMesh;
+			_grassMesh = _globalConfig._LOD0GrassMesh;
 			_renderingShaderMat = _globalConfig._renderingShaderMat;
 			_meshBoundsPadding = _globalConfig._tileBoundsPadding;
 			distToPlayerCutoff = _globalConfig._distToPlayerCutoff;

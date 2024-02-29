@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 183.07579, g: 70.749115, b: 35.076847, a: 1}
+  m_IndirectSpecularColor: {r: 179.49228, g: 69.9278, b: 34.58286, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -844,12 +844,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 94ee4247fa3f47f4b8046695a0aa7a5a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _samplesX: 1000
-  _samplesY: 1000
+  _samplesX: 100
+  _samplesY: 100
   _fallbackTileSizeX: 0
   _fallbackTileSizeZ: 0
   _tileBoundsPadding: 0
   _distToPlayerCutoff: 500
+  _LOD1Distance: 1000
   _castShadowsOn: 0
   _recieveShadowsOn: 0
   _chunkSplitFactor: 1
@@ -8627,6 +8628,11 @@ PrefabInstance:
       propertyPath: _structures
       value: 
       objectReference: {fileID: 1849557963}
+    - target: {fileID: 8819276947174590073, guid: 862d92a67177d4c7b84ab88d6b6e0257,
+        type: 3}
+      propertyPath: _enableGrass
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 8819276947174590073, guid: 862d92a67177d4c7b84ab88d6b6e0257,
         type: 3}
       propertyPath: _grassManager

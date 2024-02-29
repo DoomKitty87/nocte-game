@@ -1,7 +1,9 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Numerics;
+using JetBrains.Annotations;
 using Unity.VisualScripting;
 using UnityEditor;
 
@@ -11,14 +13,12 @@ namespace Effects.TsushimaGrass
 
 	public class GrassTilePrimitives : MonoBehaviour
 	{
-		// Tsushima divides single tile into smaller tiles based on lod, increasing sample (and blade count) near player
-		// (samples of grass density texture is constant per tile, regardless of size)
-
-		// The overall tile will be the terrain tile, making terrain tile size largest LOD
-		// Tsushima divides tiles into 3 LODs, quarters, eighths, sixteenths. Can have combination of divisions to fill single tile
-
-
-		// For now, lets implement this on CPU because I wanna solidify overall method
+		
+		// Function flow ---
+		// Start() -> SendChunksToComputeShader -> GPUComputePositionsTo -> Update -> Graphics.SomeRenderFunction
+		// File flow ---
+		// this -> CalculateGrassParams.compute -> this -> GrassCustomShader.shader
+		
 		[Header("Dependencies")]
 		public WorldGenerator _worldGenerator;
 		public Texture2D _tileHeightmap;
@@ -26,11 +26,14 @@ namespace Effects.TsushimaGrass
 		public bool _useGlobalConfig;
 		[SerializeField] private GrassGlobalConfig _globalConfig;
 		[Header("Global Set Dependencies")]
-		[SerializeField] private Mesh _grassMesh;
+		public Camera _mainCamera;
+		[SerializeField] private Mesh _LOD0GrassMesh;
+		[SerializeField] private Mesh _LOD1GrassMesh;
 		[SerializeField] private Material _renderingShaderMat;
 		
 		[Header("Settings")]
 		[SerializeField] private float distToPlayerCutoff = 1000f;
+		[SerializeField] private float _LOD1Distance;
 		[SerializeField] [Range(0, 100)]private int _samplesX, _samplesZ;
 		[SerializeField] private float _fallbackTileSizeX, _fallbackTileSizeZ;
 		[SerializeField] private float _meshBoundsPadding;
@@ -47,10 +50,25 @@ namespace Effects.TsushimaGrass
 		// ===== Passed between (re-referenced)
 		private GraphicsBuffer _grassPositionsBuffer;
 		// ===== Material Shader + Buffers =====
-		private GraphicsBuffer _meshVertsBuffer;
-		private GraphicsBuffer _meshTrisBuffer;
+		private GraphicsBuffer _LOD0MeshVertexBuffer;
+		private GraphicsBuffer _LOD0MeshTrisBuffer;
+		private GraphicsBuffer _LOD1MeshVertexBuffer;
+		private GraphicsBuffer _LOD1MeshTrisBuffer;
 		// =====
 
+		private void DisposeOfBuffers() {
+			_grassPositionsBuffer?.Dispose();
+			_grassPositionsBuffer = null;
+			_LOD0MeshVertexBuffer?.Dispose();
+			_LOD0MeshVertexBuffer = null;
+			_LOD0MeshTrisBuffer?.Dispose();
+			_LOD0MeshTrisBuffer = null;
+			_LOD1MeshVertexBuffer?.Dispose();
+			_LOD1MeshVertexBuffer = null;
+			_LOD1MeshTrisBuffer?.Dispose();
+			_LOD1MeshTrisBuffer = null;
+		}
+		
 		private void MeshDataToBuffers(Mesh mesh, out GraphicsBuffer vertexPosBuffer, out GraphicsBuffer trisIndexBuffer) {
 			vertexPosBuffer = new GraphicsBuffer(GraphicsBuffer.Target.Structured, mesh.vertices.Length, sizeof(float) * 3);
 			vertexPosBuffer.SetData(mesh.vertices);
@@ -58,7 +76,7 @@ namespace Effects.TsushimaGrass
 			trisIndexBuffer.SetData(mesh.triangles);
 		}
 
-		private void GPUComputePositionsTo(GraphicsBuffer outputBuffer, int indexOffset, Vector3 pivot, int samplesX, int samplesZ, float tileSizeX, float tileSizeZ, float padding) {
+		private void GPUComputePositionsTo(Vector3 cameraPosition, GraphicsBuffer outputBuffer, int indexOffset, Vector3 pivot, int samplesX, int samplesZ, float tileSizeX, float tileSizeZ, float padding) {
 			int kernelIndex = _positionCompute.FindKernel("ComputePosition");
 			// make the ids static later
 			_positionCompute.SetFloat(Shader.PropertyToID("_samplesX"), samplesX);
@@ -68,17 +86,17 @@ namespace Effects.TsushimaGrass
 			_positionCompute.SetFloat(Shader.PropertyToID("_padding"), padding);
 			_positionCompute.SetVector(Shader.PropertyToID("_tilePivotWorldPosition"), transform.position);
 			_positionCompute.SetVector(Shader.PropertyToID("_chunkPivotWorldPosition"), pivot);
-			_positionCompute.SetFloat(Shader.PropertyToID("_indexOffset"), (uint)indexOffset);
 			_positionCompute.SetTexture(kernelIndex, Shader.PropertyToID("_tileHeightmapTexture"), _tileHeightmap);
 			_positionCompute.SetInt(Shader.PropertyToID("_tileHeightmapTextureWidth"), _tileHeightmap.width);
 			_positionCompute.SetInt(Shader.PropertyToID("_chunkSplitFactor"), _chunkSplitFactor);
 			int grassCount = samplesX * samplesZ;
 			_positionCompute.SetBuffer(kernelIndex, Shader.PropertyToID("_positionOutputBuffer"), outputBuffer);
-			GraphicsBuffer debugBuffer = new GraphicsBuffer(GraphicsBuffer.Target.Structured, samplesX * samplesZ, sizeof(float));
-			_positionCompute.SetBuffer(kernelIndex, Shader.PropertyToID("_debugCPUReadbackBuffer"), debugBuffer);
+			_positionCompute.SetFloat(Shader.PropertyToID("_indexOffset"), (uint)indexOffset);
+			// GraphicsBuffer debugBuffer = new GraphicsBuffer(GraphicsBuffer.Target.Structured, samplesX * samplesZ, sizeof(float));
+			// _positionCompute.SetBuffer(kernelIndex, Shader.PropertyToID("_debugCPUReadbackBuffer"), debugBuffer);
 			_positionCompute.GetKernelThreadGroupSizes(kernelIndex, out uint threadX, out _, out _);
 			_positionCompute.Dispatch(kernelIndex, Mathf.CeilToInt(grassCount/(float)threadX), 1, 1);
-			DebugFloatBuffer(debugBuffer);
+			// DebugFloatBuffer(debugBuffer);
 		}
 
 		// this sucks, will fix later
@@ -102,7 +120,7 @@ namespace Effects.TsushimaGrass
 		
 		private void SendChunksToComputeShader(GraphicsBuffer outputBuffer, int chunkSplitFactor, int samplesX, int samplesZ, float tileSizeX, float tileSizeZ, float padding) {
 			if (chunkSplitFactor == 0) {
-				GPUComputePositionsTo(outputBuffer, 0, transform.position, samplesX, samplesZ, tileSizeX, tileSizeZ, padding);
+				GPUComputePositionsTo(_mainCamera.transform.position, outputBuffer, 0, transform.position, samplesX, samplesZ, tileSizeX, tileSizeZ, padding);
 				return;
 			}
 			float sizeXNoPadding = tileSizeX - (padding * 2);
@@ -111,21 +129,17 @@ namespace Effects.TsushimaGrass
 			float floatChunkSplitFactor = (float)chunkSplitFactor;
 			for (int z = 0; z < chunkSplitFactor * 2; z++) {
 				for (int x = 0; x < chunkSplitFactor * 2; x++) {
-					// Vector2 topLeft = new Vector2(sizeXNoPadding * (x / (chunkSplitFactor * 2)) + padding, sizeZNoPadding * (z / (chunkSplitFactor * 2)) + padding);
-					// Vector2 topRight = new Vector2(sizeXNoPadding * (x + 1 / (chunkSplitFactor * 2)) + padding, sizeZNoPadding * (z / (chunkSplitFactor * 2)) + padding);
-					// Vector2 bottomLeft = new Vector2(sizeXNoPadding * (x / (chunkSplitFactor * 2)) + padding, sizeZNoPadding * (z + 1 / (chunkSplitFactor * 2)) + padding);
-					// Vector2 bottomRight = new Vector2(sizeXNoPadding * (x + 1 / (chunkSplitFactor * 2)) + padding, sizeZNoPadding * (z + 1 / (chunkSplitFactor * 2)) + padding);
 					Vector2 topLeft = new Vector2(sizeXNoPadding * (x / (floatChunkSplitFactor * 2)) + padding, sizeZNoPadding * (z / (floatChunkSplitFactor * 2)) + padding);
-					Vector2 topRight = new Vector2(sizeXNoPadding * ((x + 1) / (floatChunkSplitFactor * 2)) + padding, sizeZNoPadding * (z / (floatChunkSplitFactor * 2)) + padding);
-					Vector2 bottomLeft = new Vector2(sizeXNoPadding * (x / (floatChunkSplitFactor * 2)) + padding, sizeZNoPadding * ((z + 1) / (floatChunkSplitFactor * 2)) + padding);
-					Vector2 bottomRight = new Vector2(sizeXNoPadding * ((x + 1) / (floatChunkSplitFactor * 2)) + padding, sizeZNoPadding * ((z + 1) / (floatChunkSplitFactor * 2)) + padding);
+					// Vector2 topRight = new Vector2(sizeXNoPadding * ((x + 1) / (floatChunkSplitFactor * 2)) + padding, sizeZNoPadding * (z / (floatChunkSplitFactor * 2)) + padding);
+					// Vector2 bottomLeft = new Vector2(sizeXNoPadding * (x / (floatChunkSplitFactor * 2)) + padding, sizeZNoPadding * ((z + 1) / (floatChunkSplitFactor * 2)) + padding);
+					// Vector2 bottomRight = new Vector2(sizeXNoPadding * ((x + 1) / (floatChunkSplitFactor * 2)) + padding, sizeZNoPadding * ((z + 1) / (floatChunkSplitFactor * 2)) + padding);
 					// Vector2 chunkCenter = AverageElements(new List<Vector2> { topLeft, topRight, bottomLeft, bottomRight });
 					Vector2 chunkCenter = topLeft;
 					int chunkSamplesX = samplesX / (chunkSplitFactor * 2);
 					int chunkSamplesZ = samplesZ / (chunkSplitFactor * 2);
 					float chunkSizeX = sizeXNoPadding / (floatChunkSplitFactor * 2);
 					float chunkSizeZ = sizeZNoPadding / (floatChunkSplitFactor * 2);
-					GPUComputePositionsTo(outputBuffer, indexOffset, new Vector3(chunkCenter.x, 0, chunkCenter.y) + transform.position, chunkSamplesX, chunkSamplesZ, chunkSizeX, chunkSizeZ, 0);
+					GPUComputePositionsTo(_mainCamera.transform.position, outputBuffer, indexOffset, new Vector3(chunkCenter.x, 0, chunkCenter.y) + transform.position, chunkSamplesX, chunkSamplesZ, chunkSizeX, chunkSizeZ, 0);
 					// print($"Index Offset: {indexOffset}, ABCD: [{topLeft},{topRight},{bottomLeft},{bottomRight}], Chunk Center: {chunkCenter}, Chunk Samples: {chunkSamplesX}x{chunkSamplesZ}, Chunk Size: {chunkSizeX}x{chunkSizeZ}");
 					indexOffset += chunkSamplesX * chunkSamplesZ;
 				}
@@ -170,12 +184,14 @@ namespace Effects.TsushimaGrass
 				_samplesZ = _globalConfig._samplesY;
 				_fallbackTileSizeX = _globalConfig._fallbackTileSizeX;
 				_fallbackTileSizeZ = _globalConfig._fallbackTileSizeZ;
-				_grassMesh = _globalConfig._grassMesh;
+				_LOD0GrassMesh = _globalConfig._LOD0GrassMesh;
 				_renderingShaderMat = _globalConfig._renderingShaderMat;
 				_meshBoundsPadding = _globalConfig._tileBoundsPadding;
 				distToPlayerCutoff = _globalConfig._distToPlayerCutoff;
 				_positionCompute = _globalConfig._positionCompute;
 				_chunkSplitFactor = _globalConfig._chunkSplitFactor;
+				_LOD1Distance = _globalConfig._LOD1Distance;
+				_mainCamera = _globalConfig._mainCamera;
 			}
 			#endregion
 			if (_worldGenerator == null) {
@@ -191,18 +207,22 @@ namespace Effects.TsushimaGrass
 			#endregion
 			_grassPositionsBuffer = new GraphicsBuffer(GraphicsBuffer.Target.Structured, _samplesX * _samplesZ, sizeof(float) * 16);
 			SendChunksToComputeShader(_grassPositionsBuffer, _chunkSplitFactor, _samplesX, _samplesZ, _tileSizeX, _tileSizeZ, _meshBoundsPadding);
-			MeshDataToBuffers(_grassMesh, out _meshVertsBuffer, out _meshTrisBuffer);
+			MeshDataToBuffers(_LOD0GrassMesh, out _LOD0MeshVertexBuffer, out _LOD0MeshTrisBuffer);
 			_renderParams = new RenderParams(_renderingShaderMat);
 			_renderParams.matProps = new MaterialPropertyBlock();
-			_renderParams.matProps.SetBuffer("_meshVertPositions", _meshVertsBuffer);
+			_renderParams.matProps.SetBuffer("_LOD0VertPositions", _LOD0MeshVertexBuffer);
+			_renderParams.matProps.SetBuffer("_LOD1VertPositions", _LOD0MeshVertexBuffer);
 			_renderParams.matProps.SetBuffer("_instancePositionMatrices", _grassPositionsBuffer);
+			_renderParams.matProps.SetVector("_cameraWorldPosition", _mainCamera.transform.position);
+			_renderParams.matProps.SetFloat("_LOD1Distance", _LOD1Distance);
 			_renderParams.worldBounds = new Bounds(transform.position, new Vector3(_tileSizeX, 1000000, _tileSizeZ));
 			
 		}
 		
 		private void Update() {
-			// if (Vector2.Distance(new Vector2(transform.position.x, transform.position.z), new Vector2(Camera.main.transform.position.x, Camera.main.transform.position.z)) > distToPlayerCutoff) return;
-			Graphics.RenderPrimitivesIndexed(_renderParams, MeshTopology.Triangles, _meshTrisBuffer, _meshTrisBuffer.count, instanceCount: _samplesX * _samplesZ);
+			// if (Vector2.Distance(new Vector2(transform.position.x, transform.position.z), new Vector2(_mainCamera.transform.position.x, _mainCamera.transform.position.z)) > distToPlayerCutoff) return;
+			_renderParams.matProps.SetVector("_cameraWorldPosition", _mainCamera.transform.position);
+			Graphics.RenderPrimitivesIndexed(_renderParams, MeshTopology.Triangles, _LOD0MeshTrisBuffer, _LOD0MeshTrisBuffer.count, instanceCount: _samplesX * _samplesZ);
 		}
 
 		private void OnDrawGizmosSelected() {
@@ -213,12 +233,7 @@ namespace Effects.TsushimaGrass
 		}
 
 		private void OnDestroy() {
-			_grassPositionsBuffer?.Dispose();
-			_grassPositionsBuffer = null;
-			_meshVertsBuffer?.Dispose();
-			_meshVertsBuffer = null;
-			_meshTrisBuffer?.Dispose();
-			_meshTrisBuffer = null;
+			DisposeOfBuffers();
 		}
 	}
 }

@@ -13,12 +13,14 @@ namespace Effects.TsushimaGrass
 		public float _fallbackTileSizeX, _fallbackTileSizeZ;
 		public float _tileBoundsPadding;
 		public float _distToPlayerCutoff;
+		public float _LOD1Distance;
 		public bool _castShadowsOn;
 		public bool _recieveShadowsOn;
-		[Range(0, 8)] public int _chunkSplitFactor; 
-		[Header("Dependencies")]
+		[Range(0, 8)] public int _chunkSplitFactor;
+		[Header("Dependencies")] 
+		public Camera _mainCamera;
 		public ComputeShader _positionCompute;
 		public Material _renderingShaderMat;
-		public Mesh _grassMesh;
+		public Mesh _LOD0GrassMesh;
 	}
 }
