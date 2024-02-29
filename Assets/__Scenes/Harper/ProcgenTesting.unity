@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 182.3395, g: 70.34627, b: 35.043644, a: 1}
+  m_IndirectSpecularColor: {r: 180.74886, g: 69.83851, b: 34.730747, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -514,9 +514,14 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5366405461773836912, guid: 4ade840f55de94419825a34c0132792d,
         type: 3}
+      propertyPath: _staminaLimit
+      value: 15
+      objectReference: {fileID: 0}
+    - target: {fileID: 5366405461773836912, guid: 4ade840f55de94419825a34c0132792d,
+        type: 3}
       propertyPath: _playerTransform
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 108523971}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -1270,8 +1275,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 42b9af7c200d79242b6ba2ae61747d30, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _latitude: {fileID: 695168183}
-  _longitude: {fileID: 1346589278}
+  _location: {fileID: 0}
   _elevation: {fileID: 397695008}
   _player: {fileID: 108523971}
   _gpsScale: 10000
@@ -5131,6 +5135,9 @@ MonoBehaviour:
   _onDamage:
     m_PersistentCalls:
       m_Calls: []
+  _onHeal:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!114 &1829040298
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5143,8 +5150,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d13ee61495449144aa45f155db00abac, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _ammoCurrent: {fileID: 676665780}
-  _ammoMax: {fileID: 1748459590}
+  _ammoText: {fileID: 0}
+  _ammoIcon: {fileID: 0}
 --- !u!1 &1849557960
 GameObject:
   m_ObjectHideFlags: 0
@@ -5201,8 +5208,6 @@ MonoBehaviour:
     type: 3}
   _groundInset: 5
   _structureRenderDistance: 2500
-  _roadObject: {fileID: 4150674377287508502, guid: 730c5440c1dd74f64a1065e15b475275,
-    type: 3}
   _centerOffsetRadiusAmplitude: 5000
   _heightCutoff: 500
   _roadResolution: 2
