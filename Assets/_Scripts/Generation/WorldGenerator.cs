@@ -173,7 +173,8 @@ public class WorldGenerator : MonoBehaviour
   [SerializeField] private LODLevel[] _lodLevels;
   [Tooltip("LOD level outside of specified range.")]
   [SerializeField] private int _defaultLOD;
-
+  [Header("Grass Settings")]
+  [SerializeField] private bool _enableGrass;
   [Header("Water Settings")]
   [Tooltip("Enable or disable rivers.")]
   [SerializeField] private bool _enableRivers;
@@ -597,10 +598,12 @@ public class WorldGenerator : MonoBehaviour
     tempTex.SetPixelData(dataTrimmed, 0);
     tempTex.Apply();
     output.Dispose();
-    GrassTilePrimitives grass = go.AddComponent<GrassTilePrimitives>();
-    grass._worldGenerator = this;
-    grass._useGlobalConfig = true;
-    grass._tileHeightmap = tempTex;
+    if (_enableGrass) {
+      GrassTilePrimitives grass = go.AddComponent<GrassTilePrimitives>();
+      grass._worldGenerator = this;
+      grass._useGlobalConfig = true;
+      grass._tileHeightmap = tempTex;
+    }
     int sideLength0 = (int) Mathf.Sqrt(vertices.Length) - 1;
     NativeArray<int> triangles = new NativeArray<int>(sideLength0 * sideLength0 * 6, Allocator.Persistent);
     int vert = 0;
