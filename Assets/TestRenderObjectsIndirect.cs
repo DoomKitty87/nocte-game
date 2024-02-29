@@ -26,17 +26,20 @@ public class TestRenderObjectsIndirect : MonoBehaviour
 
     public void Start() {
         Initialize();
+        
+        UpdateBuffer();
     }
     
     private void Initialize() {
         _argsBuffer = new ComputeBuffer(1, _args.Length * sizeof(uint), ComputeBufferType.IndirectArguments, 0);
+        _secondArgsBuffer = new ComputeBuffer(1, _args.Length * sizeof(uint), ComputeBufferType.IndirectArguments, 0);
+
     }
     
     public void Update() {
         Graphics.DrawMeshInstancedIndirect(_instanceMesh, 0, _instanceMaterial, new Bounds(Vector3.zero, Vector3.one * 1000), _argsBuffer);
-        
-        Graphics.DrawMeshInstancedIndirect(_secondInstancedMesh, 0, _instanceMaterial, new Bounds(Vector3.zero, Vector3.one * 1000), _argsBuffer);
 
+        Graphics.DrawMeshInstancedIndirect(_secondInstancedMesh, 0, _secondinstancedMaterial, new Bounds(Vector3.zero, Vector3.one * 1000), _secondArgsBuffer);
     }
     
     private void OnDisable() {
