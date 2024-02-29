@@ -74,8 +74,8 @@ float GetHeightmapAtWorldPosition(float2 position)
   if (tuv.x > (1 - tuv.y))
   {
 
-    float w1 = ((1 - 1) * (tuv.x - 1) + (1 - 0) * (tuv.y - 1)) / ((1 - 1) * (1 - 1) + (1 - 0) * (0 - 1));
-    float w2 = ((1 - 0) * (tuv.x - 1) + (1 - 1) * (tuv.y - 1)) / ((1 - 1) * (1 - 1) + (1 - 0) * (0 - 1));
+    float w1 = -(tuv.y - 1);
+    float w2 = -(tuv.x - 1);
     float w3 = 1 - w1 - w2;
 
     val = w1 * pointB + w2 * pointC + w3 * pointD;
@@ -84,8 +84,8 @@ float GetHeightmapAtWorldPosition(float2 position)
   else
   {
 
-    float w1 = ((0 - 0) * (tuv.x - 1) + (1 - 0) * (tuv.y - 0)) / ((0 - 0) * (0 - 1) + (1 - 0) * (1 - 0));
-    float w2 = ((0 - 1) * (tuv.x - 1) + (0 - 1) * (tuv.y - 0)) / ((0 - 0) * (0 - 1) + (1 - 0) * (1 - 0));
+    float w1 = (tuv.y);
+    float w2 = -(tuv.x - 1) - (tuv.y);
     float w3 = 1 - w1 - w2;
 
     val = w1 * pointC + w2 * pointA + w3 * pointB;
