@@ -658,6 +658,20 @@ public class WorldGenerator : MonoBehaviour
     while (!handle.IsCompleted) yield return null;
     handle.Complete();
 
+    int triLength = tmpSize - 1;
+    NativeArray<int> culled = new NativeArray<int>((triLength * triLength - (triLength * 2 + (triLength - 2) * 2)) * 6, Allocator.Persistent);
+
+    for (int i = 0, j = 0; i < triLength * triLength; i++) {
+      if (i % triLength == 0 || i % triLength == triLength - 1 || i / triLength == 0 || i / triLength == triLength - 1) continue;
+      culled[j] = triangles[i * 6];
+      culled[j + 1] = triangles[i * 6 + 1];
+      culled[j + 2] = triangles[i * 6 + 2];
+      culled[j + 3] = triangles[i * 6 + 3];
+      culled[j + 4] = triangles[i * 6 + 4];
+      culled[j + 5] = triangles[i * 6 + 5];
+      j += 6;
+    }
+
     _tilePool[index].waterVertices = waterVertsFinal.AsArray().ToArray();
     _tilePool[index].waterTriangles = waterTrisFinal.AsArray().ToArray();
     // Debug.Log(waterVertsFinal.Length);
@@ -669,7 +683,7 @@ public class WorldGenerator : MonoBehaviour
     Mesh.MeshDataArray meshDataArray = Mesh.AllocateWritableMeshData(1);
     WriteMeshJob meshJob = new WriteMeshJob {
       vertices = vertices,
-      triangles = triangles,
+      triangles = culled,
       normals = normals,
       mesh = meshDataArray[0]
     };
@@ -684,6 +698,7 @@ public class WorldGenerator : MonoBehaviour
     vertices.Dispose();
     triangles.Dispose();
     normals.Dispose();
+    culled.Dispose();
     
     //RiverPass(msh, index);
     ScatterTile(index);
@@ -831,7 +846,7 @@ public class WorldGenerator : MonoBehaviour
     heightMods.Dispose();
 
     int triLength = tmpSize - 1;
-    NativeArray<int> culled = new NativeArray<int>(triLength * triLength - (triLength * 2 + (triLength - 2) * 2) * 6, Allocator.Persistent);
+    NativeArray<int> culled = new NativeArray<int>((triLength * triLength - (triLength * 2 + (triLength - 2) * 2)) * 6, Allocator.Persistent);
 
     for (int i = 0, j = 0; i < triLength * triLength; i++) {
       if (i % triLength == 0 || i % triLength == triLength - 1 || i / triLength == 0 || i / triLength == triLength - 1) continue;
@@ -870,6 +885,7 @@ public class WorldGenerator : MonoBehaviour
     vertices.Dispose();
     triangles.Dispose();
     normals.Dispose();
+    culled.Dispose();
     
     ScatterTile(index);
     maxDistance = Mathf.Max(Mathf.Abs(x - _playerXChunkScale), Mathf.Abs(z - _playerZChunkScale));
