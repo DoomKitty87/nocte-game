@@ -70,6 +70,7 @@ public class WeatherManager : MonoBehaviour
     _cloudVolume.TryGet<VisualEnvironment>(out _environment);
     _cloudVolume.TryGet<PhysicallyBasedSky>(out _physicalSky);
     _environment.windOrientation.value = Mathf.PerlinNoise(_seed * 10, -_seed * 10) * 360;
+    _rainEffect.Play();
   }
 
   private void Update() {

@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 196.84879, g: 73.030464, b: 35.746555, a: 1}
+  m_IndirectSpecularColor: {r: 196.32681, g: 74.49776, b: 36.79879, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -1410,8 +1410,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 42b9af7c200d79242b6ba2ae61747d30, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _latitude: {fileID: 695168183}
-  _longitude: {fileID: 1346589278}
+  _location: {fileID: 0}
   _elevation: {fileID: 397695008}
   _player: {fileID: 108523971}
   _gpsScale: 10000
@@ -5490,6 +5489,9 @@ MonoBehaviour:
   _onDamage:
     m_PersistentCalls:
       m_Calls: []
+  _onHeal:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!114 &1829040298
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5502,8 +5504,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d13ee61495449144aa45f155db00abac, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _ammoCurrent: {fileID: 676665780}
-  _ammoMax: {fileID: 1748459590}
+  _ammoText: {fileID: 0}
+  _ammoIcon: {fileID: 0}
 --- !u!1 &1849557960
 GameObject:
   m_ObjectHideFlags: 0
