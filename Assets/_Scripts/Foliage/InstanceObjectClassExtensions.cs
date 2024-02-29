@@ -200,6 +200,8 @@ public class RenderFoliage
     }
 
     public RenderFoliage(Mesh mesh, Material mat) {
+        _initialized = true;
+        
         _instanceMesh = mesh;
         _instanceMaterial = mat;
         
@@ -211,7 +213,6 @@ public class RenderFoliage
     }
     
     public void Render() {
-        Debug.Log($"Render at time {Time.time}");
         if (_initialized) Graphics.DrawMeshInstancedIndirect(_instanceMesh, 0, _instanceMaterial, new Bounds(Vector3.zero, Vector3.one * 1000), _argsBuffer);
     }
     
