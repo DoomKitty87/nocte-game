@@ -198,15 +198,23 @@ public class RenderFoliage
     public RenderFoliage() {
         Initialize();
     }
+
+    public RenderFoliage(Mesh mesh, Material mat) {
+        _instanceMesh = mesh;
+        _instanceMaterial = mat;
+        
+        Initialize();
+    }
     
     private void Initialize() {
-        _argsBuffer = new ComputeBuffer(1, _args.Length * sizeof(uint), ComputeBufferType.IndirectArguments);
+        _argsBuffer = new ComputeBuffer(1, _args.Length * sizeof(uint), ComputeBufferType.IndirectArguments, 0);
     }
     
     public void Render() {
+        Debug.Log($"Render at time {Time.time}");
         if (_initialized) Graphics.DrawMeshInstancedIndirect(_instanceMesh, 0, _instanceMaterial, new Bounds(Vector3.zero, Vector3.one * 1000), _argsBuffer);
     }
-
+    
     private void Disable() {
         _positionsBuffer?.Release();
         _positionsBuffer = null;

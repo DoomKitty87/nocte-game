@@ -19,7 +19,6 @@ Shader "ExampleShader"
             #pragma multi_compile_instancing
 
             #include "UnityCG.cginc"
-            #include "UnityIndirect.cginc"
 
             struct v2f
             {

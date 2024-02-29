@@ -4,77 +4,50 @@ using UnityEngine;
 
 public class TestRenderObjectsIndirect : MonoBehaviour
 {
-    public bool _initialized;
-    
-    public Mesh _instanceMesh;
-    public Material _instanceMaterial;
     public int _length;
     public float _distance;
+    public int _numberOfRenderers;
+    public float _distanceBetweenRenderers;
 
-    private Vector4[] _positions;
+    public Mesh _mesh;
+    public Material _material;
     
-    private readonly uint[] _args = { 0, 0, 0, 0, 0 };
-    private ComputeBuffer _argsBuffer;
-    public int _count = 0;
-
-    private ComputeBuffer _positionsBuffer;
-
-    private static readonly int PositionBuffer = Shader.PropertyToID("position_buffer");
+    // private RenderFoliage[] _foliageRenderers;
+    private Dictionary<int, RenderFoliage> _foliageRenderers = new Dictionary<int, RenderFoliage>();
     
     private void Start() {
-        _argsBuffer = new ComputeBuffer(1, _args.Length * sizeof(uint), ComputeBufferType.IndirectArguments);
+        for (int i = 0; i < _numberOfRenderers; i++) {
+            _foliageRenderers.Add(i, new RenderFoliage(_mesh, _material));
+            
+            _foliageRenderers[i]._initialized = true;
+            
+            Vector3[] positions = CreatePositions(i);
 
-        CreatePositions();
-        
-        UpdateBuffer();
+            _foliageRenderers[i].UpdateBuffer(positions, Vector3.zero);
+        }
     }
     
     public void Update() {
-        Graphics.DrawMeshInstancedIndirect(_instanceMesh, 0, _instanceMaterial, new Bounds(Vector3.zero, Vector3.one * 1000), _argsBuffer);
-    }
-
-    private void OnDisable() {
-        _positionsBuffer?.Release();
-        _positionsBuffer = null;
-
-        _argsBuffer.Release();
-        _argsBuffer = null;
-    }
-
-    private void CreatePositions() {
-        int _count = _length * _length * _length;
-
-        _positions = new Vector4[_count];
-
-        int index = 0;
-        for (int i = 0; i < _length; i++) {
-            for (int j = 0; j < _length; j++) {
-                for (int k = 0; k < _length; k++) {
-                    _positions[index] = new Vector3(i * _distance, j * _distance, k * _distance);
-                    index++;
-                }
-            }
+        for (int i = 0; i < _numberOfRenderers; i++) {
+            _foliageRenderers[i].Render();
         }
     }
 
-    
-    private void UpdateBuffer() {
-        if (!_initialized) return;
+    private Vector3[] CreatePositions(int index) {
+        int count = _length * _length * _length;
         
-        _positionsBuffer?.Release();
-        _positionsBuffer = new ComputeBuffer(_count, 16);
+        Vector3[] positionsToAdd = new Vector3[count];
+        
+        int i = 0;
+        for (int j = 0; j < _length; j++) {
+            for (int k = 0; k < _length; k++) {
+                for (int l = 0; l < _length; l++) {
+                    positionsToAdd[i] = new Vector3(j * _distance + index * _distanceBetweenRenderers, k * _distance, l * _distance);
+                    i++;
+                }
+            }
+        }
 
-        var positions4 = new Vector4[_count];
-        for (int i = 0; i < _count; i++) positions4[i] = [i];
-        
-        _positionsBuffer.SetData(positions4);
-        _instanceMaterial.SetBuffer(PositionBuffer, _positionsBuffer);
-
-        _args[0] = _instanceMesh.GetIndexCount(0);
-        _args[1] = (uint)_count;
-        _args[2] = _instanceMesh.GetIndexStart(0);
-        _args[3] = _instanceMesh.GetBaseVertex(0);
-        
-        _argsBuffer.SetData(_args);
+        return positionsToAdd;
     }
 }
