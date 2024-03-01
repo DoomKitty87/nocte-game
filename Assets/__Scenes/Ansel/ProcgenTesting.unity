@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 179.50002, g: 69.72907, b: 34.587166, a: 1}
+  m_IndirectSpecularColor: {r: 183.39343, g: 70.585304, b: 35.214497, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -6433,6 +6433,10 @@ PrefabInstance:
         type: 3}
       insertIndex: -1
       addedObject: {fileID: 1401696302}
+    - targetCorrespondingSourceObject: {fileID: 2782864177877118767, guid: 807785f75a4cabf4883bf2cc8fe88221,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1919250530}
     - targetCorrespondingSourceObject: {fileID: 8790353012930772278, guid: 807785f75a4cabf4883bf2cc8fe88221,
         type: 3}
       insertIndex: -1
@@ -6737,7 +6741,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 349971437}
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 108523971}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!73398921 &1919250531
 VFXRenderer:
@@ -6794,7 +6798,7 @@ VisualEffect:
   m_InitialEventNameOverriden: 0
   m_StartSeed: 0
   m_ResetSeedOnPlay: 1
-  m_AllowInstancing: 1
+  m_AllowInstancing: 0
   m_ResourceVersion: 1
   m_PropertySheet:
     m_Float:
@@ -6824,7 +6828,7 @@ VisualEffect:
       - m_Value:
           serializedVersion: 2
           key0: {r: 1, g: 1, b: 1, a: 0}
-          key1: {r: 0.5, g: 0.5, b: 0.5, a: 1}
+          key1: {r: 1, g: 1, b: 1, a: 1}
           key2: {r: 0, g: 0, b: 0, a: 0.8}
           key3: {r: 0, g: 0, b: 0, a: 0}
           key4: {r: 0, g: 0, b: 0, a: 0}
@@ -6848,11 +6852,11 @@ VisualEffect:
           atime6: 0
           atime7: 0
           m_Mode: 0
-          m_ColorSpace: -1
+          m_ColorSpace: 1
           m_NumColorKeys: 2
           m_NumAlphaKeys: 4
         m_Name: RainColor
-        m_Overridden: 0
+        m_Overridden: 1
     m_NamedObject:
       m_Array: []
     m_Bool:
@@ -9468,7 +9472,7 @@ PrefabInstance:
     - target: {fileID: 7336471431426695701, guid: 862d92a67177d4c7b84ab88d6b6e0257,
         type: 3}
       propertyPath: _rainMaxIntensity
-      value: 10000
+      value: 5000
       objectReference: {fileID: 0}
     - target: {fileID: 7336471431426695701, guid: 862d92a67177d4c7b84ab88d6b6e0257,
         type: 3}
@@ -10203,7 +10207,6 @@ SceneRoots:
   - {fileID: 160538195}
   - {fileID: 1849557961}
   - {fileID: 1829040276}
-  - {fileID: 1919250530}
   - {fileID: 76653203}
   - {fileID: 1610259049}
   - {fileID: 1563905652}
