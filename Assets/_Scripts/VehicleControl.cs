@@ -31,6 +31,7 @@ public class VehicleControl : MonoBehaviour
   public void EnterVehicle() {
     rigidBody.isKinematic = false;
     _inUse = true;
+    WorldGenInfo._secondaryStructures.RemoveStructure(gameObject);
   }
 
   public void ExitVehicle() {

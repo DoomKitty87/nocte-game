@@ -19,6 +19,19 @@ public class SecondaryStructures : MonoBehaviour
 
   private List<StructureData> _structures = new List<StructureData>();
 
+  private void Awake() {
+    WorldGenInfo._secondaryStructures = this;
+  }
+
+  public void RemoveStructure(GameObject reference) {
+    for (int i = 0; i < _structures.Count; i++) {
+      if (_structures[i].reference == reference) {
+        _structures.RemoveAt(i);
+        return;
+      }
+    }
+  }
+
   public void GenerateChunkStructures(Vector2 corner0, Vector2 corner1) {
     Vector2 position = new Vector2((corner1.x - corner0.x) * PSRHash(corner0), (corner1.y - corner0.y) * PSRHash(corner1)) + corner0;
     if (PSRHash(position) < _chunkStructureChance) {
