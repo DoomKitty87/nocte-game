@@ -35,7 +35,7 @@ Shader "Custom/GrassCustomShader"
                 float4 worldPos = mul(_instancePositionMatrices[instanceID], float4(vertexPosition, 1.0f));
                 // view space / clip space(?) -- do clip space vert adjustments here
                 output.vertexPosition = mul(UNITY_MATRIX_VP, worldPos);
-                output.vertexColor = _lodIndexBuffer[instanceID] == 1 ? float4(0.0f, 0.0f, 5.0f, 1.0f) : float4(0.0f, 3.0f, 0.0f, 1.0f);
+                output.vertexColor = _lodIndexBuffer[instanceID] == 1 ? float4(0.0f, 3.0f, 5.0f, 1.0f) : float4(0.0f, 3.0f, 0.0f, 1.0f);
                 return output;
             }
 

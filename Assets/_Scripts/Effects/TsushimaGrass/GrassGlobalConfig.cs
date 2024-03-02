@@ -16,7 +16,7 @@ namespace Effects.TsushimaGrass
 		public float _LOD1Distance;
 		public bool _castShadowsOn;
 		public bool _recieveShadowsOn;
-		[Range(0, 8)] public int _chunkSplitFactor;
+		[Range(0, 20)] public int _chunkSplitFactor;
 		[Header("Dependencies")] 
 		public Camera _mainCamera;
 		public ComputeShader _positionCompute;

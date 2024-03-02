@@ -880,10 +880,10 @@ public class WorldGenerator : MonoBehaviour
     _currentlyUpdating--;
     if (_currentlyUpdating == 0 && _updateQueue.Count == 0) StartCoroutine(WaterMeshUpdate());
     
-    // Rengerate Grass
-    if (_enableGrass) {
-      _tilePool[index].obj.GetComponent<GrassTilePrimitives>().GenerateGrassHook();
-    }
+    // // Rengerate Grass
+    // if (_enableGrass) {
+    //   _tilePool[index].obj.GetComponent<GrassTilePrimitives>().GenerateGrassHook();
+    // }
   }
 
   #endregion
