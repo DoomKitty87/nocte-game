@@ -1,0 +1,15 @@
+// Each #kernel tells which function to compile; you can have many kernels
+#pragma kernel ClearMatrixBuffer
+
+RWStructuredBuffer<float4x4> _bufferToClear;
+
+[numthreads(64,1,1)]
+void ClearMatrixBuffer (uint3 id : SV_DispatchThreadID)
+{
+    _bufferToClear[id.x] = float4x4(
+    	0, 0, 0, 0,
+    	0, 0, 0, 0,
+    	0, 0, 0, 0,
+    	0, 0, 0 ,0
+    );
+}
