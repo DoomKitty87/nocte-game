@@ -55,6 +55,7 @@ public class WeatherManager : MonoBehaviour
   private float _spacePhaseMajor;
   private int _updateCounter;
   private int _updateCounter2;
+  private float _windDirection = 1.6f;
 
   private void Start() {
     _spacePhase = _spaceFactorInitial;
@@ -104,6 +105,9 @@ public class WeatherManager : MonoBehaviour
     _weatherState.w = _windSpeedCurve.Evaluate(_weatherPhases.z);
     _clouds.shapeFactor.value = _weatherState.y;
     _environment.windSpeed.value = _weatherState.z * _maxWindSpeed;
+    _environment.windOrientation.value = _windDirection * 360 / (2 * Mathf.PI);
+    Shader.SetGlobalFloat("_WindSpeed", _weatherState.z);
+    Shader.SetGlobalFloat("_WindDirection", _windDirection);
     _rainEffect.SetInt("RainRate", (int) (_weatherState.z * _rainMaxIntensity));
     _physicalSky.spaceEmissionMultiplier.value = nightFactor * _maxSpaceIntensity * _spaceCycleCurve.Evaluate(_spacePhaseMajor);
     _asteroidEffect.SetFloat("SpawnRate", nightFactor * _maxAsteroidRate);

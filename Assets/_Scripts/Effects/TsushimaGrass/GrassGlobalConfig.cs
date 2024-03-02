@@ -23,5 +23,10 @@ namespace Effects.TsushimaGrass
 		public ComputeShader _bufferClearCompute;
 		public Material _renderingShaderMat;
 		public Mesh _LOD0GrassMesh;
+    public Light _mainLight;
+
+    private void Update() {
+      Shader.SetGlobalVector("_MainLightDir", _mainLight.transform.forward);
+    }
 	}
 }
