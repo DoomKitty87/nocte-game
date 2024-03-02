@@ -20,6 +20,7 @@ public class WeatherManager : MonoBehaviour
   [SerializeField] private AnimationCurve _spaceCycleCurve;
 
   [Tooltip("Density of clouds over time.")]
+  [SerializeField] private AnimationCurve _cloudShapeCurve;
   [SerializeField] private AnimationCurve _cloudDensityCurve;
 
   [SerializeField] private AnimationCurve _windSpeedCurve;
@@ -31,7 +32,7 @@ public class WeatherManager : MonoBehaviour
   [SerializeField] private WorldGenerator _worldGenerator;
   [SerializeField] private VolumeProfile _cloudVolume;
   [SerializeField] private Transform _sunTransform;
-  [SerializeField] private VisualEffect _rainEffect;
+  [SerializeField] private ParticleSystem _rainEffect;
   [SerializeField] private VisualEffect _asteroidEffect;
   [SerializeField] private int _frameUpdateDelay;
   [SerializeField] private int _frameUpdateDelay2;
@@ -55,6 +56,7 @@ public class WeatherManager : MonoBehaviour
   private float _spacePhaseMajor;
   private int _updateCounter;
   private int _updateCounter2;
+  private ParticleSystem.EmissionModule _rainEmission;
 
   private void Start() {
     _spacePhase = _spaceFactorInitial;
@@ -70,7 +72,7 @@ public class WeatherManager : MonoBehaviour
     _cloudVolume.TryGet<VisualEnvironment>(out _environment);
     _cloudVolume.TryGet<PhysicallyBasedSky>(out _physicalSky);
     _environment.windOrientation.value = Mathf.PerlinNoise(_seed * 10, -_seed * 10) * 360;
-    _rainEffect.Play();
+    _rainEmission = _rainEffect.emission;
   }
 
   private void Update() {
@@ -100,12 +102,13 @@ public class WeatherManager : MonoBehaviour
     } else {
       _updateCounter = 0;
     }
-    _weatherState.y = _cloudDensityCurve.Evaluate(_weatherPhases.x);
+    _weatherState.y = _cloudShapeCurve.Evaluate(_weatherPhases.x);
     _weatherState.z = _rainDensityCurve.Evaluate(_weatherPhases.y);
     _weatherState.w = _windSpeedCurve.Evaluate(_weatherPhases.z);
     _clouds.shapeFactor.value = _weatherState.y;
+    _clouds.densityMultiplier.value = _cloudDensityCurve.Evaluate(_weatherState.y);
     _environment.windSpeed.value = _weatherState.z * _maxWindSpeed;
-    _rainEffect.SetInt("RainRate", (int) (_weatherState.z * _rainMaxIntensity));
+    _rainEmission.rateOverTime = _weatherState.z * _rainMaxIntensity;
     _physicalSky.spaceEmissionMultiplier.value = nightFactor * _maxSpaceIntensity * _spaceCycleCurve.Evaluate(_spacePhaseMajor);
     _asteroidEffect.SetFloat("SpawnRate", nightFactor * _maxAsteroidRate);
   }

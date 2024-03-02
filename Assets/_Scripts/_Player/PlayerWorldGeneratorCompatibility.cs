@@ -65,9 +65,10 @@ public class PlayerWorldGeneratorCompatibility : MonoBehaviour
 {
     public PlayerController _playerController;
     [SerializeField] private WorldGenerator _worldGeneratorObject;
-    [SerializeField] private VisualEffect _rain;
+    [SerializeField] private ParticleSystem _rain;
     [SerializeField] private LayerMask _groundMask;
     private bool _hasInitialized;
+    private ParticleSystem.ShapeModule _rainShape;
 
     private static bool _enablePlayer;
 
@@ -78,6 +79,7 @@ public class PlayerWorldGeneratorCompatibility : MonoBehaviour
         }
 
         _playerController = GetComponent<PlayerController>();
+        _rainShape = _rain.shape;
     }
 
     private void Start() {
@@ -91,7 +93,7 @@ public class PlayerWorldGeneratorCompatibility : MonoBehaviour
         if (!_hasInitialized) return;
 
         _worldGeneratorObject.UpdatePlayerLoadedChunks(transform.position);
-        _rain.SetVector3("PlayerPos", transform.position);
+        _rainShape.position = transform.position + Vector3.up * 25f;
     }
 
 
