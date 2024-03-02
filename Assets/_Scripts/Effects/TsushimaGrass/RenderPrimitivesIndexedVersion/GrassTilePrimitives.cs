@@ -46,6 +46,7 @@ namespace Effects.TsushimaGrass
 		
 		// ===== Compute Shader + Buffers
 		[SerializeField] private ComputeShader _positionCompute;
+		[SerializeField] private ComputeShader _bufferClearCompute;
 		// ===== Passed between (re-referenced)
 		private GraphicsBuffer _grassPositionsBuffer;
 		// ===== Material Shader + Buffers =====
@@ -53,8 +54,7 @@ namespace Effects.TsushimaGrass
 		private GraphicsBuffer _grassMeshTrisBuffer;
 		private GraphicsBuffer _lodIndexBuffer;
 		// =====
-
-		private List<Vector3> _chunkCenters;
+		
 		
 		private void DisposeOfBuffers() {
 			_grassPositionsBuffer?.Dispose();
@@ -118,9 +118,14 @@ namespace Effects.TsushimaGrass
 			}
 			return new Vector2(xAdded / xComps.Count, yAdded / yComps.Count);
 		}
+
+		private void ClearMatrixBuffer(GraphicsBuffer buffer, int count) {
+			int kernelIndex = _bufferClearCompute.FindKernel("ClearMatrixBuffer");
+			_bufferClearCompute.SetBuffer(kernelIndex, Shader.PropertyToID("_bufferToClear"), buffer);
+			_bufferClearCompute.Dispatch(kernelIndex, Mathf.CeilToInt(count / 64f), 1, 1);
+		}
 		
 		private void SendChunksToComputeShader(Camera mainCamera, GraphicsBuffer outputBuffer, GraphicsBuffer lodIndexBuffer, int chunkSplitFactor, int samplesX, int samplesZ, float tileSizeX, float tileSizeZ, float padding) {
-			_chunkCenters = new List<Vector3>();
 			if (chunkSplitFactor == 0) {
 				GPUComputePositionsTo(mainCamera.transform.position, outputBuffer, lodIndexBuffer, 0, transform.position, samplesX, samplesZ, tileSizeX, tileSizeZ, padding);
 				return;
@@ -129,6 +134,7 @@ namespace Effects.TsushimaGrass
 			float sizeZNoPadding = tileSizeZ - (padding * 2);
 			int indexOffset = 0;
 			float floatChunkSplitFactor = (float)chunkSplitFactor;
+			ClearMatrixBuffer(outputBuffer, samplesX * samplesZ);
 			for (int z = 0; z < chunkSplitFactor * 2; z++) {
 				for (int x = 0; x < chunkSplitFactor * 2; x++) {
 					Vector2 topLeft = new Vector2(sizeXNoPadding * (x / (floatChunkSplitFactor * 2)) + padding, sizeZNoPadding * (z / (floatChunkSplitFactor * 2)) + padding);
@@ -136,8 +142,7 @@ namespace Effects.TsushimaGrass
 					Vector2 bottomLeft = new Vector2(sizeXNoPadding * (x / (floatChunkSplitFactor * 2)) + padding, sizeZNoPadding * ((z + 1) / (floatChunkSplitFactor * 2)) + padding);
 					Vector2 bottomRight = new Vector2(sizeXNoPadding * ((x + 1) / (floatChunkSplitFactor * 2)) + padding, sizeZNoPadding * ((z + 1) / (floatChunkSplitFactor * 2)) + padding);
 					Vector2 chunkCenter = AverageElements(new List<Vector2> { topLeft, topRight, bottomLeft, bottomRight });
-					_chunkCenters.Add(chunkCenter);
-					if (Vector3.Distance(chunkCenter, mainCamera.transform.position) > _distToPlayerCutoff) {
+					if (Vector3.Distance(new Vector3(chunkCenter.x, mainCamera.transform.position.y, chunkCenter.y) + transform.position, mainCamera.transform.position) > _distToPlayerCutoff) {
 						continue;
 					}
 					int chunkSamplesX = samplesX / (chunkSplitFactor * 2);
@@ -145,7 +150,6 @@ namespace Effects.TsushimaGrass
 					float chunkSizeX = sizeXNoPadding / (floatChunkSplitFactor * 2);
 					float chunkSizeZ = sizeZNoPadding / (floatChunkSplitFactor * 2);
 					GPUComputePositionsTo(mainCamera.transform.position, outputBuffer, _lodIndexBuffer, indexOffset, new Vector3(topLeft.x, 0, topLeft.y) + transform.position, chunkSamplesX, chunkSamplesZ, chunkSizeX, chunkSizeZ, 0);
-					// print($"Index Offset: {indexOffset}, ABCD: [{topLeft},{topRight},{bottomLeft},{bottomRight}], Chunk Center: {chunkCenter}, Chunk Samples: {chunkSamplesX}x{chunkSamplesZ}, Chunk Size: {chunkSizeX}x{chunkSizeZ}");
 					indexOffset += chunkSamplesX * chunkSamplesZ;
 				}
 			}
@@ -192,6 +196,7 @@ namespace Effects.TsushimaGrass
 			_chunkSplitFactor = _globalConfig._chunkSplitFactor;
 			_LOD1Distance = _globalConfig._LOD1Distance;
 			_mainCamera = _globalConfig._mainCamera;
+			_bufferClearCompute = _globalConfig._bufferClearCompute;
 		}
 		
 		//----------------------------------------------------------------------------------
@@ -240,11 +245,8 @@ namespace Effects.TsushimaGrass
 			Graphics.RenderPrimitivesIndexed(_renderParams, MeshTopology.Triangles, _grassMeshTrisBuffer, _grassMeshTrisBuffer.count, instanceCount: _samplesX * _samplesZ);
 		}
 
-		private void OnDrawGizmos() {
-			if (_chunkCenters == null) return;
-			foreach (Vector3 pos in _chunkCenters) {
-				Gizmos.DrawSphere(pos, 10);
-			}
+		private void OnDrawGizmosSelected() {
+			Gizmos.DrawCube(transform.position, new Vector3(_tileSizeX, 1, _tileSizeZ));
 		}
 
 		private void OnDestroy() {

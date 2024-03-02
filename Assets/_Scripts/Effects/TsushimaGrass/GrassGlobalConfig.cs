@@ -20,6 +20,7 @@ namespace Effects.TsushimaGrass
 		[Header("Dependencies")] 
 		public Camera _mainCamera;
 		public ComputeShader _positionCompute;
+		public ComputeShader _bufferClearCompute;
 		public Material _renderingShaderMat;
 		public Mesh _LOD0GrassMesh;
 	}
