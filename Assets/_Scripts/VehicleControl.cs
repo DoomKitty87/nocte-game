@@ -43,7 +43,7 @@ public class VehicleControl : MonoBehaviour
   void Update()
   {
 
-    float vInput = Input.GetAxis("Vertical");
+    float vInput = -Input.GetAxis("Vertical");
     float hInput = Input.GetAxis("Horizontal");
     if (!_inUse) {
       vInput = 0;
