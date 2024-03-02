@@ -7,6 +7,9 @@ Shader "Custom/GrassCustomShader"
       _DarkColor ("Dark Color", Color) = (0, 0, 0, 1)
       _RimColor ("Rim Color", Color) = (1, 1, 1, 1)
       _BladeHeight ("Blade Height", Range(0.1, 1)) = 0.5
+      _TrampleDist ("Trample Distance", Range(0.1, 10)) = 1
+      _TrampleDownStrength ("Trample Down Strength", Range(0.1, 10)) = 1
+      _TrampleOutStrength ("Trample Out Strength", Range(0.1, 10)) = 1
     }
     SubShader
     {
@@ -33,6 +36,8 @@ Shader "Custom/GrassCustomShader"
             float4 _DarkColor;
             float4 _RimColor;
             float _BladeHeight;
+            float4 _PlayerPosition;
+            float _TrampleDist, _TrampleDownStrength, _TrampleOutStrength;
 
             struct FragData
             {
@@ -54,14 +59,26 @@ Shader "Custom/GrassCustomShader"
                 float3 vertexPosition = _vertexPositions[triIndex];
                 output.vertexColor = lerp(_BaseColor, _TipColor, vertexPosition.y);
                 // Local transform
+                float2 uv = float2(0, vertexPosition.y);
                 vertexPosition.y *= _BladeHeight;
                 // World space
                 float4 worldPos = mul(_instancePositionMatrices[instanceID], float4(vertexPosition, 1.0f));
                 float4 objWorldPos = mul(_instancePositionMatrices[instanceID], float4(0, 0, 0, 1));
+
+                // Wind
                 float windStr = randomRange(objWorldPos.xz, 0.6f, 1.3f);
                 float windOffset = randomRange(objWorldPos.zx, -0.5f, 0.5f);
-                worldPos.x += sin(_Time.y * _WindStrength + windOffset) * 0.1f * windStr * vertexPosition.y * vertexPosition.y * cos(_WindDirection);
-                worldPos.z += sin(_Time.y * _WindStrength + windOffset) * 0.1f * windStr * vertexPosition.y * vertexPosition.y * sin(_WindDirection);
+                worldPos.x += sin(_Time.y * _WindStrength + windOffset) * 0.1f * windStr * uv.y * uv.y * cos(_WindDirection);
+                worldPos.z += sin(_Time.y * _WindStrength + windOffset) * 0.1f * windStr * uv.y * uv.y * sin(_WindDirection);
+
+                float dist = distance(worldPos.xyz, _PlayerPosition.xyz);
+                float trample = 1 - saturate(dist / _TrampleDist);
+                trample *= uv.y * uv.y;
+                worldPos.y -= trample * 2 * _TrampleDownStrength;
+                float3 dir = normalize(worldPos.xyz - _PlayerPosition.xyz);
+                worldPos.x += trample * dir.x * _TrampleOutStrength;
+                worldPos.z += trample * dir.z * _TrampleOutStrength;
+                // Trampling
                 output.vertexPosition = mul(UNITY_MATRIX_VP, worldPos);
                 return output;
             }

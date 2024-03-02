@@ -106,6 +106,9 @@ Material:
     - _StencilWriteMaskMV: 41
     - _SupportDecals: 1
     - _SurfaceType: 0
+    - _TrampleDist: 1
+    - _TrampleDownStrength: 0.2
+    - _TrampleOutStrength: 0.2
     - _TransmissionEnable: 1
     - _TransparentBackfaceEnable: 0
     - _TransparentCullMode: 2
@@ -124,7 +127,7 @@ Material:
     - _DarkColor: {r: 0.091580644, g: 0.13207549, b: 0.09967962, a: 1}
     - _DoubleSidedConstants: {r: 1, g: 1, b: -1, a: 0}
     - _EmissionColor: {r: 1, g: 1, b: 1, a: 1}
-    - _RimColor: {r: 1, g: 0, b: 0, a: 1}
+    - _RimColor: {r: 1, g: 1, b: 1, a: 1}
     - _TipColor: {r: 0.4353362, g: 0.5754717, b: 0.41531682, a: 1}
   m_BuildTextureStacks: []
   m_AllowLocking: 1

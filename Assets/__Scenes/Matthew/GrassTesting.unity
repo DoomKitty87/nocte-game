@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 261.80212, g: 324.32928, b: 429.2493, a: 1}
+  m_IndirectSpecularColor: {r: 0, g: 0, b: 0, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -767,6 +767,7 @@ MonoBehaviour:
   _meshBoundsPadding: 0
   _chunkSplitFactor: 1
   _positionCompute: {fileID: 0}
+  _bufferClearCompute: {fileID: 0}
 --- !u!114 &764727110
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -936,7 +937,7 @@ Transform:
   m_GameObject: {fileID: 1219595222}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0.7071068, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: 578, y: 1, z: 365}
+  m_LocalPosition: {x: 10, y: 1, z: 10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1157,10 +1158,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 94ee4247fa3f47f4b8046695a0aa7a5a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _samplesX: 2000
-  _samplesY: 2000
-  _fallbackTileSizeX: 960
-  _fallbackTileSizeZ: 960
+  _samplesX: 1000
+  _samplesY: 1000
+  _fallbackTileSizeX: 100
+  _fallbackTileSizeZ: 100
   _tileBoundsPadding: 0
   _distToPlayerCutoff: 10000
   _LOD1Distance: 500
@@ -1169,6 +1170,7 @@ MonoBehaviour:
   _chunkSplitFactor: 13
   _mainCamera: {fileID: 1219595224}
   _positionCompute: {fileID: 7200000, guid: 0f5e4ca7781bc44ceba456965bcf344e, type: 3}
+  _bufferClearCompute: {fileID: 7200000, guid: 13261e43dce77a340bbd2fd01f00137b, type: 3}
   _renderingShaderMat: {fileID: 2100000, guid: 2bf9eee20975cfa45a2434e904df1419, type: 2}
   _LOD0GrassMesh: {fileID: -462981019419857548, guid: e9edbbe92ffc1e04a94817a23bc92820,
     type: 3}
@@ -1325,6 +1327,7 @@ MonoBehaviour:
   _meshBoundsPadding: 0
   _chunkSplitFactor: 1
   _positionCompute: {fileID: 0}
+  _bufferClearCompute: {fileID: 0}
 --- !u!1 &1415500141
 GameObject:
   m_ObjectHideFlags: 0
@@ -1542,6 +1545,7 @@ MonoBehaviour:
   _meshBoundsPadding: 0
   _chunkSplitFactor: 1
   _positionCompute: {fileID: 0}
+  _bufferClearCompute: {fileID: 0}
 --- !u!1 &1590583877
 GameObject:
   m_ObjectHideFlags: 0
@@ -1679,6 +1683,7 @@ MonoBehaviour:
   _meshBoundsPadding: 0
   _chunkSplitFactor: 1
   _positionCompute: {fileID: 0}
+  _bufferClearCompute: {fileID: 0}
 --- !u!1 &1713143282
 GameObject:
   m_ObjectHideFlags: 0
@@ -1699,7 +1704,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1713143283
 Transform:
   m_ObjectHideFlags: 0
@@ -1817,6 +1822,7 @@ MonoBehaviour:
   _meshBoundsPadding: 0
   _chunkSplitFactor: 1
   _positionCompute: {fileID: 0}
+  _bufferClearCompute: {fileID: 0}
 --- !u!114 &1713143289
 MonoBehaviour:
   m_ObjectHideFlags: 0

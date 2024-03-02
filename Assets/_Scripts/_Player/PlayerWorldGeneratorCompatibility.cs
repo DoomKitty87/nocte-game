@@ -92,6 +92,7 @@ public class PlayerWorldGeneratorCompatibility : MonoBehaviour
 
         _worldGeneratorObject.UpdatePlayerLoadedChunks(transform.position);
         _rain.SetVector3("PlayerPos", transform.position);
+        Shader.SetGlobalVector("_PlayerPosition", transform.position);
     }
 
 
