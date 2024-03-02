@@ -6,6 +6,7 @@ Shader "Custom/GrassCustomShader"
       _TipColor ("Tip Color", Color) = (1, 1, 1, 1)
       _DarkColor ("Dark Color", Color) = (0, 0, 0, 1)
       _RimColor ("Rim Color", Color) = (1, 1, 1, 1)
+      _BladeHeight ("Blade Height", Range(0.1, 1)) = 0.5
     }
     SubShader
     {
@@ -31,6 +32,7 @@ Shader "Custom/GrassCustomShader"
             float4 _TipColor;
             float4 _DarkColor;
             float4 _RimColor;
+            float _BladeHeight;
 
             struct FragData
             {
@@ -39,6 +41,12 @@ Shader "Custom/GrassCustomShader"
                 float2 uv : TEXCOORD0;
                 // Add normals passed in
             };
+
+            float randomRange(float2 seed, float min, float max)
+            {
+              const float randNum = frac(sin(dot(seed, float2(12.9898, 78.233)))*143758.5453);
+              return lerp(min, max, randNum);
+            }
             
             FragData vert(uint triIndex: SV_VertexID, uint instanceID : SV_InstanceID)
             {
@@ -46,11 +54,14 @@ Shader "Custom/GrassCustomShader"
                 float3 vertexPosition = _vertexPositions[triIndex];
                 output.vertexColor = lerp(_BaseColor, _TipColor, vertexPosition.y);
                 // Local transform
-                
+                vertexPosition.y *= _BladeHeight;
                 // World space
                 float4 worldPos = mul(_instancePositionMatrices[instanceID], float4(vertexPosition, 1.0f));
-                worldPos.x += sin(_Time.y * _WindStrength) * 0.1 * vertexPosition.y * vertexPosition.y * cos(_WindDirection);
-                worldPos.z += sin(_Time.y * _WindStrength) * 0.1 * vertexPosition.y * vertexPosition.y * sin(_WindDirection);
+                float4 objWorldPos = mul(_instancePositionMatrices[instanceID], float4(0, 0, 0, 1));
+                float windStr = randomRange(objWorldPos.xz, 0.6f, 1.3f);
+                float windOffset = randomRange(objWorldPos.zx, -0.5f, 0.5f);
+                worldPos.x += sin(_Time.y * _WindStrength + windOffset) * 0.1f * windStr * vertexPosition.y * vertexPosition.y * cos(_WindDirection);
+                worldPos.z += sin(_Time.y * _WindStrength + windOffset) * 0.1f * windStr * vertexPosition.y * vertexPosition.y * sin(_WindDirection);
                 output.vertexPosition = mul(UNITY_MATRIX_VP, worldPos);
                 return output;
             }
