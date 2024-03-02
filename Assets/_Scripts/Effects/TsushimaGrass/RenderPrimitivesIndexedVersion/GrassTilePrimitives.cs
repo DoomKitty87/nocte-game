@@ -84,8 +84,8 @@ namespace Effects.TsushimaGrass
 			_positionCompute.SetFloat(Shader.PropertyToID("_padding"), padding);
 			_positionCompute.SetVector(Shader.PropertyToID("_tilePivotWorldPosition"), transform.position);
 			_positionCompute.SetVector(Shader.PropertyToID("_chunkPivotWorldPosition"), pivot);
-			// _positionCompute.SetTexture(kernelIndex, Shader.PropertyToID("_tileHeightmapTexture"), _tileHeightmap);
-			// _positionCompute.SetInt(Shader.PropertyToID("_tileHeightmapTextureWidth"), _tileHeightmap.width);
+			_positionCompute.SetTexture(kernelIndex, Shader.PropertyToID("_tileHeightmapTexture"), _tileHeightmap);
+			_positionCompute.SetInt(Shader.PropertyToID("_tileHeightmapTextureWidth"), _tileHeightmap.width);
 			_positionCompute.SetInt(Shader.PropertyToID("_chunkSplitFactor"), _chunkSplitFactor);
 			_positionCompute.SetBuffer(kernelIndex, Shader.PropertyToID("_lodIndexBuffer"), lodIndexBuffer);
 			_positionCompute.SetVector(Shader.PropertyToID("_cameraWorldPosition"), cameraPosition);
@@ -169,10 +169,10 @@ namespace Effects.TsushimaGrass
 			Debug.Log(output);
 		}
 
-		public void GenerateGrassHook() {
-			AssignGlobalConfigValues();
-			GenerateGrass(_grassPositionsBuffer, _lodIndexBuffer, _renderParams);
-		}
+		// public void GenerateGrassHook() {
+		// 	AssignGlobalConfigValues();
+		// 	GenerateGrass(_grassPositionsBuffer, _lodIndexBuffer, _renderParams);
+		// }
 		
 		private void GenerateGrass(GraphicsBuffer positionsBuffer, GraphicsBuffer lodBuffer, RenderParams renderParams) {
 			SendChunksToComputeShader(_mainCamera, positionsBuffer, lodBuffer, _chunkSplitFactor, _samplesX, _samplesZ, _tileSizeX, _tileSizeZ, _meshBoundsPadding);

@@ -13,9 +13,9 @@ uniform float _padding;
 uniform float3 _tilePivotWorldPosition;
 uniform float3 _chunkPivotWorldPosition;
 // ====== Chunking / Heightmap
-// Texture2D<float> _tileHeightmapTexture;
-// SamplerState sampler_tileHeightmapTexture;
-// uniform uint _tileHeightmapTextureWidth;
+Texture2D<float> _tileHeightmapTexture;
+SamplerState sampler_tileHeightmapTexture;
+uniform uint _tileHeightmapTextureWidth;
 uniform uint _chunkSplitFactor;
 // ====== LODS
 uniform float _LOD1Distance;
@@ -65,40 +65,39 @@ float4x4 PositionToTransformMatrix(float3 position)
 
 float GetHeightmapAtWorldPosition(float2 position)
 {
- //  // Transform to align to texture
-	// float2 uv = float2((position.x - _tilePivotWorldPosition.x) / _sizeX, (position.y - _tilePivotWorldPosition.z) / _sizeZ) / float(_chunkSplitFactor * 2);
- //
- //  // Sample with triangle interpolation
- //  float w = float(_tileHeightmapTextureWidth - 1);
- //  float2 tuv = uv * w % 1;
- //  float tile = 1 / float(_tileHeightmapTextureWidth - 1);
- //  float2 fuv = floor(uv * w) / w;
- //  float pointA = _tileHeightmapTexture.SampleLevel(sampler_tileHeightmapTexture, fuv, 0);
- //  float pointB = _tileHeightmapTexture.SampleLevel(sampler_tileHeightmapTexture, fuv + float2(tile, 0), 0);
- //  float pointC = _tileHeightmapTexture.SampleLevel(sampler_tileHeightmapTexture, fuv + float2(0, tile), 0);
- //  float pointD = _tileHeightmapTexture.SampleLevel(sampler_tileHeightmapTexture, fuv + float2(tile, tile), 0);
- //  float val = 0;
- //  if (tuv.x > (1 - tuv.y))
- //  {
- //
- //    float w1 = -(tuv.y - 1);
- //    float w2 = -(tuv.x - 1);
- //    float w3 = 1 - w1 - w2;
- //
- //    val = w1 * pointB + w2 * pointC + w3 * pointD;
- //
- //  }
- //  else
- //  {
- //
- //    float w1 = (tuv.y);
- //    float w2 = -(tuv.x - 1) - (tuv.y);
- //    float w3 = 1 - w1 - w2;
- //
- //    val = w1 * pointC + w2 * pointA + w3 * pointB;
- //  }
-	// return val;
-	return 0;
+  // Transform to align to texture
+	float2 uv = float2((position.x - _tilePivotWorldPosition.x) / _sizeX, (position.y - _tilePivotWorldPosition.z) / _sizeZ) / float(_chunkSplitFactor * 2);
+ 
+  // Sample with triangle interpolation
+  float w = float(_tileHeightmapTextureWidth - 1);
+  float2 tuv = uv * w % 1;
+  float tile = 1 / float(_tileHeightmapTextureWidth - 1);
+  float2 fuv = floor(uv * w) / w;
+  float pointA = _tileHeightmapTexture.SampleLevel(sampler_tileHeightmapTexture, fuv, 0);
+  float pointB = _tileHeightmapTexture.SampleLevel(sampler_tileHeightmapTexture, fuv + float2(tile, 0), 0);
+  float pointC = _tileHeightmapTexture.SampleLevel(sampler_tileHeightmapTexture, fuv + float2(0, tile), 0);
+  float pointD = _tileHeightmapTexture.SampleLevel(sampler_tileHeightmapTexture, fuv + float2(tile, tile), 0);
+  float val = 0;
+  if (tuv.x > (1 - tuv.y))
+  {
+ 
+    float w1 = -(tuv.y - 1);
+    float w2 = -(tuv.x - 1);
+    float w3 = 1 - w1 - w2;
+ 
+    val = w1 * pointB + w2 * pointC + w3 * pointD;
+ 
+  }
+  else
+  {
+ 
+    float w1 = (tuv.y);
+    float w2 = -(tuv.x - 1) - (tuv.y);
+    float w3 = 1 - w1 - w2;
+ 
+    val = w1 * pointC + w2 * pointA + w3 * pointB;
+  }
+	return val;
 }
 
 [numthreads(64,1,1)]

@@ -7,6 +7,6 @@ public class RegenerationTesting : MonoBehaviour
 {
     void FixedUpdate()
     {
-        gameObject.GetComponent<GrassTilePrimitives>().GenerateGrassHook();
+        // gameObject.GetComponent<GrassTilePrimitives>().GenerateGrassHook();
     }
 }
