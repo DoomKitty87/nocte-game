@@ -1,7 +1,7 @@
 #define HAVE_MESH_MODIFICATION
   
-AttributesMesh ApplyMeshModification(AttributesMesh input, uint SV_INSTANCEID)
+AttributesMesh ApplyMeshModification(AttributesMesh input, float3 timeParameters)
 {
-    input.positionOS += float3(0.0f, SV_INSTANCEID * 500, 0.0f);
+    input.positionOS += float3(0.5f, 0.5f, 0.5f);
     return input;
 }
