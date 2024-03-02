@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 261.80057, g: 324.3278, b: 429.24698, a: 1}
+  m_IndirectSpecularColor: {r: 261.80212, g: 324.32928, b: 429.2493, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -751,11 +751,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _worldGenerator: {fileID: 0}
+  _tileHeightmap: {fileID: 0}
   _useGlobalConfig: 1
   _globalConfig: {fileID: 0}
+  _mainCamera: {fileID: 0}
   _grassMesh: {fileID: 0}
   _renderingShaderMat: {fileID: 0}
-  distToPlayerCutoff: 1000
+  _distToPlayerCutoff: 1000
+  _LOD1Distance: 0
   _samplesX: 100
   _samplesZ: 100
   _fallbackTileSizeX: 960
@@ -1141,19 +1144,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 94ee4247fa3f47f4b8046695a0aa7a5a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _samplesX: 5000
-  _samplesY: 5000
-  _fallbackTileSizeX: 960
-  _fallbackTileSizeZ: 960
+  _samplesX: 500
+  _samplesY: 500
+  _fallbackTileSizeX: 50
+  _fallbackTileSizeZ: 50
   _tileBoundsPadding: 0
   _distToPlayerCutoff: 1000
+  _LOD1Distance: 0
   _castShadowsOn: 0
   _recieveShadowsOn: 0
   _chunkSplitFactor: 2
+  _mainCamera: {fileID: 1219595224}
   _positionCompute: {fileID: 7200000, guid: 0f5e4ca7781bc44ceba456965bcf344e, type: 3}
   _renderingShaderMat: {fileID: 2100000, guid: 2bf9eee20975cfa45a2434e904df1419, type: 2}
-  _grassMesh: {fileID: -462981019419857548, guid: e9edbbe92ffc1e04a94817a23bc92820,
+  _LOD0GrassMesh: {fileID: -462981019419857548, guid: e9edbbe92ffc1e04a94817a23bc92820,
     type: 3}
+  _mainLight: {fileID: 248034644}
 --- !u!4 &1371078899
 Transform:
   m_ObjectHideFlags: 0
@@ -1291,11 +1297,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _worldGenerator: {fileID: 0}
+  _tileHeightmap: {fileID: 0}
   _useGlobalConfig: 1
   _globalConfig: {fileID: 0}
+  _mainCamera: {fileID: 0}
   _grassMesh: {fileID: 0}
   _renderingShaderMat: {fileID: 0}
-  distToPlayerCutoff: 1000
+  _distToPlayerCutoff: 1000
+  _LOD1Distance: 0
   _samplesX: 0
   _samplesZ: 0
   _fallbackTileSizeX: 0
@@ -1504,12 +1513,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _worldGenerator: {fileID: 0}
+  _tileHeightmap: {fileID: 0}
   _useGlobalConfig: 1
   _globalConfig: {fileID: 0}
+  _mainCamera: {fileID: 0}
   _grassMesh: {fileID: -462981019419857548, guid: e9edbbe92ffc1e04a94817a23bc92820,
     type: 3}
   _renderingShaderMat: {fileID: 0}
-  distToPlayerCutoff: 1000
+  _distToPlayerCutoff: 1000
+  _LOD1Distance: 0
   _samplesX: 10
   _samplesZ: 0
   _fallbackTileSizeX: 0
@@ -1639,11 +1651,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _worldGenerator: {fileID: 0}
+  _tileHeightmap: {fileID: 0}
   _useGlobalConfig: 1
   _globalConfig: {fileID: 0}
+  _mainCamera: {fileID: 0}
   _grassMesh: {fileID: 0}
   _renderingShaderMat: {fileID: 0}
-  distToPlayerCutoff: 1000
+  _distToPlayerCutoff: 1000
+  _LOD1Distance: 0
   _samplesX: 0
   _samplesZ: 0
   _fallbackTileSizeX: 0
@@ -1773,11 +1788,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _worldGenerator: {fileID: 0}
+  _tileHeightmap: {fileID: 0}
   _useGlobalConfig: 1
   _globalConfig: {fileID: 0}
+  _mainCamera: {fileID: 0}
   _grassMesh: {fileID: 0}
   _renderingShaderMat: {fileID: 0}
-  distToPlayerCutoff: 1000
+  _distToPlayerCutoff: 1000
+  _LOD1Distance: 0
   _samplesX: 0
   _samplesZ: 0
   _fallbackTileSizeX: 0

@@ -2,46 +2,68 @@ Shader "Custom/GrassCustomShader"
 {
     Properties
     {
-        
+      _BaseColor ("Base Color", Color) = (0, 0, 0, 1)
+      _TipColor ("Tip Color", Color) = (1, 1, 1, 1)
+      _DarkColor ("Dark Color", Color) = (0, 0, 0, 1)
+      _RimColor ("Rim Color", Color) = (1, 1, 1, 1)
     }
     SubShader
     {
-        Cull Off
+
+        Tags { "RenderType"="Opaque" "Queue" = "Transparent"}
+
         Pass
         {
             CGPROGRAM
             #pragma vertex vert
             #pragma fragment frag
+            #pragma multi_compile_fog
 
             StructuredBuffer<uint> _lodIndexBuffer;
             StructuredBuffer<float4x4> _instancePositionMatrices;
             StructuredBuffer<float> _debugBuffer;
             float _instanceCount;
             StructuredBuffer<float3> _vertexPositions;
+            float3 _MainLightDir;
+            float _WindStrength;
+            float _WindDirection;
+            float4 _BaseColor;
+            float4 _TipColor;
+            float4 _DarkColor;
+            float4 _RimColor;
 
             struct FragData
             {
                 float4 vertexPosition : SV_POSITION;
                 float4 vertexColor : COLOR0;
+                float2 uv : TEXCOORD0;
+                // Add normals passed in
             };
             
             FragData vert(uint triIndex: SV_VertexID, uint instanceID : SV_InstanceID)
             {
                 FragData output;
                 float3 vertexPosition = _vertexPositions[triIndex];
-                // local space - do wind curvature here
+                output.vertexColor = lerp(_BaseColor, _TipColor, vertexPosition.y);
+                // Local transform
                 
-                // world space
+                // World space
                 float4 worldPos = mul(_instancePositionMatrices[instanceID], float4(vertexPosition, 1.0f));
-                // view space / clip space(?) -- do clip space vert adjustments here
+                worldPos.x += sin(_Time.y * _WindStrength) * 0.1 * vertexPosition.y * vertexPosition.y * cos(_WindDirection);
+                worldPos.z += sin(_Time.y * _WindStrength) * 0.1 * vertexPosition.y * vertexPosition.y * sin(_WindDirection);
                 output.vertexPosition = mul(UNITY_MATRIX_VP, worldPos);
-                output.vertexColor = _lodIndexBuffer[instanceID] == 1 ? float4(0.0f, 3.0f, 5.0f, 1.0f) : float4(0.0f, 3.0f, 0.0f, 1.0f);
                 return output;
             }
 
             float4 frag(FragData i) : SV_Target
             {
-                return i.vertexColor;
+                float4 c = i.vertexColor;
+                float dotL = dot(float3(0, -1, 0), normalize(_MainLightDir));
+                dotL = max(0, dotL);
+                dotL = 1 - dotL;
+                dotL = pow(dotL, 2);
+                c = lerp(c, _DarkColor, dotL);
+                return c;
             }
             ENDCG
         }
