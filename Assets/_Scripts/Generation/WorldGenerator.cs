@@ -261,6 +261,7 @@ public class WorldGenerator : MonoBehaviour
     int posx = Mathf.FloorToInt(relPos.x + (_tileCount - 1) / 2);
     int posz = Mathf.FloorToInt(relPos.y + (_tileCount - 1) / 2);
     int indx = _tilePositions[posx, posz];
+    Debug.Log(indx);
     return _tilePool[indx].heightmapTexture;
   }
 
@@ -610,6 +611,7 @@ public class WorldGenerator : MonoBehaviour
     }
     tempTex.SetPixelData(dataTrimmed, 0);
     tempTex.Apply();
+    Debug.Log(tempTex.GetPixel(0, 0));
     _tilePool[index].heightmapTexture = tempTex;
     output.Dispose();
     int sideLength0 = (int) Mathf.Sqrt(vertices.Length) - 1;

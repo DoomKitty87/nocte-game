@@ -24,11 +24,10 @@ Shader "Custom/GrassCustomShader"
       #pragma multi_compile_fog
 
       #include "UnityCG.cginc"
+      #include "UnityLightingCommon.cginc"
+      #include "AutoLight.cginc"
 
-      StructuredBuffer<uint> _lodIndexBuffer;
-      StructuredBuffer<float4x4> _instancePositionMatrices;
-      StructuredBuffer<float> _debugBuffer;
-      float _instanceCount;
+      StructuredBuffer<float4> _instancePositions;
       float3 _MainLightDir;
       float _WindStrength;
       float _WindDirection;
@@ -40,7 +39,7 @@ Shader "Custom/GrassCustomShader"
       float4 _PlayerPosition;
       float _TrampleDist, _TrampleDownStrength, _TrampleOutStrength;
 
-      struct appdata_t {
+      struct appdata {
         float4 vertex : POSITION;
       };
 
@@ -56,20 +55,30 @@ Shader "Custom/GrassCustomShader"
         const float randNum = frac(sin(dot(seed, float2(12.9898, 78.233)))*143758.5453);
         return lerp(min, max, randNum);
       }
+
+      float4 RotateAroundYInDegrees (float4 vertex, float degrees) {
+        float alpha = degrees * UNITY_PI / 180.0;
+        float sina, cosa;
+        sincos(alpha, sina, cosa);
+        float2x2 m = float2x2(cosa, -sina, sina, cosa);
+        return float4(mul(m, vertex.xz), vertex.yw).xzyw;
+      }
       
-      v2f vert(appdata_t v, uint instanceID : SV_InstanceID)
+      v2f vert(appdata_full v, uint instanceID : SV_INSTANCEID)
       {
         v2f output;
-        float4 vertexPosition = v.vertex;
+        float3 vertexPosition = v.vertex.xyz;
         output.vertexColor = lerp(_BaseColor, _TipColor, vertexPosition.y);
-        float4 objWorldPos = mul(_instancePositionMatrices[instanceID], float4(0, 0, 0, 1));
+        float4 objWorldPos = _instancePositions[instanceID];
+        float rot = randomRange(objWorldPos.xz, -3.14, 3.14);
+        vertexPosition = RotateAroundYInDegrees(float4(vertexPosition, 1), rot);
         // Local transform
         float2 uv = float2(0, vertexPosition.y);
         float heightMod = randomRange(objWorldPos.xz, 0.8f, 1.2f);
         heightMod *= _BladeHeight;
         vertexPosition.y *= heightMod;
         // World space
-        float4 worldPos = mul(_instancePositionMatrices[instanceID], vertexPosition);
+        float4 worldPos = float4(vertexPosition.xyz + objWorldPos.xyz, 1);
 
         // Wind
         float windStr = randomRange(objWorldPos.xz, 0.6f, 1.3f);

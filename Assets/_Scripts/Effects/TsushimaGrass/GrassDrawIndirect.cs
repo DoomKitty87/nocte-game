@@ -13,6 +13,7 @@ public class GrassDrawIndirect : MonoBehaviour
   [SerializeField] private int _chunkCount;
   [SerializeField] private float _chunkSize;
   [SerializeField] private int _grassDensity;
+  [SerializeField] private Light _mainLight;
 
   private Dictionary<Vector2Int, RenderChunk> _chunkDict = new Dictionary<Vector2Int, RenderChunk>();
   private Vector2Int _middleChunk = new Vector2Int(0, 0);
@@ -40,6 +41,7 @@ public class GrassDrawIndirect : MonoBehaviour
   }
 
   private void Update() {
+    Shader.SetGlobalVector("_MainLightDir", _mainLight.transform.forward);
     foreach (var chunk in _chunkDict.Values) {
       chunk.Render(_cameraPosition.position);
     }
