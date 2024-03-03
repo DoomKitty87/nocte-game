@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 95.54606, g: 38.501087, b: 18.050585, a: 1}
+  m_IndirectSpecularColor: {r: 186.72574, g: 73.99105, b: 35.967937, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -10434,7 +10434,7 @@ MonoBehaviour:
   _heightCutoff: 1500
   _roadResolution: 2
   _roadWidth: 25
-  _roadDepth: 5
+  _roadDepth: 5.25
   _roadInset: 9
   _roadBevel: 0.3
   _roadWaterImpact: 70
@@ -18514,7 +18514,7 @@ PrefabInstance:
     - target: {fileID: 7336471431426695701, guid: 862d92a67177d4c7b84ab88d6b6e0257,
         type: 3}
       propertyPath: _windSpeedCurve.m_Curve.Array.data[1].value
-      value: 1
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 7336471431426695701, guid: 862d92a67177d4c7b84ab88d6b6e0257,
         type: 3}
@@ -19274,13 +19274,12 @@ MonoBehaviour:
   _positionCompute: {fileID: 7200000, guid: ad2522b6a715ee54d8ae10d592b5a0cc, type: 3}
   _grassMaterial: {fileID: 2100000, guid: 3df5acdb7da894144ae7205285c0ed66, type: 2}
   _grassMeshes:
-  - {fileID: -3141602069487479162, guid: 82ca8cc96c2980e4d92e49b5bfe50816, type: 3}
   - {fileID: 6272463214150983, guid: 82ca8cc96c2980e4d92e49b5bfe50816, type: 3}
   - {fileID: 1237130334405037093, guid: 82ca8cc96c2980e4d92e49b5bfe50816, type: 3}
-  _lodValues: 3200000064000000
-  _chunkCount: 9
+  _lodValues: 32000000
+  _chunkCount: 7
   _chunkSize: 30
-  _grassDensity: 100
+  _grassDensity: 9600000064000000
   _mainLight: {fileID: 76653202}
 --- !u!136 &4762342597639217425
 CapsuleCollider:

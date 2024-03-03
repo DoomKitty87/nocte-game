@@ -7,6 +7,8 @@ Shader "Custom/GrassCustomShader"
     _DarkColor ("Dark Color", Color) = (0, 0, 0, 1)
     _RimColor ("Rim Color", Color) = (1, 1, 1, 1)
     _BladeHeight ("Blade Height", Range(0.1, 1)) = 0.5
+    _WindImpact ("Wind Impact", Range(0.1, 10)) = 1
+    _WindSpeed ("Wind Speed", Range(0.1, 10)) = 1
     _TrampleDist ("Trample Distance", Range(0.1, 10)) = 1
     _TrampleDownStrength ("Trample Down Strength", Range(0.1, 10)) = 1
     _TrampleOutStrength ("Trample Out Strength", Range(0.1, 10)) = 1
@@ -16,14 +18,13 @@ Shader "Custom/GrassCustomShader"
 
     Cull Off
 
-    Tags { "RenderType"="Opaque" "Queue" = "Transparent"}
+    Tags { "RenderType"="Opaque" }
 
     Pass
     {
       CGPROGRAM
       #pragma vertex vert
       #pragma fragment frag
-      #pragma multi_compile_fog
 
       StructuredBuffer<float4> _instancePositions;
       float3 _MainLightDir;
@@ -35,6 +36,7 @@ Shader "Custom/GrassCustomShader"
       float4 _RimColor;
       float _BladeHeight;
       float4 _PlayerPosition;
+      float _WindImpact, _WindSpeed;
       float _TrampleDist, _TrampleDownStrength, _TrampleOutStrength;
 
       struct appdata {
@@ -80,8 +82,8 @@ Shader "Custom/GrassCustomShader"
         // Wind
         float windStr = randomRange(objWorldPos.xz, 0.6f, 1.3f);
         float windOffset = randomRange(objWorldPos.zx, -0.5f, 0.5f);
-        float xDisp = sin(_Time.y * _WindStrength + windOffset) * 0.1f * windStr * uv.y * uv.y * cos(_WindDirection);
-        float zDisp = sin(_Time.y * _WindStrength + windOffset) * 0.1f * windStr * uv.y * uv.y * sin(_WindDirection);
+        float xDisp = (sin(_Time.y * _WindStrength * _WindSpeed + windOffset + objWorldPos.x + objWorldPos.z) + 1) * _WindStrength * _WindImpact * windStr * uv.y * uv.y * cos(_WindDirection);
+        float zDisp = (sin(_Time.y * _WindStrength * _WindSpeed + windOffset) + objWorldPos.x + objWorldPos.z + 1) * _WindStrength * _WindImpact * windStr * uv.y * uv.y * sin(_WindDirection);
         worldPos.x += xDisp;
         worldPos.z += zDisp;
         worldPos.y -= sqrt(heightMod * heightMod + xDisp * xDisp + zDisp * zDisp) - heightMod;

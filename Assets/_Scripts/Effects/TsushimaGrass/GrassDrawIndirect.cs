@@ -12,7 +12,7 @@ public class GrassDrawIndirect : MonoBehaviour
 
   [SerializeField] private int _chunkCount;
   [SerializeField] private float _chunkSize;
-  [SerializeField] private int _grassDensity;
+  [SerializeField] private int[] _grassDensity;
   [SerializeField] private Light _mainLight;
 
   private Dictionary<Vector2Int, RenderChunk> _chunkDict = new Dictionary<Vector2Int, RenderChunk>();
@@ -26,18 +26,18 @@ public class GrassDrawIndirect : MonoBehaviour
   }
 
   public void Initialize() {
+    _cameraPosition = Camera.main.transform;
     _chunkDict.Clear();
     for (int i = -(_chunkCount - 1) / 2; i < (_chunkCount - 1) / 2 + 1; i++) {
       for (int j = -(_chunkCount - 1) / 2; j < (_chunkCount - 1) / 2 + 1; j++) {
         //Debug.Log($"{i}, {j}");
         Vector2Int chunkPos = new Vector2Int(i, j);
         //Debug.Log(chunkPos);
-        RenderChunk chunk = new RenderChunk(chunkPos, _chunkSize, _grassDensity, _grassMaterial, _grassMeshes, _lodValues, _positionCompute);
+        RenderChunk chunk = new RenderChunk(chunkPos, _chunkSize, _grassDensity, _grassMaterial, _grassMeshes, _lodValues, _positionCompute, new Vector2(_cameraPosition.position.x, _cameraPosition.position.z));
         _chunkDict.Add(chunkPos, chunk);
       }
     }
     //Debug.Log(_chunkDict.Count);
-    _cameraPosition = Camera.main.transform;
   }
 
   private void Update() {
@@ -64,7 +64,7 @@ public class GrassDrawIndirect : MonoBehaviour
         _chunkDict.Remove(new Vector2Int(_middleChunk.x - _chunkCount / 2, _middleChunk.y + i));
 
         Vector2Int chunkPos = new Vector2Int(_middleChunk.x + (_chunkCount - 1) / 2 + 1, _middleChunk.y + i);
-        RenderChunk chunk = new RenderChunk(chunkPos, _chunkSize, _grassDensity, _grassMaterial, _grassMeshes, _lodValues, _positionCompute);
+        RenderChunk chunk = new RenderChunk(chunkPos, _chunkSize, _grassDensity, _grassMaterial, _grassMeshes, _lodValues, _positionCompute, new Vector2(_cameraPosition.position.x, _cameraPosition.position.z));
         _chunkDict.Add(chunkPos, chunk);
       }
       _middleChunk.x += 1;
@@ -75,7 +75,7 @@ public class GrassDrawIndirect : MonoBehaviour
         _chunkDict.Remove(new Vector2Int(_middleChunk.x + (_chunkCount - 1) / 2, _middleChunk.y + i));
 
         Vector2Int chunkPos = new Vector2Int(_middleChunk.x - (_chunkCount - 1) / 2 - 1, _middleChunk.y + i);
-        RenderChunk chunk = new RenderChunk(chunkPos, _chunkSize, _grassDensity, _grassMaterial, _grassMeshes, _lodValues, _positionCompute);
+        RenderChunk chunk = new RenderChunk(chunkPos, _chunkSize, _grassDensity, _grassMaterial, _grassMeshes, _lodValues, _positionCompute, new Vector2(_cameraPosition.position.x, _cameraPosition.position.z));
         _chunkDict.Add(chunkPos, chunk);
       }
       _middleChunk.x -= 1;
@@ -86,7 +86,7 @@ public class GrassDrawIndirect : MonoBehaviour
         _chunkDict.Remove(new Vector2Int(_middleChunk.x + i, _middleChunk.y - (_chunkCount - 1) / 2));
 
         Vector2Int chunkPos = new Vector2Int(_middleChunk.x + i, _middleChunk.y + (_chunkCount - 1) / 2 + 1);
-        RenderChunk chunk = new RenderChunk(chunkPos, _chunkSize, _grassDensity, _grassMaterial, _grassMeshes, _lodValues, _positionCompute);
+        RenderChunk chunk = new RenderChunk(chunkPos, _chunkSize, _grassDensity, _grassMaterial, _grassMeshes, _lodValues, _positionCompute, new Vector2(_cameraPosition.position.x, _cameraPosition.position.z));
         _chunkDict.Add(chunkPos, chunk);
       }
       _middleChunk.y += 1;
@@ -97,7 +97,7 @@ public class GrassDrawIndirect : MonoBehaviour
         _chunkDict.Remove(new Vector2Int(_middleChunk.x + i, _middleChunk.y + (_chunkCount - 1) / 2));
 
         Vector2Int chunkPos = new Vector2Int(_middleChunk.x + i, _middleChunk.y - (_chunkCount - 1) / 2 - 1);
-        RenderChunk chunk = new RenderChunk(chunkPos, _chunkSize, _grassDensity, _grassMaterial, _grassMeshes, _lodValues, _positionCompute);
+        RenderChunk chunk = new RenderChunk(chunkPos, _chunkSize, _grassDensity, _grassMaterial, _grassMeshes, _lodValues, _positionCompute, new Vector2(_cameraPosition.position.x, _cameraPosition.position.z));
         _chunkDict.Add(chunkPos, chunk);
       }
       _middleChunk.y -= 1;
