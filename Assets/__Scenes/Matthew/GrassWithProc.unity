@@ -815,6 +815,67 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 204426481}
   m_Mesh: {fileID: 10206, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1 &229332643
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 229332645}
+  - component: {fileID: 229332644}
+  m_Layer: 0
+  m_Name: GlobalObject
+  m_TagString: GlobalObject
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &229332644
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 229332643}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 94ee4247fa3f47f4b8046695a0aa7a5a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _samplesX: 1000
+  _samplesY: 1000
+  _fallbackTileSizeX: 0
+  _fallbackTileSizeZ: 0
+  _tileBoundsPadding: 0
+  _distToPlayerCutoff: 1000
+  _LOD1Distance: 500
+  _castShadowsOn: 0
+  _recieveShadowsOn: 0
+  _chunkSplitFactor: 13
+  _mainCamera: {fileID: 492074379}
+  _positionCompute: {fileID: 7200000, guid: 0f5e4ca7781bc44ceba456965bcf344e, type: 3}
+  _bufferClearCompute: {fileID: 7200000, guid: 13261e43dce77a340bbd2fd01f00137b, type: 3}
+  _renderingShaderMat: {fileID: 2100000, guid: 2bf9eee20975cfa45a2434e904df1419, type: 2}
+  _LOD0GrassMesh: {fileID: -462981019419857548, guid: e9edbbe92ffc1e04a94817a23bc92820,
+    type: 3}
+  _mainLight: {fileID: 76653202}
+--- !u!4 &229332645
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 229332643}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &254070712
 GameObject:
   m_ObjectHideFlags: 0
@@ -3167,7 +3228,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1118809493
 RectTransform:
   m_ObjectHideFlags: 0
@@ -8548,7 +8609,7 @@ PrefabInstance:
     - target: {fileID: 8819276947174590073, guid: 862d92a67177d4c7b84ab88d6b6e0257,
         type: 3}
       propertyPath: _tileCount
-      value: 35
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 8819276947174590073, guid: 862d92a67177d4c7b84ab88d6b6e0257,
         type: 3}
@@ -8570,6 +8631,11 @@ PrefabInstance:
       propertyPath: _structures
       value: 
       objectReference: {fileID: 1849557963}
+    - target: {fileID: 8819276947174590073, guid: 862d92a67177d4c7b84ab88d6b6e0257,
+        type: 3}
+      propertyPath: _enableGrass
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 8819276947174590073, guid: 862d92a67177d4c7b84ab88d6b6e0257,
         type: 3}
       propertyPath: _grassManager
@@ -8603,7 +8669,7 @@ PrefabInstance:
     - target: {fileID: 8819276947174590073, guid: 862d92a67177d4c7b84ab88d6b6e0257,
         type: 3}
       propertyPath: _lodLevels.Array.size
-      value: 3
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8819276947174590073, guid: 862d92a67177d4c7b84ab88d6b6e0257,
         type: 3}
@@ -8668,7 +8734,7 @@ PrefabInstance:
     - target: {fileID: 8819276947174590073, guid: 862d92a67177d4c7b84ab88d6b6e0257,
         type: 3}
       propertyPath: _lodLevels.Array.data[2].factor
-      value: 1
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 8819276947174590073, guid: 862d92a67177d4c7b84ab88d6b6e0257,
         type: 3}
@@ -8703,7 +8769,7 @@ PrefabInstance:
     - target: {fileID: 8819276947174590073, guid: 862d92a67177d4c7b84ab88d6b6e0257,
         type: 3}
       propertyPath: _lodLevels.Array.data[2].distance
-      value: 10
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 8819276947174590073, guid: 862d92a67177d4c7b84ab88d6b6e0257,
         type: 3}
@@ -8981,3 +9047,4 @@ SceneRoots:
   - {fileID: 1932890305}
   - {fileID: 1570415309}
   - {fileID: 322278561}
+  - {fileID: 229332645}

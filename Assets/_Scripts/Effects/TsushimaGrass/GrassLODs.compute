@@ -1,0 +1,33 @@
+#pragma kernel ComputeLOD
+
+uniform float3 _cameraPosition;
+uniform float4 _lodDistances;
+
+RWStructuredBuffer<float3> _positionBuffer;
+RWStructuredBuffer<int> _lodOutputBuffer;
+
+[numthreads(64, 1, 1)]
+void ComputeLOD(uint3 id : SV_DispatchThreadID)
+{
+  int index = id.x;
+  float3 position = _positionBuffer[index];
+  float dist = distance(position, _cameraPosition);
+  int lod = 0;
+  if (dist > _lodDistances.x)
+  {
+    lod = 1;
+  }
+  else if (dist > _lodDistances.y)
+  {
+    lod = 2;
+  }
+  else if (dist > _lodDistances.z)
+  {
+    lod = 3;
+  }
+  else if (dist > _lodDistances.w)
+  {
+    lod = 4;
+  }
+  _lodOutputBuffer[index] = lod;
+}

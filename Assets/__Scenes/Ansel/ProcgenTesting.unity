@@ -18818,13 +18818,18 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8819276947174590073, guid: 862d92a67177d4c7b84ab88d6b6e0257,
         type: 3}
+      propertyPath: _grass
+      value: 
+      objectReference: {fileID: 4258144910533491458}
+    - target: {fileID: 8819276947174590073, guid: 862d92a67177d4c7b84ab88d6b6e0257,
+        type: 3}
       propertyPath: _material
       value: 
       objectReference: {fileID: 2100000, guid: dd21b70b04efe5e4b801fa131391384f, type: 2}
     - target: {fileID: 8819276947174590073, guid: 862d92a67177d4c7b84ab88d6b6e0257,
         type: 3}
       propertyPath: _tileCount
-      value: 35
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 8819276947174590073, guid: 862d92a67177d4c7b84ab88d6b6e0257,
         type: 3}
@@ -18846,6 +18851,11 @@ PrefabInstance:
       propertyPath: _structures
       value: 
       objectReference: {fileID: 1849557963}
+    - target: {fileID: 8819276947174590073, guid: 862d92a67177d4c7b84ab88d6b6e0257,
+        type: 3}
+      propertyPath: _enableGrass
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 8819276947174590073, guid: 862d92a67177d4c7b84ab88d6b6e0257,
         type: 3}
       propertyPath: _grassManager
@@ -19225,15 +19235,25 @@ PrefabInstance:
     - {fileID: 0}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 7828621975473438852, guid: 862d92a67177d4c7b84ab88d6b6e0257,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 4258144910533491458}
   m_SourcePrefab: {fileID: 100100000, guid: 862d92a67177d4c7b84ab88d6b6e0257, type: 3}
+--- !u!1 &4258144910533491456 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7828621975473438852, guid: 862d92a67177d4c7b84ab88d6b6e0257,
+    type: 3}
+  m_PrefabInstance: {fileID: 4258144910533491455}
+  m_PrefabAsset: {fileID: 0}
 --- !u!114 &4258144910533491457 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 8819276947174590073, guid: 862d92a67177d4c7b84ab88d6b6e0257,
     type: 3}
   m_PrefabInstance: {fileID: 4258144910533491455}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
+  m_GameObject: {fileID: 4258144910533491456}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 67c43eb278576c646b814952f91643c8, type: 3}
