@@ -34,6 +34,7 @@ public class WorldGenerator : MonoBehaviour
     public Vector3[] waterVertices;
     public int[] waterTriangles;
     public int currentLOD;
+    public Texture2D heightmapTexture;
 
   }
 
@@ -175,6 +176,7 @@ public class WorldGenerator : MonoBehaviour
   [SerializeField] private int _defaultLOD;
   [Header("Grass Settings")]
   [SerializeField] private bool _enableGrass;
+  [SerializeField] private GrassDrawIndirect _grass;
   [Header("Water Settings")]
   [Tooltip("Enable or disable rivers.")]
   [SerializeField] private bool _enableRivers;
@@ -250,6 +252,16 @@ public class WorldGenerator : MonoBehaviour
     float waterFactor = _riverParameters.heightCurve.Evaluate(heightVal / _maxPossibleHeight) * _riverParameters.noiseCurve.Evaluate(AmalgamNoise.GetRiverValue(
         worldPosition.x + _seed % 216812, worldPosition.y + _seed % 216812, _riverParameters.scale, _riverParameters.octaves, _riverParameters.lacunarity, _riverParameters.persistence, _riverParameters.warpScale, _riverParameters.warpStrength));
     return waterFactor == 0 ? -1 : (heightVal - _riverParameters.waterLevel);
+  }
+
+  public Texture2D GetHeightmapTexture(Vector2 position) {
+    Vector3 centerPos = _tilePool[_tilePositions[(_tileCount - 1) / 2, (_tileCount - 1) / 2]].obj.transform.position;
+    Vector2 relPos = position - new Vector2(centerPos.x, centerPos.z);
+    relPos /= _size * _resolution;
+    int posx = Mathf.FloorToInt(relPos.x + (_tileCount - 1) / 2);
+    int posz = Mathf.FloorToInt(relPos.y + (_tileCount - 1) / 2);
+    int indx = _tilePositions[posx, posz];
+    return _tilePool[indx].heightmapTexture;
   }
 
   public float GetSeedHash() {
@@ -370,7 +382,7 @@ public class WorldGenerator : MonoBehaviour
   }
 
   public void UpdatePlayerLoadedChunks(Vector3 playerPos) {
-    if (_generateQueue.Count > 0) return;
+    if (!_doneGenerating) return;
     int playerXChunkScale = Mathf.FloorToInt(playerPos.x / (_size * _resolution));
     int playerZChunkScale = Mathf.FloorToInt(playerPos.z / (_size * _resolution));
 
@@ -477,6 +489,7 @@ public class WorldGenerator : MonoBehaviour
     }
 
     if (deltaZ != 0 || deltaX != 0) {
+      //if (_enableGrass) _grass.UpdateGrass(new Vector2Int(deltaX, deltaZ));
       Vector2 playerPosXZ = new Vector2(playerPos.x, playerPos.z);
       _structures.CheckStructures(playerPosXZ);
       _storyStructures.CheckStructures(playerPosXZ);
@@ -597,13 +610,8 @@ public class WorldGenerator : MonoBehaviour
     }
     tempTex.SetPixelData(dataTrimmed, 0);
     tempTex.Apply();
+    _tilePool[index].heightmapTexture = tempTex;
     output.Dispose();
-    if (_enableGrass) {
-      GrassTilePrimitives grass = go.AddComponent<GrassTilePrimitives>();
-      grass._worldGenerator = this;
-      grass._useGlobalConfig = true;
-      grass._tileHeightmap = tempTex;
-    }
     int sideLength0 = (int) Mathf.Sqrt(vertices.Length) - 1;
     NativeArray<int> triangles = new NativeArray<int>(sideLength0 * sideLength0 * 6, Allocator.Persistent);
     int vert = 0;
@@ -759,9 +767,20 @@ public class WorldGenerator : MonoBehaviour
     while (!handle.IsCompleted) yield return null;
     handle.Complete();
     NativeArray<Vector3> vertices = new NativeArray<Vector3>(tmpSize * tmpSize, Allocator.Persistent);
-    for (int i = 0; i < tmpSize * tmpSize; i++) {
+    Texture2D tempTex = new Texture2D(tmpSize - 4, tmpSize - 4, TextureFormat.RFloat, false, true);
+    float[] dataTrimmed = new float[(tmpSize - 4) * (tmpSize - 4)];
+    tempTex.wrapMode = TextureWrapMode.Clamp;
+    tempTex.filterMode = FilterMode.Point;
+    for (int i = 0, n = 0; i < tmpSize * tmpSize; i++) {
       vertices[i] = new Vector3((i % tmpSize - 1) * tmpRes, output[i], (i / tmpSize - 1) * tmpRes);
+      if (i % tmpSize > 0 && i % tmpSize < tmpSize - 3 && i / tmpSize > 0 && i / tmpSize < tmpSize - 3) {
+        dataTrimmed[n] = output[i];
+        n++;
+      }
     }
+    tempTex.SetPixelData(dataTrimmed, 0);
+    tempTex.Apply();
+    _tilePool[index].heightmapTexture = tempTex;
     output.Dispose();
 
     _tilePool[index].obj.transform.position = new Vector3(x * _size * _resolution, 0, z * _size * _resolution);

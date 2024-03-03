@@ -1,0 +1,128 @@
+// Each #kernel tells which function to compile; you can have many kernels
+#pragma kernel ComputePosition
+// thanks elliot
+#define TWO_PI 6.28318530718f
+#define DEG_TO_RAD 0.01745329251f
+// ====== Settings
+uniform uint _samplesX;
+uniform uint _samplesZ;
+uniform float _sizeX;
+uniform float _sizeZ;
+uniform float _padding;
+// ====== Depends
+uniform float3 _chunkTopLeftPosition;
+// ====== Chunking / Heightmap
+Texture2D<float> _tileHeightmapTexture;
+SamplerState sampler_tileHeightmapTexture;
+uniform uint _tileHeightmapTextureWidth;
+uniform float3 _tilePivotWorldPosition;
+uniform uint _chunkSplitFactor;
+// ====== LODS
+uniform float _LOD1Distance;
+uniform float3 _cameraWorldPosition;
+// ====== Output
+RWStructuredBuffer<uint> _lodIndexBuffer;
+RWStructuredBuffer<float4x4> _positionOutputBuffer;
+// RWStructuredBuffer<float> _debugCPUReadbackBuffer;
+uniform uint _indexOffset;
+
+
+// ======
+
+
+// Pseudo-random number between min and max, from shadergraph compiled code(?)
+float randomRange(float2 seed, float min, float max)
+{
+	const float randNum = frac(sin(dot(seed, float2(12.9898, 78.233)))*143758.5453);
+	return lerp(min, max, randNum);
+}
+
+float4x4 GetMatrixWithRotationY(float angle)
+{
+	float s, c;
+	sincos(angle, s, c);
+
+	return float4x4
+	(
+		c, 0, s, 0,
+		0, 1, 0, 0,
+		-s, 0, c, 0,
+		0, 0, 0, 1
+	);
+}
+
+float4x4 PositionToTransformMatrix(float3 position)
+{
+	float x = position.x;
+	float y = position.y;
+	float z = position.z;
+	return float4x4(
+		1, 0, 0, x,
+		0, 1, 0, y,
+		0, 0, 1, z,
+		0, 0, 0, 1);
+}
+
+float GetHeightmapAtWorldPosition(float2 position)
+{
+  // Transform to align to texture
+	float2 uv = float2((position.x - _tilePivotWorldPosition.x) / _sizeX, (position.y - _tilePivotWorldPosition.z) / _sizeZ) / float(_chunkSplitFactor * 2);
+ 
+  // Sample with triangle interpolation
+  float w = float(_tileHeightmapTextureWidth - 1);
+  float2 tuv = uv * w % 1;
+  float tile = 1 / float(_tileHeightmapTextureWidth - 1);
+  float2 fuv = floor(uv * w) / w;
+  float pointA = _tileHeightmapTexture.SampleLevel(sampler_tileHeightmapTexture, fuv, 0);
+  float pointB = _tileHeightmapTexture.SampleLevel(sampler_tileHeightmapTexture, fuv + float2(tile, 0), 0);
+  float pointC = _tileHeightmapTexture.SampleLevel(sampler_tileHeightmapTexture, fuv + float2(0, tile), 0);
+  float pointD = _tileHeightmapTexture.SampleLevel(sampler_tileHeightmapTexture, fuv + float2(tile, tile), 0);
+  float val = 0;
+  if (tuv.x > (1 - tuv.y))
+  {
+ 
+    float w1 = -(tuv.y - 1);
+    float w2 = -(tuv.x - 1);
+    float w3 = 1 - w1 - w2;
+ 
+    val = w1 * pointB + w2 * pointC + w3 * pointD;
+ 
+  }
+  else
+  {
+ 
+    float w1 = (tuv.y);
+    float w2 = -(tuv.x - 1) - (tuv.y);
+    float w3 = 1 - w1 - w2;
+ 
+    val = w1 * pointC + w2 * pointA + w3 * pointB;
+  }
+	return val;
+}
+
+[numthreads(64,1,1)]
+void ComputePosition(uint3 id : SV_DispatchThreadID)
+{
+	uint sampleIndex = id.x; // useless, but reminds me that id takes into account the number of groups so i never have to suffer again
+	float2 samplePosition;
+	samplePosition.y = floor(sampleIndex / _samplesX);
+	samplePosition.x = sampleIndex % _samplesX; // never mod by floats, inaccuracies cause issues
+	float xSpacing = _sizeX / _samplesX;
+	float zSpacing = _sizeZ / _samplesZ;
+	float3 worldPos = float3(samplePosition.x * xSpacing + xSpacing / 2, 0, samplePosition.y * zSpacing + zSpacing / 2) + _chunkTopLeftPosition;
+	worldPos.x += randomRange(float2(id.x, id.x % 0.35) + _chunkTopLeftPosition.xz, -xSpacing / 2, xSpacing / 2);
+	worldPos.z += randomRange(float2(id.x, id.x % 0.52) + _chunkTopLeftPosition.xz, -zSpacing / 2, zSpacing / 2);
+	worldPos.y = GetHeightmapAtWorldPosition(worldPos.xz);
+	if (distance(_cameraWorldPosition, worldPos) > _LOD1Distance)
+	{
+		_lodIndexBuffer[sampleIndex + _indexOffset] = 1;
+	}
+	else
+	{
+		_lodIndexBuffer[sampleIndex + _indexOffset] = 0;
+	}
+	// worldPos = worldPos + float3(-_sizeX / 2, 0, -_sizeZ / 2); // centerize, remove for proc gen
+	float4x4 rotMatrix = GetMatrixWithRotationY(randomRange(worldPos.xz, 0, TWO_PI));
+	_positionOutputBuffer[sampleIndex + _indexOffset] = mul(PositionToTransformMatrix(worldPos), rotMatrix); //(x, y) applies x then y, do not use the function notation in the 3blue1brown video, it is wrong
+	// _debugCPUReadbackBuffer[sampleIndex + _indexOffset] = worldPos.y;
+}

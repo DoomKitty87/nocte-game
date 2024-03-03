@@ -95,7 +95,6 @@ public class PlayerWorldGeneratorCompatibility : MonoBehaviour
         Shader.SetGlobalVector("_PlayerPosition", transform.position);
     }
 
-
     private void EnablePlayer() {
         if (Physics.Raycast(Vector3.up * 10000, Vector3.down, out var hit, Mathf.Infinity, _groundMask)) {
             transform.position = hit.point + Vector3.up * 2f;
