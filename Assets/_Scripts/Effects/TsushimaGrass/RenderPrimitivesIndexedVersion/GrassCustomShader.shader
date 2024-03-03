@@ -68,8 +68,8 @@ Shader "Custom/GrassCustomShader"
                 // Wind
                 float windStr = randomRange(objWorldPos.xz, 0.6f, 1.3f);
                 float windOffset = randomRange(objWorldPos.zx, -0.5f, 0.5f);
-                worldPos.x += sin(_Time.y * _WindStrength + windOffset) * 0.1f * windStr * uv.y * uv.y * cos(_WindDirection);
-                worldPos.z += sin(_Time.y * _WindStrength + windOffset) * 0.1f * windStr * uv.y * uv.y * sin(_WindDirection);
+                worldPos.x += sin(_Time.y * 1 + windOffset) * 0.1f * windStr * uv.y * uv.y * cos(1);
+                worldPos.z += sin(_Time.y * 1 + windOffset) * 0.1f * windStr * uv.y * uv.y * sin(1);
 
                 float dist = distance(worldPos.xyz, _PlayerPosition.xyz);
                 float trample = 1 - saturate(dist / _TrampleDist);

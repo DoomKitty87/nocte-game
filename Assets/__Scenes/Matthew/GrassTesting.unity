@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 261.80057, g: 324.3278, b: 429.24698, a: 1}
+  m_IndirectSpecularColor: {r: 261.80212, g: 324.32928, b: 429.2493, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -544,6 +544,115 @@ MonoBehaviour:
   m_ObsoleteUseShadowQualitySettings: 0
   m_ObsoleteCustomShadowResolution: 512
   m_ObsoleteContactShadows: 0
+--- !u!1 &338846477
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 338846481}
+  - component: {fileID: 338846480}
+  - component: {fileID: 338846479}
+  - component: {fileID: 338846478}
+  m_Layer: 0
+  m_Name: Capsule
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!136 &338846478
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 338846477}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.5
+  m_Height: 2
+  m_Direction: 1
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!23 &338846479
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 338846477}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_RenderingLayerMask: 257
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 2100000, guid: 73c176f402d2c2f4d929aa5da7585d17, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_AdditionalVertexStreams: {fileID: 0}
+--- !u!33 &338846480
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 338846477}
+  m_Mesh: {fileID: 10208, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!4 &338846481
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 338846477}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 2, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &535676643
 GameObject:
   m_ObjectHideFlags: 0
@@ -752,22 +861,22 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _worldGenerator: {fileID: 0}
-  _tileHeightmap: {fileID: 0}
+  _tileHeightmap: {fileID: 2800000, guid: 364ae69160ed563488542e8b6b089bd1, type: 3}
   _useGlobalConfig: 1
   _globalConfig: {fileID: 0}
-  _mainCamera: {fileID: 0}
-  _grassMesh: {fileID: 0}
-  _renderingShaderMat: {fileID: 0}
+  _mainCamera: {fileID: 1219595224}
+  _grassMesh: {fileID: 6272463214150983, guid: 82ca8cc96c2980e4d92e49b5bfe50816, type: 3}
+  _renderingShaderMat: {fileID: 2100000, guid: 2bf9eee20975cfa45a2434e904df1419, type: 2}
   _distToPlayerCutoff: 10000
   _LOD1Distance: 0
   _samplesX: 100
   _samplesZ: 100
-  _fallbackTileSizeX: 960
-  _fallbackTileSizeZ: 960
+  _fallbackTileSizeX: 10
+  _fallbackTileSizeZ: 10
   _meshBoundsPadding: 0
   _chunkSplitFactor: 1
-  _positionCompute: {fileID: 0}
-  _bufferClearCompute: {fileID: 0}
+  _positionCompute: {fileID: 7200000, guid: 0f5e4ca7781bc44ceba456965bcf344e, type: 3}
+  _bufferClearCompute: {fileID: 7200000, guid: 13261e43dce77a340bbd2fd01f00137b, type: 3}
 --- !u!114 &764727110
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1145,7 +1254,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1371078898
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1158,10 +1267,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 94ee4247fa3f47f4b8046695a0aa7a5a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _samplesX: 1000
-  _samplesY: 1000
-  _fallbackTileSizeX: 100
-  _fallbackTileSizeZ: 100
+  _samplesX: 500
+  _samplesY: 500
+  _fallbackTileSizeX: 50
+  _fallbackTileSizeZ: 50
   _tileBoundsPadding: 0
   _distToPlayerCutoff: 10000
   _LOD1Distance: 500
@@ -1172,7 +1281,7 @@ MonoBehaviour:
   _positionCompute: {fileID: 7200000, guid: 0f5e4ca7781bc44ceba456965bcf344e, type: 3}
   _bufferClearCompute: {fileID: 7200000, guid: 13261e43dce77a340bbd2fd01f00137b, type: 3}
   _renderingShaderMat: {fileID: 2100000, guid: 2bf9eee20975cfa45a2434e904df1419, type: 2}
-  _LOD0GrassMesh: {fileID: -462981019419857548, guid: e9edbbe92ffc1e04a94817a23bc92820,
+  _LOD0GrassMesh: {fileID: 6272463214150983, guid: 82ca8cc96c2980e4d92e49b5bfe50816,
     type: 3}
   _mainLight: {fileID: 248034644}
 --- !u!4 &1371078899
@@ -1704,7 +1813,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &1713143283
 Transform:
   m_ObjectHideFlags: 0
@@ -1714,7 +1823,7 @@ Transform:
   m_GameObject: {fileID: 1713143282}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 960, y: 0, z: 0}
+  m_LocalPosition: {x: 10, y: 0, z: 0}
   m_LocalScale: {x: 96, y: 96, z: 96}
   m_ConstrainProportionsScale: 1
   m_Children: []
@@ -1807,22 +1916,23 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _worldGenerator: {fileID: 0}
-  _tileHeightmap: {fileID: 0}
+  _tileHeightmap: {fileID: 2800000, guid: 9cfdd6633ed9d1e4e8d27c76aac0dbaa, type: 3}
   _useGlobalConfig: 1
   _globalConfig: {fileID: 0}
-  _mainCamera: {fileID: 0}
-  _grassMesh: {fileID: 0}
-  _renderingShaderMat: {fileID: 0}
+  _mainCamera: {fileID: 1219595224}
+  _grassMesh: {fileID: -3141602069487479162, guid: 82ca8cc96c2980e4d92e49b5bfe50816,
+    type: 3}
+  _renderingShaderMat: {fileID: 2100000, guid: 2bf9eee20975cfa45a2434e904df1419, type: 2}
   _distToPlayerCutoff: 1000
   _LOD1Distance: 0
-  _samplesX: 0
-  _samplesZ: 0
-  _fallbackTileSizeX: 0
-  _fallbackTileSizeZ: 0
+  _samplesX: 100
+  _samplesZ: 100
+  _fallbackTileSizeX: 10
+  _fallbackTileSizeZ: 10
   _meshBoundsPadding: 0
   _chunkSplitFactor: 1
-  _positionCompute: {fileID: 0}
-  _bufferClearCompute: {fileID: 0}
+  _positionCompute: {fileID: 7200000, guid: 0f5e4ca7781bc44ceba456965bcf344e, type: 3}
+  _bufferClearCompute: {fileID: 7200000, guid: 13261e43dce77a340bbd2fd01f00137b, type: 3}
 --- !u!114 &1713143289
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1847,3 +1957,4 @@ SceneRoots:
   - {fileID: 787646541}
   - {fileID: 673101082}
   - {fileID: 1371078899}
+  - {fileID: 338846481}
