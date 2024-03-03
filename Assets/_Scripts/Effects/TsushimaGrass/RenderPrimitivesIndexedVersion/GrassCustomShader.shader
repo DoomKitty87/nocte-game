@@ -58,18 +58,23 @@ Shader "Custom/GrassCustomShader"
                 FragData output;
                 float3 vertexPosition = _vertexPositions[triIndex];
                 output.vertexColor = lerp(_BaseColor, _TipColor, vertexPosition.y);
+                float4 objWorldPos = mul(_instancePositionMatrices[instanceID], float4(0, 0, 0, 1));
                 // Local transform
                 float2 uv = float2(0, vertexPosition.y);
-                vertexPosition.y *= _BladeHeight;
+                float heightMod = randomRange(objWorldPos.xz, 0.8f, 1.2f);
+                heightMod *= _BladeHeight;
+                vertexPosition.y *= heightMod;
                 // World space
                 float4 worldPos = mul(_instancePositionMatrices[instanceID], float4(vertexPosition, 1.0f));
-                float4 objWorldPos = mul(_instancePositionMatrices[instanceID], float4(0, 0, 0, 1));
 
                 // Wind
                 float windStr = randomRange(objWorldPos.xz, 0.6f, 1.3f);
                 float windOffset = randomRange(objWorldPos.zx, -0.5f, 0.5f);
-                worldPos.x += sin(_Time.y * 1 + windOffset) * 0.1f * windStr * uv.y * uv.y * cos(1);
-                worldPos.z += sin(_Time.y * 1 + windOffset) * 0.1f * windStr * uv.y * uv.y * sin(1);
+                float xDisp = sin(_Time.y * _WindStrength + windOffset) * 0.1f * windStr * uv.y * uv.y * cos(_WindDirection);
+                float zDisp = sin(_Time.y * _WindStrength + windOffset) * 0.1f * windStr * uv.y * uv.y * sin(_WindDirection);
+                worldPos.x += xDisp;
+                worldPos.z += zDisp;
+                worldPos.y -= sqrt(heightMod * heightMod + xDisp * xDisp + zDisp * zDisp) - heightMod;
 
                 float dist = distance(worldPos.xyz, _PlayerPosition.xyz);
                 float trample = 1 - saturate(dist / _TrampleDist);
