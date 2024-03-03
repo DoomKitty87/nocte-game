@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 168.64629, g: 65.85999, b: 29.617424, a: 1}
+  m_IndirectSpecularColor: {r: 180.1751, g: 70.98341, b: 34.14287, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -19259,6 +19259,28 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 67c43eb278576c646b814952f91643c8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &4258144910533491458
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4258144910533491456}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8901d01b1ec976449b26f9ac05943e4b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _positionCompute: {fileID: 7200000, guid: ad2522b6a715ee54d8ae10d592b5a0cc, type: 3}
+  _grassMaterial: {fileID: 2100000, guid: 3df5acdb7da894144ae7205285c0ed66, type: 2}
+  _grassMeshes:
+  - {fileID: -3141602069487479162, guid: 82ca8cc96c2980e4d92e49b5bfe50816, type: 3}
+  - {fileID: 6272463214150983, guid: 82ca8cc96c2980e4d92e49b5bfe50816, type: 3}
+  _lodValues: 32000000
+  _chunkCount: 9
+  _chunkSize: 30
+  _grassDensity: 100
+  _mainLight: {fileID: 76653202}
 --- !u!136 &4762342597639217425
 CapsuleCollider:
   m_ObjectHideFlags: 0

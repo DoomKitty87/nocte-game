@@ -4,7 +4,7 @@ using UnityEngine.UIElements;
 
 public class RenderChunk {
   private Vector3 _position;
-  private Vector3 _centerPosition;
+  private Vector2 _centerPosition;
   private Mesh[] _meshes;
   private Material _material;
   private float _chunkSize;
@@ -25,7 +25,7 @@ public class RenderChunk {
   // chunkSize is the size in one direction
   public RenderChunk(Vector2Int chunkPos, float chunkSize, int chunkDensity, Material grassMaterial, Mesh[] grassMeshes, int[] lodValues, ComputeShader positionCompute) {
     _position = new Vector3(chunkPos.x * chunkSize, 0, chunkPos.y * chunkSize);
-    Debug.Log(_position);
+    //Debug.Log(_position);
     _chunkSize = chunkSize;
     _chunkDensity = chunkDensity;
     _material = Material.Instantiate(grassMaterial);
@@ -36,9 +36,9 @@ public class RenderChunk {
     Initialize();
 
     ComputePositions();
-    Vector4[] arry = new Vector4[_chunkDensity * _chunkDensity];
-    _positionsBuffer.GetData(arry);
-    Debug.Log(arry[0]);
+    // Vector4[] arry = new Vector4[_chunkDensity * _chunkDensity];
+    // _positionsBuffer.GetData(arry);
+    // Debug.Log(arry[0]);
     _material.SetBuffer("_instancePositions", _positionsBuffer);
     
   }
@@ -64,15 +64,15 @@ public class RenderChunk {
     _argsBuffer = new ComputeBuffer(1, _args.Length * sizeof(uint), ComputeBufferType.IndirectArguments);
     _heightmapTexture = WorldGenInfo._worldGenerator.GetHeightmapTexture(new Vector2(_position.x, _position.z));
 
-    _centerPosition = new Vector3(_position.x + _chunkSize / 2, 0, _position.z + _chunkSize / 2);
+    _centerPosition = new Vector2(_position.x + _chunkSize / 2, _position.z + _chunkSize / 2);
 
     _positionsBuffer = new ComputeBuffer(_chunkDensity * _chunkDensity, sizeof(float) * 4);
 
   }
 
-  public void Render(Vector3 cameraPosition) {
+  public void Render(Vector2 cameraPosition) {
 
-    float distance = Vector3.Distance(cameraPosition, _centerPosition);
+    float distance = Vector2.Distance(cameraPosition, _centerPosition);
     int lod = 0;
     
     for (int i = 0; i < _lodDistances.Length; i++) {
@@ -85,7 +85,7 @@ public class RenderChunk {
     _args[2] = (uint)_meshes[lod].GetIndexStart(0);
     _args[3] = (uint)_meshes[lod].GetBaseVertex(0);
     _argsBuffer.SetData(_args);
-    Graphics.DrawMeshInstancedIndirect(_meshes[lod], 0, _material, new Bounds(_centerPosition, Vector3.one * 1000000), _argsBuffer);
+    Graphics.DrawMeshInstancedIndirect(_meshes[lod], 0, _material, new Bounds(new Vector3(_centerPosition.x, 0, _centerPosition.y), new Vector3(_chunkSize, 5000, _chunkSize)), _argsBuffer);
 
   }
 

@@ -112,7 +112,6 @@ public class WeatherManager : MonoBehaviour
     _environment.windOrientation.value = _windDirection * 360 / (2 * Mathf.PI);
     Shader.SetGlobalFloat("_WindSpeed", _weatherState.z);
     Shader.SetGlobalFloat("_WindDirection", _windDirection);
-    _rainEffect.SetInt("RainRate", (int) (_weatherState.z * _rainMaxIntensity));
     _rainEmission.rateOverTime = _weatherState.z * _rainMaxIntensity;
     _physicalSky.spaceEmissionMultiplier.value = nightFactor * _maxSpaceIntensity * _spaceCycleCurve.Evaluate(_spacePhaseMajor);
     _asteroidEffect.SetFloat("SpawnRate", nightFactor * _maxAsteroidRate);

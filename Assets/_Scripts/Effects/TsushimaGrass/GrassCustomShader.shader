@@ -14,6 +14,8 @@ Shader "Custom/GrassCustomShader"
   SubShader
   {
 
+    Cull Off
+
     Tags { "RenderType"="Opaque" "Queue" = "Transparent"}
 
     Pass
@@ -22,10 +24,6 @@ Shader "Custom/GrassCustomShader"
       #pragma vertex vert
       #pragma fragment frag
       #pragma multi_compile_fog
-
-      #include "UnityCG.cginc"
-      #include "UnityLightingCommon.cginc"
-      #include "AutoLight.cginc"
 
       StructuredBuffer<float4> _instancePositions;
       float3 _MainLightDir;
@@ -56,15 +54,14 @@ Shader "Custom/GrassCustomShader"
         return lerp(min, max, randNum);
       }
 
-      float4 RotateAroundYInDegrees (float4 vertex, float degrees) {
-        float alpha = degrees * UNITY_PI / 180.0;
+      float4 RotateAroundYInDegrees (float4 vertex, float rads) {
         float sina, cosa;
-        sincos(alpha, sina, cosa);
+        sincos(rads, sina, cosa);
         float2x2 m = float2x2(cosa, -sina, sina, cosa);
         return float4(mul(m, vertex.xz), vertex.yw).xzyw;
       }
       
-      v2f vert(appdata_full v, uint instanceID : SV_INSTANCEID)
+      v2f vert(appdata v, uint instanceID : SV_INSTANCEID)
       {
         v2f output;
         float3 vertexPosition = v.vertex.xyz;
