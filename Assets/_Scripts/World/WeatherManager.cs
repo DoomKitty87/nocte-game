@@ -108,9 +108,9 @@ public class WeatherManager : MonoBehaviour
     _weatherState.w = _windSpeedCurve.Evaluate(_weatherPhases.z);
     _clouds.shapeFactor.value = _weatherState.y;
     _clouds.densityMultiplier.value = _cloudDensityCurve.Evaluate(_weatherState.y);
-    _environment.windSpeed.value = _weatherState.z * _maxWindSpeed;
+    _environment.windSpeed.value = _weatherState.w * _maxWindSpeed;
     _environment.windOrientation.value = _windDirection * 360 / (2 * Mathf.PI);
-    Shader.SetGlobalFloat("_WindSpeed", _weatherState.z);
+    Shader.SetGlobalFloat("_WindStrength", _weatherState.w);
     Shader.SetGlobalFloat("_WindDirection", _windDirection);
     _rainEmission.rateOverTime = _weatherState.z * _rainMaxIntensity;
     _physicalSky.spaceEmissionMultiplier.value = nightFactor * _maxSpaceIntensity * _spaceCycleCurve.Evaluate(_spacePhaseMajor);
