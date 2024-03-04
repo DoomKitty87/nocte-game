@@ -8,6 +8,7 @@ Shader "Custom/GrassCustomShader"
     _BladeHeight ("Blade Height", Range(0.1, 1)) = 0.5
     _WindImpact ("Wind Impact", Range(0.1, 10)) = 1
     _WindSpeed ("Wind Speed", Range(0.1, 10)) = 1
+    _WindTiling ("Wind Tiling", Range(0.01, 10)) = 1
     _TrampleDist ("Trample Distance", Range(0.1, 10)) = 1
     _TrampleDownStrength ("Trample Down Strength", Range(0.1, 10)) = 1
     _TrampleOutStrength ("Trample Out Strength", Range(0.1, 10)) = 1
@@ -26,6 +27,8 @@ Shader "Custom/GrassCustomShader"
       #pragma fragment frag
 
       StructuredBuffer<float4> _instancePositions;
+      //Texture2D _WindTexture;
+      //SamplerState sampler_WindTexture;
       float3 _MainLightDir;
       // Global
       float _WindStrength;
@@ -36,7 +39,7 @@ Shader "Custom/GrassCustomShader"
       float4 _DarkColor;
       float _BladeHeight;
       float4 _PlayerPosition;
-      float _WindImpact, _WindSpeed;
+      float _WindImpact, _WindSpeed, _WindTiling;
       float _TrampleDist, _TrampleDownStrength, _TrampleOutStrength;
 
       struct appdata {
@@ -82,6 +85,7 @@ Shader "Custom/GrassCustomShader"
         float4 worldPos = float4(vertexPosition.xyz + objWorldPos.xyz, 1);
 
         // Wind
+        // float windTexStr = _WindTexture.SampleLevel(sampler_WindTexture, objWorldPos.xz * _WindTiling, 0).r;
         float windStr = randomRange(objWorldPos.xz, 0.6f, 1.3f);
         float windOffset = randomRange(objWorldPos.zx, -0.5f, 0.5f);
         float xDisp = (sin(_Time.y * _WindStrength * _WindSpeed + windOffset) + 1) * _WindStrength * _WindImpact * windStr * uv.y * uv.y * cos(_WindDirection);

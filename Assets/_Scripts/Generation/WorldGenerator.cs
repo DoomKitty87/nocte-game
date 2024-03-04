@@ -598,7 +598,7 @@ public class WorldGenerator : MonoBehaviour
     while (!handle.IsCompleted) yield return null;
     handle.Complete();
     NativeArray<Vector3> vertices = new NativeArray<Vector3>(tmpSize * tmpSize, Allocator.Persistent);
-    Texture2D tempTex = new Texture2D(tmpSize - 4, tmpSize - 4, TextureFormat.RFloat, false, true);
+    Texture2D tempTex = new Texture2D(tmpSize - 4, tmpSize - 4, TextureFormat.RFloat, false, true, true);
     float[] dataTrimmed = new float[(tmpSize - 4) * (tmpSize - 4)];
     tempTex.wrapMode = TextureWrapMode.Clamp;
     tempTex.filterMode = FilterMode.Point;
@@ -784,7 +784,7 @@ public class WorldGenerator : MonoBehaviour
     while (!handle.IsCompleted) yield return null;
     handle.Complete();
     NativeArray<Vector3> vertices = new NativeArray<Vector3>(tmpSize * tmpSize, Allocator.Persistent);
-    Texture2D tempTex = new Texture2D(tmpSize - 4, tmpSize - 4, TextureFormat.RFloat, false, true);
+    Texture2D tempTex = new Texture2D(tmpSize - 4, tmpSize - 4, TextureFormat.RFloat, false, true, true);
     float[] dataTrimmed = new float[(tmpSize - 4) * (tmpSize - 4)];
     tempTex.wrapMode = TextureWrapMode.Clamp;
     tempTex.filterMode = FilterMode.Point;
