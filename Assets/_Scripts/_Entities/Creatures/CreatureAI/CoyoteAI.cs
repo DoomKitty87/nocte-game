@@ -26,6 +26,7 @@ namespace _Scripts._Entities.Creatures.CreatureAI
 		[SerializeField] private float _distanceHeal;
 		[SerializeField] private float _range;
 		[SerializeField] private float _staminaLimit;
+		[SerializeField] private float _recencyLimit;
 		[SerializeField] private List<CreatureAttack> _attacks;
 		
 		protected override TreeNode SetupTree() {
@@ -40,6 +41,7 @@ namespace _Scripts._Entities.Creatures.CreatureAI
 					new Selector(new List<TreeNode> {
 						new Sequencer(new List<TreeNode> { // checks if very close to player and attacks
 							new DistanceTransformLessThan(_transform, _playerTransform, _distanceAttack),
+							new CheckAttackRecent(_creatureCombat, _recencyLimit),
 							new SetState(_controller, EnemyController.PlayerStates.Idle),
 							new UseAttack(_creatureCombat, _attacks[0]),
 							new ChangeStamina(_controller, -20),
