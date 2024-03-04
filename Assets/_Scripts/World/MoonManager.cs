@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -30,6 +31,13 @@ public class MoonManager : MonoBehaviour
   [SerializeField] private WorldGenerator _worldGenerator;
   [SerializeField] private OrbitVisualizer _orbitVisualizer;
   public float _distanceMultiplier = 1.0f; // Used to scale the distance of the moons from the planet
+
+  private void Awake() {
+    if (_worldGenerator == null) {
+      Debug.LogWarning($"No WorldGeneratorObject found on {this.name}");
+      this.enabled = false;
+    }
+  }
 
   void Start()
   {

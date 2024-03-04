@@ -93,7 +93,7 @@ namespace Console
                 consoleUI.Setup(GetCommands());
             }
             catch {
-                Debug.LogWarning("No consoleUI object in ConsoleController.");
+                Debug.LogWarning($"No consoleUI found on {this.name}.");
                 this.enabled = false;
             }
         }
