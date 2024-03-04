@@ -13,6 +13,15 @@ public sealed class ScannerEffectPostProcessVolume : CustomPostProcessVolumeComp
     public Vector2Parameter _scanDirectionXZ = new Vector2Parameter(new Vector2(0, 1));
     public ClampedFloatParameter _scanDegrees = new ClampedFloatParameter(120, 0, 360);
     public FloatParameter _scanDistance = new FloatParameter(10f);
+    public FloatParameter _scanLineWidth = new FloatParameter(0.02f);
+    public FloatParameter _scanLineDistBetween = new FloatParameter(1);
+    
+    // uniform float3 _scanCenterPos;
+    // uniform float2 _scanDirectionXZ;
+    // uniform float _scanDegrees;
+    // uniform float _scanDistance;
+    // uniform float _scanLineWidth;
+    // uniform float _scanLineDistBetween;
     
     Material m_Material;
 
@@ -41,6 +50,8 @@ public sealed class ScannerEffectPostProcessVolume : CustomPostProcessVolumeComp
         m_Material.SetVector("_scanDirectionXZ", _scanDirectionXZ.value);
         m_Material.SetFloat("_scanDegrees", _scanDegrees.value);
         m_Material.SetFloat("_scanDistance", _scanDistance.value);
+        m_Material.SetFloat("_scanLineWidth", _scanLineWidth.value);
+        m_Material.SetFloat("_scanLineDistBetween", _scanLineDistBetween.value);
         HDUtils.DrawFullScreen(cmd, m_Material, destination, shaderPassId: 0);
     }
 

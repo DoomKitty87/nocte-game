@@ -35,6 +35,12 @@ Shader "FullScreen/ScannerEffectFullscreen"
     uniform float2 _scanDirectionXZ;
     uniform float _scanDegrees;
     uniform float _scanDistance;
+    uniform float _scanLineWidth;
+    uniform float _scanLineDistBetween;
+    
+    float radiansToDegrees(float radians) {
+        return radians * 57.295779513082320876798154814105;
+    }
     
     float4 FullScreenPass(Varyings varyings) : SV_Target
     {
@@ -52,12 +58,20 @@ Shader "FullScreen/ScannerEffectFullscreen"
 
         // Add your custom pass code here
         float2 uv = float2(0, 0);
-        uv.x = distance(float2(0, 0), camWorldPos.xz);
-        uv.y = dot(normalize(_scanDirectionXZ), normalize(camWorldPos.xz - float2(0, 0)));
-        if (uv.x < _scanDistance && uv.y > 0)
+        float2 dirFromCenter = normalize(absWorldPos.xz - _scanCenterPos.xz);
+        float2 dirScanForward = normalize(_scanDirectionXZ);
+        float angleFromForward = radiansToDegrees(acos(dot(dirFromCenter, dirScanForward)));
+        uv.x = 1 - (angleFromForward / (_scanDegrees / 2));
+        uv.y = distance(_scanCenterPos.xz, absWorldPos.xz);
+        if (uv.x > 0 && uv.y < _scanDistance)
         {
-            color = float4(uv.x % 1, uv.y, 0, 1);
+            float scanLineDistanceNormalized = _scanLineDistBetween / _scanLineWidth;
+            float distanceFromLine = frac(uv.y / _scanLineWidth / scanLineDistanceNormalized);
+            float scanLineMask = 1 - smoothstep(0.0, _scanLineWidth, abs(distanceFromLine - 0.5));
+            // -----
+            color = float4(uv.x, frac(uv.y), 0, 1);
         }
+        
         // Fade value allow you to increase the strength of the effect while the camera gets closer to the custom pass volume
         // float f = 1 - abs(_FadeValue * 2 - 1);
         return float4(color.rgb, color.a);
@@ -70,7 +84,7 @@ Shader "FullScreen/ScannerEffectFullscreen"
         Tags{ "RenderPipeline" = "HDRenderPipeline" }
         Pass
         {
-            Name "Custom Pass 0"
+            Name "Scanner Custom Pass"
 
             ZWrite Off
             ZTest Always
