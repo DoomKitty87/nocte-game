@@ -1,6 +1,4 @@
-using Unity.Mathematics;
 using UnityEngine;
-using UnityEngine.UIElements;
 
 public class RenderChunk {
   private readonly Vector3 _position;
@@ -31,7 +29,7 @@ public class RenderChunk {
     //Debug.Log(_position);
     _chunkSize = chunkSize;
     _chunkDensity = chunkDensity;
-    _material = Material.Instantiate(grassMaterial);
+    _material = Object.Instantiate(grassMaterial);
     _meshes = grassMeshes;
     _lodDistances = lodValues;
     _positionCompute = positionCompute;
@@ -55,7 +53,7 @@ public class RenderChunk {
   }
   
   private void UpdateDensity(int lod) {
-    _positionsBuffer.Release();
+    _positionsBuffer?.Release();
     _positionsBuffer = new ComputeBuffer(_chunkDensity[lod] * _chunkDensity[lod], sizeof(float) * 4);
     ComputePositions(lod);
     _material.SetBuffer(PositionBuffer, _positionsBuffer);
@@ -88,10 +86,10 @@ public class RenderChunk {
 
     _positionsBuffer = new ComputeBuffer(_chunkDensity[lod] * _chunkDensity[lod], sizeof(float) * 4);
 
+    _previousLOD = lod;
   }
 
 
-  private int _previousLOD = -1;
   public void Render(Vector2 cameraPosition) {
 
     float distance = Vector2.Distance(cameraPosition, _centerPosition);

@@ -1,27 +1,29 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "Foliage Name", menuName = "ScriptableObjects/FoliageObject")]
-public class FoliageScriptable : ScriptableObject
+namespace Foliage
 {
-    public FoliageType type;
+    [CreateAssetMenu(fileName = "Foliage Name", menuName = "ScriptableObjects/FoliageObject")]
+    public class FoliageScriptable : ScriptableObject
+    {
+        public FoliageType type;
 
-    public FoliageLODData[] _lodRanges;
-}
+        public Material Material;
+        
+        public FoliageLODData[] _lodRanges;
+    }
 
-[System.Serializable]
-public class FoliageLODData
-{
-    public Mesh Mesh;
-    public Material Material;
-    public int Distance;
-    public float Density;
-}
+    [System.Serializable]
+    public class FoliageLODData
+    {
+        public Mesh Mesh;
+        public int Distance;
+        public int Density;
+    }
 
-public enum FoliageType
-{
-    PineTree,
-    OakTree,
-    Bush
+    public enum FoliageType
+    {
+        PineTree,
+        OakTree,
+        Bush
+    }
 }

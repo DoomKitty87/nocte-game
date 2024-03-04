@@ -1,18 +1,28 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class FoliageChunk
+namespace Foliage
 {
-    public FoliageChunk() {
-        
-    }
+    public class FoliageChunk
+    {
+        private readonly FoliageRenderer[] _renderers;
 
-    public void Render() {
-        
-    }
 
-    public void CleanUp() {
-        
+        public FoliageChunk(IReadOnlyList<FoliageScriptable> scriptables, Vector2Int chunkPos, float chunkSize, ComputeShader positionCompute, Vector2 cameraPos) {
+            var numberOfScriptables = scriptables.Count;
+            _renderers = new FoliageRenderer[numberOfScriptables];
+
+            for (var i = 0; i < numberOfScriptables; i++) {
+                _renderers[i] = new FoliageRenderer(scriptables[i], chunkPos, chunkSize, positionCompute, cameraPos);
+            }
+        }
+
+        public void Render(Vector2 cameraPosition) {
+            foreach (var renderer in _renderers) renderer.Render(cameraPosition);
+        }
+
+        public void CleanUp() {
+            foreach (var renderer in _renderers) renderer.CleanUp();
+        }
     }
 }

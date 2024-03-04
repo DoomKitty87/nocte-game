@@ -1,18 +1,136 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-public class FoliageRenderer
+namespace Foliage
 {
-    // Start is called before the first frame update
-    void Start()
+    public class FoliageRenderer
     {
-        
-    }
+        private Vector3 _position;
+        private Vector2 _centerPosition;
+        private readonly Mesh[] _meshes;
+        private readonly Material _material;
+        private readonly float _chunkSize;
+        private readonly int[] _chunkDensity;
+        private readonly int[] _lodDistances;
 
-    // Update is called once per frame
-    void Update()
-    {
+        private int _previousLOD;
+
+        private readonly ComputeShader _positionCompute;
+
+        private readonly uint[] _args = new uint[5];
+        private ComputeBuffer _argsBuffer;
+
+        private ComputeBuffer _positionsBuffer;
+        private Texture2D _heightmapTexture;
         
+        private FoliageScriptable _scriptable;
+        private static readonly int PositionBuffer = Shader.PropertyToID("_positionBuffer");
+
+        public FoliageRenderer(FoliageScriptable scriptable, Vector2Int chunkPos, float chunkSize, ComputeShader positionCompute, Vector2 cameraPosition) {
+            _position = new Vector3(chunkPos.x * chunkSize, 0, chunkPos.y * chunkSize);
+            _chunkSize = chunkSize;
+            _scriptable = scriptable;
+            _positionCompute = positionCompute;
+
+            var numberOfLODs = _scriptable._lodRanges.Length;
+
+            _meshes = new Mesh[numberOfLODs];
+            _lodDistances = new int[numberOfLODs];
+            
+            _material = new Material(_scriptable.Material);
+
+            var lodDatas = _scriptable._lodRanges;
+            
+            for (var i = 0; i < numberOfLODs; i++) {
+                _meshes[i] = lodDatas[i].Mesh;
+                _chunkDensity[i] = lodDatas[i].Density;
+                _lodDistances[i] = lodDatas[i].Distance;
+            }
+
+            var lod = 0;
+            var distance = Vector2.Distance(
+                cameraPosition,
+                new Vector2(_position.x + _chunkSize / 2, _position.z + _chunkSize / 2)
+            );
+            for (int i = 0; i < _lodDistances.Length; i++) {
+                if (distance > _lodDistances[i]) lod = i + 1;
+            }
+
+            Initialize(lod);
+            
+            ComputePositions(lod);
+            
+            _material.SetBuffer(PositionBuffer, _positionsBuffer);
+        }
+
+        private void UpdateDensity(int lod) {
+            _positionsBuffer?.Release();
+            _positionsBuffer = new ComputeBuffer(_chunkDensity[lod] * _chunkDensity[lod], sizeof(float) * 4);
+            ComputePositions(lod);
+            _material.SetBuffer(PositionBuffer, _positionsBuffer);
+        }
+        
+        private void ComputePositions(int lod) {
+
+            var kernelIndex = _positionCompute.FindKernel("ComputePosition");
+            _positionCompute.SetFloat(Shader.PropertyToID("_samples"), _chunkDensity[lod]);
+            _positionCompute.SetFloat(Shader.PropertyToID("_size"), _chunkSize);
+            _positionCompute.SetVector(Shader.PropertyToID("_chunkBottomLeftPosition"), _position);
+            _positionCompute.SetInt(Shader.PropertyToID("_tileHeightmapTextureWidth"), _heightmapTexture.width);
+            _positionCompute.SetFloat("_tileWidth", WorldGenInfo._tileEdgeSize);
+            _positionCompute.SetVector("_tileBottomLeftPosition", new Vector3(Mathf.Floor(_position.x / WorldGenInfo._tileEdgeSize) * WorldGenInfo._tileEdgeSize, 0, Mathf.Floor(_position.z / WorldGenInfo._tileEdgeSize) * WorldGenInfo._tileEdgeSize));
+            _positionCompute.SetTexture(kernelIndex, Shader.PropertyToID("_tileHeightmapTexture"), _heightmapTexture);
+            _positionCompute.SetBuffer(kernelIndex, Shader.PropertyToID("_positionOutputBuffer"), _positionsBuffer);
+            _positionCompute.GetKernelThreadGroupSizes(kernelIndex, out uint threadX, out _, out _);
+            _positionCompute.Dispatch(kernelIndex, Mathf.CeilToInt(_chunkDensity[lod] * _chunkDensity[lod] / (float)threadX), 1, 1);
+            
+        }
+        
+        private void Initialize(int lod) {
+            _argsBuffer = new ComputeBuffer(1, _args.Length * sizeof(uint), ComputeBufferType.IndirectArguments);
+            _heightmapTexture = WorldGenInfo._worldGenerator.GetHeightmapTexture(new Vector2(_position.x, _position.z));
+
+            _centerPosition = new Vector2(_position.x + _chunkSize / 2, _position.z + _chunkSize / 2);
+
+            _positionsBuffer = new ComputeBuffer(_chunkDensity[lod] * _chunkDensity[lod], sizeof(float) * 4);
+
+            _previousLOD = lod;
+        }
+
+        public void Render(Vector2 cameraPosition) {
+            
+            float distance = Vector2.Distance(cameraPosition, _centerPosition);
+            int lod = 0;
+    
+            for (int i = 0; i < _lodDistances.Length; i++) {
+                if (distance > _lodDistances[i]) {
+                    lod = i + 1;
+                }
+            }
+
+            if (lod != _previousLOD) {
+                UpdateDensity(lod);
+
+                _args[0] = (uint)_meshes[lod].GetIndexCount(0);
+                _args[1] = (uint)(_chunkDensity[lod] * _chunkDensity[lod]);
+                _args[2] = (uint)_meshes[lod].GetIndexStart(0);
+                _args[3] = (uint)_meshes[lod].GetBaseVertex(0);
+                _argsBuffer.SetData(_args);
+
+                _previousLOD = lod;
+            }
+
+            Graphics.DrawMeshInstancedIndirect(_meshes[lod], 0, _material, new Bounds(new Vector3(_centerPosition.x, 0, _centerPosition.y), new Vector3(_chunkSize, 5000, _chunkSize)), _argsBuffer);
+
+        }
+
+        public void CleanUp() {
+
+            _positionsBuffer?.Release();
+            _positionsBuffer = null;
+
+            _argsBuffer?.Release();
+            _argsBuffer = null;
+
+        }
     }
 }

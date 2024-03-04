@@ -3,6 +3,7 @@ using UnityEngine;
 using System.Collections.Generic;
  using System.Linq;
  using Effects.TsushimaGrass;
+ using Foliage;
  using UnityEngine.Rendering.HighDefinition;
 using Matrix4x4 = UnityEngine.Matrix4x4;
 using Vector2 = UnityEngine.Vector2;
