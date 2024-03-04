@@ -175,9 +175,15 @@ public class WorldGenerator : MonoBehaviour
   [SerializeField] private LODLevel[] _lodLevels;
   [Tooltip("LOD level outside of specified range.")]
   [SerializeField] private int _defaultLOD;
+  
   [Header("Grass Settings")]
   [SerializeField] private bool _enableGrass;
   [SerializeField] private GrassDrawIndirect _grass;
+  
+  [Header("Foliage Settings")]
+  [SerializeField] private bool _enableFoliage;
+  [SerializeField] private FoliageHandler _foliage;
+  
   [Header("Water Settings")]
   [Tooltip("Enable or disable rivers.")]
   [SerializeField] private bool _enableRivers;
@@ -386,6 +392,7 @@ public class WorldGenerator : MonoBehaviour
   public void UpdatePlayerLoadedChunks(Vector3 playerPos) {
     if (!_doneGenerating) return;
     if (_enableGrass) _grass.UpdatePlayerPosition(new Vector2(playerPos.x, playerPos.z));
+    if (_enableFoliage) _foliage.UpdatePlayerPosition(new Vector2(playerPos.x, playerPos.z));
     int playerXChunkScale = Mathf.FloorToInt(playerPos.x / (_size * _resolution));
     int playerZChunkScale = Mathf.FloorToInt(playerPos.z / (_size * _resolution));
 

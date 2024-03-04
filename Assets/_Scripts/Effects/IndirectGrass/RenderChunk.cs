@@ -3,17 +3,17 @@ using UnityEngine;
 using UnityEngine.UIElements;
 
 public class RenderChunk {
-  private Vector3 _position;
+  private readonly Vector3 _position;
   private Vector2 _centerPosition;
-  private Mesh[] _meshes;
-  private Material _material;
-  private float _chunkSize;
-  private int[] _chunkDensity;
-  private int[] _lodDistances;
+  private readonly Mesh[] _meshes;
+  private readonly Material _material;
+  private readonly float _chunkSize;
+  private readonly int[] _chunkDensity;
+  private readonly int[] _lodDistances;
 
-  private ComputeShader _positionCompute;
+  private readonly ComputeShader _positionCompute;
 
-  private uint[] _args = new uint[5];
+  private readonly uint[] _args = new uint[5];
   private ComputeBuffer _argsBuffer;
 
   private ComputeBuffer _positionsBuffer;
@@ -50,7 +50,7 @@ public class RenderChunk {
     // Vector4[] arry = new Vector4[_chunkDensity * _chunkDensity];
     // _positionsBuffer.GetData(arry);
     // Debug.Log(arry[0]);
-    _material.SetBuffer("_instancePositions", _positionsBuffer);
+    _material.SetBuffer(PositionBuffer, _positionsBuffer);
     
   }
   
@@ -58,7 +58,7 @@ public class RenderChunk {
     _positionsBuffer.Release();
     _positionsBuffer = new ComputeBuffer(_chunkDensity[lod] * _chunkDensity[lod], sizeof(float) * 4);
     ComputePositions(lod);
-    _material.SetBuffer("_instancePositions", _positionsBuffer);
+    _material.SetBuffer(PositionBuffer, _positionsBuffer);
   }
 
   private void ComputePositions(int lod) {
@@ -90,6 +90,8 @@ public class RenderChunk {
 
   }
 
+
+  private int _previousLOD = -1;
   public void Render(Vector2 cameraPosition) {
 
     float distance = Vector2.Distance(cameraPosition, _centerPosition);
@@ -101,9 +103,16 @@ public class RenderChunk {
       }
     }
 
-    if (lod != _densityLevel) {
-      _densityLevel = lod;
+    if (lod != _previousLOD) {
       UpdateDensity(lod);
+
+      _args[0] = (uint)_meshes[lod].GetIndexCount(0);
+      _args[1] = (uint)(_chunkDensity[lod] * _chunkDensity[lod]);
+      _args[2] = (uint)_meshes[lod].GetIndexStart(0);
+      _args[3] = (uint)_meshes[lod].GetBaseVertex(0);
+      _argsBuffer.SetData(_args);
+
+      _previousLOD = lod;
     }
     _args[0] = (uint)_meshes[lod].GetIndexCount(0);
     _args[1] = (uint)(_chunkDensity[lod] * _chunkDensity[lod]);
