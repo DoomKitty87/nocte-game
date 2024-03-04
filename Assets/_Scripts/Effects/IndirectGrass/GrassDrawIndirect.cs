@@ -24,21 +24,25 @@ public class GrassDrawIndirect : MonoBehaviour
     WorldGenerator.GenerationComplete += Initialize;
   }
 
-  private void Initialize() {
+  public void Initialize() {
     _cameraPosition = Camera.main.transform;
     _chunkDict.Clear();
     for (int i = -(_chunkCount - 1) / 2; i < (_chunkCount - 1) / 2 + 1; i++) {
       for (int j = -(_chunkCount - 1) / 2; j < (_chunkCount - 1) / 2 + 1; j++) {
+        //Debug.Log($"{i}, {j}");
         Vector2Int chunkPos = new Vector2Int(i, j);
+        //Debug.Log(chunkPos);
         RenderChunk chunk = new RenderChunk(chunkPos, _chunkSize, _grassDensity, _grassMaterial, _grassMeshes, _lodValues, _positionCompute, new Vector2(_cameraPosition.position.x, _cameraPosition.position.z));
         _chunkDict.Add(chunkPos, chunk);
       }
     }
+    //Debug.Log(_chunkDict.Count);
   }
 
   private void Update() {
     foreach (var chunk in _chunkDict.Values) {
       chunk.Render(new Vector2(_cameraPosition.position.x, _cameraPosition.position.z));
+    }
   }
 
   public void UpdatePlayerPosition(Vector2 playerPosition) {
@@ -48,7 +52,10 @@ public class GrassDrawIndirect : MonoBehaviour
     }
   }
 
-  private void UpdateGrass(Vector2Int moveDelta) {
+  public void UpdateGrass(Vector2Int moveDelta) {
+    //Debug.Log(_middleChunk);
+    //Debug.Log(_chunkDict[new Vector2Int(_middleChunk.x, _middleChunk.y)]);
+
     if (moveDelta.x == 1) {
       for (int i = -(_chunkCount - 1) / 2; i < (_chunkCount - 1) / 2 + 1; i++) {
         _chunkDict[new Vector2Int( _middleChunk.x - (_chunkCount - 1) / 2, _middleChunk.y + i)].CleanUp();
@@ -93,5 +100,7 @@ public class GrassDrawIndirect : MonoBehaviour
       }
       _middleChunk.y -= 1;
     }
+
   }
+
 }

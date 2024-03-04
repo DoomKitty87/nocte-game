@@ -35,6 +35,7 @@ namespace Foliage
 
             _meshes = new Mesh[numberOfLODs];
             _lodDistances = new int[numberOfLODs];
+            _chunkDensity = new int[numberOfLODs];
             
             _material = new Material(_scriptable.Material);
 
@@ -51,7 +52,7 @@ namespace Foliage
                 cameraPosition,
                 new Vector2(_position.x + _chunkSize / 2, _position.z + _chunkSize / 2)
             );
-            for (int i = 0; i < _lodDistances.Length; i++) {
+            for (int i = 0; i < _lodDistances.Length - 1; i++) {
                 if (distance > _lodDistances[i]) lod = i + 1;
             }
 
@@ -101,7 +102,7 @@ namespace Foliage
             float distance = Vector2.Distance(cameraPosition, _centerPosition);
             int lod = 0;
     
-            for (int i = 0; i < _lodDistances.Length; i++) {
+            for (int i = 0; i < _lodDistances.Length - 1; i++) {
                 if (distance > _lodDistances[i]) {
                     lod = i + 1;
                 }
