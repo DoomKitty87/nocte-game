@@ -5,7 +5,6 @@ Shader "Custom/GrassCustomShader"
     _BaseColor ("Base Color", Color) = (0, 0, 0, 1)
     _TipColor ("Tip Color", Color) = (1, 1, 1, 1)
     _DarkColor ("Dark Color", Color) = (0, 0, 0, 1)
-    _RimColor ("Rim Color", Color) = (1, 1, 1, 1)
     _BladeHeight ("Blade Height", Range(0.1, 1)) = 0.5
     _WindImpact ("Wind Impact", Range(0.1, 10)) = 1
     _WindSpeed ("Wind Speed", Range(0.1, 10)) = 1
@@ -33,7 +32,6 @@ Shader "Custom/GrassCustomShader"
       float4 _BaseColor;
       float4 _TipColor;
       float4 _DarkColor;
-      float4 _RimColor;
       float _BladeHeight;
       float4 _PlayerPosition;
       float _WindImpact, _WindSpeed;
@@ -41,12 +39,14 @@ Shader "Custom/GrassCustomShader"
 
       struct appdata {
         float4 vertex : POSITION;
+        float3 normal : NORMAL;
       };
 
       struct v2f
       {
         float4 vertexPosition : SV_POSITION;
         float4 vertexColor : COLOR0;
+        float3 normal : NORMAL;
         float2 uv : TEXCOORD0;
       };
 
@@ -82,8 +82,8 @@ Shader "Custom/GrassCustomShader"
         // Wind
         float windStr = randomRange(objWorldPos.xz, 0.6f, 1.3f);
         float windOffset = randomRange(objWorldPos.zx, -0.5f, 0.5f);
-        float xDisp = (sin(_Time.y * _WindStrength * _WindSpeed + windOffset + objWorldPos.x + objWorldPos.z) + 1) * _WindStrength * _WindImpact * windStr * uv.y * uv.y * cos(_WindDirection);
-        float zDisp = (sin(_Time.y * _WindStrength * _WindSpeed + windOffset) + objWorldPos.x + objWorldPos.z + 1) * _WindStrength * _WindImpact * windStr * uv.y * uv.y * sin(_WindDirection);
+        float xDisp = (sin(_Time.y * _WindStrength * _WindSpeed + windOffset) + 1) * _WindStrength * _WindImpact * windStr * uv.y * uv.y * cos(_WindDirection);
+        float zDisp = (sin(_Time.y * _WindStrength * _WindSpeed + windOffset) + 1) * _WindStrength * _WindImpact * windStr * uv.y * uv.y * sin(_WindDirection);
         worldPos.x += xDisp;
         worldPos.z += zDisp;
         worldPos.y -= sqrt(heightMod * heightMod + xDisp * xDisp + zDisp * zDisp) - heightMod;
@@ -96,6 +96,7 @@ Shader "Custom/GrassCustomShader"
         worldPos.x += trample * dir.x * _TrampleOutStrength;
         worldPos.z += trample * dir.z * _TrampleOutStrength;
         // Trampling
+        output.normal = v.normal;
         output.vertexPosition = mul(UNITY_MATRIX_VP, worldPos);
         return output;
       }
