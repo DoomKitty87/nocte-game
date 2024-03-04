@@ -547,9 +547,15 @@ MonoBehaviour:
   m_Name: ScannerEffectPostProcessVolume
   m_EditorClassIdentifier: 
   active: 1
-  intensity:
-    m_OverrideState: 1
+  _intensity:
+    m_OverrideState: 0
     m_Value: 0
+  _scannerCenterPosition:
+    m_OverrideState: 0
+    m_Value: {x: 0, y: 0, z: 0}
+  _scanDistance:
+    m_OverrideState: 0
+    m_Value: 10
 --- !u!114 &-5691695388600492338
 MonoBehaviour:
   m_ObjectHideFlags: 3
