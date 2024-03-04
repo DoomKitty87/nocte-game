@@ -10,6 +10,8 @@ public sealed class ScannerEffectPostProcessVolume : CustomPostProcessVolumeComp
     [Tooltip("Controls the intensity of the effect.")]
     public ClampedFloatParameter _intensity = new ClampedFloatParameter(0f, 0f, 1f);
     public Vector3Parameter _scannerCenterPosition = new Vector3Parameter(new Vector3(0, 0, 0));
+    public Vector2Parameter _scanDirectionXZ = new Vector2Parameter(new Vector2(0, 1));
+    public ClampedFloatParameter _scanDegrees = new ClampedFloatParameter(120, 0, 360);
     public FloatParameter _scanDistance = new FloatParameter(10f);
     
     Material m_Material;
@@ -17,7 +19,7 @@ public sealed class ScannerEffectPostProcessVolume : CustomPostProcessVolumeComp
     public bool IsActive() => m_Material != null && _intensity.value > 0f;
 
     // Do not forget to add this post process in the Custom Post Process Orders list (Project Settings > Graphics > HDRP Global Settings).
-    public override CustomPostProcessInjectionPoint injectionPoint => CustomPostProcessInjectionPoint.BeforePostProcess;
+    public override CustomPostProcessInjectionPoint injectionPoint => CustomPostProcessInjectionPoint.AfterPostProcess;
 
     const string kShaderName = "FullScreen/ScannerEffectFullscreen";
 
@@ -35,7 +37,9 @@ public sealed class ScannerEffectPostProcessVolume : CustomPostProcessVolumeComp
             return;
 
         // m_Material.SetFloat("_Intensity", intensity.value);
-        m_Material.SetVector("_centerScanPosition", _scannerCenterPosition.value);
+        m_Material.SetVector("_scanCenterPos", _scannerCenterPosition.value);
+        m_Material.SetVector("_scanDirectionXZ", _scanDirectionXZ.value);
+        m_Material.SetFloat("_scanDegrees", _scanDegrees.value);
         m_Material.SetFloat("_scanDistance", _scanDistance.value);
         HDUtils.DrawFullScreen(cmd, m_Material, destination, shaderPassId: 0);
     }

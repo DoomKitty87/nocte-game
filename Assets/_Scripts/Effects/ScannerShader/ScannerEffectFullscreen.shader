@@ -32,7 +32,10 @@ Shader "FullScreen/ScannerEffectFullscreen"
     // you can check them out in the source code of the core SRP package.
 
     uniform float3 _scanCenterPos;
+    uniform float2 _scanDirectionXZ;
+    uniform float _scanDegrees;
     uniform float _scanDistance;
+    
     float4 FullScreenPass(Varyings varyings) : SV_Target
     {
         UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX(varyings);
@@ -48,18 +51,16 @@ Shader "FullScreen/ScannerEffectFullscreen"
             color = float4(CustomPassLoadCameraColor(varyings.positionCS.xy, 0), 1);
 
         // Add your custom pass code here
-        float2 uv = (dot(camWorldPos.xz, float2(0, 1)), distance(float2(0, 0), camWorldPos.xz));
-        if (distance(float2(0, 0), camWorldPos.xz) < _scanDistance)
+        float2 uv = float2(0, 0);
+        uv.x = distance(float2(0, 0), camWorldPos.xz);
+        uv.y = dot(normalize(_scanDirectionXZ), normalize(camWorldPos.xz - float2(0, 0)));
+        if (uv.x < _scanDistance && uv.y > 0)
         {
-            color = float4(uv.y, 0, 0, 1);
-        }
-        else
-        {
-            color = float4(0, 0, 0, 1);
+            color = float4(uv.x % 1, uv.y, 0, 1);
         }
         // Fade value allow you to increase the strength of the effect while the camera gets closer to the custom pass volume
-        float f = 1 - abs(_FadeValue * 2 - 1);
-        return float4(color.rgb + f, color.a);
+        // float f = 1 - abs(_FadeValue * 2 - 1);
+        return float4(color.rgb, color.a);
     }
 
     ENDHLSL
