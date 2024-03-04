@@ -35,6 +35,7 @@ public class WorldGenerator : MonoBehaviour
     public int[] waterTriangles;
     public int currentLOD;
     public Texture2D heightmapTexture;
+    public Texture2D growthTexture;
 
   }
 
@@ -254,7 +255,7 @@ public class WorldGenerator : MonoBehaviour
     return waterFactor == 0 ? -1 : (heightVal - _riverParameters.waterLevel);
   }
 
-  public Texture2D GetHeightmapTexture(Vector2 position) {
+  public (Texture2D, Texture2D) GetHeightmapTexture(Vector2 position) {
     Vector3 centerPos = _tilePool[_tilePositions[(_tileCount - 1) / 2, (_tileCount - 1) / 2]].obj.transform.position;
     Vector2 relPos = position - new Vector2(centerPos.x, centerPos.z);
     relPos /= _size * _resolution;
@@ -262,7 +263,7 @@ public class WorldGenerator : MonoBehaviour
     int posz = Mathf.FloorToInt(relPos.y + (_tileCount - 1) / 2);
     int indx = _tilePositions[posx, posz];
     // Debug.Log(indx);
-    return _tilePool[indx].heightmapTexture;
+    return (_tilePool[indx].heightmapTexture, _tilePool[indx].growthTexture);
   }
 
   public float GetSeedHash() {
@@ -663,9 +664,23 @@ public class WorldGenerator : MonoBehaviour
     handle = riverJob.Schedule(tmpSize * tmpSize, 64);
     while (!handle.IsCompleted) yield return null;
     handle.Complete();
-
-    for (int i = 0; i < heightMods.Length; i++) heightMods[i] = _riverParameters.noiseCurve.Evaluate(heightMods[i]) * _riverParameters.heightCurve.Evaluate(vertices[i].y / _maxPossibleHeight) * _riverParameters.normalCurve.Evaluate(Mathf.Abs(normals[i].y));
-
+    tempTex = new Texture2D(tmpSize - 4, tmpSize - 4, TextureFormat.RFloat, false, true, true);
+    int[] data = new int[(tmpSize - 4) * (tmpSize - 4)];
+    tempTex.wrapMode = TextureWrapMode.Clamp;
+    tempTex.filterMode = FilterMode.Point;
+    for (int i = 0, n = 0; i < heightMods.Length; i++) {
+      heightMods[i] = _riverParameters.noiseCurve.Evaluate(heightMods[i]) * _riverParameters.heightCurve.Evaluate(vertices[i].y / _maxPossibleHeight) * _riverParameters.normalCurve.Evaluate(Mathf.Abs(normals[i].y));
+      if (i % tmpSize > 0 && i % tmpSize < tmpSize - 3 && i / tmpSize > 0 && i / tmpSize < tmpSize - 3) {
+        if (heightMods[i] > 0)
+          data[n] = 0;
+        else
+          data[n] = 1;
+        n++;
+      }
+    }
+    tempTex.SetPixelData(data, 0);
+    tempTex.Apply();
+    _tilePool[index].growthTexture = tempTex;
     NativeList<Vector3> waterVertsFinal = new NativeList<Vector3>(0, Allocator.Persistent);
     NativeList<int> waterTrisFinal = new NativeList<int>(0, Allocator.Persistent);
 
@@ -855,9 +870,24 @@ public class WorldGenerator : MonoBehaviour
     handle = riverJob.Schedule(tmpSize * tmpSize, 64);
     while (!handle.IsCompleted) yield return null;
     handle.Complete();
-
-    for (int i = 0; i < heightMods.Length; i++) heightMods[i] = _riverParameters.noiseCurve.Evaluate(heightMods[i]) * _riverParameters.heightCurve.Evaluate(vertices[i].y / _maxPossibleHeight) * _riverParameters.normalCurve.Evaluate(Mathf.Abs(normals[i].y));
-
+    
+    tempTex = new Texture2D(tmpSize - 4, tmpSize - 4, TextureFormat.RFloat, false, true, true);
+    int[] data = new int[(tmpSize - 4) * (tmpSize - 4)];
+    tempTex.wrapMode = TextureWrapMode.Clamp;
+    tempTex.filterMode = FilterMode.Point;
+    for (int i = 0, n = 0; i < heightMods.Length; i++) {
+      heightMods[i] = _riverParameters.noiseCurve.Evaluate(heightMods[i]) * _riverParameters.heightCurve.Evaluate(vertices[i].y / _maxPossibleHeight) * _riverParameters.normalCurve.Evaluate(Mathf.Abs(normals[i].y));
+      if (i % tmpSize > 0 && i % tmpSize < tmpSize - 3 && i / tmpSize > 0 && i / tmpSize < tmpSize - 3) {
+        if (heightMods[i] > 0 || normals[i].y < 0.7f)
+          data[n] = 0;
+        else
+          data[n] = 1;
+        n++;
+      }
+    }
+    tempTex.SetPixelData(data, 0);
+    tempTex.Apply();
+    _tilePool[index].growthTexture = tempTex;
     NativeList<Vector3> waterVertsFinal = new NativeList<Vector3>(0, Allocator.Persistent);
     NativeList<int> waterTrisFinal = new NativeList<int>(0, Allocator.Persistent);
 

@@ -10,7 +10,9 @@ uniform float _size;
 uniform float3 _chunkBottomLeftPosition;
 // ====== Chunking / Heightmap
 Texture2D<float> _tileHeightmapTexture;
+Texture2D<float> _tileGrowthTexture;
 SamplerState sampler_tileHeightmapTexture;
+SamplerState sampler_tileGrowthTexture;
 uniform uint _tileHeightmapTextureWidth;
 uniform float _tileWidth;
 uniform float3 _tileBottomLeftPosition;
@@ -42,6 +44,10 @@ float GetHeightmapAtWorldPosition(float2 position)
   float pointB = _tileHeightmapTexture.SampleLevel(sampler_tileHeightmapTexture, fuv + float2(tile, 0), 0);
   float pointC = _tileHeightmapTexture.SampleLevel(sampler_tileHeightmapTexture, fuv + float2(0, tile), 0);
   float pointD = _tileHeightmapTexture.SampleLevel(sampler_tileHeightmapTexture, fuv + float2(tile, tile), 0);
+	float pointA2 = _tileGrowthTexture.SampleLevel(sampler_tileGrowthTexture, fuv, 0);
+	float pointB2 = _tileGrowthTexture.SampleLevel(sampler_tileGrowthTexture, fuv + float2(tile, 0), 0);
+	float pointC2 = _tileGrowthTexture.SampleLevel(sampler_tileGrowthTexture, fuv + float2(0, tile), 0);
+	float pointD2 = _tileGrowthTexture.SampleLevel(sampler_tileGrowthTexture, fuv + float2(tile, tile), 0);
   float val = 0;
   if (tuv.x > (1 - tuv.y))
   {
@@ -51,7 +57,7 @@ float GetHeightmapAtWorldPosition(float2 position)
     float w3 = 1 - w1 - w2;
 
     val = w1 * pointB + w2 * pointC + w3 * pointD;
-
+	if (w1 * pointB2 + w2 * pointC2 + w3 * pointD2 < 0.0f) val = 0;
   }
   else
   {
@@ -61,6 +67,7 @@ float GetHeightmapAtWorldPosition(float2 position)
     float w3 = 1 - w1 - w2;
 
     val = w1 * pointC + w2 * pointA + w3 * pointB;
+  	if (w1 * pointC2 + w2 * pointA2 + w3 * pointB2 < 0.0f) val = 0;
   }
 	return val;
 }
