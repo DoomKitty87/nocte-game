@@ -2,21 +2,24 @@ using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.HighDefinition;
 using System;
+using UnityEngine.Splines.Interpolators;
 
 [Serializable, VolumeComponentMenu("Post-processing/Custom/ScannerEffectPostProcessVolume")]
 public sealed class ScannerEffectPostProcessVolume : CustomPostProcessVolumeComponent, IPostProcessComponent
 {
     [Tooltip("Controls the intensity of the effect.")]
-    public ClampedFloatParameter intensity = new ClampedFloatParameter(0f, 0f, 1f);
-
+    public ClampedFloatParameter _intensity = new ClampedFloatParameter(0f, 0f, 1f);
+    public Vector3Parameter _scannerCenterPosition = new Vector3Parameter(new Vector3(0, 0, 0));
+    public FloatParameter _scanDistance = new FloatParameter(10f);
+    
     Material m_Material;
 
-    public bool IsActive() => m_Material != null && intensity.value > 0f;
+    public bool IsActive() => m_Material != null && _intensity.value > 0f;
 
     // Do not forget to add this post process in the Custom Post Process Orders list (Project Settings > Graphics > HDRP Global Settings).
-    public override CustomPostProcessInjectionPoint injectionPoint => CustomPostProcessInjectionPoint.AfterPostProcess;
+    public override CustomPostProcessInjectionPoint injectionPoint => CustomPostProcessInjectionPoint.BeforePostProcess;
 
-    const string kShaderName = "Hidden/Shader/ScannerEffectPostProcessVolume";
+    const string kShaderName = "FullScreen/ScannerEffectFullscreen";
 
     public override void Setup()
     {
@@ -31,8 +34,9 @@ public sealed class ScannerEffectPostProcessVolume : CustomPostProcessVolumeComp
         if (m_Material == null)
             return;
 
-        m_Material.SetFloat("_Intensity", intensity.value);
-        m_Material.SetTexture("_MainTex", source);
+        // m_Material.SetFloat("_Intensity", intensity.value);
+        m_Material.SetVector("_centerScanPosition", _scannerCenterPosition.value);
+        m_Material.SetFloat("_scanDistance", _scanDistance.value);
         HDUtils.DrawFullScreen(cmd, m_Material, destination, shaderPassId: 0);
     }
 
