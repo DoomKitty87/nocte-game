@@ -27,8 +27,10 @@ Shader "Custom/GrassCustomShader"
 
       StructuredBuffer<float4> _instancePositions;
       float3 _MainLightDir;
+      // Global
       float _WindStrength;
       float _WindDirection;
+      // =====
       float4 _BaseColor;
       float4 _TipColor;
       float4 _DarkColor;
