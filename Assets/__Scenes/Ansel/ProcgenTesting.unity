@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 174.97842, g: 68.518364, b: 31.874222, a: 1}
+  m_IndirectSpecularColor: {r: 84.067055, g: 51.62576, b: 45.742527, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -332,7 +332,7 @@ Light:
   m_LightShadowCasterMode: 2
   m_AreaSize: {x: 0.5, y: 0.5}
   m_BounceIntensity: 1
-  m_ColorTemperature: 5500
+  m_ColorTemperature: 15000
   m_UseColorTemperature: 1
   m_BoundingSphereOverride: {x: 0, y: 0, z: 0, w: 0}
   m_UseBoundingSphereOverride: 0
@@ -19412,12 +19412,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _positionCompute: {fileID: 7200000, guid: ad2522b6a715ee54d8ae10d592b5a0cc, type: 3}
-  _grassMaterial: {fileID: 2100000, guid: 3df5acdb7da894144ae7205285c0ed66, type: 2}
+  _grassMaterial: {fileID: -876546973899608171, guid: d429d73512aa14642b7ecd828e6f6408,
+    type: 3}
   _grassMeshes:
-  - {fileID: -3141602069487479162, guid: 82ca8cc96c2980e4d92e49b5bfe50816, type: 3}
+  - {fileID: 6272463214150983, guid: 82ca8cc96c2980e4d92e49b5bfe50816, type: 3}
   - {fileID: 1237130334405037093, guid: 82ca8cc96c2980e4d92e49b5bfe50816, type: 3}
   _lodValues: 32000000
-  _chunkCount: 7
+  _chunkCount: 5
   _chunkSize: 30
   _grassDensity: 9600000064000000
   _mainLight: {fileID: 76653202}
