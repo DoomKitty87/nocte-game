@@ -16,6 +16,7 @@ GameObject:
   - component: {fileID: 7454635895247724828}
   - component: {fileID: 2241853167547969901}
   - component: {fileID: 4362584080177631383}
+  - component: {fileID: 8892798865153843284}
   m_Layer: 0
   m_Name: Coyote
   m_TagString: Untagged
@@ -127,7 +128,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _layerMask:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 8
+  _timeOfLastAttack: 0
 --- !u!114 &7454635895247724828
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -148,9 +150,11 @@ MonoBehaviour:
   _distanceHeal: 10
   _range: 100
   _staminaLimit: 15
+  _leaveLimit: 50
+  _recencyLimit: 3
   _attacks:
   - _attackDistance: 3
-    _attackDamage: 700
+    _attackDamage: 20
     _attackRepeatSeconds: 5
 --- !u!114 &2241853167547969901
 MonoBehaviour:
@@ -190,8 +194,8 @@ MonoBehaviour:
   _jumpKey: 0
   _sprintKey: 304
   _crouchKey: 0
-  _maxStamina: 100
-  _currentStamina: 100
+  _maxStamina: 200
+  _currentStamina: 150
 --- !u!54 &4362584080177631383
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -219,3 +223,32 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 80
   m_CollisionDetection: 1
+--- !u!114 &8892798865153843284
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1309179364605712187}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 91e9c5a72272c4bf79d6e5a9357dbb36, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _currentHealth: 100
+  _maxHealth: 100
+  _onHealthInitialize:
+    m_PersistentCalls:
+      m_Calls: []
+  _onHealthZero:
+    m_PersistentCalls:
+      m_Calls: []
+  _onHealthChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  _onDamage:
+    m_PersistentCalls:
+      m_Calls: []
+  _onHeal:
+    m_PersistentCalls:
+      m_Calls: []
