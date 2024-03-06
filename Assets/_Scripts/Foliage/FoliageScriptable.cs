@@ -6,10 +6,9 @@ namespace Foliage
     public class FoliageScriptable : ScriptableObject
     {
         public FoliageType type;
-
         public Material Material;
-        
         public FoliageLODData[] _lodRanges;
+        public ComputeShader _positionComputeShader;
     }
 
     [System.Serializable]

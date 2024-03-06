@@ -6,8 +6,6 @@ namespace Foliage
 {
   public class FoliageHandler : MonoBehaviour
   {
-    public ComputeShader _positionCompute;
-    
     private Dictionary<Vector2Int, FoliageChunk> _chunkDict = new Dictionary<Vector2Int, FoliageChunk>();
     private FoliageScriptable[] _scriptables;
     private Transform _cameraPosition;
@@ -47,7 +45,6 @@ namespace Foliage
             _scriptables, 
             new Vector2Int(i, j), 
             _chunkSize, 
-            _positionCompute, 
             new Vector2(position.x, position.z)
           );
           _chunkDict.Add(chunkPos, chunk);
@@ -81,7 +78,6 @@ namespace Foliage
               _scriptables, 
               chunkPos, 
               _chunkSize, 
-              _positionCompute, 
               new Vector2(position.x, position.z)
             );            
             _chunkDict.Add(chunkPos, chunk);
@@ -101,7 +97,6 @@ namespace Foliage
               _scriptables, 
               chunkPos, 
               _chunkSize, 
-              _positionCompute, 
               new Vector2(position.x, position.z)
             );            
             _chunkDict.Add(chunkPos, chunk);
@@ -123,7 +118,6 @@ namespace Foliage
               _scriptables, 
               chunkPos, 
               _chunkSize, 
-              _positionCompute, 
               new Vector2(position.x, position.z)
             );            
             _chunkDict.Add(chunkPos, chunk);
@@ -143,7 +137,6 @@ namespace Foliage
               _scriptables, 
               chunkPos, 
               _chunkSize, 
-              _positionCompute, 
               new Vector2(position.x, position.z)
             );            
             _chunkDict.Add(chunkPos, chunk);

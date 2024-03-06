@@ -18,7 +18,7 @@ public class RenderChunk {
   private Texture2D _heightmapTexture;
   private Texture2D _growthTexture;
 
-  private int _densityLevel;
+  private int _previousLOD;
 
   private static readonly int PositionBuffer = Shader.PropertyToID("_instancePositions");
   

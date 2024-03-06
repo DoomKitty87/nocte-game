@@ -8,12 +8,12 @@ namespace Foliage
         private readonly FoliageRenderer[] _renderers;
 
 
-        public FoliageChunk(IReadOnlyList<FoliageScriptable> scriptables, Vector2Int chunkPos, float chunkSize, ComputeShader positionCompute, Vector2 cameraPos) {
+        public FoliageChunk(IReadOnlyList<FoliageScriptable> scriptables, Vector2Int chunkPos, float chunkSize, Vector2 cameraPos) {
             var numberOfScriptables = scriptables.Count;
             _renderers = new FoliageRenderer[numberOfScriptables];
 
             for (var i = 0; i < numberOfScriptables; i++) {
-                _renderers[i] = new FoliageRenderer(scriptables[i], chunkPos, chunkSize, positionCompute, cameraPos);
+                _renderers[i] = new FoliageRenderer(scriptables[i], chunkPos, chunkSize, cameraPos);
             }
         }
 

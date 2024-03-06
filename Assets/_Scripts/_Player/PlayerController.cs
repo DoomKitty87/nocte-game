@@ -80,6 +80,14 @@ public class PlayerController : MonoBehaviour
     private Collider _collider;
     
     private bool _jumping;
+
+    private bool ResetJump {
+        get => _resetJump;
+        set {
+            if (value == false) Invoke(nameof(ResetJumpCooldown), 0.1f);
+            _resetJump = value;
+        }
+    }
     private bool _resetJump;
     private bool _sprintingForward;
     private bool _sprinting;
@@ -146,7 +154,7 @@ public class PlayerController : MonoBehaviour
         // Exiting state
         switch (_state) {
             case PlayerStates.Air:
-                _resetJump = true;
+                ResetJump = true;
                 break; 
             
             case PlayerStates.Grappling:
@@ -334,10 +342,10 @@ public class PlayerController : MonoBehaviour
                 // Friction
                 _acceleration -= Vector3.ProjectOnPlane(_velocity, _normalVector) * _frictionCoefficient;
 
-                if (_jumping && _resetJump) {
+                if (_jumping && ResetJump) {
                     _acceleration += _jumpForce * Vector3.up;
                     _jumping = false;
-                    _resetJump = false;
+                    ResetJump = false;
                 }
 
                 break;
@@ -357,10 +365,10 @@ public class PlayerController : MonoBehaviour
                 // Friction
                 _acceleration -= Vector3.ProjectOnPlane(_velocity, _normalVector) * _frictionCoefficient;
 
-                if (_jumping && _resetJump) {
+                if (_jumping && ResetJump) {
                     _acceleration += _jumpForce * Vector3.up;
                     _jumping = false;
-                    _resetJump = false;
+                    ResetJump = false;
                 }
 
                 break;
@@ -380,10 +388,10 @@ public class PlayerController : MonoBehaviour
                 // Friction
                 _acceleration -= Vector3.ProjectOnPlane(_velocity, _normalVector) * _frictionCoefficient;
 
-                if (_jumping && _resetJump) {
+                if (_jumping && ResetJump) {
                     _acceleration += _jumpForce * Vector3.up;
                     _jumping = false;
-                    _resetJump = false;
+                    ResetJump = false;
                 }
 
                 break;
@@ -394,10 +402,10 @@ public class PlayerController : MonoBehaviour
 
                 _acceleration -= Vector3.ProjectOnPlane(_velocity, _normalVector) * _slidingFrictionCoefficient;
 
-                if (_jumping && _resetJump) {
+                if (_jumping && ResetJump) {
                     _acceleration += _jumpForce * Vector3.up;
                     _jumping = false;
-                    _resetJump = false;
+                    ResetJump = false;
                 }
 
                 break;
@@ -408,10 +416,10 @@ public class PlayerController : MonoBehaviour
                 // Friction
                 _acceleration -= Vector3.ProjectOnPlane(_velocity, _normalVector) * _frictionCoefficient;
 
-                if (_jumping && _resetJump) {
+                if (_jumping && ResetJump) {
                     _acceleration += _jumpForce * Vector3.up;
                     _jumping = false;
-                    _resetJump = false;
+                    ResetJump = false;
                 }
 
                 break;
@@ -568,7 +576,9 @@ public class PlayerController : MonoBehaviour
         _rb.collisionDetectionMode = CollisionDetectionMode.Continuous;
         _collider.enabled = true;
     }
-    
+
+    private void ResetJumpCooldown() => _resetJump = true;
+
     #endregion
-    
+
 }

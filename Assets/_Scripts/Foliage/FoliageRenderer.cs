@@ -25,17 +25,18 @@ namespace Foliage
         private FoliageScriptable _scriptable;
         private static readonly int PositionBuffer = Shader.PropertyToID("_positionBuffer");
 
-        public FoliageRenderer(FoliageScriptable scriptable, Vector2Int chunkPos, float chunkSize, ComputeShader positionCompute, Vector2 cameraPosition) {
+        public FoliageRenderer(FoliageScriptable scriptable, Vector2Int chunkPos, float chunkSize, Vector2 cameraPosition) {
             _position = new Vector3(chunkPos.x * chunkSize, 0, chunkPos.y * chunkSize);
             _chunkSize = chunkSize;
             _scriptable = scriptable;
-            _positionCompute = positionCompute;
-
+            
             var numberOfLODs = _scriptable._lodRanges.Length;
 
             _meshes = new Mesh[numberOfLODs];
             _lodDistances = new int[numberOfLODs];
             _chunkDensity = new int[numberOfLODs];
+
+            _positionCompute = _scriptable._positionComputeShader;
             
             _material = new Material(_scriptable.Material);
 
@@ -88,7 +89,7 @@ namespace Foliage
         
         private void Initialize(int lod) {
             _argsBuffer = new ComputeBuffer(1, _args.Length * sizeof(uint), ComputeBufferType.IndirectArguments);
-            _heightmapTexture = WorldGenInfo._worldGenerator.GetHeightmapTexture(new Vector2(_position.x, _position.z));
+            _heightmapTexture = WorldGenInfo._worldGenerator.GetHeightmapTexture(new Vector2(_position.x, _position.z)).Item1;
 
             _centerPosition = new Vector2(_position.x + _chunkSize / 2, _position.z + _chunkSize / 2);
 
@@ -120,8 +121,9 @@ namespace Foliage
                 _previousLOD = lod;
             }
 
-            Graphics.DrawMeshInstancedIndirect(_meshes[lod], 0, _material, new Bounds(new Vector3(_centerPosition.x, 0, _centerPosition.y), new Vector3(_chunkSize, 5000, _chunkSize)), _argsBuffer);
-
+            Graphics.DrawMeshInstancedIndirect(_meshes[lod], 0, _material, new Bounds(new Vector3(0, 0, 0), Vector3.one * 10000f), _argsBuffer);
+            Debug.Log($"Rendering mesh");
+            
         }
 
         public void CleanUp() {
