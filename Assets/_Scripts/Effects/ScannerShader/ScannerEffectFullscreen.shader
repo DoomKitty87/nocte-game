@@ -8,7 +8,6 @@ Shader "FullScreen/ScannerEffectFullscreen"
     #pragma only_renderers d3d11 playstation xboxone xboxseries vulkan metal switch
 
     #include "Packages/com.unity.render-pipelines.high-definition/Runtime/RenderPipeline/RenderPass/CustomPass/CustomPassCommon.hlsl"
-
     // The PositionInputs struct allow you to retrieve a lot of useful information for your fullScreenShader:
     // struct PositionInputs
     // {
@@ -40,7 +39,9 @@ Shader "FullScreen/ScannerEffectFullscreen"
     uniform float _scanLineWidth;
     uniform float _scanLineDistBetween;
     uniform float4 _edgeGlowColor;
+    uniform float4 _edgeGlowAccentColor;
     uniform float _edgeGlowWidth;
+    uniform float _darkenOpacity;
     uniform float _darkenStartDistance;
     uniform float _sideFadeMagnitude;
     
@@ -91,19 +92,22 @@ Shader "FullScreen/ScannerEffectFullscreen"
             float sideFadeMask = smoothstep(0, _sideFadeMagnitude, uv.x);
             // ---- Final Color
 
-            float3 rgb = color.rgb;
+            float3 rgb;
+            float a;
             
-            float scanLineMaskWithoutFurthest = scanLineMask * 1 - furthestLineMask;
-            float scanLineMaskFurthestOnly = scanLineMask * furthestLineMask;
-            rgb = scanLineMaskWithoutFurthest * _scanLineColor; 
-            float a = darkenMask * sideFadeMask;
-            // color = lerp(color, float4(rgb, 1.0f), a);
+            float scanLineWithoutFurthest = scanLineMask * (1 - furthestLineMask);
+            float scanLineFurthest = step(Eps_float(), furthestLineMask) * scanLineMask;
+            
+            rgb = scanLineFurthest * _lastScanLineColor + scanLineWithoutFurthest * _scanLineColor + edgeGlowMask * _edgeGlowColor;
+            a = scanLineMask * sideFadeMask + edgeGlowMask * sideFadeMask + darkenMask * sideFadeMask * _darkenOpacity;
+
+            rgb = lerp(color.rgb, rgb, a);
             color = float4(rgb, 1.0f);
         }
         
         // Fade value allow you to increase the strength of the effect while the camera gets closer to the custom pass volume
         // float f = 1 - abs(_FadeValue * 2 - 1);
-        return float4(color.rgb, color.a);
+        return float4(color);
     }
 
     ENDHLSL
@@ -117,7 +121,7 @@ Shader "FullScreen/ScannerEffectFullscreen"
 
             ZWrite Off
             ZTest Always
-            Blend SrcAlpha OneMinusSrcAlpha
+            Blend Off
             Cull Off
 
             HLSLPROGRAM
