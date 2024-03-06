@@ -57,7 +57,9 @@ float GetHeightmapAtWorldPosition(float2 position)
     float w3 = 1 - w1 - w2;
 
     val = w1 * pointB + w2 * pointC + w3 * pointD;
-	if (w1 * pointB2 + w2 * pointC2 + w3 * pointD2 < 0.0f) val = 0;
+  	float norm = w1 * pointB2 + w2 * pointC2 + w3 * pointD2;
+  	norm += randomRange(position, -0.2f, 0.2f);
+  	if (norm < 0.5f) val = 0;
   }
   else
   {
@@ -67,7 +69,9 @@ float GetHeightmapAtWorldPosition(float2 position)
     float w3 = 1 - w1 - w2;
 
     val = w1 * pointC + w2 * pointA + w3 * pointB;
-  	if (w1 * pointC2 + w2 * pointA2 + w3 * pointB2 < 0.0f) val = 0;
+  	float norm = w1 * pointC2 + w2 * pointA2 + w3 * pointB2;
+  	norm += randomRange(position, -0.2f, 0.2f);
+  	if (norm < 0.5f) val = 0;
   }
 	return val;
 }

@@ -110,7 +110,7 @@ public class RenderChunk {
     _args[2] = (uint)_meshes[lod].GetIndexStart(0);
     _args[3] = (uint)_meshes[lod].GetBaseVertex(0);
     _argsBuffer.SetData(_args);
-    Graphics.DrawMeshInstancedIndirect(_meshes[lod], 0, _material, new Bounds(new Vector3(0, 0, 0), new Vector3(5000, 5000, 5000)), _argsBuffer);
+    Graphics.DrawMeshInstancedIndirect(_meshes[lod], 0, _material, new Bounds(new Vector3(0, 0, 0), new Vector3(1000000, 5000, 1000000)), _argsBuffer);
 
   }
 

@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 62.40928, g: 38.52802, b: 32.258396, a: 1}
+  m_IndirectSpecularColor: {r: 84.18574, g: 51.61335, b: 45.564854, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -19028,6 +19028,11 @@ PrefabInstance:
       objectReference: {fileID: 1849557962}
     - target: {fileID: 8819276947174590073, guid: 862d92a67177d4c7b84ab88d6b6e0257,
         type: 3}
+      propertyPath: _grassNormalCutoff
+      value: 0.85
+      objectReference: {fileID: 0}
+    - target: {fileID: 8819276947174590073, guid: 862d92a67177d4c7b84ab88d6b6e0257,
+        type: 3}
       propertyPath: _maxUpdatesPerFrame
       value: 0.1
       objectReference: {fileID: 0}
@@ -19429,7 +19434,7 @@ MonoBehaviour:
   _lodValues: 32000000
   _chunkCount: 5
   _chunkSize: 30
-  _grassDensity: 9600000064000000
+  _grassDensity: c800000064000000
 --- !u!136 &4762342597639217425
 CapsuleCollider:
   m_ObjectHideFlags: 0

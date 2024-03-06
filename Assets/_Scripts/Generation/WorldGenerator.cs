@@ -178,6 +178,7 @@ public class WorldGenerator : MonoBehaviour
   [Header("Grass Settings")]
   [SerializeField] private bool _enableGrass;
   [SerializeField] private GrassDrawIndirect _grass;
+  [SerializeField] private float _grassNormalCutoff;
   [Header("Water Settings")]
   [Tooltip("Enable or disable rivers.")]
   [SerializeField] private bool _enableRivers;
@@ -599,21 +600,11 @@ public class WorldGenerator : MonoBehaviour
     while (!handle.IsCompleted) yield return null;
     handle.Complete();
     NativeArray<Vector3> vertices = new NativeArray<Vector3>(tmpSize * tmpSize, Allocator.Persistent);
-    Texture2D tempTex = new Texture2D(tmpSize - 4, tmpSize - 4, TextureFormat.RFloat, false, true, true);
-    float[] dataTrimmed = new float[(tmpSize - 4) * (tmpSize - 4)];
-    tempTex.wrapMode = TextureWrapMode.Clamp;
-    tempTex.filterMode = FilterMode.Point;
+    
     for (int i = 0, n = 0; i < tmpSize * tmpSize; i++) {
       vertices[i] = new Vector3((i % tmpSize - 1) * tmpRes, output[i], (i / tmpSize - 1) * tmpRes);
-      if (i % tmpSize > 0 && i % tmpSize < tmpSize - 3 && i / tmpSize > 0 && i / tmpSize < tmpSize - 3) {
-        dataTrimmed[n] = output[i];
-        n++;
-      }
     }
-    tempTex.SetPixelData(dataTrimmed, 0);
-    tempTex.Apply();
-    // Debug.Log(tempTex.GetPixel(0, 0));
-    _tilePool[index].heightmapTexture = tempTex;
+   
     output.Dispose();
     int sideLength0 = (int) Mathf.Sqrt(vertices.Length) - 1;
     NativeArray<int> triangles = new NativeArray<int>(sideLength0 * sideLength0 * 6, Allocator.Persistent);
@@ -664,23 +655,23 @@ public class WorldGenerator : MonoBehaviour
     handle = riverJob.Schedule(tmpSize * tmpSize, 64);
     while (!handle.IsCompleted) yield return null;
     handle.Complete();
-    tempTex = new Texture2D(tmpSize - 4, tmpSize - 4, TextureFormat.RFloat, false, true, true);
-    int[] data = new int[(tmpSize - 4) * (tmpSize - 4)];
-    tempTex.wrapMode = TextureWrapMode.Clamp;
-    tempTex.filterMode = FilterMode.Point;
+    Texture2D growTex = new Texture2D(tmpSize - 4, tmpSize - 4, TextureFormat.RFloat, false, true, true);
+    float[] data = new float[(tmpSize - 4) * (tmpSize - 4)];
+    growTex.wrapMode = TextureWrapMode.Clamp;
+    growTex.filterMode = FilterMode.Point;
     for (int i = 0, n = 0; i < heightMods.Length; i++) {
       heightMods[i] = _riverParameters.noiseCurve.Evaluate(heightMods[i]) * _riverParameters.heightCurve.Evaluate(vertices[i].y / _maxPossibleHeight) * _riverParameters.normalCurve.Evaluate(Mathf.Abs(normals[i].y));
       if (i % tmpSize > 0 && i % tmpSize < tmpSize - 3 && i / tmpSize > 0 && i / tmpSize < tmpSize - 3) {
-        if (heightMods[i] > 0)
+        if (heightMods[i] > 0.2f || vertices[i].y < _lakePlaneHeight - _riverParameters.waterLevel || normals[i].normalized.y < _grassNormalCutoff)
           data[n] = 0;
         else
           data[n] = 1;
         n++;
       }
     }
-    tempTex.SetPixelData(data, 0);
-    tempTex.Apply();
-    _tilePool[index].growthTexture = tempTex;
+    growTex.SetPixelData(data, 0);
+    growTex.Apply();
+    _tilePool[index].growthTexture = growTex;
     NativeList<Vector3> waterVertsFinal = new NativeList<Vector3>(0, Allocator.Persistent);
     NativeList<int> waterTrisFinal = new NativeList<int>(0, Allocator.Persistent);
 
@@ -713,6 +704,23 @@ public class WorldGenerator : MonoBehaviour
       culled[j + 5] = triangles[i * 6 + 5];
       j += 6;
     }
+    
+    Texture2D tempTex = new Texture2D(tmpSize - 4, tmpSize - 4, TextureFormat.RFloat, false, true, true);
+    float[] dataTrimmed = new float[(tmpSize - 4) * (tmpSize - 4)];
+    tempTex.wrapMode = TextureWrapMode.Clamp;
+    tempTex.filterMode = FilterMode.Point;
+
+    for (int i = 0, n = 0; i < tmpSize * tmpSize; i++) {
+      if (i % tmpSize > 0 && i % tmpSize < tmpSize - 3 && i / tmpSize > 0 && i / tmpSize < tmpSize - 3) {
+        dataTrimmed[n] = vertices[i].y;
+        n++;
+      }
+    }
+    
+    tempTex.SetPixelData(dataTrimmed, 0);
+    tempTex.Apply();
+    // Debug.Log(tempTex.GetPixel(0, 0));
+    _tilePool[index].heightmapTexture = tempTex;
 
     _tilePool[index].waterVertices = waterVertsFinal.AsArray().ToArray();
     _tilePool[index].waterTriangles = waterTrisFinal.AsArray().ToArray();
@@ -799,20 +807,11 @@ public class WorldGenerator : MonoBehaviour
     while (!handle.IsCompleted) yield return null;
     handle.Complete();
     NativeArray<Vector3> vertices = new NativeArray<Vector3>(tmpSize * tmpSize, Allocator.Persistent);
-    Texture2D tempTex = new Texture2D(tmpSize - 4, tmpSize - 4, TextureFormat.RFloat, false, true, true);
-    float[] dataTrimmed = new float[(tmpSize - 4) * (tmpSize - 4)];
-    tempTex.wrapMode = TextureWrapMode.Clamp;
-    tempTex.filterMode = FilterMode.Point;
-    for (int i = 0, n = 0; i < tmpSize * tmpSize; i++) {
+
+    for (int i = 0; i < tmpSize * tmpSize; i++) {
       vertices[i] = new Vector3((i % tmpSize - 1) * tmpRes, output[i], (i / tmpSize - 1) * tmpRes);
-      if (i % tmpSize > 0 && i % tmpSize < tmpSize - 3 && i / tmpSize > 0 && i / tmpSize < tmpSize - 3) {
-        dataTrimmed[n] = output[i];
-        n++;
-      }
     }
-    tempTex.SetPixelData(dataTrimmed, 0);
-    tempTex.Apply();
-    _tilePool[index].heightmapTexture = tempTex;
+
     output.Dispose();
 
     _tilePool[index].obj.transform.position = new Vector3(x * _size * _resolution, 0, z * _size * _resolution);
@@ -871,14 +870,14 @@ public class WorldGenerator : MonoBehaviour
     while (!handle.IsCompleted) yield return null;
     handle.Complete();
     
-    tempTex = new Texture2D(tmpSize - 4, tmpSize - 4, TextureFormat.RFloat, false, true, true);
-    int[] data = new int[(tmpSize - 4) * (tmpSize - 4)];
+    Texture2D tempTex = new Texture2D(tmpSize - 4, tmpSize - 4, TextureFormat.RFloat, false, true, true);
+    float[] data = new float[(tmpSize - 4) * (tmpSize - 4)];
     tempTex.wrapMode = TextureWrapMode.Clamp;
     tempTex.filterMode = FilterMode.Point;
     for (int i = 0, n = 0; i < heightMods.Length; i++) {
       heightMods[i] = _riverParameters.noiseCurve.Evaluate(heightMods[i]) * _riverParameters.heightCurve.Evaluate(vertices[i].y / _maxPossibleHeight) * _riverParameters.normalCurve.Evaluate(Mathf.Abs(normals[i].y));
       if (i % tmpSize > 0 && i % tmpSize < tmpSize - 3 && i / tmpSize > 0 && i / tmpSize < tmpSize - 3) {
-        if (heightMods[i] > 0 || normals[i].y < 0.7f)
+        if (heightMods[i] > 0.2f || vertices[i].y < _lakePlaneHeight - _riverParameters.waterLevel || normals[i].y < _grassNormalCutoff)
           data[n] = 0;
         else
           data[n] = 1;
@@ -926,6 +925,19 @@ public class WorldGenerator : MonoBehaviour
       culled[j + 5] = triangles[i * 6 + 5];
       j += 6;
     }
+    tempTex = new Texture2D(tmpSize - 4, tmpSize - 4, TextureFormat.RFloat, false, true, true);
+    float[] dataTrimmed = new float[(tmpSize - 4) * (tmpSize - 4)];
+    tempTex.wrapMode = TextureWrapMode.Clamp;
+    tempTex.filterMode = FilterMode.Point;
+    for (int i = 0, n = 0; i < tmpSize * tmpSize; i++) {
+      if (i % tmpSize > 0 && i % tmpSize < tmpSize - 3 && i / tmpSize > 0 && i / tmpSize < tmpSize - 3) {
+        dataTrimmed[n] = vertices[i].y;
+        n++;
+      }
+    }
+    tempTex.SetPixelData(dataTrimmed, 0);
+    tempTex.Apply();
+    _tilePool[index].heightmapTexture = tempTex;
 
     // Write data to the mesh after all passes
 
