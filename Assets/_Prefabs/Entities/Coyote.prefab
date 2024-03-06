@@ -127,7 +127,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _layerMask:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 8
+  _timeOfLastAttack: 0
 --- !u!114 &7454635895247724828
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -148,6 +149,8 @@ MonoBehaviour:
   _distanceHeal: 10
   _range: 100
   _staminaLimit: 15
+  _leaveLimit: 50
+  _recencyLimit: 3
   _attacks:
   - _attackDistance: 3
     _attackDamage: 700
@@ -190,8 +193,8 @@ MonoBehaviour:
   _jumpKey: 0
   _sprintKey: 304
   _crouchKey: 0
-  _maxStamina: 100
-  _currentStamina: 100
+  _maxStamina: 200
+  _currentStamina: 150
 --- !u!54 &4362584080177631383
 Rigidbody:
   m_ObjectHideFlags: 0
