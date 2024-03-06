@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 62.40928, g: 38.52802, b: 32.258396, a: 1}
+  m_IndirectSpecularColor: {r: 79.75855, g: 48.06495, b: 41.62217, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -18488,7 +18488,7 @@ PrefabInstance:
     - target: {fileID: 2642911361457780204, guid: 862d92a67177d4c7b84ab88d6b6e0257,
         type: 3}
       propertyPath: m_Enabled
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2642911361457780204, guid: 862d92a67177d4c7b84ab88d6b6e0257,
         type: 3}
@@ -19019,7 +19019,12 @@ PrefabInstance:
     - target: {fileID: 8819276947174590073, guid: 862d92a67177d4c7b84ab88d6b6e0257,
         type: 3}
       propertyPath: _enableGrass
-      value: 0
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8819276947174590073, guid: 862d92a67177d4c7b84ab88d6b6e0257,
+        type: 3}
+      propertyPath: _enableRivers
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8819276947174590073, guid: 862d92a67177d4c7b84ab88d6b6e0257,
         type: 3}
@@ -19436,7 +19441,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 4258144910533491455}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4258144910533491456}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8901d01b1ec976449b26f9ac05943e4b, type: 3}
   m_Name: 
@@ -19448,13 +19453,12 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4258144910533491456}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fff7592f4066cad449132b4f09ce7088, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _positionCompute: {fileID: 7200000, guid: ad2522b6a715ee54d8ae10d592b5a0cc, type: 3}
-  _chunkSize: 30
+  _chunkSize: 0
 --- !u!136 &4762342597639217425
 CapsuleCollider:
   m_ObjectHideFlags: 0

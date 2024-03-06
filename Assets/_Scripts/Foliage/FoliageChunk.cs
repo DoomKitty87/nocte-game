@@ -9,7 +9,7 @@ namespace Foliage
 
 
         public FoliageChunk(IReadOnlyList<FoliageScriptable> scriptables, Vector2Int chunkPos, float chunkSize, Vector2 cameraPos) {
-            var numberOfScriptables = scriptables.Count;
+            var numberOfScriptables = 0;
             _renderers = new FoliageRenderer[numberOfScriptables];
 
             for (var i = 0; i < numberOfScriptables; i++) {
