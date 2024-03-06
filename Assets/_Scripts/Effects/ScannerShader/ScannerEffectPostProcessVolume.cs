@@ -13,8 +13,11 @@ public sealed class ScannerEffectPostProcessVolume : CustomPostProcessVolumeComp
     public Vector2Parameter _scanDirectionXZ = new Vector2Parameter(new Vector2(0, 1));
     public ClampedFloatParameter _scanDegrees = new ClampedFloatParameter(120, 0, 360);
     public FloatParameter _scanDistance = new FloatParameter(10f);
+    public ColorParameter _scanLineColor = new ColorParameter(Color.cyan, true, true, true);
+    public ColorParameter _lastScanLineColor = new ColorParameter(Color.cyan, true, true, true);
     public FloatParameter _scanLineWidth = new FloatParameter(0.02f);
     public FloatParameter _scanLineDistBetween = new FloatParameter(1);
+    public ColorParameter _edgeGlowColor = new ColorParameter(Color.cyan, true, true, true);
     public FloatParameter _edgeGlowWidth = new FloatParameter(2);
     public FloatParameter _darkenStartDistance = new FloatParameter(2);
     public ClampedFloatParameter _sideFadeMagnitude = new ClampedFloatParameter(0.1f, 0, 1);
@@ -23,8 +26,14 @@ public sealed class ScannerEffectPostProcessVolume : CustomPostProcessVolumeComp
     // uniform float2 _scanDirectionXZ;
     // uniform float _scanDegrees;
     // uniform float _scanDistance;
+    // uniform float4 _scanLineColor;
+    // uniform float4 _lastScanLineColor;
     // uniform float _scanLineWidth;
     // uniform float _scanLineDistBetween;
+    // uniform float4 _edgeGlowColor;
+    // uniform float _edgeGlowWidth;
+    // uniform float _darkenStartDistance;
+    // uniform float _sideFadeMagnitude;
     
     Material m_Material;
 
@@ -53,8 +62,11 @@ public sealed class ScannerEffectPostProcessVolume : CustomPostProcessVolumeComp
         m_Material.SetVector("_scanDirectionXZ", _scanDirectionXZ.value);
         m_Material.SetFloat("_scanDegrees", _scanDegrees.value);
         m_Material.SetFloat("_scanDistance", _scanDistance.value);
+        m_Material.SetColor("_scanLineColor", _scanLineColor.value);
+        m_Material.SetColor("_lastScanLineColor", _lastScanLineColor.value);
         m_Material.SetFloat("_scanLineWidth", _scanLineWidth.value);
         m_Material.SetFloat("_scanLineDistBetween", _scanLineDistBetween.value);
+        m_Material.SetColor("_edgeGlowColor", _edgeGlowColor.value);
         m_Material.SetFloat("_edgeGlowWidth", _edgeGlowWidth.value);
         m_Material.SetFloat("_darkenStartDistance", _darkenStartDistance.value);
         m_Material.SetFloat("_sideFadeMagnitude", _sideFadeMagnitude.value);
