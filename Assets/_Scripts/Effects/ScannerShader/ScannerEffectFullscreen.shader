@@ -35,8 +35,13 @@ Shader "FullScreen/ScannerEffectFullscreen"
     uniform float2 _scanDirectionXZ;
     uniform float _scanDegrees;
     uniform float _scanDistance;
+    uniform float4 _scanLineColor;
+    uniform float4 _lastScanLineColor;
     uniform float _scanLineWidth;
     uniform float _scanLineDistBetween;
+    uniform float _edgeGlowWidth;
+    uniform float _darkenStartDistance;
+    uniform float _sideFadeMagnitude;
     
     float radiansToDegrees(float radians) {
         return radians * 57.295779513082320876798154814105;
@@ -60,16 +65,31 @@ Shader "FullScreen/ScannerEffectFullscreen"
         float2 uv = float2(0, 0);
         float2 dirFromCenter = normalize(absWorldPos.xz - _scanCenterPos.xz);
         float2 dirScanForward = normalize(_scanDirectionXZ);
-        float angleFromForward = radiansToDegrees(acos(dot(dirFromCenter, dirScanForward)));
-        uv.x = 1 - (angleFromForward / (_scanDegrees / 2));
+        
+        float angleFromCenter = atan2(dirFromCenter.y, dirFromCenter.x);
+        float angleFromForward = atan2(dirScanForward.y, dirScanForward.x);
+        float angleDifference = angleFromForward - angleFromCenter;
+        angleDifference = radiansToDegrees(angleDifference);
+        
+        uv.x = 1 - (abs(angleDifference) / (_scanDegrees / 2));
         uv.y = distance(_scanCenterPos.xz, absWorldPos.xz);
-        if (uv.x > 0 && uv.y < _scanDistance)
+        
+        if (uv.x > Eps_float() && uv.y < _scanDistance)
         {
+            // -----
             float scanLineDistanceNormalized = _scanLineDistBetween / _scanLineWidth;
             float distanceFromLine = frac(uv.y / _scanLineWidth / scanLineDistanceNormalized);
             float scanLineMask = 1 - smoothstep(0.0, _scanLineWidth, abs(distanceFromLine - 0.5));
             // -----
-            color = float4(uv.x, frac(uv.y), 0, 1);
+            float furthestLineMask = step(_scanDistance - _scanLineDistBetween, uv.y);
+            // ----
+            float edgeGlowMask = smoothstep(_scanDistance - _edgeGlowWidth, _scanDistance, uv.y);
+            // ----
+            float darkenMask = smoothstep(_darkenStartDistance, _scanDistance, uv.y);
+            // ----
+            float sideFadeMask = smoothstep(0, _sideFadeMagnitude, uv.x);
+            // ----
+            color = float4(sideFadeMask, sideFadeMask, sideFadeMask, 1);
         }
         
         // Fade value allow you to increase the strength of the effect while the camera gets closer to the custom pass volume

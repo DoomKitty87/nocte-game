@@ -15,6 +15,9 @@ public sealed class ScannerEffectPostProcessVolume : CustomPostProcessVolumeComp
     public FloatParameter _scanDistance = new FloatParameter(10f);
     public FloatParameter _scanLineWidth = new FloatParameter(0.02f);
     public FloatParameter _scanLineDistBetween = new FloatParameter(1);
+    public FloatParameter _edgeGlowWidth = new FloatParameter(2);
+    public FloatParameter _darkenStartDistance = new FloatParameter(2);
+    public ClampedFloatParameter _sideFadeMagnitude = new ClampedFloatParameter(0.1f, 0, 1);
     
     // uniform float3 _scanCenterPos;
     // uniform float2 _scanDirectionXZ;
@@ -52,6 +55,9 @@ public sealed class ScannerEffectPostProcessVolume : CustomPostProcessVolumeComp
         m_Material.SetFloat("_scanDistance", _scanDistance.value);
         m_Material.SetFloat("_scanLineWidth", _scanLineWidth.value);
         m_Material.SetFloat("_scanLineDistBetween", _scanLineDistBetween.value);
+        m_Material.SetFloat("_edgeGlowWidth", _edgeGlowWidth.value);
+        m_Material.SetFloat("_darkenStartDistance", _darkenStartDistance.value);
+        m_Material.SetFloat("_sideFadeMagnitude", _sideFadeMagnitude.value);
         HDUtils.DrawFullScreen(cmd, m_Material, destination, shaderPassId: 0);
     }
 
