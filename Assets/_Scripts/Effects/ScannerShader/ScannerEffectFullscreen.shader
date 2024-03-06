@@ -89,13 +89,16 @@ Shader "FullScreen/ScannerEffectFullscreen"
             float darkenMask = smoothstep(_darkenStartDistance, _scanDistance, uv.y);
             // ----
             float sideFadeMask = smoothstep(0, _sideFadeMagnitude, uv.x);
-            // ----
-            float scanLineWithoutFurthest = scanLineMask * 1 - furthestLineMask;
-            float scanLineFurthestOnly = scanLineMask * furthestLineMask;
-            float3 scanLines = scanLineWithoutFurthest * _scanLineColor + scanLineFurthestOnly * _lastScanLineColor;
+            // ---- Final Color
+
+            float3 rgb = color.rgb;
+            
+            float scanLineMaskWithoutFurthest = scanLineMask * 1 - furthestLineMask;
+            float scanLineMaskFurthestOnly = scanLineMask * furthestLineMask;
+            rgb = scanLineMaskWithoutFurthest * _scanLineColor; 
             float a = darkenMask * sideFadeMask;
             // color = lerp(color, float4(rgb, 1.0f), a);
-            color = float4(scanLines, 1.0f);
+            color = float4(rgb, 1.0f);
         }
         
         // Fade value allow you to increase the strength of the effect while the camera gets closer to the custom pass volume
