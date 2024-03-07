@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 84.18574, g: 51.61335, b: 45.564854, a: 1}
+  m_IndirectSpecularColor: {r: 80.83252, g: 49.69192, b: 43.624767, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -6592,6 +6592,12 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 9251f6c58d15c7b428fef40ec34ce952, type: 3}
+--- !u!4 &485706945 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 8737222161639352964, guid: 9251f6c58d15c7b428fef40ec34ce952,
+    type: 3}
+  m_PrefabInstance: {fileID: 485706944}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &585527493
 GameObject:
   m_ObjectHideFlags: 0
@@ -7976,6 +7982,8 @@ GameObject:
   - component: {fileID: 1004352485}
   - component: {fileID: 1004352484}
   - component: {fileID: 1004352486}
+  - component: {fileID: 1004352488}
+  - component: {fileID: 1004352487}
   m_Layer: 0
   m_Name: Global Volume
   m_TagString: Untagged
@@ -8054,6 +8062,67 @@ MonoBehaviour:
         materialPassIndex: 0
         materialPassName: Custom Pass 0
         fetchColorBuffer: 0
+--- !u!114 &1004352487
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1004352483}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 16182c219be23524eac12f47c629959b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _scanEffectVolume: {fileID: 1004352488}
+  _scanOrigin: {fileID: 485706945}
+  _scanKey: 113
+  _scanDistance: 2000
+  _scanDuration: 2
+  _scanHangDuration: 2
+  _scanFadeOutDuration: 0.3
+  _scanSpeedCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: -0
+      outSlope: -0
+      tangentMode: 0
+      weightedMode: 3
+      inWeight: 0
+      outWeight: 0.87166446
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: -0
+      outSlope: -0
+      tangentMode: 0
+      weightedMode: 1
+      inWeight: 0.45997465
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  _scanCooldown: 1
+--- !u!114 &1004352488
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1004352483}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 172515602e62fb746b5d573b38a5fe58, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_IsGlobal: 1
+  priority: 0
+  blendDistance: 0
+  weight: 1
+  sharedProfile: {fileID: 11400000, guid: 0bb8a34382df44169a58b96dbd82f511, type: 2}
 --- !u!1 &1077108755
 GameObject:
   m_ObjectHideFlags: 0
