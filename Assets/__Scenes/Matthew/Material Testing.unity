@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 4426.979, g: 2878.5276, b: 2126.77, a: 1}
+  m_IndirectSpecularColor: {r: 4423.8823, g: 2875.3552, b: 2124.5107, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -862,6 +862,11 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 8673760560345401740, guid: 807785f75a4cabf4883bf2cc8fe88221,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8790353012930772278, guid: 807785f75a4cabf4883bf2cc8fe88221,
         type: 3}
       propertyPath: m_LocalPosition.y
@@ -1215,6 +1220,12 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 755629886}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!4 &756627535 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 4562887522520872698, guid: 807785f75a4cabf4883bf2cc8fe88221,
+    type: 3}
+  m_PrefabInstance: {fileID: 434362355}
+  m_PrefabAsset: {fileID: 0}
 --- !u!850595691 &933783193
 LightingSettings:
   m_ObjectHideFlags: 0
@@ -1285,6 +1296,7 @@ GameObject:
   m_Component:
   - component: {fileID: 971802133}
   - component: {fileID: 971802134}
+  - component: {fileID: 971802135}
   m_Layer: 0
   m_Name: Scanner Global Volume
   m_TagString: Untagged
@@ -1324,6 +1336,50 @@ MonoBehaviour:
   blendDistance: 0
   weight: 1
   sharedProfile: {fileID: 11400000, guid: 0bb8a34382df44169a58b96dbd82f511, type: 2}
+--- !u!114 &971802135
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 971802132}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 16182c219be23524eac12f47c629959b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _scanEffectVolume: {fileID: 971802134}
+  _scanOrigin: {fileID: 756627535}
+  _scanKey: 113
+  _scanDistance: 2000
+  _scanDuration: 2
+  _scanHangDuration: 2
+  _scanFadeOutDuration: 0.3
+  _scanSpeedCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: -0
+      outSlope: -0
+      tangentMode: 0
+      weightedMode: 3
+      inWeight: 0
+      outWeight: 0.87166446
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: -0
+      outSlope: -0
+      tangentMode: 0
+      weightedMode: 1
+      inWeight: 0.45997465
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  _scanCooldown: 1
 --- !u!1 &1087242014
 GameObject:
   m_ObjectHideFlags: 0
@@ -3305,7 +3361,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 500, y: 10, z: 500}
+  m_LocalScale: {x: 2000, y: 10, z: 2000}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1822154858}

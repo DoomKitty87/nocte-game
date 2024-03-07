@@ -30,6 +30,7 @@ Shader "FullScreen/ScannerEffectFullscreen"
     // There are also a lot of utility function you can use inside Common.hlsl and Color.hlsl,
     // you can check them out in the source code of the core SRP package.
 
+    uniform float _intensity;
     uniform float3 _scanCenterPos;
     uniform float2 _scanDirectionXZ;
     uniform float _scanDegrees;
@@ -42,7 +43,8 @@ Shader "FullScreen/ScannerEffectFullscreen"
     uniform float4 _edgeGlowAccentColor;
     uniform float _edgeGlowWidth;
     uniform float _darkenOpacity;
-    uniform float _darkenStartDistance;
+    uniform float _darkenBaseValue;
+    uniform float _darkenWidth;
     uniform float _sideFadeMagnitude;
     
     float radiansToDegrees(float radians) {
@@ -87,7 +89,7 @@ Shader "FullScreen/ScannerEffectFullscreen"
             // ----
             float edgeGlowMask = smoothstep(_scanDistance - _edgeGlowWidth, _scanDistance, uv.y);
             // ----
-            float darkenMask = smoothstep(_darkenStartDistance, _scanDistance, uv.y);
+            float darkenMask = smoothstep(_scanDistance - _scanDistance * _darkenWidth, _scanDistance, uv.y);
             // ----
             float sideFadeMask = smoothstep(0, _sideFadeMagnitude, uv.x);
             // ---- Final Color
@@ -99,7 +101,7 @@ Shader "FullScreen/ScannerEffectFullscreen"
             float scanLineFurthest = step(Eps_float(), furthestLineMask) * scanLineMask;
             
             rgb = scanLineFurthest * _lastScanLineColor + scanLineWithoutFurthest * _scanLineColor + edgeGlowMask * _edgeGlowColor;
-            a = scanLineMask * sideFadeMask + edgeGlowMask * sideFadeMask + darkenMask * sideFadeMask * _darkenOpacity;
+            a = (saturate(scanLineMask) * sideFadeMask + edgeGlowMask * sideFadeMask + saturate(darkenMask + _darkenBaseValue) * sideFadeMask * _darkenOpacity) * _intensity;
 
             rgb = lerp(color.rgb, rgb, a);
             color = float4(rgb, 1.0f);

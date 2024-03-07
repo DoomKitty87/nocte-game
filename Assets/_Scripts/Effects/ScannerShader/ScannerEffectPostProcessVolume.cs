@@ -21,7 +21,8 @@ public sealed class ScannerEffectPostProcessVolume : CustomPostProcessVolumeComp
     public ColorParameter _edgeGlowAccentColor = new ColorParameter(Color.black, true, false, true);
     public FloatParameter _edgeGlowWidth = new FloatParameter(2);
     public ClampedFloatParameter _darkenOpacity = new ClampedFloatParameter(1, 0, 1);
-    public FloatParameter _darkenStartDistance = new FloatParameter(2);
+    public ClampedFloatParameter _darkenBaseValue = new ClampedFloatParameter(1, 0, 1);
+    public ClampedFloatParameter _darkenWidth = new ClampedFloatParameter(0.85f, 0, 1);
     public ClampedFloatParameter _sideFadeMagnitude = new ClampedFloatParameter(0.1f, 0, 1);
     
     // uniform float3 _scanCenterPos;
@@ -36,7 +37,7 @@ public sealed class ScannerEffectPostProcessVolume : CustomPostProcessVolumeComp
     // uniform float4 _edgeGlowAccentColor;
     // uniform float _edgeGlowWidth;
     // uniform float _darkenOpacity;
-    // uniform float _darkenStartDistance;
+    // uniform float _darkenWidth;
     // uniform float _sideFadeMagnitude;
     
     Material m_Material;
@@ -61,7 +62,7 @@ public sealed class ScannerEffectPostProcessVolume : CustomPostProcessVolumeComp
         if (m_Material == null)
             return;
 
-        // m_Material.SetFloat("_Intensity", intensity.value);
+        m_Material.SetFloat("_intensity", _intensity.value);
         m_Material.SetVector("_scanCenterPos", _scannerCenterPosition.value);
         m_Material.SetVector("_scanDirectionXZ", _scanDirectionXZ.value);
         m_Material.SetFloat("_scanDegrees", _scanDegrees.value);
@@ -74,7 +75,8 @@ public sealed class ScannerEffectPostProcessVolume : CustomPostProcessVolumeComp
         m_Material.SetColor("_edgeGlowAccentColor", _edgeGlowAccentColor.value);
         m_Material.SetFloat("_edgeGlowWidth", _edgeGlowWidth.value);
         m_Material.SetFloat("_darkenOpacity", _darkenOpacity.value);
-        m_Material.SetFloat("_darkenStartDistance", _darkenStartDistance.value);
+        m_Material.SetFloat("_darkenBaseValue", _darkenBaseValue.value);
+        m_Material.SetFloat("_darkenWidth", _darkenWidth.value);
         m_Material.SetFloat("_sideFadeMagnitude", _sideFadeMagnitude.value);
         HDUtils.DrawFullScreen(cmd, m_Material, destination, shaderPassId: 0);
     }
