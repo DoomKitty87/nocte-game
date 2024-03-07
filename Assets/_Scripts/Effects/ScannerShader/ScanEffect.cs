@@ -24,7 +24,7 @@ public class ScanEffect : MonoBehaviour
     private IEnumerator Scan() {
         _scanning = true;
         _effect._intensity.value = 1;
-        _effect._scannerCenterPosition.value = _scanOrigin.position;
+        _effect._scannerCenterPosition.value = _scanOrigin.position + -_scanOrigin.forward * 3;
         _effect._scanDirectionXZ.value = new Vector2(_scanOrigin.forward.x, _scanOrigin.forward.z);
         _effect._scanDistance.value = 0;
         yield return new WaitForSeconds(0.5f);

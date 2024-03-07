@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 4423.8823, g: 2875.3552, b: 2124.5107, a: 1}
+  m_IndirectSpecularColor: {r: 4425.1934, g: 2873.1487, b: 2116.0217, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -1351,8 +1351,8 @@ MonoBehaviour:
   _scanEffectVolume: {fileID: 971802134}
   _scanOrigin: {fileID: 756627535}
   _scanKey: 113
-  _scanDistance: 2000
-  _scanDuration: 2
+  _scanDistance: 3000
+  _scanDuration: 4
   _scanHangDuration: 2
   _scanFadeOutDuration: 0.3
   _scanSpeedCurve:
@@ -1361,20 +1361,29 @@ MonoBehaviour:
     - serializedVersion: 3
       time: 0
       value: 0
-      inSlope: -0
-      outSlope: -0
+      inSlope: 0
+      outSlope: 0
       tangentMode: 0
       weightedMode: 3
       inWeight: 0
-      outWeight: 0.87166446
+      outWeight: 0.801701
+    - serializedVersion: 3
+      time: 0.29803026
+      value: 0.49955457
+      inSlope: 5.4857707
+      outSlope: 5.4857707
+      tangentMode: 0
+      weightedMode: 3
+      inWeight: 0.083820865
+      outWeight: 0.099660195
     - serializedVersion: 3
       time: 1
       value: 1
-      inSlope: -0
-      outSlope: -0
+      inSlope: 0
+      outSlope: 0
       tangentMode: 0
       weightedMode: 1
-      inWeight: 0.45997465
+      inWeight: 0.83786863
       outWeight: 0
     m_PreInfinity: 2
     m_PostInfinity: 2
