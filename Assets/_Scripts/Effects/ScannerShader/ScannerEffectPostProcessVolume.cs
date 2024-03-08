@@ -17,6 +17,7 @@ public sealed class ScannerEffectPostProcessVolume : CustomPostProcessVolumeComp
     public ColorParameter _lastScanLineColor = new ColorParameter(Color.cyan, true, false, true);
     public FloatParameter _scanLineWidth = new FloatParameter(0.02f);
     public FloatParameter _scanLineDistBetween = new FloatParameter(1);
+    public FloatParameter _scanLineDistFromEdgeShown = new FloatParameter(50);
     public ColorParameter _edgeGlowColor = new ColorParameter(Color.cyan, true, false, true);
     public ColorParameter _edgeGlowAccentColor = new ColorParameter(Color.black, true, false, true);
     public FloatParameter _edgeGlowWidth = new FloatParameter(2);
@@ -27,6 +28,10 @@ public sealed class ScannerEffectPostProcessVolume : CustomPostProcessVolumeComp
     
     public FloatParameter _sobelThreshold = new FloatParameter(0.2f);
     public ColorParameter _sobelColor = new ColorParameter(Color.cyan, true, false, true);
+    public FloatParameter _sobelDistFromEdgeShown = new FloatParameter(50);
+    
+    // // scan
+    // uniform float _intensity;
     // uniform float3 _scanCenterPos;
     // uniform float2 _scanDirectionXZ;
     // uniform float _scanDegrees;
@@ -35,13 +40,18 @@ public sealed class ScannerEffectPostProcessVolume : CustomPostProcessVolumeComp
     // uniform float4 _lastScanLineColor;
     // uniform float _scanLineWidth;
     // uniform float _scanLineDistBetween;
+    // uniform float _scanLineDistFromEdgeShown;
     // uniform float4 _edgeGlowColor;
     // uniform float4 _edgeGlowAccentColor;
     // uniform float _edgeGlowWidth;
     // uniform float _darkenOpacity;
+    // uniform float _darkenBaseValue;
     // uniform float _darkenWidth;
     // uniform float _sideFadeMagnitude;
+    // // sobel
+    // uniform float4 _sobelColor;
     // uniform float _sobelThreshold;
+    // uniform float _sobelDistFromEdgeShown;
     
     Material m_Material;
 
@@ -74,6 +84,7 @@ public sealed class ScannerEffectPostProcessVolume : CustomPostProcessVolumeComp
         m_Material.SetColor("_lastScanLineColor", _lastScanLineColor.value);
         m_Material.SetFloat("_scanLineWidth", _scanLineWidth.value);
         m_Material.SetFloat("_scanLineDistBetween", _scanLineDistBetween.value);
+        m_Material.SetFloat("_scanLineDistFromEdgeShown", _scanLineDistFromEdgeShown.value);
         m_Material.SetColor("_edgeGlowColor", _edgeGlowColor.value);
         m_Material.SetColor("_edgeGlowAccentColor", _edgeGlowAccentColor.value);
         m_Material.SetFloat("_edgeGlowWidth", _edgeGlowWidth.value);
@@ -83,6 +94,7 @@ public sealed class ScannerEffectPostProcessVolume : CustomPostProcessVolumeComp
         m_Material.SetFloat("_sideFadeMagnitude", _sideFadeMagnitude.value);
         m_Material.SetFloat("_sobelThreshold", _sobelThreshold.value);
         m_Material.SetColor("_sobelColor", _sobelColor.value);
+        m_Material.SetFloat("_sobelDistFromEdgeShown", _sobelDistFromEdgeShown.value);
         HDUtils.DrawFullScreen(cmd, m_Material, destination, shaderPassId: 0);
     }
 

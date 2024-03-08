@@ -76,12 +76,15 @@ Shader "FullScreen/ScannerEffectFullscreen"
         float2 dirToFrag = normalize(absWorldPos.xz - _scanCenterPos.xz);
         float2 dirScanForward = normalize(_scanDirectionXZ);
         
-        float angleToFrag = atan2(dirToFrag.y, dirToFrag.x) + PI;
-        float angleForward = atan2(dirScanForward.y, dirScanForward.x) + PI;
+        float angleToFrag = atan2(dirToFrag.y, dirToFrag.x);
+        float angleForward = atan2(dirScanForward.y, dirScanForward.x);
+
         float angleDifference = angleForward - angleToFrag;
+        angleDifference = (angleDifference + PI) % (2.0 * PI) - PI;
+        angleDifference = abs(angleDifference);
         angleDifference = radiansToDegrees(angleDifference);
         
-        uv.x = 1 - (abs(angleDifference) / (_scanDegrees / 2));
+        uv.x = 1 - (angleDifference / (_scanDegrees / 2));
         uv.y = distance(_scanCenterPos.xz, absWorldPos.xz);
         // uv.x > Eps_float() &&
         if ( uv.y < _scanDistance)
@@ -121,11 +124,11 @@ Shader "FullScreen/ScannerEffectFullscreen"
             float scanLineWithoutFurthest = scanLineMask * (1 - furthestLineMask);
             float scanLineFurthest = step(Eps_float(), furthestLineMask) * scanLineMask;
             
-            rgb = scanLineFurthest * _lastScanLineColor + scanLineWithoutFurthest * _scanLineColor + edgeGlowMask * _edgeGlowColor + sobelMask * _sobelColor;
+            rgb = (scanLineFurthest * _lastScanLineColor + scanLineWithoutFurthest * _scanLineColor) * scanLineDarkenMask + edgeGlowMask * _edgeGlowColor + (sobelMask * _sobelColor) * sobelDarkenMask;
             a = (scanLineMask * sideFadeMask * scanLineDarkenMask + edgeGlowMask * sideFadeMask + saturate(darkenMask + _darkenBaseValue) * sideFadeMask * _darkenOpacity + sobelMask * sideFadeMask * sobelDarkenMask) * _intensity;
 
             rgb = lerp(color.rgb, rgb, a);
-            color = float4(angleDifference.xxx, 1.0f);
+            color = float4(rgb, 1.0f);
         }
         
         // Fade value allow you to increase the strength of the effect while the camera gets closer to the custom pass volume
