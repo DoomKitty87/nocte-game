@@ -40,6 +40,7 @@ Shader "FullScreen/ScannerEffectFullscreen"
     uniform float4 _lastScanLineColor;
     uniform float _scanLineWidth;
     uniform float _scanLineDistBetween;
+    uniform float _scanLineDistFromEdgeShown;
     uniform float4 _edgeGlowColor;
     uniform float4 _edgeGlowAccentColor;
     uniform float _edgeGlowWidth;
@@ -50,6 +51,7 @@ Shader "FullScreen/ScannerEffectFullscreen"
     // sobel
     uniform float4 _sobelColor;
     uniform float _sobelThreshold;
+    uniform float _sobelDistFromEdgeShown;
     
     float radiansToDegrees(float radians) {
         return radians * 57.295779513082320876798154814105;
@@ -71,18 +73,18 @@ Shader "FullScreen/ScannerEffectFullscreen"
 
         // Add your custom pass code here
         float2 uv = float2(0, 0);
-        float2 dirFromCenter = normalize(absWorldPos.xz - _scanCenterPos.xz);
+        float2 dirToFrag = normalize(absWorldPos.xz - _scanCenterPos.xz);
         float2 dirScanForward = normalize(_scanDirectionXZ);
         
-        float angleFromCenter = atan2(dirFromCenter.y, dirFromCenter.x) + PI;
-        float angleFromForward = atan2(dirScanForward.y, dirScanForward.x) + PI;
-        float angleDifference = angleFromForward - angleFromCenter;
+        float angleToFrag = atan2(dirToFrag.y, dirToFrag.x) + PI;
+        float angleForward = atan2(dirScanForward.y, dirScanForward.x) + PI;
+        float angleDifference = angleForward - angleToFrag;
         angleDifference = radiansToDegrees(angleDifference);
         
         uv.x = 1 - (abs(angleDifference) / (_scanDegrees / 2));
         uv.y = distance(_scanCenterPos.xz, absWorldPos.xz);
-        
-        if (uv.x > Eps_float() && uv.y < _scanDistance)
+        // uv.x > Eps_float() &&
+        if ( uv.y < _scanDistance)
         {
             // ----- SCAN
             float newScanLineWidth = _scanLineWidth / 1000 * posInput.linearDepth;
@@ -98,6 +100,9 @@ Shader "FullScreen/ScannerEffectFullscreen"
             // ----
             float sideFadeMask = smoothstep(0, _sideFadeMagnitude, uv.x);
 
+            float scanLineDarkenMask = smoothstep(_scanDistance - _scanLineDistFromEdgeShown, _scanDistance, uv.y);
+            float sobelDarkenMask = smoothstep(_scanDistance - _sobelDistFromEdgeShown, _scanDistance, uv.y);
+            
             // Sobel Outline
             float sobelMask;
             float pixel = LoadCameraDepth(posInput.positionSS) * 10;
@@ -117,10 +122,10 @@ Shader "FullScreen/ScannerEffectFullscreen"
             float scanLineFurthest = step(Eps_float(), furthestLineMask) * scanLineMask;
             
             rgb = scanLineFurthest * _lastScanLineColor + scanLineWithoutFurthest * _scanLineColor + edgeGlowMask * _edgeGlowColor + sobelMask * _sobelColor;
-            a = (scanLineMask * sideFadeMask * darkenMask + edgeGlowMask * sideFadeMask + saturate(darkenMask + _darkenBaseValue) * sideFadeMask * _darkenOpacity + sobelMask * sideFadeMask * darkenMask) * _intensity;
+            a = (scanLineMask * sideFadeMask * scanLineDarkenMask + edgeGlowMask * sideFadeMask + saturate(darkenMask + _darkenBaseValue) * sideFadeMask * _darkenOpacity + sobelMask * sideFadeMask * sobelDarkenMask) * _intensity;
 
             rgb = lerp(color.rgb, rgb, a);
-            color = float4(rgb, 1.0f);
+            color = float4(angleDifference.xxx, 1.0f);
         }
         
         // Fade value allow you to increase the strength of the effect while the camera gets closer to the custom pass volume
