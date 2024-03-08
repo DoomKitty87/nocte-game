@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 82.12823, g: 50.40357, b: 44.32394, a: 1}
+  m_IndirectSpecularColor: {r: 80.15165, g: 49.04798, b: 41.66956, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -7981,7 +7981,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1004352485}
   - component: {fileID: 1004352484}
-  - component: {fileID: 1004352486}
   - component: {fileID: 1004352488}
   - component: {fileID: 1004352487}
   m_Layer: 0
@@ -8023,45 +8022,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1004352486
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1004352483}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 26d6499a6bd256e47b859377446493a1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_IsGlobal: 1
-  fadeRadius: 0
-  priority: 0
-  customPasses:
-  - rid: 5398221021191340105
-  injectionPoint: 2
-  m_TargetCamera: {fileID: 0}
-  useTargetCamera: 0
-  references:
-    version: 2
-    RefIds:
-    - rid: 5398221021191340105
-      type: {class: FullScreenCustomPass, ns: UnityEngine.Rendering.HighDefinition,
-        asm: Unity.RenderPipelines.HighDefinition.Runtime}
-      data:
-        m_Name: UnderWater
-        enabled: 1
-        targetColorBuffer: 0
-        targetDepthBuffer: 0
-        clearFlags: 0
-        passFoldout: 0
-        m_Version: 0
-        fullscreenPassMaterial: {fileID: 2100000, guid: 4f8998eadec5b41e08420763d59485cc,
-          type: 2}
-        materialPassIndex: 0
-        materialPassName: Custom Pass 0
-        fetchColorBuffer: 0
 --- !u!114 &1004352487
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -19513,8 +19473,8 @@ MonoBehaviour:
   - {fileID: 1237130334405037093, guid: 82ca8cc96c2980e4d92e49b5bfe50816, type: 3}
   _lodValues: 320000006400000096000000
   _chunkCount: 15
-  _chunkSize: 30
-  _grassDensity: c8000000640000003200000019000000
+  _chunkSize: 15
+  _grassDensity: 6400000032000000190000000a000000
 --- !u!136 &4762342597639217425
 CapsuleCollider:
   m_ObjectHideFlags: 0

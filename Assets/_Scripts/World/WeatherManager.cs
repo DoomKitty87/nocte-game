@@ -77,6 +77,18 @@ public class WeatherManager : MonoBehaviour
   }
 
   private void Update() {
+    Texture2D windTex = new Texture2D(512, 512, TextureFormat.RFloat, false, true, true);
+    windTex.wrapMode = TextureWrapMode.Repeat;
+    windTex.filterMode = FilterMode.Bilinear;
+    float[] windData = new float[512 * 512];
+    for (int i = 0; i < 512; i++) {
+      for (int j = 0; j < 512; j++) {
+        windData[i * 512 + j] = Mathf.PerlinNoise(i / 512f * 0.5f + _seed + Time.time * Mathf.Cos(_windDirection) / 100, j / 512f * 0.5f + _seed + Time.time * Mathf.Sin(_windDirection) / 100);
+      }
+    }
+    windTex.SetPixelData(windData, 0);
+    windTex.Apply();
+    Shader.SetGlobalTexture("_WindTexture", windTex);
     _weatherState.x += Time.deltaTime / _dayNightCycleSpeed;
     _weatherState.x %= 1;
     _weatherPhases.x += Mathf.PerlinNoise(_seed + Time.time, _seed + Time.time) * _cloudCycleSpeed * Time.deltaTime;
@@ -112,18 +124,7 @@ public class WeatherManager : MonoBehaviour
     _environment.windOrientation.value = _windDirection * 360 / (2 * Mathf.PI);
     Shader.SetGlobalFloat("_WindStrength", _weatherState.w);
     Shader.SetGlobalFloat("_WindDirection", _windDirection);
-    // Texture2D windTex = new Texture2D(512, 512, TextureFormat.RFloat, false, true, true);
-    // windTex.wrapMode = TextureWrapMode.Repeat;
-    // windTex.filterMode = FilterMode.Bilinear;
-    // float[] windData = new float[512 * 512];
-    // for (int i = 0; i < 512; i++) {
-    //   for (int j = 0; j < 512; j++) {
-    //     windData[i * 512 + j] = Mathf.PerlinNoise(i / 512f * 5 + _seed + Time.time * Mathf.Cos(_windDirection) / 10, j / 512f * 5 + _seed + Time.time * Mathf.Sin(_windDirection) / 10);
-    //   }
-    // }
-    // windTex.SetPixelData(windData, 0);
-    // windTex.Apply();
-    // Shader.SetGlobalTexture("_WindTexture", windTex);
+    
     _rainEmission.rateOverTime = _weatherState.z * _rainMaxIntensity;
     _physicalSky.spaceEmissionMultiplier.value = nightFactor * _maxSpaceIntensity * _spaceCycleCurve.Evaluate(_spacePhaseMajor);
     _asteroidEffect.SetFloat("SpawnRate", nightFactor * _maxAsteroidRate);
