@@ -25,6 +25,8 @@ public sealed class ScannerEffectPostProcessVolume : CustomPostProcessVolumeComp
     public ClampedFloatParameter _darkenWidth = new ClampedFloatParameter(0.85f, 0, 1);
     public ClampedFloatParameter _sideFadeMagnitude = new ClampedFloatParameter(0.1f, 0, 1);
     
+    public FloatParameter _sobelThreshold = new FloatParameter(0.2f);
+    public ColorParameter _sobelColor = new ColorParameter(Color.cyan, true, false, true);
     // uniform float3 _scanCenterPos;
     // uniform float2 _scanDirectionXZ;
     // uniform float _scanDegrees;
@@ -39,6 +41,7 @@ public sealed class ScannerEffectPostProcessVolume : CustomPostProcessVolumeComp
     // uniform float _darkenOpacity;
     // uniform float _darkenWidth;
     // uniform float _sideFadeMagnitude;
+    // uniform float _sobelThreshold;
     
     Material m_Material;
 
@@ -78,6 +81,8 @@ public sealed class ScannerEffectPostProcessVolume : CustomPostProcessVolumeComp
         m_Material.SetFloat("_darkenBaseValue", _darkenBaseValue.value);
         m_Material.SetFloat("_darkenWidth", _darkenWidth.value);
         m_Material.SetFloat("_sideFadeMagnitude", _sideFadeMagnitude.value);
+        m_Material.SetFloat("_sobelThreshold", _sobelThreshold.value);
+        m_Material.SetColor("_sobelColor", _sobelColor.value);
         HDUtils.DrawFullScreen(cmd, m_Material, destination, shaderPassId: 0);
     }
 

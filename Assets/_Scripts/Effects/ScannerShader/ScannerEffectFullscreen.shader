@@ -30,6 +30,7 @@ Shader "FullScreen/ScannerEffectFullscreen"
     // There are also a lot of utility function you can use inside Common.hlsl and Color.hlsl,
     // you can check them out in the source code of the core SRP package.
 
+    // scan
     uniform float _intensity;
     uniform float3 _scanCenterPos;
     uniform float2 _scanDirectionXZ;
@@ -46,6 +47,9 @@ Shader "FullScreen/ScannerEffectFullscreen"
     uniform float _darkenBaseValue;
     uniform float _darkenWidth;
     uniform float _sideFadeMagnitude;
+    // sobel
+    uniform float4 _sobelColor;
+    uniform float _sobelThreshold;
     
     float radiansToDegrees(float radians) {
         return radians * 57.295779513082320876798154814105;
@@ -70,8 +74,8 @@ Shader "FullScreen/ScannerEffectFullscreen"
         float2 dirFromCenter = normalize(absWorldPos.xz - _scanCenterPos.xz);
         float2 dirScanForward = normalize(_scanDirectionXZ);
         
-        float angleFromCenter = atan2(dirFromCenter.y, dirFromCenter.x);
-        float angleFromForward = atan2(dirScanForward.y, dirScanForward.x);
+        float angleFromCenter = atan2(dirFromCenter.y, dirFromCenter.x) + PI;
+        float angleFromForward = atan2(dirScanForward.y, dirScanForward.x) + PI;
         float angleDifference = angleFromForward - angleFromCenter;
         angleDifference = radiansToDegrees(angleDifference);
         
@@ -80,10 +84,11 @@ Shader "FullScreen/ScannerEffectFullscreen"
         
         if (uv.x > Eps_float() && uv.y < _scanDistance)
         {
-            // -----
-            float scanLineDistanceNormalized = _scanLineDistBetween / _scanLineWidth;
-            float distanceFromLine = frac(uv.y / _scanLineWidth / scanLineDistanceNormalized);
-            float scanLineMask = 1 - smoothstep(0.0, _scanLineWidth, abs(distanceFromLine - 0.5));
+            // ----- SCAN
+            float newScanLineWidth = _scanLineWidth / 1000 * posInput.linearDepth;
+            float scanLineDistanceNormalized = _scanLineDistBetween / newScanLineWidth;
+            float distanceFromLine = frac(uv.y / newScanLineWidth / scanLineDistanceNormalized);
+            float scanLineMask = 1 - smoothstep(0.0, newScanLineWidth, abs(distanceFromLine - 0.5));
             // -----
             float furthestLineMask = step(_scanDistance - _scanLineDistBetween, uv.y);
             // ----
@@ -92,6 +97,17 @@ Shader "FullScreen/ScannerEffectFullscreen"
             float darkenMask = smoothstep(_scanDistance - _scanDistance * _darkenWidth, _scanDistance, uv.y);
             // ----
             float sideFadeMask = smoothstep(0, _sideFadeMagnitude, uv.x);
+
+            // Sobel Outline
+            float sobelMask;
+            float pixel = LoadCameraDepth(posInput.positionSS) * 10;
+            float northPixel = LoadCameraDepth(posInput.positionSS + float2(0, 1)) * 10;
+            float westPixel = LoadCameraDepth(posInput.positionSS + float2(-1, 0)) * 10;
+            float southPixel = LoadCameraDepth(posInput.positionSS + float2(0,-1)) * 10;
+            float eastPixel = LoadCameraDepth(posInput.positionSS + float2(1, 0)) * 10;
+            float differences = (pixel - northPixel) + (pixel - southPixel) + (pixel - westPixel) + (pixel - eastPixel);
+            sobelMask = step(_sobelThreshold, differences);
+            
             // ---- Final Color
 
             float3 rgb;
@@ -100,8 +116,8 @@ Shader "FullScreen/ScannerEffectFullscreen"
             float scanLineWithoutFurthest = scanLineMask * (1 - furthestLineMask);
             float scanLineFurthest = step(Eps_float(), furthestLineMask) * scanLineMask;
             
-            rgb = scanLineFurthest * _lastScanLineColor + scanLineWithoutFurthest * _scanLineColor + edgeGlowMask * _edgeGlowColor;
-            a = (saturate(scanLineMask) * sideFadeMask * darkenMask + edgeGlowMask * sideFadeMask + saturate(darkenMask + _darkenBaseValue) * sideFadeMask * _darkenOpacity) * _intensity;
+            rgb = scanLineFurthest * _lastScanLineColor + scanLineWithoutFurthest * _scanLineColor + edgeGlowMask * _edgeGlowColor + sobelMask * _sobelColor;
+            a = (scanLineMask * sideFadeMask * darkenMask + edgeGlowMask * sideFadeMask + saturate(darkenMask + _darkenBaseValue) * sideFadeMask * _darkenOpacity + sobelMask * sideFadeMask * darkenMask) * _intensity;
 
             rgb = lerp(color.rgb, rgb, a);
             color = float4(rgb, 1.0f);
