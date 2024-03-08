@@ -17,7 +17,7 @@ namespace _Scripts._Entities.Creatures.CreatureAI
 		[Header("References")] private Transform _transform;
 		private CreatureCombat _creatureCombat;
 		private EnemyController _controller;
-		[SerializeField] private Transform _playerTransform;
+		[SerializeField] public Transform _playerTransform;
 
 		[Header("Settings")] 
 		[SerializeField] private float _distanceAttack;
@@ -100,11 +100,6 @@ namespace _Scripts._Entities.Creatures.CreatureAI
 					new StaminaLessThan(_controller, _staminaLimit),
 					new DistanceDenLessThan(_controller, _transform, _distanceHeal),
 					new ChangeStamina(_controller, 5 * Time.deltaTime)
-				}),
-				new Sequencer(new List<TreeNode> {  // places den on spawn
-					new Invertor(new CheckState(_controller, EnemyController.PlayerStates.Air)),
-					new Invertor(new CheckDenExists(_controller)),
-					new PlaceDen(_controller, _transform)
 				})
 			});
 		}

@@ -419,5 +419,5 @@ public class EnemyController : MonoBehaviour
     private void  StopGrounded() { _grounded = false; }
     
     #endregion
-    
+
 }
