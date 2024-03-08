@@ -74,11 +74,11 @@ void GetInstanceID_float(out float Out){
 	#endif
 }
 
-void Instancing_float(float3 Position, out float3 Out, out float3 World){
+void Instancing_float(float3 Position, out float3 Out, out float4 World){
   Out = Position;
   float id = 0;
   GetInstanceID_float(id);
-  World = _instancePositions[id].xyz;
+  World = _instancePositions[id].xyzw;
 }
 
 #endif
