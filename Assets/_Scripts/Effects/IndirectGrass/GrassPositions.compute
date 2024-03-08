@@ -90,6 +90,8 @@ void ComputePosition(uint3 id : SV_DispatchThreadID)
 	worldPos.x += randomRange(float2(id.x, id.x % 0.35) + _chunkBottomLeftPosition.xz, -spacing / 2, spacing / 2);
 	worldPos.z += randomRange(float2(id.x, id.x % 0.52) + _chunkBottomLeftPosition.xz, -spacing / 2, spacing / 2);
 	worldPos.y = GetHeightmapAtWorldPosition(worldPos.xz);
+
+  float worldRot = randomRange(float2(id.x, id.x % 0.35) + _chunkBottomLeftPosition.xz, 0, TWO_PI);
   
-	_positionOutputBuffer[sampleIndex] = float4(worldPos, 1); //(x, y) applies x then y, do not use the function notation in the 3blue1brown video, it is wrong
+	_positionOutputBuffer[sampleIndex] = float4(worldPos, worldRot); //(x, y) applies x then y, do not use the function notation in the 3blue1brown video, it is wrong
 }
