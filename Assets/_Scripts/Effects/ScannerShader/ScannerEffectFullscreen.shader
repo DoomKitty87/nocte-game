@@ -53,10 +53,6 @@ Shader "FullScreen/ScannerEffectFullscreen"
     uniform float _sobelThreshold;
     uniform float _sobelDistFromEdgeShown;
     
-    float radiansToDegrees(float radians) {
-        return radians * 57.295779513082320876798154814105;
-    }
-    
     float4 FullScreenPass(Varyings varyings) : SV_Target
     {
         UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX(varyings);
@@ -75,16 +71,16 @@ Shader "FullScreen/ScannerEffectFullscreen"
         float2 uv = float2(0, 0);
         float2 dirToFrag = normalize(absWorldPos.xz - _scanCenterPos.xz);
         float2 dirScanForward = normalize(_scanDirectionXZ);
+        float a1 = atan2(dirToFrag.y, dirToFrag.x);
+        float a2 = atan2(dirScanForward.y, dirScanForward.x);
+        if (a1 < 0) a1 += 2 * PI;
+        if (a2 < 0) a2 += 2 * PI;
+        float difference = a1 - a2;
+        difference = abs(difference);
+        if (difference >= PI) difference = 2 * PI - difference;
+        difference = degrees(difference);
         
-        float angleToFrag = atan2(dirToFrag.y, dirToFrag.x);
-        float angleForward = atan2(dirScanForward.y, dirScanForward.x);
-
-        float angleDifference = angleForward - angleToFrag;
-        angleDifference = (angleDifference + PI) % (2.0 * PI) - PI;
-        angleDifference = abs(angleDifference);
-        angleDifference = radiansToDegrees(angleDifference);
-        
-        uv.x = 1 - (angleDifference / (_scanDegrees / 2));
+        uv.x = 1 - (difference / (_scanDegrees / 2));
         uv.y = distance(_scanCenterPos.xz, absWorldPos.xz);
         // uv.x > Eps_float() &&
         if ( uv.y < _scanDistance)
