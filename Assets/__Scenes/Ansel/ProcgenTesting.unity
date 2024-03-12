@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 80.15165, g: 49.04798, b: 41.66956, a: 1}
+  m_IndirectSpecularColor: {r: 84.31316, g: 51.745823, b: 45.830143, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -6462,6 +6462,16 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1192220085663393874, guid: 9251f6c58d15c7b428fef40ec34ce952,
+        type: 3}
+      propertyPath: _worldGen
+      value: 
+      objectReference: {fileID: 4258144910533491457}
+    - target: {fileID: 1192220085663393874, guid: 9251f6c58d15c7b428fef40ec34ce952,
+        type: 3}
+      propertyPath: _swimmingBuoyantForce
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 1411075424346787586, guid: 9251f6c58d15c7b428fef40ec34ce952,
         type: 3}
       propertyPath: m_LocalRotation.w
@@ -19472,7 +19482,7 @@ MonoBehaviour:
   - {fileID: 1237130334405037093, guid: 82ca8cc96c2980e4d92e49b5bfe50816, type: 3}
   - {fileID: 1237130334405037093, guid: 82ca8cc96c2980e4d92e49b5bfe50816, type: 3}
   _lodValues: 320000006400000096000000
-  _chunkCount: 15
+  _chunkCount: 5
   _chunkSize: 15
   _grassDensity: 6400000032000000190000000a000000
 --- !u!136 &4762342597639217425

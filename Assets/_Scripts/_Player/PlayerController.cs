@@ -205,22 +205,20 @@ public class PlayerController : MonoBehaviour
         }
     }
     
-    private bool _disableWorldGen;
+    private bool _disableWorldGen = false;
     private void UpdateStates() {
         if (!_disableWorldGen) {
-            if (_worldGen != null)
+            if (_worldGen != null) {
                 _currentWaterHeight = _worldGen.GetWaterHeight(new Vector2(transform.position.x, transform.position.z));
+                _currentWaterHeight = Math.Max(_currentWaterHeight, WorldGenInfo._lakePlaneHeight);
+            }
             else
                 _disableWorldGen = true;
         }
 
         if (State is PlayerStates.Frozen or PlayerStates.Noclip or PlayerStates.Grappling or PlayerStates.Driving)
             return;
-        if (_worldGen != null) {
-            if (_currentWaterHeight > transform.position.y - _collider.bounds.size.y / 2
-                || WorldGenInfo._lakePlaneHeight > transform.position.y - _collider.bounds.size.y / 2)
-                SetState(PlayerStates.Swimming);
-        }
+
         if (!_grounded)
             SetState(PlayerStates.Air);
         else if (Vector3.Distance(_velocity, Vector3.zero) < 0.1f && _inputVectorNormalized == Vector3.zero)
@@ -235,6 +233,11 @@ public class PlayerController : MonoBehaviour
             SetState(PlayerStates.Sprinting);
         else
             SetState(PlayerStates.Walking);
+        
+        if (!_disableWorldGen) {
+            if (_currentWaterHeight > transform.position.y)
+                SetState(PlayerStates.Swimming);
+        }
     }
     
     #endregion
@@ -472,8 +475,7 @@ public class PlayerController : MonoBehaviour
 
                 _acceleration += Vector3.up * (_swimmingBuoyantForce *
                                                Mathf.Max(
-                                                   _currentWaterHeight - (transform.position.y -
-                                                                          _collider.bounds.size.y / 2),
+                                                   _currentWaterHeight - (transform.position.y),
                                                    0
                                                ));
 
