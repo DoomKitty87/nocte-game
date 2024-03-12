@@ -143,7 +143,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _updateType: 0
-  _playerTransform: {fileID: 0}
   _distanceAttack: 3
   _distanceChase: 75
   _distanceGoal: 2
@@ -242,7 +241,19 @@ MonoBehaviour:
       m_Calls: []
   _onHealthZero:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 2241853167547969901}
+        m_TargetAssemblyTypeName: EnemyController, _Scripts._Entities.Creatures
+        m_MethodName: OnHealthZero
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   _onHealthChanged:
     m_PersistentCalls:
       m_Calls: []

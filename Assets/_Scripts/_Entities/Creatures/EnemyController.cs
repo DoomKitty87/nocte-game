@@ -419,5 +419,13 @@ public class EnemyController : MonoBehaviour
     private void  StopGrounded() { _grounded = false; }
     
     #endregion
+    
+    #region Health functions
+
+    public void OnHealthZero() {
+        Destroy(this.gameObject);
+    }
+    
+    #endregion
 
 }

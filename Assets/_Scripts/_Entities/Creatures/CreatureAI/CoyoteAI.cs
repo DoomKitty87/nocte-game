@@ -17,7 +17,7 @@ namespace _Scripts._Entities.Creatures.CreatureAI
 		[Header("References")] private Transform _transform;
 		private CreatureCombat _creatureCombat;
 		private EnemyController _controller;
-		[SerializeField] public Transform _playerTransform;
+		private Transform _playerTransform;
 
 		[Header("Settings")] 
 		[SerializeField] private float _distanceAttack;
@@ -34,12 +34,13 @@ namespace _Scripts._Entities.Creatures.CreatureAI
 			_transform = transform;
 			_controller = gameObject.GetComponent<EnemyController>();
 			_creatureCombat = gameObject.GetComponent<CreatureCombat>();
+			_playerTransform = GameObject.FindGameObjectWithTag("Player").transform;
 			return new Noder(new List<TreeNode> {
 				new Sequencer(new List<TreeNode> {
 					new Invertor(new CheckState(_controller, EnemyController.PlayerStates.Air)),
 					new Invertor(new StaminaLessThan(_controller, _staminaLimit)),
 					new ChangeStamina(_controller, -0.5f * Time.deltaTime),
-					new Sequencer(new List<TreeNode> {
+					new Sequencer(new List<TreeNode> { // enemy just attacked? cannot attack again
 						new CheckAttackRecent(_creatureCombat, _recencyLimit),
 						new SetState(_controller, EnemyController.PlayerStates.Walking)
 					}),
@@ -79,7 +80,7 @@ namespace _Scripts._Entities.Creatures.CreatureAI
 						new SetMovementToDirection(_transform.forward, _controller),
 						new CheckStuck(_transform),
 						new PlaceRandomGoal(_controller, _transform, _range)
-					}),
+					})
 				}),
 				new Selector(new List<TreeNode> {
 					new Sequencer(new List<TreeNode> { // keeps coyote at den to heal up before leaving
