@@ -16,8 +16,9 @@ public class ScanEffect : MonoBehaviour
     [SerializeField] private float _scanDistance = 10f;
     [SerializeField] private float _scanDuration = 1.5f;
     [SerializeField] private float _scanHangDuration = 2;
-    [SerializeField] private float _scanFadeOutDuration;
     [SerializeField] private AnimationCurve _scanSpeedCurve = AnimationCurve.EaseInOut(0, 0, 1, 1);
+    [SerializeField] private AnimationCurve _scanFadeOutCurve;
+    [SerializeField] private float _scanFadeOutDuration;
     [SerializeField] private float _scanCooldown = 3f;
 
     private bool _scanning = false;
@@ -42,8 +43,8 @@ public class ScanEffect : MonoBehaviour
         }
         durationLeft = _scanFadeOutDuration;
         while (durationLeft > 0) {
-            float t = 1 - durationLeft / _scanFadeOutDuration;
-            _effect._intensity.value = 1 - t;
+            float t =  1 - durationLeft / _scanFadeOutDuration;
+            _effect._intensity.value = _scanFadeOutCurve.Evaluate(t);
             durationLeft -= Time.deltaTime;
             yield return null;
         }
