@@ -56,7 +56,7 @@ public class WeatherManager : MonoBehaviour
   private float _spacePhaseMajor;
   private int _updateCounter;
   private int _updateCounter2;
-  private float _windDirection = 1.6f;
+  private float _windDirection = 2f;
   private ParticleSystem.EmissionModule _rainEmission;
 
   private void Start() {
