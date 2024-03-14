@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using System.Linq.Expressions;
+using System.Linq.Expressions; //Javyn wuz here 2
 using _Scripts._BehaviorTree;
 using UnityEngine;
 using Vector3 = UnityEngine.Vector3;
@@ -24,7 +24,7 @@ namespace _Scripts._Entities.Creatures.CreatureAI
 		[SerializeField] private float _distanceChase;
 		[SerializeField] private float _distanceGoal;
 		[SerializeField] private float _distanceHeal;
-		[SerializeField] private float _range;
+		[SerializeField] private float _range; //Javyn wuz here
 		[SerializeField] private float _staminaLimit;
 		[SerializeField] private float _leaveLimit;
 		[SerializeField] private float _recencyLimit;
@@ -59,7 +59,7 @@ namespace _Scripts._Entities.Creatures.CreatureAI
 							new SetMovementToDirection(_transform.forward, _controller),
 							new Invertor(new CheckAttackRecent(_creatureCombat, _recencyLimit)),
 							new SetState(_controller, EnemyController.PlayerStates.Sprinting)
-						}), 
+						}),
 						new Sequencer(new List<TreeNode> { // checks if the enemy is far from the player and starts roaming
 							new Invertor(new DistanceTransformLessThan(_transform, _playerTransform, _distanceChase)),
 							new Invertor(new CheckGoalExists(_controller)),
