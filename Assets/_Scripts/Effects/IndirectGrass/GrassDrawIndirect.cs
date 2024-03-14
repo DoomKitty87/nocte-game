@@ -17,6 +17,7 @@ public class GrassDrawIndirect : MonoBehaviour
   private Dictionary<Vector2Int, RenderChunk> _chunkDict = new Dictionary<Vector2Int, RenderChunk>();
   private Vector2Int _middleChunk = new Vector2Int(0, 0);
   private Transform _cameraPosition;
+  private Camera _camera;
 
   private void Awake() {
     if (_chunkCount % 2 == 0) _chunkCount++;
@@ -26,6 +27,7 @@ public class GrassDrawIndirect : MonoBehaviour
 
   public void Initialize() {
     _cameraPosition = Camera.main.transform;
+    _camera = Camera.main;
     _chunkDict.Clear();
     for (int i = -(_chunkCount - 1) / 2; i < (_chunkCount - 1) / 2 + 1; i++) {
       for (int j = -(_chunkCount - 1) / 2; j < (_chunkCount - 1) / 2 + 1; j++) {
@@ -41,7 +43,7 @@ public class GrassDrawIndirect : MonoBehaviour
 
   private void Update() {
     foreach (var chunk in _chunkDict.Values) {
-      chunk.Render(new Vector2(_cameraPosition.position.x, _cameraPosition.position.z));
+      chunk.Render(new Vector2(_cameraPosition.position.x, _cameraPosition.position.z), _camera);
     }
   }
 

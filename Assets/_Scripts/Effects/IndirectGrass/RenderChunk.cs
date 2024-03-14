@@ -90,7 +90,11 @@ public class RenderChunk {
 
   }
 
-  public void Render(Vector2 cameraPosition) {
+  public void Render(Vector2 cameraPosition, Camera camera) {
+
+    if (camera.WorldToScreenPoint(new Vector3(_position.x, 0, _position.z)).z < 0) {
+      return;
+    }
 
     float distance = Vector2.Distance(cameraPosition, _centerPosition);
     int lod = 0;
