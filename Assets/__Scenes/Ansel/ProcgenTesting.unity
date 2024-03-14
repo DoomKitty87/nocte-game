@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 84.12298, g: 51.672176, b: 45.90029, a: 1}
+  m_IndirectSpecularColor: {r: 58.74153, g: 35.859337, b: 30.20919, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -8047,7 +8047,7 @@ MonoBehaviour:
   _scanEffectVolume: {fileID: 1004352488}
   _scanOrigin: {fileID: 485706945}
   _scanKey: 113
-  _scanDistance: 10000
+  _scanDistance: 2000
   _scanDuration: 6
   _scanHangDuration: 2
   _scanSpeedCurve:
@@ -8085,7 +8085,61 @@ MonoBehaviour:
     m_RotationOrder: 4
   _scanFadeOutCurve:
     serializedVersion: 2
-    m_Curve: []
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: -1.417083
+      outSlope: -1.417083
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0.09930343
+    - serializedVersion: 3
+      time: 0.12740472
+      value: 0.06894308
+      inSlope: -1.281374
+      outSlope: -1.281374
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.10838791
+    - serializedVersion: 3
+      time: 0.41578647
+      value: 0.44315004
+      inSlope: -1.1512908
+      outSlope: -1.1512908
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 0.642825
+      value: 0.024185985
+      inSlope: -0.62308055
+      outSlope: -0.62308055
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 0.8256429
+      value: 0.40527034
+      inSlope: -1.386992
+      outSlope: -1.386992
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: -0.009812254
+      outSlope: -0.009812254
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.23336256
+      outWeight: 0
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
