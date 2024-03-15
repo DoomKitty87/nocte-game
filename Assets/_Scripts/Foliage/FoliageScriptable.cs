@@ -7,7 +7,9 @@ namespace Foliage
   public class FoliageScriptable : ScriptableObject
   {
     public FoliageType type;
+    public bool _useSubmesh;
     public Material Material;
+    public Material Material2;
     public FoliageLODData[] _lodRanges;
     public ComputeShader _positionComputeShader;
   }

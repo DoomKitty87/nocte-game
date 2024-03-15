@@ -8,6 +8,8 @@ namespace Foliage
     private Vector2 _centerPosition;
     private readonly Mesh[] _meshes;
     private readonly Material _material;
+    private readonly Material _material2;
+    private readonly bool _useSubmesh;
     private readonly float _chunkSize;
     private readonly int[] _chunkDensity;
     private readonly int[] _lodDistances;
@@ -17,7 +19,9 @@ namespace Foliage
     private readonly ComputeShader _positionCompute;
 
     private readonly uint[] _args = new uint[5];
+    private readonly uint[] _args2 = new uint[5];
     private ComputeBuffer _argsBuffer;
+    private ComputeBuffer _argsBuffer2;
 
     private ComputeBuffer _positionsBuffer;
     private Texture2D _heightmapTexture;
@@ -40,6 +44,8 @@ namespace Foliage
       _positionCompute = _scriptable._positionComputeShader;
     
       _material = new Material(_scriptable.Material);
+      _useSubmesh = _scriptable._useSubmesh;
+      if (_useSubmesh) _material2 = new Material(_scriptable.Material2);
 
       var lodDatas = _scriptable._lodRanges;
     
@@ -98,10 +104,18 @@ namespace Foliage
 
       _positionsBuffer = new ComputeBuffer(_chunkDensity[lod] * _chunkDensity[lod], sizeof(float) * 4);
 
-      _args[0] = (uint)_meshes[lod].GetIndexCount(1);
+      _args[0] = (uint)_meshes[lod].GetIndexCount(0);
       _args[1] = (uint)(_chunkDensity[lod] * _chunkDensity[lod]);
-      _args[2] = (uint)_meshes[lod].GetIndexStart(1);
-      _args[3] = (uint)_meshes[lod].GetBaseVertex(1);
+      _args[2] = (uint)_meshes[lod].GetIndexStart(0);
+      _args[3] = (uint)_meshes[lod].GetBaseVertex(0);
+      if (_useSubmesh) {
+        _args2[0] = (uint)_meshes[lod].GetIndexCount(1);
+        _args2[1] = (uint)(_chunkDensity[lod] * _chunkDensity[lod]);
+        _args2[2] = (uint)_meshes[lod].GetIndexStart(1);
+        _args2[3] = (uint)_meshes[lod].GetBaseVertex(1);
+        _argsBuffer2 = new ComputeBuffer(1, _args2.Length * sizeof(uint), ComputeBufferType.IndirectArguments);
+        _argsBuffer2.SetData(_args2);
+      }
       _argsBuffer.SetData(_args);
       _previousLOD = lod;
     }
@@ -126,11 +140,22 @@ namespace Foliage
           _args[3] = (uint)_meshes[lod].GetBaseVertex(1);
           _argsBuffer.SetData(_args);
 
+          if (_useSubmesh) {
+            _args2[0] = (uint)_meshes[lod].GetIndexCount(1);
+            _args2[1] = (uint)(_chunkDensity[lod] * _chunkDensity[lod]);
+            _args2[2] = (uint)_meshes[lod].GetIndexStart(1);
+            _args2[3] = (uint)_meshes[lod].GetBaseVertex(1);
+            _argsBuffer2.SetData(_args2);
+          }
+
           _previousLOD = lod;
       }
 
       //Debug.Log(lod);
-      Graphics.DrawMeshInstancedIndirect(_meshes[lod], 1, _material, new Bounds(new Vector3(0, 0, 0), Vector3.one * 10000f), _argsBuffer);
+      Graphics.DrawMeshInstancedIndirect(_meshes[lod], 0, _material, new Bounds(new Vector3(0, 0, 0), Vector3.one * 10000f), _argsBuffer);
+      if (_useSubmesh) {
+        Graphics.DrawMeshInstancedIndirect(_meshes[lod], 1, _material2, new Bounds(new Vector3(0, 0, 0), Vector3.one * 10000f), _argsBuffer2);
+      }
       //Debug.Log($"Rendering mesh");
       
     }
@@ -142,6 +167,9 @@ namespace Foliage
 
       _argsBuffer?.Release();
       _argsBuffer = null;
+
+      _argsBuffer2?.Release();
+      _argsBuffer2 = null;
 
     }
   }
