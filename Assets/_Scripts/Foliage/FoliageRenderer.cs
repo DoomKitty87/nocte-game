@@ -69,6 +69,7 @@ namespace Foliage
       ComputePositions(lod);
     
       _material.SetBuffer(PositionBuffer, _positionsBuffer);
+      if (_useSubmesh) _material2.SetBuffer(PositionBuffer, _positionsBuffer);
     }
 
     private void UpdateDensity(int lod) {
@@ -76,6 +77,7 @@ namespace Foliage
       _positionsBuffer = new ComputeBuffer(_chunkDensity[lod] * _chunkDensity[lod], sizeof(float) * 4);
       ComputePositions(lod);
       _material.SetBuffer(PositionBuffer, _positionsBuffer);
+      if (_useSubmesh) _material2.SetBuffer(PositionBuffer, _positionsBuffer);
     }
     
     private void ComputePositions(int lod) {
@@ -134,10 +136,10 @@ namespace Foliage
       if (lod != _previousLOD) {
           UpdateDensity(lod);
 
-          _args[0] = (uint)_meshes[lod].GetIndexCount(1);
+          _args[0] = (uint)_meshes[lod].GetIndexCount(0);
           _args[1] = (uint)(_chunkDensity[lod] * _chunkDensity[lod]);
-          _args[2] = (uint)_meshes[lod].GetIndexStart(1);
-          _args[3] = (uint)_meshes[lod].GetBaseVertex(1);
+          _args[2] = (uint)_meshes[lod].GetIndexStart(0);
+          _args[3] = (uint)_meshes[lod].GetBaseVertex(0);
           _argsBuffer.SetData(_args);
 
           if (_useSubmesh) {
