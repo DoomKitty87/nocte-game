@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 58.74153, g: 35.859337, b: 30.20919, a: 1}
+  m_IndirectSpecularColor: {r: 84.50181, g: 51.66882, b: 46.27789, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -19503,6 +19503,10 @@ PrefabInstance:
         type: 3}
       insertIndex: -1
       addedObject: {fileID: 4258144910533491458}
+    - targetCorrespondingSourceObject: {fileID: 7828621975473438852, guid: 862d92a67177d4c7b84ab88d6b6e0257,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 4258144910533491459}
   m_SourcePrefab: {fileID: 100100000, guid: 862d92a67177d4c7b84ab88d6b6e0257, type: 3}
 --- !u!1 &4258144910533491456 stripped
 GameObject:
@@ -19545,6 +19549,19 @@ MonoBehaviour:
   _chunkCount: 15
   _chunkSize: 15
   _grassDensity: 6400000032000000190000000a000000
+--- !u!114 &4258144910533491459
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4258144910533491456}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 18a4e77c39ca141739a8cee42705b5e8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _chunkSize: 320
 --- !u!136 &4762342597639217425
 CapsuleCollider:
   m_ObjectHideFlags: 0

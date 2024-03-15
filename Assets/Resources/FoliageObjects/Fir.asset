@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 66f3bff2376ff4ab8a8d95181fd974c3, type: 3}
+  m_Name: Fir
+  m_EditorClassIdentifier: 
+  type: 0
+  Material: {fileID: 2100000, guid: bd09531d12c7bef49a2b57ab3fbb6d79, type: 2}
+  _lodRanges:
+  - Mesh: {fileID: 80228495367173954, guid: 9fed2d493e029450a90f3bde0e465da7, type: 3}
+    Distance: 2
+    Density: 25
+  - Mesh: {fileID: -4795301418380413282, guid: 6c5fe95a8b36b4c41b897f292121ed93, type: 3}
+    Distance: 4
+    Density: 25
+  - Mesh: {fileID: 8299668197654103502, guid: 9c0adad8f2cbe42589cad1b338c24942, type: 3}
+    Distance: 6
+    Density: 25
+  _positionComputeShader: {fileID: 7200000, guid: ad2522b6a715ee54d8ae10d592b5a0cc,
+    type: 3}
