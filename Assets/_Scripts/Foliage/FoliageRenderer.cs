@@ -21,6 +21,7 @@ namespace Foliage
 
     private ComputeBuffer _positionsBuffer;
     private Texture2D _heightmapTexture;
+    private Texture2D _growthTexture;
   
     private FoliageScriptable _scriptable;
     private static readonly int PositionBuffer = Shader.PropertyToID("_instancePositions");
@@ -81,6 +82,7 @@ namespace Foliage
       _positionCompute.SetFloat("_tileWidth", WorldGenInfo._tileEdgeSize);
       _positionCompute.SetVector("_tileBottomLeftPosition", new Vector3(Mathf.Floor(_position.x / WorldGenInfo._tileEdgeSize) * WorldGenInfo._tileEdgeSize, 0, Mathf.Floor(_position.z / WorldGenInfo._tileEdgeSize) * WorldGenInfo._tileEdgeSize));
       _positionCompute.SetTexture(kernelIndex, Shader.PropertyToID("_tileHeightmapTexture"), _heightmapTexture);
+      _positionCompute.SetTexture(kernelIndex, Shader.PropertyToID("_tileGrowthTexture"), _growthTexture);
       _positionCompute.SetBuffer(kernelIndex, Shader.PropertyToID("_positionOutputBuffer"), _positionsBuffer);
       _positionCompute.GetKernelThreadGroupSizes(kernelIndex, out uint threadX, out _, out _);
       _positionCompute.Dispatch(kernelIndex, Mathf.CeilToInt(_chunkDensity[lod] * _chunkDensity[lod] / (float)threadX), 1, 1);
@@ -89,8 +91,9 @@ namespace Foliage
     
     private void Initialize(int lod) {
       _argsBuffer = new ComputeBuffer(1, _args.Length * sizeof(uint), ComputeBufferType.IndirectArguments);
-      _heightmapTexture = WorldGenInfo._worldGenerator.GetHeightmapTexture(new Vector2(_position.x, _position.z)).Item1;
-
+      var textures = WorldGenInfo._worldGenerator.GetHeightmapTexture(new Vector2(_position.x, _position.z));
+      _heightmapTexture = textures.Item1;
+      _growthTexture = textures.Item2;
       _centerPosition = new Vector2(_position.x + _chunkSize / 2, _position.z + _chunkSize / 2);
 
       _positionsBuffer = new ComputeBuffer(_chunkDensity[lod] * _chunkDensity[lod], sizeof(float) * 4);
