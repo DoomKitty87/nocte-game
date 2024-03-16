@@ -123,6 +123,7 @@ namespace Foliage
     }
 
     public void Render(Vector2 cameraPosition) {
+
       //Debug.Log("Rendering");
       float distance = Vector2.Distance(cameraPosition, _centerPosition);
       int lod = 0;

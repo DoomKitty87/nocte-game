@@ -14,6 +14,7 @@ namespace Foliage
 
     private Vector2Int _middleChunk = new Vector2Int(0, 0);
     private int _chunkDistance;
+    private Camera _camera;
 
     private void Awake() {
       WorldGenerator.GenerationComplete += Initialize;
@@ -33,6 +34,7 @@ namespace Foliage
     private void Initialize() {
       if (_initialized) return;
       _cameraPosition = Camera.main.transform;
+      _camera = Camera.main;
       _chunkDict.Clear();
       
       for (var i = -_chunkDistance; i <= _chunkDistance; i++) {
@@ -52,7 +54,7 @@ namespace Foliage
     }
 
     private void Update() {
-      foreach (var chunk in _chunkDict.Values) chunk.Render(new Vector2(_cameraPosition.position.x, _cameraPosition.position.z));
+      foreach (var chunk in _chunkDict.Values) chunk.Render(new Vector2(_cameraPosition.position.x, _cameraPosition.position.z), _camera);
     }
 
     public void UpdatePlayerPosition(Vector2 playerPosition) {
