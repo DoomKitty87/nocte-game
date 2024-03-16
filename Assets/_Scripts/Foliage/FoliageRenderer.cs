@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Foliage
@@ -29,6 +31,8 @@ namespace Foliage
     private ComputeBuffer _positionsBuffer;
     private Texture2D _heightmapTexture;
     private Texture2D _growthTexture;
+
+    private List<GameObject> _activeColliders = new List<GameObject>();
   
     private FoliageScriptable _scriptable;
     private static readonly int PositionBuffer = Shader.PropertyToID("_instancePositions");
@@ -76,6 +80,7 @@ namespace Foliage
       Initialize(lod);
     
       ComputePositions(lod);
+      if (lod == 0) UpdateColliders(lod);
     
       _material.SetBuffer(PositionBuffer, _positionsBuffer);
       _billboardMaterial.SetBuffer(PositionBuffer, _positionsBuffer);
@@ -184,6 +189,9 @@ namespace Foliage
             _argsBuffer.SetData(_args);
           }
 
+          if (lod == 0) UpdateColliders(lod);
+          else if (_previousLOD == 0) UpdateColliders(lod);
+
           _previousLOD = lod;
       }
 
@@ -200,6 +208,32 @@ namespace Foliage
 
       //Debug.Log($"Rendering mesh");
       
+    }
+
+    private void UpdateColliders(int lod) {
+      if (lod == 0) {
+        Vector4[] data = new Vector4[_chunkDensity[lod] * _chunkDensity[lod]];
+        _positionsBuffer.GetData(data);
+        Debug.Log(data[0]);
+        foreach (Vector4 v in data) {
+          if (FoliagePool._pool[_scriptable].Count == 0) {
+            var collider = GameObject.Instantiate(_scriptable.ColliderPrefab, new Vector3(v.x, v.y, v.z), Quaternion.identity);
+            _activeColliders.Add(collider);
+          }
+          else {
+            var collider = FoliagePool._pool[_scriptable][0];
+            FoliagePool._pool[_scriptable].RemoveAt(0);
+            collider.transform.position = new Vector3(v.x, v.y, v.z);
+            _activeColliders.Add(collider);
+          }
+        }
+      }
+      else {
+        foreach (GameObject g in _activeColliders) {
+          FoliagePool._pool[_scriptable].Add(g);
+        }
+        _activeColliders.Clear();
+      }
     }
 
     public void CleanUp() {

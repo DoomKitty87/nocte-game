@@ -92,7 +92,7 @@ public class RenderChunk {
 
   public void Render(Vector2 cameraPosition, Camera camera) {
 
-    if (camera.WorldToScreenPoint(new Vector3(_position.x, camera.transform.position.y, _position.z)).z < -_chunkSize) {
+    if (camera.WorldToScreenPoint(new Vector3(_position.x, camera.transform.position.y, _position.z)).z < -_chunkSize * 1.5f) {
       return;
     }
 

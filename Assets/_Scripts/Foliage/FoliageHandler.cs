@@ -5,6 +5,14 @@ using UnityEngine;
 
 namespace Foliage
 {
+
+  public static class FoliagePool
+  {
+
+    public static Dictionary<FoliageScriptable, List<GameObject>> _pool;
+
+  }
+
   public class FoliageHandler : MonoBehaviour
   {
     private Dictionary<Vector2Int, FoliageChunk> _chunkDict = new Dictionary<Vector2Int, FoliageChunk>();
@@ -19,10 +27,15 @@ namespace Foliage
 
     private void Awake() {
       WorldGenerator.GenerationComplete += Initialize;
+      FoliagePool._pool = new Dictionary<FoliageScriptable, List<GameObject>>();
     }
 
     private void Start() {
       _scriptables = Resources.LoadAll<FoliageScriptable>("FoliageObjects");
+      
+      foreach (var scriptable in _scriptables) {
+        FoliagePool._pool.Add(scriptable, new List<GameObject>());
+      }
 
       // Finds the farthest LOD distance in all FoliageScriptable objects
       var farthestChunkDistance = _scriptables.Select(scriptable => scriptable._maxBillboardDistance).
