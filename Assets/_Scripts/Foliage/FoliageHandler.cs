@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -24,10 +25,10 @@ namespace Foliage
       _scriptables = Resources.LoadAll<FoliageScriptable>("FoliageObjects");
 
       // Finds the farthest LOD distance in all FoliageScriptable objects
-      var farthestChunkDistance = _scriptables.Select(scriptable => scriptable._lodRanges[^1].Distance).
+      var farthestChunkDistance = _scriptables.Select(scriptable => scriptable._maxBillboardDistance).
         Prepend(0).Max();
 
-      _chunkDistance = farthestChunkDistance;
+      _chunkDistance = Mathf.FloorToInt(farthestChunkDistance / _chunkSize);
     }
 
     private bool _initialized;

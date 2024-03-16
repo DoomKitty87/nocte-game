@@ -9,10 +9,13 @@ namespace Foliage
     private readonly Mesh[] _meshes;
     private readonly Material _material;
     private readonly Material _material2;
+    private readonly Material _billboardMaterial;
     private readonly bool _useSubmesh;
     private readonly float _chunkSize;
     private readonly int[] _chunkDensity;
     private readonly int[] _lodDistances;
+    private readonly float _billboardDistance;
+    private readonly Mesh _billboardMesh;
 
     private int _previousLOD;
 
@@ -47,6 +50,10 @@ namespace Foliage
       _useSubmesh = _scriptable._useSubmesh;
       if (_useSubmesh) _material2 = new Material(_scriptable.Material2);
 
+      _billboardMaterial = new Material(_scriptable.BillboardMaterial);
+      _billboardDistance = _scriptable._maxBillboardDistance;
+      _billboardMesh = _scriptable.BillboardMesh;
+
       var lodDatas = _scriptable._lodRanges;
     
       for (var i = 0; i < numberOfLODs; i++) {
@@ -64,24 +71,29 @@ namespace Foliage
           if (distance > _lodDistances[i]) lod = i + 1;
       }
 
+      if (distance > _lodDistances[_lodDistances.Length - 1] && distance < _billboardDistance) lod = -1;
+
       Initialize(lod);
     
       ComputePositions(lod);
     
       _material.SetBuffer(PositionBuffer, _positionsBuffer);
+      _billboardMaterial.SetBuffer(PositionBuffer, _positionsBuffer);
       if (_useSubmesh) _material2.SetBuffer(PositionBuffer, _positionsBuffer);
     }
 
     private void UpdateDensity(int lod) {
+      if (lod == -1) lod = _chunkDensity.Length - 1;
       _positionsBuffer?.Release();
       _positionsBuffer = new ComputeBuffer(_chunkDensity[lod] * _chunkDensity[lod], sizeof(float) * 4);
       ComputePositions(lod);
       _material.SetBuffer(PositionBuffer, _positionsBuffer);
+      _billboardMaterial.SetBuffer(PositionBuffer, _positionsBuffer);
       if (_useSubmesh) _material2.SetBuffer(PositionBuffer, _positionsBuffer);
     }
     
     private void ComputePositions(int lod) {
-
+      if (lod == -1) lod = _chunkDensity.Length - 1;
       var kernelIndex = _positionCompute.FindKernel("ComputePosition");
       _positionCompute.SetFloat(Shader.PropertyToID("_samples"), _chunkDensity[lod]);
       _positionCompute.SetFloat(Shader.PropertyToID("_size"), _chunkSize);
@@ -99,26 +111,36 @@ namespace Foliage
     
     private void Initialize(int lod) {
       _argsBuffer = new ComputeBuffer(1, _args.Length * sizeof(uint), ComputeBufferType.IndirectArguments);
+      _argsBuffer2 = new ComputeBuffer(1, _args2.Length * sizeof(uint), ComputeBufferType.IndirectArguments);
       var textures = WorldGenInfo._worldGenerator.GetHeightmapTexture(new Vector2(_position.x, _position.z));
       _heightmapTexture = textures.Item1;
       _growthTexture = textures.Item2;
       _centerPosition = new Vector2(_position.x + _chunkSize / 2, _position.z + _chunkSize / 2);
 
-      _positionsBuffer = new ComputeBuffer(_chunkDensity[lod] * _chunkDensity[lod], sizeof(float) * 4);
+      _positionsBuffer = new ComputeBuffer(_chunkDensity[lod == -1 ? ^1 : lod] * _chunkDensity[lod == -1 ? ^1 : lod], sizeof(float) * 4);
 
-      _args[0] = (uint)_meshes[lod].GetIndexCount(0);
-      _args[1] = (uint)(_chunkDensity[lod] * _chunkDensity[lod]);
-      _args[2] = (uint)_meshes[lod].GetIndexStart(0);
-      _args[3] = (uint)_meshes[lod].GetBaseVertex(0);
-      if (_useSubmesh) {
-        _args2[0] = (uint)_meshes[lod].GetIndexCount(1);
-        _args2[1] = (uint)(_chunkDensity[lod] * _chunkDensity[lod]);
-        _args2[2] = (uint)_meshes[lod].GetIndexStart(1);
-        _args2[3] = (uint)_meshes[lod].GetBaseVertex(1);
-        _argsBuffer2 = new ComputeBuffer(1, _args2.Length * sizeof(uint), ComputeBufferType.IndirectArguments);
-        _argsBuffer2.SetData(_args2);
+      if (lod != -1) {
+        _args[0] = (uint)_meshes[lod].GetIndexCount(0);
+        _args[1] = (uint)(_chunkDensity[lod] * _chunkDensity[lod]);
+        _args[2] = (uint)_meshes[lod].GetIndexStart(0);
+        _args[3] = (uint)_meshes[lod].GetBaseVertex(0);
+        if (_useSubmesh) {
+          _args2[0] = (uint)_meshes[lod].GetIndexCount(1);
+          _args2[1] = (uint)(_chunkDensity[lod] * _chunkDensity[lod]);
+          _args2[2] = (uint)_meshes[lod].GetIndexStart(1);
+          _args2[3] = (uint)_meshes[lod].GetBaseVertex(1);
+          _argsBuffer2.SetData(_args2);
+        }
+        _argsBuffer.SetData(_args);
       }
-      _argsBuffer.SetData(_args);
+      else {
+        _args[0] = (uint)_billboardMesh.GetIndexCount(0);
+        _args[1] = (uint)(_chunkDensity[^1] * _chunkDensity[^1]);
+        _args[2] = (uint)_billboardMesh.GetIndexStart(0);
+        _args[3] = (uint)_billboardMesh.GetBaseVertex(0);
+        _argsBuffer.SetData(_args);
+      }
+      
       _previousLOD = lod;
     }
 
@@ -134,31 +156,48 @@ namespace Foliage
         }
       }
 
+      if (distance > _lodDistances[_lodDistances.Length - 1]) lod = -1;
+
       if (lod != _previousLOD) {
-          UpdateDensity(lod);
+          if (lod != -1 && _previousLOD != -1) UpdateDensity(lod);
 
-          _args[0] = (uint)_meshes[lod].GetIndexCount(0);
-          _args[1] = (uint)(_chunkDensity[lod] * _chunkDensity[lod]);
-          _args[2] = (uint)_meshes[lod].GetIndexStart(0);
-          _args[3] = (uint)_meshes[lod].GetBaseVertex(0);
-          _argsBuffer.SetData(_args);
+          if (lod != -1) {
+            _args[0] = (uint)_meshes[lod].GetIndexCount(0);
+            _args[1] = (uint)(_chunkDensity[lod] * _chunkDensity[lod]);
+            _args[2] = (uint)_meshes[lod].GetIndexStart(0);
+            _args[3] = (uint)_meshes[lod].GetBaseVertex(0);
+            _argsBuffer.SetData(_args);
 
-          if (_useSubmesh) {
-            _args2[0] = (uint)_meshes[lod].GetIndexCount(1);
-            _args2[1] = (uint)(_chunkDensity[lod] * _chunkDensity[lod]);
-            _args2[2] = (uint)_meshes[lod].GetIndexStart(1);
-            _args2[3] = (uint)_meshes[lod].GetBaseVertex(1);
-            _argsBuffer2.SetData(_args2);
+            if (_useSubmesh) {
+              _args2[0] = (uint)_meshes[lod].GetIndexCount(1);
+              _args2[1] = (uint)(_chunkDensity[lod] * _chunkDensity[lod]);
+              _args2[2] = (uint)_meshes[lod].GetIndexStart(1);
+              _args2[3] = (uint)_meshes[lod].GetBaseVertex(1);
+              _argsBuffer2.SetData(_args2);
+            }
+          }
+          else {
+            _args[0] = (uint)_billboardMesh.GetIndexCount(0);
+            _args[1] = (uint)(_chunkDensity[^1] * _chunkDensity[^1]);
+            _args[2] = (uint)_billboardMesh.GetIndexStart(0);
+            _args[3] = (uint)_billboardMesh.GetBaseVertex(0);
+            _argsBuffer.SetData(_args);
           }
 
           _previousLOD = lod;
       }
 
       //Debug.Log(lod);
-      Graphics.DrawMeshInstancedIndirect(_meshes[lod], 0, _material, new Bounds(new Vector3(0, 0, 0), Vector3.one * 10000f), _argsBuffer);
-      if (_useSubmesh) {
-        Graphics.DrawMeshInstancedIndirect(_meshes[lod], 1, _material2, new Bounds(new Vector3(0, 0, 0), Vector3.one * 10000f), _argsBuffer2);
+      if (lod != -1) {
+        Graphics.DrawMeshInstancedIndirect(_meshes[lod], 0, _material, new Bounds(new Vector3(0, 0, 0), Vector3.one * 10000f), _argsBuffer);
+        if (_useSubmesh) {
+          Graphics.DrawMeshInstancedIndirect(_meshes[lod], 1, _material2, new Bounds(new Vector3(0, 0, 0), Vector3.one * 10000f), _argsBuffer2);
+        }
       }
+      else {
+        Graphics.DrawMeshInstancedIndirect(_billboardMesh, 0, _billboardMaterial, new Bounds(new Vector3(0, 0, 0), Vector3.one * 10000f), _argsBuffer);
+      }
+
       //Debug.Log($"Rendering mesh");
       
     }
