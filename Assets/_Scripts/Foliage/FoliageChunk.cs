@@ -24,7 +24,7 @@ namespace Foliage
 
 
     public void Render(Vector2 cameraPosition, Camera camera) {
-      if (camera.WorldToScreenPoint(new Vector3(_chunkCenter.x, camera.transform.position.y, _chunkCenter.y)).z < -_chunkSize) return;
+      if (camera.WorldToScreenPoint(new Vector3(_chunkCenter.x, camera.transform.position.y, _chunkCenter.y)).z < -_chunkSize * 1.5f) return;
       foreach (var renderer in _renderers) renderer.Render(cameraPosition);
     }
 
