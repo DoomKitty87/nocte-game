@@ -8,6 +8,8 @@ namespace Console
 {
     public class ConsoleController : MonoBehaviour
     {
+	    private InputHandler _input;
+
         [SerializeField] private GameObject _console;
 
         private ConsoleUI _consoleUI;
@@ -68,6 +70,8 @@ namespace Console
         }
 
         private void Start() {
+            _input = InputHandler.Instance;
+
             _consoleUI = _console.GetComponentInChildren<ConsoleUI>();
             
             CloseConsole();
@@ -99,17 +103,17 @@ namespace Console
         }
 
         private void ReadKeyInput() {
-            if (Input.GetKeyDown(_consoleKey))
+            if (_input.Console)
                 SwapConsoleState();
 
-            if (Input.GetKeyDown(_noclipKey) && BackgroundInfo._enableCheats && !_console.activeInHierarchy) {
+            if (_input.Noclip && BackgroundInfo._enableCheats && !_console.activeInHierarchy) {
                 _consoleUI.ApplyCommand("noclip toggle");
             }
 
-            if (_console.activeInHierarchy && Input.GetKeyDown(KeyCode.UpArrow)) 
+            if (_console.activeInHierarchy && _input.MoveVector.y > 0) 
                 _consoleUI.GetPreviousMessage(1);
             
-            if (_console.activeInHierarchy && Input.GetKeyDown(KeyCode.DownArrow)) 
+            if (_console.activeInHierarchy && _input.MoveVector.y < 0) 
                 _consoleUI.GetPreviousMessage(-1);
         }
         

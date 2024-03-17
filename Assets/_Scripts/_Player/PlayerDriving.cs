@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class PlayerDriving : MonoBehaviour
 {
+  private InputHandler _input;
 
   [SerializeField] private MonoBehaviour[] _toDisable; 
   
@@ -23,9 +24,14 @@ public class PlayerDriving : MonoBehaviour
     _playerCameraController = GetComponent<PlayerCameraController>();
   }
 
+  void Start()
+  {
+    _input = InputHandler.Instance;
+  }
+
   private void Update() {
-    if (Input.GetKeyDown(_vehicleKey) && _hasVehicle && !_inVehicle) EnterVehicle(_availableVehicles[0]);
-    else if (Input.GetKeyDown(_vehicleKey) && _inVehicle) ExitVehicle();
+    if (_input.Interact && _hasVehicle && !_inVehicle) EnterVehicle(_availableVehicles[0]);
+    else if (_input.Interact && _inVehicle) ExitVehicle();
   }
 
   private void OnTriggerEnter(Collider other) {

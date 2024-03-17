@@ -2,6 +2,8 @@ using UnityEngine;
 
 public class PlayerGrapple : MonoBehaviour
 {
+    private InputHandler _input;
+
     public KeyCode _grappleButton = KeyCode.Mouse1;
     
     [Header("References")]
@@ -45,6 +47,8 @@ public class PlayerGrapple : MonoBehaviour
     }
 
     private void Start() {
+        _input = InputHandler.Instance;
+
         _playerController = GetComponent<PlayerController>();
 
         PlayerController.Freeze += FreezeGrapple;
@@ -55,7 +59,7 @@ public class PlayerGrapple : MonoBehaviour
         if (_frozen) return;
         if (_grapplingCoolDownTimer > 0)
             _grapplingCoolDownTimer -= Time.deltaTime;
-        if (Input.GetKeyDown(_grappleButton)) StartGrapple();
+        if (_input.Grapple) StartGrapple();
         if (Input.GetKeyUp(_grappleButton)) StopGrapple();
     }
 
@@ -86,7 +90,7 @@ public class PlayerGrapple : MonoBehaviour
     private float _time;
     
     private void ExecuteGrapple() {
-        if (!Input.GetKey(_grappleButton)) return;
+        if (!_input.Grapple) return;
         _currentlyGrappling = true;
         _playerController.State = PlayerController.PlayerStates.Grappling;
         _time = 0;

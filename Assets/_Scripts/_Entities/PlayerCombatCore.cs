@@ -5,6 +5,8 @@ using UnityEngine;
 [RequireComponent(typeof(HealthInterface))]
 public class PlayerCombatCore : MonoBehaviour
 {
+  private InputHandler _input;
+
   [Header("Dependencies")]
   public Camera _mainCamera;
   [SerializeField] private GameObject _weaponContainer;
@@ -42,7 +44,7 @@ public class PlayerCombatCore : MonoBehaviour
   }
   
   private void UpdateControls() {
-    if (Input.GetAxisRaw("Fire1") > 0) {
+    if (_input.Shoot) {
       if (_fire1LastFrame == false) {
         _instanceScript.FireDown();
         _weaponUI.UpdateAmmoCount(_instanceScript.GetAmmo);
@@ -60,7 +62,9 @@ public class PlayerCombatCore : MonoBehaviour
       }
       _fire1LastFrame = false;
     }
-    if (Input.GetAxisRaw("Fire2") > 0) {
+    if (_input.Grapple) { // Super confused what this is supposed to do, need to impliment new input system here but grapple is already right click?
+      Debug.LogWarning("Unclear what's happening here, see comment in PlayerCombatCore.cs line 65.");
+      return;
       if (_fire2LastFrame == false) {
         _instanceScript.Fire2Down();
         _weaponUI.UpdateAmmoCount(_instanceScript.GetAmmo);
@@ -82,6 +86,8 @@ public class PlayerCombatCore : MonoBehaviour
   
   // Start is called before the first frame update
   private void Start() {
+    _input = InputHandler.Instance;
+
     _fire1LastFrame = false;
     _fire2LastFrame = false;
     if (_currentWeaponItem != null) InstanceWeaponItem();

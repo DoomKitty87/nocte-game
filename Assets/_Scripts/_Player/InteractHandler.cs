@@ -5,6 +5,7 @@ using TMPro;
 
 public class InteractHandler : MonoBehaviour
 {
+  private InputHandler _input;
 
   [SerializeField] private TextMeshProUGUI _promptText;
   
@@ -12,8 +13,13 @@ public class InteractHandler : MonoBehaviour
   
   private List<GameObject> _interactibles = new List<GameObject>();
 
+  void Start()
+  {
+    _input = InputHandler.Instance;
+  }
+
   private void Update() {
-    if (Input.GetKeyDown(_interactKey) && _interactibles.Count > 0) {
+    if (_input.Interact && _interactibles.Count > 0) {
       _interactibles[0].GetComponent<Interactible>()._onInteract.Invoke();
       _interactibles.RemoveAt(0);
       if (_promptText == null) return;

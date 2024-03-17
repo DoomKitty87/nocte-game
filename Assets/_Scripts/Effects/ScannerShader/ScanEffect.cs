@@ -6,13 +6,13 @@ using UnityEngine.Rendering;
 
 public class ScanEffect : MonoBehaviour
 {
+	private InputHandler _input;
 
     [Header("Dependencies")]
     [SerializeField] private Volume _scanEffectVolume;
     [SerializeField] private Transform _scanOrigin;
     private ScannerEffectPostProcessVolume _effect;
     [Header("Settings")]
-    [SerializeField] private KeyCode _scanKey = KeyCode.Q;
     [SerializeField] private float _scanDistance = 10f;
     [SerializeField] private float _scanDuration = 1.5f;
     [SerializeField] private float _scanHangDuration = 2;
@@ -55,6 +55,8 @@ public class ScanEffect : MonoBehaviour
     // Start is called before the first frame update
     private void Start()
     {
+        _input = InputHandler.Instance;
+
         if (_scanEffectVolume.profile.TryGet<ScannerEffectPostProcessVolume>(out var effect)) {
             _effect = effect;
         } 
@@ -67,7 +69,7 @@ public class ScanEffect : MonoBehaviour
     // Update is called once per frame
     private void Update()
     {
-        if (Input.GetKeyDown(_scanKey) && !_scanning && _timeSinceLastScan > _scanCooldown) {
+        if (_input.Scan && !_scanning && _timeSinceLastScan > _scanCooldown) {
             _timeSinceLastScan = 0;
             StartCoroutine(Scan());
         }

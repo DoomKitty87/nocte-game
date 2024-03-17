@@ -5,6 +5,7 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
+    private InputHandler _input;
 
     public static PlayerController Instance { get; private set; }
     
@@ -90,7 +91,7 @@ public class PlayerController : MonoBehaviour
     
     private float _currentWaterHeight;
 
-    private Vector3 _inputVectorNormalized;
+    private Vector3 _inputVector;
     
     private Vector3 _horizontalVelocity;
     private Vector3 _horizontalAcceleration;
@@ -137,6 +138,10 @@ public class PlayerController : MonoBehaviour
                 ConsoleController.ConsoleClosed += EnablePlayer;
             }
         }
+    }
+
+    void Start() {
+        _input = InputHandler.Instance;
     }
 
     #region State Machine
@@ -221,7 +226,7 @@ public class PlayerController : MonoBehaviour
 
         if (!_grounded)
             SetState(PlayerStates.Air);
-        else if (Vector3.Distance(_velocity, Vector3.zero) < 0.1f && _inputVectorNormalized == Vector3.zero)
+        else if (Vector3.Distance(_velocity, Vector3.zero) < 0.1f && _inputVector == Vector3.zero)
             SetState(PlayerStates.Idle);
         else if (_crouching) {
             if (_horizontalVelocityMagnitude < _slideThreshold)
@@ -245,11 +250,11 @@ public class PlayerController : MonoBehaviour
     #region Input
 
     private void GetInput() {
-        _inputVectorNormalized = new Vector3(Input.GetAxisRaw("Horizontal"), 0, Input.GetAxisRaw("Vertical")).normalized;
-        _jumping = (Input.GetKey(_jumpKey));
-        _sprinting = Input.GetKey(_sprintKey);
-        _sprintingForward = (_sprinting && _inputVectorNormalized.z > 0); // Can only sprint when forward component in input
-        _crouching = Input.GetKey(_crouchKey);
+        _inputVector = new Vector3(_input.MoveVector.x, 0, _input.MoveVector.y);
+        _jumping = _input.Jump;
+        _sprinting = _input.Sprint;
+        _sprintingForward = (_sprinting && _inputVector.z > 0); // Can only sprint when forward component in input
+        _crouching = _input.Crouch;
     }
     
     #endregion
@@ -326,7 +331,7 @@ public class PlayerController : MonoBehaviour
             case PlayerStates.Walking: {
                 // Transform the input vector to the orientation's forward and right directions
                 Vector3 inputDirection =
-                    (_inputVectorNormalized.x * rightDirection + _inputVectorNormalized.z * forwardDirection).
+                    (_inputVector.x * rightDirection + _inputVector.z * forwardDirection).
                     normalized;
 
                 // Fixed movement for slope                
@@ -349,7 +354,7 @@ public class PlayerController : MonoBehaviour
             case PlayerStates.Sprinting: {
                 // Transform the input vector to the orientation's forward and right directions
                 Vector3 inputDirection =
-                    (_inputVectorNormalized.x * rightDirection + _inputVectorNormalized.z * forwardDirection).
+                    (_inputVector.x * rightDirection + _inputVector.z * forwardDirection).
                     normalized;
 
                 // Fixed movement for slope                
@@ -372,7 +377,7 @@ public class PlayerController : MonoBehaviour
             case PlayerStates.Crouching: {
                 // Transform the input vector to the orientation's forward and right directions
                 Vector3 inputDirection =
-                    (_inputVectorNormalized.x * rightDirection + _inputVectorNormalized.z * forwardDirection).
+                    (_inputVector.x * rightDirection + _inputVector.z * forwardDirection).
                     normalized;
 
                 // Fixed movement for slope                
@@ -423,7 +428,7 @@ public class PlayerController : MonoBehaviour
             case PlayerStates.Air: {
                 // Transform the input vector to the orientation's forward and right directions
                 Vector3 inputDirection =
-                    (_inputVectorNormalized.x * rightDirection + _inputVectorNormalized.z * forwardDirection).
+                    (_inputVector.x * rightDirection + _inputVector.z * forwardDirection).
                     normalized;
 
                 // 4 different cases:
@@ -466,7 +471,7 @@ public class PlayerController : MonoBehaviour
 
             case PlayerStates.Swimming: {
                 Vector3 inputDirection =
-                    (_inputVectorNormalized.x * rightDirection + _inputVectorNormalized.z * forwardDirection).
+                    (_inputVector.x * rightDirection + _inputVector.z * forwardDirection).
                     normalized;
 
                 _acceleration += inputDirection * _swimmingSpeed;
@@ -494,11 +499,11 @@ public class PlayerController : MonoBehaviour
                 Transform mainCamera = Camera.main.transform;
 
                 Vector3 inputDirection =
-                    (_inputVectorNormalized.x * mainCamera.right + _inputVectorNormalized.z * mainCamera.forward).
+                    (_inputVector.x * mainCamera.right + _inputVector.z * mainCamera.forward).
                     normalized;
 
-                if (Input.GetKey(_upKey)) inputDirection += mainCamera.up;
-                if (Input.GetKey(_downKey)) inputDirection -= mainCamera.up;
+                if (_input.VerticalMoveVector > 0) inputDirection += mainCamera.up;
+                if (_input.VerticalMoveVector < 0) inputDirection -= mainCamera.up;
 
                 // Horrible but funny
                 _velocity = inputDirection *

@@ -2,6 +2,8 @@ using UnityEngine;
 
 public class VehicleControl : MonoBehaviour
 {
+  private InputHandler _input;
+
   public float motorTorque = 2000;
   public float brakeTorque = 2000;
   public float maxSpeed = 20;
@@ -19,6 +21,8 @@ public class VehicleControl : MonoBehaviour
   // Start is called before the first frame update
   void Start()
   {
+    _input = InputHandler.Instance;
+
     rigidBody = GetComponent<Rigidbody>();
 
     // Adjust center of mass vertically, to help prevent the car from rolling
@@ -44,8 +48,8 @@ public class VehicleControl : MonoBehaviour
   void Update()
   {
 
-    float vInput = -Input.GetAxis("Vertical");
-    float hInput = Input.GetAxis("Horizontal");
+    float vInput = -_input.MoveVector.y;
+    float hInput = _input.MoveVector.x;
     if (!_inUse) {
       vInput = 0;
       hInput = 0;

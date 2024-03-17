@@ -4,6 +4,7 @@ using UnityEngine.Serialization;
 
 public class PlayerCameraController : MonoBehaviour
 {
+    private InputHandler _input;
 
     [SerializeField] private bool _freezeOnTimescale0;
 
@@ -15,9 +16,6 @@ public class PlayerCameraController : MonoBehaviour
     [Header("Look Parameters")]
     [SerializeField, Range(1, 10)] private float _lookSensitivityX = 2.0f;
     [SerializeField, Range(1, 10)] private float _lookSensitivityY = 2.0f;
-    [SerializeField, Range(0, 10)] private float _sensitivityMultiplier = 1.0f;
-    [SerializeField] private bool _invertMouseX = false;
-    [SerializeField] private bool _invertMouseY = false;
     [SerializeField, Range(1, 180)] private float _upperLookLimit = 80.0f;
     [SerializeField, Range(1, 180)] private float _lowerLookLimit = 80.0f;
 
@@ -29,6 +27,8 @@ public class PlayerCameraController : MonoBehaviour
     private float _clampAngle;
     
     private void Start() {
+        _input = InputHandler.Instance;
+
         PlayerController.Freeze += CameraFreeze;
         PlayerController.UnFreeze += CameraUnFreeze;
 
@@ -45,8 +45,8 @@ public class PlayerCameraController : MonoBehaviour
     private float _desiredX;
 
     private void Look() {
-        float mouseX = Input.GetAxis("Mouse X") * (_lookSensitivityX * 20) * Time.fixedDeltaTime * _sensitivityMultiplier * (_invertMouseX ? -1 : 1);
-        float mouseY = Input.GetAxis("Mouse Y") * (_lookSensitivityY * 20) * Time.fixedDeltaTime * _sensitivityMultiplier * (_invertMouseY ? -1 : 1);
+        float mouseX = _input.LookVector.x * _lookSensitivityX;
+        float mouseY = _input.LookVector.y * _lookSensitivityY;
 
         Vector3 rot = _currentRotation.eulerAngles;
         _desiredX = rot.y + mouseX;

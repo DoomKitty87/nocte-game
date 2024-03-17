@@ -7,12 +7,16 @@ interface IInteractable
 
 public class Interactor : MonoBehaviour
 {
+	private InputHandler _input;
+
   [SerializeField] private float _InteractRange;
 
-  public KeyCode _interactKey = KeyCode.E;
-  
+  private void Start() {
+    _input = InputHandler.Instance;
+  }
+
   private void Update() {
-    if (Input.GetKeyDown(_interactKey)) {
+    if (_input.Interact) {
       Ray r = new Ray(transform.position, transform.forward);
       if (Physics.Raycast(r, out RaycastHit hitInfo, _InteractRange)) {
         if (hitInfo.collider.gameObject.TryGetComponent(out IInteractable interactObj)) {
