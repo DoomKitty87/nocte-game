@@ -24,13 +24,41 @@ MonoBehaviour:
     m_Value: 1
   windOrientation:
     m_OverrideState: 1
-    m_Value: 91.67325
+    m_Value: 114.59155
   windSpeed:
     m_OverrideState: 1
     m_Value: 250
   fogType:
     m_OverrideState: 0
     m_Value: 0
+--- !u!114 &-5533930892415571491
+MonoBehaviour:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4b8bcdf71d7fafa419fca1ed162f5fc9, type: 3}
+  m_Name: ColorAdjustments
+  m_EditorClassIdentifier: 
+  active: 1
+  postExposure:
+    m_OverrideState: 0
+    m_Value: 0
+  contrast:
+    m_OverrideState: 1
+    m_Value: 20
+  colorFilter:
+    m_OverrideState: 0
+    m_Value: {r: 1, g: 1, b: 1, a: 1}
+  hueShift:
+    m_OverrideState: 0
+    m_Value: 0
+  saturation:
+    m_OverrideState: 1
+    m_Value: 10
 --- !u!114 &-2456328700736638316
 MonoBehaviour:
   m_ObjectHideFlags: 3
@@ -167,10 +195,10 @@ MonoBehaviour:
     m_Value: {fileID: 8900000, guid: 6a0b0c10aff8ac344b60e6a2f4f23f7c, type: 3}
   spaceEmissionMultiplier:
     m_OverrideState: 1
-    m_Value: 1273.2308
+    m_Value: 624.2608
   spaceRotation:
     m_OverrideState: 1
-    m_Value: {x: 299.21283, y: 124.38131, z: 124.38131}
+    m_Value: {x: 288.204, y: 321.50476, z: 321.50476}
   colorSaturation:
     m_OverrideState: 0
     m_Value: 1
@@ -214,6 +242,7 @@ MonoBehaviour:
   - {fileID: 756639205190390437}
   - {fileID: -924958126123348105}
   - {fileID: 4901719294588945791}
+  - {fileID: -5533930892415571491}
 --- !u!114 &756639205190390437
 MonoBehaviour:
   m_ObjectHideFlags: 3
@@ -764,10 +793,10 @@ MonoBehaviour:
     m_Value: 0.5
   densityMultiplier:
     m_OverrideState: 1
-    m_Value: 0.2
+    m_Value: 0.2023281
   shapeFactor:
     m_OverrideState: 1
-    m_Value: 0.90001476
+    m_Value: 0.89262354
   shapeScale:
     m_OverrideState: 1
     m_Value: 5

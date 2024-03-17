@@ -214,7 +214,7 @@ namespace Foliage
       if (lod == 0) {
         Vector4[] data = new Vector4[_chunkDensity[lod] * _chunkDensity[lod]];
         _positionsBuffer.GetData(data);
-        Debug.Log(data[0]);
+        //Debug.Log(data[0]);
         foreach (Vector4 v in data) {
           if (FoliagePool._pool[_scriptable].Count == 0) {
             var collider = GameObject.Instantiate(_scriptable.ColliderPrefab, new Vector3(v.x, v.y, v.z), Quaternion.identity);
