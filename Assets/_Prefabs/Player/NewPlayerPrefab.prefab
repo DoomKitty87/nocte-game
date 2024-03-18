@@ -264,7 +264,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &6633975466043103109
 Transform:
   m_ObjectHideFlags: 0
@@ -2427,8 +2427,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4678761156688045521}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.5081674, y: -0, z: -0, w: 0.8612583}
-  m_LocalPosition: {x: 0.5, y: 2.4647598, z: -0.79033756}
+  m_LocalRotation: {x: -0.4432123, y: -0, z: -0, w: 0.89641666}
+  m_LocalPosition: {x: 0.5, y: -1.0484009, z: -1.4303026}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -3091,7 +3091,7 @@ Transform:
   m_GameObject: {fileID: 5316255148932535911}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.00000047683716, z: 0.00000044703484}
+  m_LocalPosition: {x: 0, y: -0.000022411346, z: 0.00000044703484}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -4034,6 +4034,9 @@ MonoBehaviour:
       Owner: {fileID: 377901386337017269}
       Enabled: 0
       Input:
+        InputAction: {fileID: 3403135191316315522, guid: 0bef6341e0af346438caf2a7dbca631b,
+          type: 3}
+        Gain: 1
         LegacyInput: Mouse X
         LegacyGain: 200
         CancelDeltaTime: 0
@@ -4045,9 +4048,12 @@ MonoBehaviour:
       Owner: {fileID: 377901386337017269}
       Enabled: 1
       Input:
+        InputAction: {fileID: 3403135191316315522, guid: 0bef6341e0af346438caf2a7dbca631b,
+          type: 3}
+        Gain: -1
         LegacyInput: Mouse Y
-        LegacyGain: -200
-        CancelDeltaTime: 0
+        LegacyGain: -1
+        CancelDeltaTime: 1
       InputValue: -0
       Driver:
         AccelTime: 0
@@ -4056,6 +4062,8 @@ MonoBehaviour:
       Owner: {fileID: 377901386337017269}
       Enabled: 1
       Input:
+        InputAction: {fileID: 0}
+        Gain: 1
         LegacyInput: Mouse ScrollWheel
         LegacyGain: 150
         CancelDeltaTime: 0
@@ -4063,6 +4071,8 @@ MonoBehaviour:
       Driver:
         AccelTime: 0
         DecelTime: 0
+  PlayerIndex: -1
+  AutoEnableInputs: 1
 --- !u!114 &7940010568097194610
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4942,9 +4952,6 @@ MonoBehaviour:
   _orientation: {fileID: 8737222161639352964}
   _lookSensitivityX: 2
   _lookSensitivityY: 2
-  _sensitivityMultiplier: 2.76
-  _invertMouseX: 0
-  _invertMouseY: 0
   _upperLookLimit: 80
   _lowerLookLimit: 80
 --- !u!114 &1192220085663393874
@@ -5121,7 +5128,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d9910d30d3bd94377ad0ca092aa3decf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _playerController: {fileID: 0}
+  _playerController: {fileID: 1192220085663393874}
   _worldGeneratorObject: {fileID: 0}
   _rain: {fileID: 0}
   _groundMask:

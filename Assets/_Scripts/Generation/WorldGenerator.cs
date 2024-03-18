@@ -1,21 +1,10 @@
- using System;
 using UnityEngine;
 using System.Collections.Generic;
- using System.Linq;
- using Effects.TsushimaGrass;
- using UnityEngine.Rendering.HighDefinition;
-using Matrix4x4 = UnityEngine.Matrix4x4;
 using Vector2 = UnityEngine.Vector2;
 using Vector3 = UnityEngine.Vector3;
-using Vector4 = UnityEngine.Vector4;
-using Math = System.Math;
-using Unity.Mathematics;
 using Unity.Jobs;
-using Unity.Burst;
 using Unity.Collections;
- using Unity.VisualScripting;
- using UnityEngine.Experimental.Rendering;
- using UnityEngine.Rendering;
+using UnityEngine.Rendering;
 using IEnumerator = System.Collections.IEnumerator;
 using static AmalgamNoise;
 
