@@ -11,6 +11,10 @@ namespace Foliage
     private float _chunkSize;
     private Vector2 _chunkCenter;
 
+    public FoliageChunk() {
+      
+    }
+    
     public FoliageChunk(IReadOnlyList<FoliageScriptable> scriptables, Vector2Int chunkPos, float chunkSize, Vector2 cameraPos) {
       var numberOfScriptables = scriptables.Count;
       _chunkSize = chunkSize;
