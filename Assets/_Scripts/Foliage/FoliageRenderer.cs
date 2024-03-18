@@ -18,6 +18,7 @@ namespace Foliage
     private readonly int[] _lodDistances;
     private readonly float _billboardDistance;
     private readonly Mesh _billboardMesh;
+    private readonly bool _useBillboard;
 
     private int _previousLOD;
 
@@ -53,10 +54,13 @@ namespace Foliage
       _material = new Material(_scriptable.Material);
       _useSubmesh = _scriptable._useSubmesh;
       if (_useSubmesh) _material2 = new Material(_scriptable.Material2);
-
-      _billboardMaterial = new Material(_scriptable.BillboardMaterial);
-      _billboardDistance = _scriptable._maxBillboardDistance;
-      _billboardMesh = _scriptable.BillboardMesh;
+      _useBillboard = _scriptable.UseBillboard;
+      
+      if (_useBillboard) {
+        _billboardMaterial = new Material(_scriptable.BillboardMaterial);
+        _billboardDistance = _scriptable._maxBillboardDistance;
+        _billboardMesh = _scriptable.BillboardMesh;
+      }
 
       var lodDatas = _scriptable._lodRanges;
     
@@ -83,7 +87,7 @@ namespace Foliage
       if (lod == 0) UpdateColliders(lod);
     
       _material.SetBuffer(PositionBuffer, _positionsBuffer);
-      _billboardMaterial.SetBuffer(PositionBuffer, _positionsBuffer);
+      if (_useBillboard) _billboardMaterial.SetBuffer(PositionBuffer, _positionsBuffer);
       if (_useSubmesh) _material2.SetBuffer(PositionBuffer, _positionsBuffer);
     }
 
@@ -92,9 +96,9 @@ namespace Foliage
       _positionsBuffer?.Release();
       _positionsBuffer = new ComputeBuffer(_chunkDensity[lod] * _chunkDensity[lod], sizeof(float) * 4);
       ComputePositions(lod);
-      _material.SetBuffer(PositionBuffer, _positionsBuffer);
-      _billboardMaterial.SetBuffer(PositionBuffer, _positionsBuffer);
-      if (_useSubmesh) _material2.SetBuffer(PositionBuffer, _positionsBuffer);
+      if (lod != -1) _material.SetBuffer(PositionBuffer, _positionsBuffer);
+      if (lod == -1) _billboardMaterial.SetBuffer(PositionBuffer, _positionsBuffer);
+      if (_useSubmesh && lod != -1) _material2.SetBuffer(PositionBuffer, _positionsBuffer);
     }
     
     private void ComputePositions(int lod) {
@@ -138,7 +142,7 @@ namespace Foliage
         }
         _argsBuffer.SetData(_args);
       }
-      else {
+      else if (_useBillboard) {
         _args[0] = (uint)_billboardMesh.GetIndexCount(0);
         _args[1] = (uint)(_chunkDensity[^1] * _chunkDensity[^1]);
         _args[2] = (uint)_billboardMesh.GetIndexStart(0);
@@ -164,7 +168,7 @@ namespace Foliage
       if (distance > _lodDistances[_lodDistances.Length - 1]) lod = -1;
 
       if (lod != _previousLOD) {
-          if (lod != -1 && _previousLOD != -1) UpdateDensity(lod);
+          if (lod != -1 && _previousLOD != -1 && _useBillboard) UpdateDensity(lod);
 
           if (lod != -1) {
             _args[0] = (uint)_meshes[lod].GetIndexCount(0);
@@ -181,7 +185,7 @@ namespace Foliage
               _argsBuffer2.SetData(_args2);
             }
           }
-          else {
+          else if (_useBillboard) {
             _args[0] = (uint)_billboardMesh.GetIndexCount(0);
             _args[1] = (uint)(_chunkDensity[^1] * _chunkDensity[^1]);
             _args[2] = (uint)_billboardMesh.GetIndexStart(0);
@@ -202,7 +206,7 @@ namespace Foliage
           Graphics.DrawMeshInstancedIndirect(_meshes[lod], 1, _material2, new Bounds(new Vector3(0, 0, 0), Vector3.one * 10000f), _argsBuffer2);
         }
       }
-      else {
+      else if (_useBillboard) {
         Graphics.DrawMeshInstancedIndirect(_billboardMesh, 0, _billboardMaterial, new Bounds(new Vector3(0, 0, 0), Vector3.one * 10000f), _argsBuffer);
       }
 
