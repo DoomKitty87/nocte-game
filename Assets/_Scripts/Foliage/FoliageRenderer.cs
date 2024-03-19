@@ -166,10 +166,11 @@ namespace Foliage
       }
 
       if (distance > _lodDistances[_lodDistances.Length - 1]) lod = -1;
+      if (lod == -1 && !_useBillboard) return;
 
       if (lod != _previousLOD) {
           if (lod != -1 && _previousLOD != -1 && _useBillboard) UpdateDensity(lod);
-
+          else if (!_useBillboard) UpdateDensity(lod);
           if (lod != -1) {
             _args[0] = (uint)_meshes[lod].GetIndexCount(0);
             _args[1] = (uint)(_chunkDensity[lod] * _chunkDensity[lod]);

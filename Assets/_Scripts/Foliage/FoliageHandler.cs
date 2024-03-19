@@ -44,7 +44,7 @@ namespace Foliage
       _chunkDistance = Mathf.FloorToInt(farthestChunkDistance / _chunkSize);
     }
 
-    private bool _initialized;
+    private bool _initialized = false;
     private void Initialize() {
       if (_initialized) return;
       _cameraPosition = Camera.main.transform;
@@ -65,6 +65,7 @@ namespace Foliage
         }
       }
       _initialized = true;
+      WorldGenerator.PlayerMove += UpdatePlayerPosition;
     }
 
     private void Update() {

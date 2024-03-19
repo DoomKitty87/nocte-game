@@ -214,6 +214,10 @@ public class WorldGenerator : MonoBehaviour
   
   public static event OnGenerationComplete GenerationComplete;
 
+  public delegate void OnPlayerMove(Vector2 playerPosition);
+
+  public static event OnPlayerMove PlayerMove;
+
   #endregion
 
   #region Public Fetch Functions
@@ -503,6 +507,8 @@ public class WorldGenerator : MonoBehaviour
 
     _lastPlayerChunkX = playerXChunkScale;
     _lastPlayerChunkZ = playerZChunkScale;
+
+    PlayerMove?.Invoke(new Vector2(playerPos.x, playerPos.z));
   }
 
   #endregion

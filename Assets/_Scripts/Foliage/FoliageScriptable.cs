@@ -6,7 +6,6 @@ namespace Foliage
   [CreateAssetMenu(fileName = "Foliage Name", menuName = "ScriptableObjects/FoliageObject")]
   public class FoliageScriptable : ScriptableObject
   {
-    public FoliageType type;
     public bool _useSubmesh;
     public Material Material;
     public Material Material2;
@@ -28,11 +27,4 @@ namespace Foliage
     public int Density;
   }
 
-
-  public enum FoliageType
-  {
-    PineTree,
-    OakTree,
-    Bush
-  }
 }

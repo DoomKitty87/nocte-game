@@ -12,25 +12,25 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 66f3bff2376ff4ab8a8d95181fd974c3, type: 3}
   m_Name: Pine
   m_EditorClassIdentifier: 
-  type: 0
   _useSubmesh: 1
   Material: {fileID: 2100000, guid: 27a1cb5713da6a646b7cc5260c6bd7eb, type: 2}
   Material2: {fileID: 2100000, guid: bdc7b1778ccbc574e9483881d916d91b, type: 2}
   BillboardMaterial: {fileID: 2100000, guid: e6ac68609dc00864bb380d380ad4266d, type: 2}
   BillboardMesh: {fileID: -4669657605859110733, guid: ccc882c037b2231439eb9fca4ee29b3a,
     type: 3}
+  UseBillboard: 1
   ColliderPrefab: {fileID: 3918287844934764089, guid: 4da5b6fb15d9192498f97241f9defe75,
     type: 3}
   _lodRanges:
   - Mesh: {fileID: -7976001809576193062, guid: 1f459f33de75946eb88216266c547378, type: 3}
     Distance: 1
-    Density: 30
+    Density: 12
   - Mesh: {fileID: -3999089259926646061, guid: 4b7f2745c31a94bcbada83e4f18c85fa, type: 3}
     Distance: 2
-    Density: 30
+    Density: 9
   - Mesh: {fileID: 6608440108915591259, guid: 1b91a623045c44e278d9d62b73579250, type: 3}
     Distance: 3
-    Density: 30
-  _maxBillboardDistance: 5000
+    Density: 6
+  _maxBillboardDistance: 3000
   _positionComputeShader: {fileID: 7200000, guid: ad2522b6a715ee54d8ae10d592b5a0cc,
     type: 3}
