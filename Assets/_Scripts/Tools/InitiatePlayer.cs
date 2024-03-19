@@ -1,9 +1,16 @@
 using System;
 using UnityEngine;
 
-public class ExtractChildren : MonoBehaviour
+public class InitiatePlayer : MonoBehaviour
 {
+  private GameObject _gameHandler;
+
   private void Awake() {
+    if (GameObject.FindWithTag("GameHandler") == null) {
+      _gameHandler = Resources.Load<GameObject>("Game Handler/GameHandler");
+      Instantiate(_gameHandler);
+    }
+
     int numberOfChildren = transform.childCount;
     for (int i = 0; i < numberOfChildren; i++) {
       transform.GetChild(0).SetParent(null);
