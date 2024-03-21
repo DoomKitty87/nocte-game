@@ -11,10 +11,7 @@ namespace UpgradeSystem
         public string _upgradeName;
         public string _upgradeDescription;
         public int _upgradeCost;
-        public int _upgradeLevel;
         public int _upgradeMaxLevel;
-        public int _upgradeValue;
-        public bool _isUnlocked;
     }
 
     public enum UpgradeType
