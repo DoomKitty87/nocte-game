@@ -28,7 +28,8 @@ public class ParallaxEffect : MonoBehaviour
 		// Make this use the new input system later
 		Vector2 mousePos = new Vector2(Input.mousePosition.x, Input.mousePosition.y);
 		Vector2 screenSize = new Vector2(Screen.width, Screen.height);
-		return ((mousePos / screenSize) + Vector2.one * 0.5f) / 2;
+		Vector2 mouseUV = mousePos / screenSize - Vector2.one * 0.5f;
+		return mouseUV;
 	}
 	
 	// Update is called once per frame
