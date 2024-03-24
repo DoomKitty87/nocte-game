@@ -78,6 +78,13 @@ namespace Foliage
         UpdateFoliage(moveDelta);
       }
     }
+    
+    // private void OnDrawGizmos() {
+    //   Gizmos.color = Color.red;
+    //   foreach (var chunk in _chunkDict.Values) {
+    //     Gizmos.DrawWireCube(new Vector3(chunk._chunkCenter.x, 0, chunk._chunkCenter.y), new Vector3(_chunkSize, 0, _chunkSize));
+    //   }
+    // }
 
     private void UpdateFoliage(Vector2Int moveDelta) {
       switch (moveDelta.x) {

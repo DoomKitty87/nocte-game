@@ -596,10 +596,10 @@ public class WorldGenerator : MonoBehaviour
     handle.Complete();
     NativeArray<Vector3> vertices = new NativeArray<Vector3>(tmpSize * tmpSize, Allocator.Persistent);
     
-    for (int i = 0, n = 0; i < tmpSize * tmpSize; i++) {
+    for (int i = 0; i < tmpSize * tmpSize; i++) {
       vertices[i] = new Vector3((i % tmpSize - 1) * tmpRes, output[i], (i / tmpSize - 1) * tmpRes);
     }
-   
+
     output.Dispose();
     int sideLength0 = (int) Mathf.Sqrt(vertices.Length) - 1;
     NativeArray<int> triangles = new NativeArray<int>(sideLength0 * sideLength0 * 6, Allocator.Persistent);

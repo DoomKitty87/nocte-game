@@ -96,9 +96,9 @@ namespace Foliage
       _positionsBuffer?.Release();
       _positionsBuffer = new ComputeBuffer(_chunkDensity[lod] * _chunkDensity[lod], sizeof(float) * 4);
       ComputePositions(lod);
-      if (lod != -1) _material.SetBuffer(PositionBuffer, _positionsBuffer);
-      if (lod == -1) _billboardMaterial.SetBuffer(PositionBuffer, _positionsBuffer);
-      if (_useSubmesh && lod != -1) _material2.SetBuffer(PositionBuffer, _positionsBuffer);
+      _material.SetBuffer(PositionBuffer, _positionsBuffer);
+      if (_useBillboard) _billboardMaterial.SetBuffer(PositionBuffer, _positionsBuffer);
+      if (_useSubmesh) _material2.SetBuffer(PositionBuffer, _positionsBuffer);
     }
     
     private void ComputePositions(int lod) {
