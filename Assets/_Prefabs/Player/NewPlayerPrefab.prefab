@@ -1625,7 +1625,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6499379936886537626}
   m_Layer: 3
-  m_Name: Effects
+  m_Name: Effects - Misc
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1803,7 +1803,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &4405197145562226085
 Transform:
   m_ObjectHideFlags: 0
@@ -2427,8 +2427,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4678761156688045521}
   serializedVersion: 2
-  m_LocalRotation: {x: -0.4432123, y: -0, z: -0, w: 0.89641666}
-  m_LocalPosition: {x: 0.5, y: -1.0484009, z: -1.4303026}
+  m_LocalRotation: {x: -0.443214, y: -0, z: -0, w: 0.8964158}
+  m_LocalPosition: {x: 0.5, y: -1.048439, z: -1.4303045}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -3091,7 +3091,7 @@ Transform:
   m_GameObject: {fileID: 5316255148932535911}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: -0.000022411346, z: 0.00000044703484}
+  m_LocalPosition: {x: 0, y: 0.00000047683716, z: 0.00000044703484}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -3156,8 +3156,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8737222161639352964}
+  - component: {fileID: 1170665709441797290}
   m_Layer: 3
-  m_Name: Orientation
+  m_Name: Orientation - Visual
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3181,6 +3182,20 @@ Transform:
   - {fileID: 3074057977569299220}
   m_Father: {fileID: 7579844485692665664}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1170665709441797290
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5783222951152462553}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b3b2abbb87fcdfb49b6f2c33f82381aa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _animator: {fileID: 6825996530567685683}
+  _playerController: {fileID: 1192220085663393874}
 --- !u!1 &5872349947199506808
 GameObject:
   m_ObjectHideFlags: 0
@@ -3526,7 +3541,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3668390507169330137}
   m_Layer: 3
-  m_Name: Head
+  m_Name: Head - Camera
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3561,7 +3576,7 @@ GameObject:
   - component: {fileID: 3273840457138616756}
   - component: {fileID: 7958512495963828235}
   m_Layer: 0
-  m_Name: Overlay Canvas
+  m_Name: PlayerUICanvas
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3873,8 +3888,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7569261846997404326}
   serializedVersion: 2
-  m_LocalRotation: {x: -0.4432123, y: -0, z: -0, w: 0.89641666}
-  m_LocalPosition: {x: 0, y: -0.3250122, z: -1.1049995}
+  m_LocalRotation: {x: -0.443214, y: -0, z: -0, w: 0.8964158}
+  m_LocalPosition: {x: 0, y: -0.3249998, z: -1.1049995}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -6193,7 +6208,7 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: 82a0757253967f043a0448a9d8c0a8bd,
         type: 3}
       propertyPath: m_Name
-      value: Model
+      value: PlayerModel
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 82a0757253967f043a0448a9d8c0a8bd,
         type: 3}
@@ -6608,6 +6623,12 @@ PrefabInstance:
 --- !u!4 &602043610379385929 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 82a0757253967f043a0448a9d8c0a8bd,
+    type: 3}
+  m_PrefabInstance: {fileID: 1139509679778012066}
+  m_PrefabAsset: {fileID: 0}
+--- !u!95 &6825996530567685683 stripped
+Animator:
+  m_CorrespondingSourceObject: {fileID: 5866666021909216657, guid: 82a0757253967f043a0448a9d8c0a8bd,
     type: 3}
   m_PrefabInstance: {fileID: 1139509679778012066}
   m_PrefabAsset: {fileID: 0}
