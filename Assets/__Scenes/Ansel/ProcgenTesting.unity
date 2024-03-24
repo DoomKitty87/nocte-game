@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 164.26054, g: 102.405945, b: 89.063965, a: 1}
+  m_IndirectSpecularColor: {r: 360.34326, g: 140.56758, b: 64.15241, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -332,7 +332,7 @@ Light:
   m_LightShadowCasterMode: 2
   m_AreaSize: {x: 0.5, y: 0.5}
   m_BounceIntensity: 1
-  m_ColorTemperature: 15000
+  m_ColorTemperature: 5500
   m_UseColorTemperature: 1
   m_BoundingSphereOverride: {x: 0, y: 0, z: 0, w: 0}
   m_UseBoundingSphereOverride: 0
@@ -10623,7 +10623,7 @@ MonoBehaviour:
   _centralStructure: {fileID: 1059486729885557029, guid: 50e2c84c9ce784f4e9090670d29ac089,
     type: 3}
   _outerStructures:
-  - {fileID: 2579545386004284078, guid: 598ee2d86be1f4a708d9ea9d7a10b55c, type: 3}
+  - {fileID: 7453258109037728848, guid: 26a84eda139585f4986d86d14a1201a6, type: 3}
   - {fileID: 8610528419109309939, guid: c2f5aad09bc80ec49a60347b2622961f, type: 3}
   _nodeDistance: 5000
   _beamWidth: 5
@@ -10632,7 +10632,7 @@ MonoBehaviour:
   _groundInset: 5
   _structureRenderDistance: 2500
   _centerOffsetRadiusAmplitude: 5000
-  _heightCutoff: 1500
+  _heightCutoff: 800
   _roadResolution: 2
   _roadWidth: 25
   _roadDepth: 5.25
@@ -18546,12 +18546,12 @@ PrefabInstance:
     - target: {fileID: 7336471431426695701, guid: 862d92a67177d4c7b84ab88d6b6e0257,
         type: 3}
       propertyPath: _sunAxis.x
-      value: 0.2
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7336471431426695701, guid: 862d92a67177d4c7b84ab88d6b6e0257,
         type: 3}
       propertyPath: _sunAxis.y
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7336471431426695701, guid: 862d92a67177d4c7b84ab88d6b6e0257,
         type: 3}
