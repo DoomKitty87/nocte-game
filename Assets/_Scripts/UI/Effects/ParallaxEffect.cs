@@ -29,6 +29,7 @@ public class ParallaxEffect : MonoBehaviour
 		Vector2 mousePos = new Vector2(Input.mousePosition.x, Input.mousePosition.y);
 		Vector2 screenSize = new Vector2(Screen.width, Screen.height);
 		Vector2 mouseUV = mousePos / screenSize - Vector2.one * 0.5f;
+		mouseUV *= 2;
 		return mouseUV;
 	}
 	
