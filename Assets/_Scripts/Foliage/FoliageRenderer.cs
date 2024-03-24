@@ -104,6 +104,8 @@ namespace Foliage
     private void ComputePositions(int lod) {
       if (lod == -1) lod = _chunkDensity.Length - 1;
       var kernelIndex = _positionCompute.FindKernel("ComputePosition");
+      _positionCompute.SetBuffer(kernelIndex, Shader.PropertyToID("_boundsBuffer"), FoliagePool._boundsBuffer);
+      _positionCompute.SetInt(Shader.PropertyToID("_structureBoundsCount"), FoliagePool._structureBounds.Count);
       _positionCompute.SetFloat(Shader.PropertyToID("_samples"), _chunkDensity[lod]);
       _positionCompute.SetFloat(Shader.PropertyToID("_size"), _chunkSize);
       _positionCompute.SetVector(Shader.PropertyToID("_chunkBottomLeftPosition"), _position);
