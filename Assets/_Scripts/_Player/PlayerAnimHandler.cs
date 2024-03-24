@@ -16,11 +16,11 @@ public class PlayerAnimHandler : MonoBehaviour
 		if (_playerController.State == PlayerController.PlayerStates.Idle) {
 			_animator.SetBool("Walking", false);
 		}
-		if (_playerController.State == PlayerController.PlayerStates.Walking) {
+		if (_playerController.State == PlayerController.PlayerStates.Walking || Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.D)) {
 			_animator.SetBool("Walking", true);
 		}
 
-		if (_playerController.State == PlayerController.PlayerStates.Crouching) {
+		if (_playerController.State == PlayerController.PlayerStates.Crouching || Input.GetKey(KeyCode.LeftControl)) {
 			_animator.SetBool("Crouching", true);
 		}
 		else {

@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 4426.203, g: 2871.947, b: 2111.5476, a: 1}
+  m_IndirectSpecularColor: {r: 4426.657, g: 2872.425, b: 2111.843, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -274,6 +274,11 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 202254587731404948, guid: 9251f6c58d15c7b428fef40ec34ce952,
+        type: 3}
+      propertyPath: AimCollisionFilter.m_Bits
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2882977137503334130, guid: 9251f6c58d15c7b428fef40ec34ce952,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -328,6 +333,36 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: NewPlayerPrefab
+      objectReference: {fileID: 0}
+    - target: {fileID: 8006249604740443719, guid: 9251f6c58d15c7b428fef40ec34ce952,
+        type: 3}
+      propertyPath: field of view
+      value: 80
+      objectReference: {fileID: 0}
+    - target: {fileID: 8573639786141903827, guid: 9251f6c58d15c7b428fef40ec34ce952,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 8573639786141903827, guid: 9251f6c58d15c7b428fef40ec34ce952,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -1.048439
+      objectReference: {fileID: 0}
+    - target: {fileID: 8573639786141903827, guid: 9251f6c58d15c7b428fef40ec34ce952,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -1.4303045
+      objectReference: {fileID: 0}
+    - target: {fileID: 8573639786141903827, guid: 9251f6c58d15c7b428fef40ec34ce952,
+        type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.8964158
+      objectReference: {fileID: 0}
+    - target: {fileID: 8573639786141903827, guid: 9251f6c58d15c7b428fef40ec34ce952,
+        type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0.443214
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
