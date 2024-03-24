@@ -13,6 +13,7 @@ public class PlayerAnimHandler : MonoBehaviour
 	}
 	
 	private void Update() {
+		// this is bad, deal with new input system later
 		if (_playerController.State == PlayerController.PlayerStates.Idle) {
 			_animator.SetBool("Walking", false);
 		}

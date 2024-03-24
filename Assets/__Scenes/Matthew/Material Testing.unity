@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 4426.657, g: 2872.425, b: 2111.843, a: 1}
+  m_IndirectSpecularColor: {r: 4425.812, g: 2871.673, b: 2111.448, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -276,9 +276,14 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 202254587731404948, guid: 9251f6c58d15c7b428fef40ec34ce952,
         type: 3}
-      propertyPath: AimCollisionFilter.m_Bits
-      value: 0
+      propertyPath: IgnoreTag
+      value: 
       objectReference: {fileID: 0}
+    - target: {fileID: 1588644084663329446, guid: 9251f6c58d15c7b428fef40ec34ce952,
+        type: 3}
+      propertyPath: Target.TrackingTarget
+      value: 
+      objectReference: {fileID: 1126446339}
     - target: {fileID: 2882977137503334130, guid: 9251f6c58d15c7b428fef40ec34ce952,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -329,6 +334,21 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4798468513531427306, guid: 9251f6c58d15c7b428fef40ec34ce952,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.8000002
+      objectReference: {fileID: 0}
+    - target: {fileID: 4798468513531427306, guid: 9251f6c58d15c7b428fef40ec34ce952,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -4
+      objectReference: {fileID: 0}
+    - target: {fileID: 5316255148932535911, guid: 9251f6c58d15c7b428fef40ec34ce952,
+        type: 3}
+      propertyPath: m_Name
+      value: CameraTarget
+      objectReference: {fileID: 0}
     - target: {fileID: 6057207074736297204, guid: 9251f6c58d15c7b428fef40ec34ce952,
         type: 3}
       propertyPath: m_Name
@@ -337,32 +357,32 @@ PrefabInstance:
     - target: {fileID: 8006249604740443719, guid: 9251f6c58d15c7b428fef40ec34ce952,
         type: 3}
       propertyPath: field of view
-      value: 80
+      value: 60.000004
       objectReference: {fileID: 0}
     - target: {fileID: 8573639786141903827, guid: 9251f6c58d15c7b428fef40ec34ce952,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0.5
+      value: 0.8000002
       objectReference: {fileID: 0}
     - target: {fileID: 8573639786141903827, guid: 9251f6c58d15c7b428fef40ec34ce952,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: -1.048439
+      value: 0.8000002
       objectReference: {fileID: 0}
     - target: {fileID: 8573639786141903827, guid: 9251f6c58d15c7b428fef40ec34ce952,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: -1.4303045
+      value: -4
       objectReference: {fileID: 0}
     - target: {fileID: 8573639786141903827, guid: 9251f6c58d15c7b428fef40ec34ce952,
         type: 3}
       propertyPath: m_LocalRotation.w
-      value: 0.8964158
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8573639786141903827, guid: 9251f6c58d15c7b428fef40ec34ce952,
         type: 3}
       propertyPath: m_LocalRotation.x
-      value: -0.443214
+      value: -0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -1514,6 +1534,12 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!4 &1126446339 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 5766149443483151228, guid: 9251f6c58d15c7b428fef40ec34ce952,
+    type: 3}
+  m_PrefabInstance: {fileID: 281930233}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1197107629 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: -3133498875991405556, guid: 5f3dc5d183dd3cf43b98a421b09a95bc,

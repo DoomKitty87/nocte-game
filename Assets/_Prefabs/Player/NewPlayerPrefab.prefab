@@ -1181,6 +1181,7 @@ GameObject:
   - component: {fileID: 1588644084663329446}
   - component: {fileID: 4190060279380810648}
   - component: {fileID: 202254587731404948}
+  - component: {fileID: 2899580299425288621}
   m_Layer: 3
   m_Name: Third Person Aim Camera
   m_TagString: Untagged
@@ -1290,6 +1291,29 @@ MonoBehaviour:
   IgnoreTag: 
   AimDistance: 200
   NoiseCancellation: 1
+--- !u!114 &2899580299425288621
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1198251880453041267}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 00b2d199b96b516448144ab30fb26aed, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ApplyAfter: 2
+  ChannelMask: 1
+  Gain: 1
+  Use2DDistance: 0
+  UseCameraSpace: 1
+  ReactionSettings:
+    m_SecondaryNoise: {fileID: 0}
+    AmplitudeGain: 1
+    FrequencyGain: 1
+    Duration: 1
+    m_NoiseOffsets: {x: 0, y: 0, z: 0}
 --- !u!1 &1419968268116159405
 GameObject:
   m_ObjectHideFlags: 0
@@ -5066,7 +5090,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5236b29f77166d4b8e548c63c8d17e5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _grappleButton: 324
+  _grappleButton: 102
   _useOutsideScriptControl: 0
   _camera: {fileID: 8573639786141903827}
   _gunEnd: {fileID: 1145783382288288641}
