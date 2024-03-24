@@ -10,6 +10,8 @@ namespace Foliage
   {
 
     public static Dictionary<FoliageScriptable, List<GameObject>> _pool;
+    public static List<(Vector2, Vector2)> _structureBounds = new List<(Vector2, Vector2)>();
+    public static ComputeBuffer _boundsBuffer;
 
   }
 
@@ -47,6 +49,14 @@ namespace Foliage
     private bool _initialized = false;
     private void Initialize() {
       if (_initialized) return;
+
+      FoliagePool._boundsBuffer = new ComputeBuffer(FoliagePool._structureBounds.Count, sizeof(float) * 4);
+      Vector4[] bounds = new Vector4[FoliagePool._structureBounds.Count];
+      for (var i = 0; i < FoliagePool._structureBounds.Count; i++) {
+        bounds[i] = new Vector4(FoliagePool._structureBounds[i].Item1.x, FoliagePool._structureBounds[i].Item1.y, FoliagePool._structureBounds[i].Item2.x, FoliagePool._structureBounds[i].Item2.y);
+      }
+      FoliagePool._boundsBuffer.SetData(bounds);
+
       _cameraPosition = Camera.main.transform;
       _camera = Camera.main;
       _chunkDict.Clear();

@@ -16,6 +16,8 @@ SamplerState sampler_tileGrowthTexture;
 uniform uint _tileHeightmapTextureWidth;
 uniform float _tileWidth;
 uniform float3 _tileBottomLeftPosition;
+RWStructuredBuffer<float4> _boundsBuffer;
+uniform uint _structureBoundsCount;
 // ====== Output
 RWStructuredBuffer<float4> _positionOutputBuffer;
 // RWStructuredBuffer<float> _debugCPUReadbackBuffer;
@@ -32,6 +34,21 @@ float randomRange(float2 seed, float min, float max)
 
 float GetHeightmapAtWorldPosition(float2 position)
 {
+
+  for (uint i = 0; i < _structureBoundsCount; i++)
+  {
+    float2 corner1 = _boundsBuffer[i].xy;
+    float2 corner2 = _boundsBuffer[i].zw;
+    
+    if ((position.x > corner1.x && position.x < corner2.x) || (position.x < corner1.x && position.x > corner2.x))
+    {
+      if ((position.y > corner1.y && position.y < corner2.y) || (position.y < corner1.y && position.y > corner2.y))
+      {
+        return 0;
+      }
+    }
+  }
+
   // Transform to align to texture
 	float2 uv = float2(position.x - _tileBottomLeftPosition.x, position.y - _tileBottomLeftPosition.z) / _tileWidth;
 
