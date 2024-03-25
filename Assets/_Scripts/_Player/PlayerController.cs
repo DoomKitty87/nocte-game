@@ -82,6 +82,7 @@ public class PlayerController : MonoBehaviour
     
     [HideInInspector] public bool _jumping;
     [HideInInspector] public bool _resetJump;
+    [HideInInspector] public bool _walking;
     [HideInInspector] public bool _sprintingForward;
     [HideInInspector] public bool _sprinting;
     [HideInInspector] public bool _crouching;
@@ -255,6 +256,9 @@ public class PlayerController : MonoBehaviour
         _sprinting = _input.Sprint;
         _sprintingForward = (_sprinting && _inputVector.z > 0); // Can only sprint when forward component in input
         _crouching = _input.Crouch;
+
+        // Little bit dumb but it works
+        _walking = _inputVector != Vector3.zero && !_sprinting;
     }
     
     #endregion
