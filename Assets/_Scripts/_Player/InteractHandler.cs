@@ -19,7 +19,7 @@ public class InteractHandler : MonoBehaviour
   }
 
   private void Update() {
-    if (_input.Interact && _interactibles.Count > 0) {
+    if ((_input.PLAYER_Interact || _input.DRIVING_Leave) && _interactibles.Count > 0) {
       _interactibles[0].GetComponent<Interactible>()._onInteract.Invoke();
       _interactibles.RemoveAt(0);
       if (_promptText == null) return;

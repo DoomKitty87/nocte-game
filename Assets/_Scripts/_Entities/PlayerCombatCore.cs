@@ -17,7 +17,7 @@ public class PlayerCombatCore : MonoBehaviour
   [SerializeField] private WeaponUI _weaponUI;
   
   private bool _fire1LastFrame;
-  private bool _fire2LastFrame;
+  // private bool _fire2LastFrame;
 
 
   public void SetWeaponItem(WeaponItem weaponItem) {
@@ -44,7 +44,7 @@ public class PlayerCombatCore : MonoBehaviour
   }
   
   private void UpdateControls() {
-    if (_input.Shoot) {
+    if (_input.PLAYER_Shoot) {
       if (_fire1LastFrame == false) {
         _instanceScript.FireDown();
         _weaponUI.UpdateAmmoCount(_instanceScript.GetAmmo);
@@ -62,7 +62,8 @@ public class PlayerCombatCore : MonoBehaviour
       }
       _fire1LastFrame = false;
     }
-    if (_input.Grapple) { // Super confused what this is supposed to do, need to impliment new input system here but grapple is already right click?
+    /* // Super confused what this is supposed to do, need to impliment new input system here but grapple is already right click?
+    if (_input.PLAYER_Grapple) { 
       Debug.LogWarning("Unclear what's happening here, see comment in PlayerCombatCore.cs line 65.");
       return;
       if (_fire2LastFrame == false) {
@@ -82,6 +83,7 @@ public class PlayerCombatCore : MonoBehaviour
       }
       _fire2LastFrame = false;
     }
+    */
   }
   
   // Start is called before the first frame update
@@ -89,7 +91,7 @@ public class PlayerCombatCore : MonoBehaviour
     _input = InputHandler.Instance;
 
     _fire1LastFrame = false;
-    _fire2LastFrame = false;
+    // _fire2LastFrame = false;
     if (_currentWeaponItem != null) InstanceWeaponItem();
   }
   

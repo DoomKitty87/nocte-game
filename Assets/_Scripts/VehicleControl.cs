@@ -48,8 +48,8 @@ public class VehicleControl : MonoBehaviour
   void Update()
   {
 
-    float vInput = -_input.MoveVector.y;
-    float hInput = _input.MoveVector.x;
+    float vInput = -_input.DRIVING_MoveVector.y;
+    float hInput = _input.DRIVING_MoveVector.x;
     if (!_inUse) {
       vInput = 0;
       hInput = 0;

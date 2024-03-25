@@ -1,6 +1,5 @@
 using System;
 using Console;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class PlayerController : MonoBehaviour
@@ -251,11 +250,11 @@ public class PlayerController : MonoBehaviour
     #region Input
 
     private void GetInput() {
-        _inputVector = new Vector3(_input.MoveVector.x, 0, _input.MoveVector.y);
-        _jumping = _input.Jump;
-        _sprinting = _input.Sprint;
+        _inputVector = new Vector3(_input.PLAYER_MoveVector.x, 0, _input.PLAYER_MoveVector.y);
+        _jumping = _input.PLAYER_Jump;
+        _sprinting = _input.PLAYER_Sprint;
         _sprintingForward = (_sprinting && _inputVector.z > 0); // Can only sprint when forward component in input
-        _crouching = _input.Crouch;
+        _crouching = _input.PLAYER_Crouch;
 
         // Little bit dumb but it works
         _walking = _inputVector != Vector3.zero && !_sprinting;
@@ -506,8 +505,8 @@ public class PlayerController : MonoBehaviour
                     (_inputVector.x * mainCamera.right + _inputVector.z * mainCamera.forward).
                     normalized;
 
-                if (_input.VerticalMoveVector > 0) inputDirection += mainCamera.up;
-                if (_input.VerticalMoveVector < 0) inputDirection -= mainCamera.up;
+                if (_input.PLAYER_VerticalMoveVector > 0) inputDirection += mainCamera.up;
+                if (_input.PLAYER_VerticalMoveVector < 0) inputDirection -= mainCamera.up;
 
                 // Horrible but funny
                 _velocity = inputDirection *

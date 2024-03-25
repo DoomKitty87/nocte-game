@@ -48,13 +48,22 @@ public class PlayerGrapple : MonoBehaviour
     private void Start() {
         _input = InputHandler.Instance;
 
-        _input._grappleAction.performed += StartGrapple;
-        _input._grappleAction.canceled += StopGrapple;
+        _input.PLAYER_grappleAction.performed += StartGrapple;
+        _input.PLAYER_grappleAction.canceled += StopGrapple;
 
         _playerController = GetComponent<PlayerController>();
 
         PlayerController.Freeze += FreezeGrapple;
         PlayerController.UnFreeze += UnFreezeGrapple;
+    }
+
+    void OnDisable()
+    {
+        _input.PLAYER_grappleAction.performed -= StartGrapple;
+        _input.PLAYER_grappleAction.canceled -= StopGrapple;
+
+        PlayerController.Freeze -= FreezeGrapple;
+        PlayerController.UnFreeze -= UnFreezeGrapple;
     }
 
     private void Update() {
@@ -74,6 +83,8 @@ public class PlayerGrapple : MonoBehaviour
 
     public void StartGrapple(InputAction.CallbackContext context)
     {
+        Debug.Log("Grapple");
+
         if (_grapplingCoolDownTimer > 0) return;
         
         RaycastHit hit;
@@ -90,7 +101,7 @@ public class PlayerGrapple : MonoBehaviour
     private float _time;
     
     private void ExecuteGrapple() {
-        if (!_input.Grapple) return;
+        if (!_input.PLAYER_Grapple) return;
         _currentlyGrappling = true;
         _playerController.State = PlayerController.PlayerStates.Grappling;
         _time = 0;

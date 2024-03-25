@@ -45,8 +45,8 @@ public class PlayerCameraController : MonoBehaviour
     private float _desiredX;
 
     private void Look() {
-        float mouseX = _input.LookVector.x * _lookSensitivityX;
-        float mouseY = _input.LookVector.y * _lookSensitivityY;
+        float mouseX = _input.GENERAL_LookVector.x * _lookSensitivityX;
+        float mouseY = _input.GENERAL_LookVector.y * _lookSensitivityY;
 
         Vector3 rot = _currentRotation.eulerAngles;
         _desiredX = rot.y + mouseX;

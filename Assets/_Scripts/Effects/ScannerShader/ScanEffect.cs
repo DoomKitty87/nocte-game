@@ -69,7 +69,7 @@ public class ScanEffect : MonoBehaviour
     // Update is called once per frame
     private void Update()
     {
-        if (_input.Scan && !_scanning && _timeSinceLastScan > _scanCooldown) {
+        if (_input.PLAYER_Scan && !_scanning && _timeSinceLastScan > _scanCooldown) {
             _timeSinceLastScan = 0;
             StartCoroutine(Scan());
         }

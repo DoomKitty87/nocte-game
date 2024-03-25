@@ -70,8 +70,10 @@ namespace Console
         private void Start() {
             _input = InputHandler.Instance;
 
-            _input._consoleAction.performed += SwapConsoleState;
-            _input._noclipAction.performed += TryNoclip;
+            _input.PLAYER_consoleAction.started += SwapConsoleState;
+            _input.DRIVING_consoleAction.started += SwapConsoleState;
+
+            _input.PLAYER_noclipAction.started += TryNoclip;
 
             _consoleUI = _console.GetComponentInChildren<ConsoleUI>();
             
@@ -104,10 +106,10 @@ namespace Console
         }
 
         private void ReadKeyInput() {
-            if (_console.activeInHierarchy && _input.MoveVector.y > 0) 
+            if (_console.activeInHierarchy && _input.GENERAL_MoveVector.y > 0) 
                 _consoleUI.GetPreviousMessage(1);
             
-            if (_console.activeInHierarchy && _input.MoveVector.y < 0) 
+            if (_console.activeInHierarchy && _input.GENERAL_MoveVector.y < 0) 
                 _consoleUI.GetPreviousMessage(-1);
         }
 
@@ -130,15 +132,13 @@ namespace Console
         private void OpenConsole() {
             _console.SetActive(true);
             _consoleOpen?.Invoke();
-            if (ConsoleOpened != null)
-                ConsoleOpened();
+            ConsoleOpened?.Invoke();
         }
 
         private void CloseConsole() {
             _console.SetActive(false);
             _consoleClosed?.Invoke();
-            if (ConsoleClosed != null)
-                ConsoleClosed();
+            ConsoleClosed?.Invoke();
         }
 
         private void ShowMouse() {

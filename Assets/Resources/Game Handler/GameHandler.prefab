@@ -46,17 +46,175 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _playerInput: {fileID: -944628639613478452, guid: 0bef6341e0af346438caf2a7dbca631b,
     type: 3}
-  ACTION_MAP_NAME: Player
-  MOVE: Movement
-  LOOK: Look
-  JUMP: Jump
-  SPRINT: Sprint
-  CROUCH: Crouch
-  SHOOT: Shoot
-  GRAPPLE: Grapple
-  SCAN: Scan
-  CONSOLE: Console
-  NOCLIP: Noclip
-  INTERACT: Interact
-  OVERLAY: Overlay
-  VERTICALMOVE: VerticalMovement
+  DefaultActionMap: Player
+  PLAYER_moveAction:
+    m_Name: PLAYER_move
+    m_Type: 0
+    m_ExpectedControlType: 
+    m_Id: a79af521-ae63-4890-9fda-57943cfaec02
+    m_Processors: 
+    m_Interactions: 
+    m_SingletonActionBindings: []
+    m_Flags: 0
+  PLAYER_lookAction:
+    m_Name: PLAYER_look
+    m_Type: 0
+    m_ExpectedControlType: 
+    m_Id: 43def4a3-8183-47e2-8ee7-1f0f4525f175
+    m_Processors: 
+    m_Interactions: 
+    m_SingletonActionBindings: []
+    m_Flags: 0
+  PLAYER_jumpAction:
+    m_Name: PLAYER_jump
+    m_Type: 0
+    m_ExpectedControlType: 
+    m_Id: f759191d-6119-4ed1-9b70-e72e70d8a810
+    m_Processors: 
+    m_Interactions: 
+    m_SingletonActionBindings: []
+    m_Flags: 0
+  PLAYER_sprintAction:
+    m_Name: PLAYER_sprint
+    m_Type: 0
+    m_ExpectedControlType: 
+    m_Id: 4a7fb0eb-1561-48f1-8cb9-16ac531f0825
+    m_Processors: 
+    m_Interactions: 
+    m_SingletonActionBindings: []
+    m_Flags: 0
+  PLAYER_crouchAction:
+    m_Name: PLAYER_crouch
+    m_Type: 0
+    m_ExpectedControlType: 
+    m_Id: c9d97415-52f3-4665-8778-34ef0df28b1b
+    m_Processors: 
+    m_Interactions: 
+    m_SingletonActionBindings: []
+    m_Flags: 0
+  PLAYER_shootAction:
+    m_Name: PLAYER_shoot
+    m_Type: 0
+    m_ExpectedControlType: 
+    m_Id: fb841b31-606b-427b-9fad-7eb73655eaa9
+    m_Processors: 
+    m_Interactions: 
+    m_SingletonActionBindings: []
+    m_Flags: 0
+  PLAYER_grappleAction:
+    m_Name: PLAYER_grapple
+    m_Type: 0
+    m_ExpectedControlType: 
+    m_Id: 74997cc7-df4a-4b06-9335-6a3e677af75a
+    m_Processors: 
+    m_Interactions: 
+    m_SingletonActionBindings: []
+    m_Flags: 0
+  PLAYER_scanAction:
+    m_Name: PLAYER_scan
+    m_Type: 0
+    m_ExpectedControlType: 
+    m_Id: 3aea2853-743e-4091-86c3-3deb9afa043c
+    m_Processors: 
+    m_Interactions: 
+    m_SingletonActionBindings: []
+    m_Flags: 0
+  PLAYER_consoleAction:
+    m_Name: PLAYER_console
+    m_Type: 0
+    m_ExpectedControlType: 
+    m_Id: 679014a1-c952-47f3-bd29-2ca6ba4ec134
+    m_Processors: 
+    m_Interactions: 
+    m_SingletonActionBindings: []
+    m_Flags: 0
+  PLAYER_noclipAction:
+    m_Name: PLAYER_noclip
+    m_Type: 0
+    m_ExpectedControlType: 
+    m_Id: df3578b6-c0ca-4f9d-8be1-832417e475f3
+    m_Processors: 
+    m_Interactions: 
+    m_SingletonActionBindings: []
+    m_Flags: 0
+  PLAYER_interactAction:
+    m_Name: PLAYER_interact
+    m_Type: 0
+    m_ExpectedControlType: 
+    m_Id: da052415-f782-4f60-9367-5a838c809ce2
+    m_Processors: 
+    m_Interactions: 
+    m_SingletonActionBindings: []
+    m_Flags: 0
+  PLAYER_overlayAction:
+    m_Name: PLAYER_overlay
+    m_Type: 0
+    m_ExpectedControlType: 
+    m_Id: 1b55428d-0f14-4661-92fa-90160a8a15b3
+    m_Processors: 
+    m_Interactions: 
+    m_SingletonActionBindings: []
+    m_Flags: 0
+  PLAYER_verticalMoveAction:
+    m_Name: PLAYER_vertical Move
+    m_Type: 0
+    m_ExpectedControlType: 
+    m_Id: 23361dd9-7192-47f4-a95d-cf96c4942bd9
+    m_Processors: 
+    m_Interactions: 
+    m_SingletonActionBindings: []
+    m_Flags: 0
+  DRIVING_moveAction:
+    m_Name: DRIVING_move
+    m_Type: 0
+    m_ExpectedControlType: 
+    m_Id: bdcc96e9-ecb4-417b-a17f-88fdf842102c
+    m_Processors: 
+    m_Interactions: 
+    m_SingletonActionBindings: []
+    m_Flags: 0
+  DRIVING_leaveAction:
+    m_Name: DRIVING_leave
+    m_Type: 0
+    m_ExpectedControlType: 
+    m_Id: fbf01597-2886-465a-a6cf-875686450d14
+    m_Processors: 
+    m_Interactions: 
+    m_SingletonActionBindings: []
+    m_Flags: 0
+  DRIVING_overlayAction:
+    m_Name: DRIVING_overlay
+    m_Type: 0
+    m_ExpectedControlType: 
+    m_Id: 8cead6e1-389b-4ad0-8e72-e55ceb526951
+    m_Processors: 
+    m_Interactions: 
+    m_SingletonActionBindings: []
+    m_Flags: 0
+  DRIVING_consoleAction:
+    m_Name: DRIVING_console
+    m_Type: 0
+    m_ExpectedControlType: 
+    m_Id: de3fa216-dcd7-4956-a9d8-c3b7f66fb0e2
+    m_Processors: 
+    m_Interactions: 
+    m_SingletonActionBindings: []
+    m_Flags: 0
+  DRIVING_scanAction:
+    m_Name: DRIVING_scan
+    m_Type: 0
+    m_ExpectedControlType: 
+    m_Id: 3fbc6439-9229-47ec-bd38-bb448546112f
+    m_Processors: 
+    m_Interactions: 
+    m_SingletonActionBindings: []
+    m_Flags: 0
+  DRIVING_lookAction:
+    m_Name: DRIVING_look
+    m_Type: 0
+    m_ExpectedControlType: 
+    m_Id: bafcc7f5-d8b5-4953-8469-11a6e470bcff
+    m_Processors: 
+    m_Interactions: 
+    m_SingletonActionBindings: []
+    m_Flags: 0

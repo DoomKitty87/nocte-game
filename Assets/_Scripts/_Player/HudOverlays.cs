@@ -22,7 +22,7 @@ public class HudOverlays : MonoBehaviour
 
   private void Update() {
     foreach (Overlay overlay in _overlays) {
-      if (_input.Overlay) {
+      if (_input.GENERAL_Overlay) {
         overlay.reference.SetActive(!overlay.reference.activeSelf);
       }
     }

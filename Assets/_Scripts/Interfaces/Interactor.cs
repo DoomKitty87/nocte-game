@@ -16,7 +16,7 @@ public class Interactor : MonoBehaviour
   }
 
   private void Update() {
-    if (_input.Interact) {
+    if (_input.PLAYER_Interact) {
       Ray r = new Ray(transform.position, transform.forward);
       if (Physics.Raycast(r, out RaycastHit hitInfo, _InteractRange)) {
         if (hitInfo.collider.gameObject.TryGetComponent(out IInteractable interactObj)) {

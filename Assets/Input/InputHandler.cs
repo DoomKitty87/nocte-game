@@ -7,153 +7,221 @@ public class InputHandler : MonoBehaviour
     [SerializeField] private InputActionAsset _playerInput;
 
     [Header("Action Map Name")] 
-    [SerializeField] private string ACTION_MAP_NAME = "Player";
+    [SerializeField] private string DefaultActionMap = "Player";
+    private string _currentActionMap;
 
-    [Header("Action Name Reference")]
-    [SerializeField] private string MOVE = "Movement";
-    [SerializeField] private string LOOK = "Look";
-    [SerializeField] private string JUMP = "Jump";
-    [SerializeField] private string SPRINT = "Sprint";
-    [SerializeField] private string CROUCH = "Crouch";
-    [SerializeField] private string SHOOT = "Shoot";
-    [SerializeField] private string GRAPPLE = "Grapple";
-    [SerializeField] private string SCAN = "Scan";
-    [SerializeField] private string CONSOLE = "Console";
-    [SerializeField] private string NOCLIP = "Noclip";
-    [SerializeField] private string INTERACT = "Interact";
-    [SerializeField] private string OVERLAY = "Overlay";
-    [SerializeField] private string VERTICALMOVE = "VerticalMovement";
+    [HideInInspector] public InputAction PLAYER_moveAction;
+    [HideInInspector] public InputAction PLAYER_lookAction;
+    [HideInInspector] public InputAction PLAYER_jumpAction;
+    [HideInInspector] public InputAction PLAYER_sprintAction;
+    [HideInInspector] public InputAction PLAYER_crouchAction;
+    [HideInInspector] public InputAction PLAYER_shootAction;
+    [HideInInspector] public InputAction PLAYER_grappleAction;
+    [HideInInspector] public InputAction PLAYER_scanAction;
+    [HideInInspector] public InputAction PLAYER_consoleAction;
+    [HideInInspector] public InputAction PLAYER_noclipAction;
+    [HideInInspector] public InputAction PLAYER_interactAction;
+    [HideInInspector] public InputAction PLAYER_overlayAction;
+    [HideInInspector] public InputAction PLAYER_verticalMoveAction;
 
-    public InputAction _moveAction;
-    public InputAction _lookAction;
-    public InputAction _jumpAction;
-    public InputAction _sprintAction;
-    public InputAction _crouchAction;
-    public InputAction _shootAction;
-    public InputAction _grappleAction;
-    public InputAction _scanAction;
-    public InputAction _consoleAction;
-    public InputAction _noclipAction;
-    public InputAction _interactAction;
-    public InputAction _overlayAction;
-    public InputAction _verticalMoveAction;
+    [HideInInspector] public InputAction DRIVING_moveAction;
+    [HideInInspector] public InputAction DRIVING_leaveAction;
+    [HideInInspector] public InputAction DRIVING_overlayAction;
+    [HideInInspector] public InputAction DRIVING_consoleAction;
+    [HideInInspector] public InputAction DRIVING_scanAction;
+    [HideInInspector] public InputAction DRIVING_lookAction;
 
-    public Vector2 MoveVector { get; private set; }
-    public Vector2 LookVector { get; private set; }
-    public bool Jump { get; private set; }
-    public bool Sprint { get; private set; }
-    public bool Crouch { get; private set; }
-    public bool Shoot { get; private set; }
-    public bool Grapple { get; private set; }
-    public bool Scan { get; private set; }
-    public bool Console { get; private set; }
-    public bool Noclip { get; private set; }
-    public bool Interact { get; private set; }
-    public bool Overlay { get; private set; }
-    public float VerticalMoveVector { get; private set; }
+    public Vector2 PLAYER_MoveVector { get; private set; }
+    public Vector2 PLAYER_LookVector { get; private set; }
+    public bool PLAYER_Jump { get; private set; }
+    public bool PLAYER_Sprint { get; private set; }
+    public bool PLAYER_Crouch { get; private set; }
+    public bool PLAYER_Shoot { get; private set; }
+    public bool PLAYER_Grapple { get; private set; }
+    public bool PLAYER_Scan { get; private set; }
+    public bool PLAYER_Console { get; private set; }
+    public bool PLAYER_Noclip { get; private set; }
+    public bool PLAYER_Interact { get; private set; }
+    public bool PLAYER_Overlay { get; private set; }
+    public float PLAYER_VerticalMoveVector { get; private set; }
 
-    public static InputHandler Instance { get; private set; }
+    public Vector2 DRIVING_MoveVector { get; private set; }
+    public Vector2 Driving_LookVector { get; private set; }
+    public bool DRIVING_Leave { get; private set; }
+    public bool DRIVING_Overlay { get; private set; }
+    public bool DRIVING_Console { get; private set; }
+    public bool DRIVING_Scan { get; private set; }
+
+    public Vector2 GENERAL_MoveVector { 
+        get { return _currentActionMap == "Player" ? PLAYER_MoveVector : DRIVING_MoveVector; }
+    }
+
+    public Vector2 GENERAL_LookVector { 
+        get { return _currentActionMap == "Player" ? PLAYER_LookVector : Driving_LookVector; }
+    }
+
+    public bool GENERAL_Overlay { 
+        get { return _currentActionMap == "Player" ? PLAYER_Overlay : DRIVING_Overlay; }
+    }
+
+    public bool GENERAL_Console { 
+        get { return _currentActionMap == "Player" ? PLAYER_Console : DRIVING_Console; }
+    }
+
+    public bool GENERAL_Scan { 
+        get { return _currentActionMap == "Player" ? PLAYER_Scan : DRIVING_Scan; }
+    }
+
+    private static InputHandler instance;
+
+    public static InputHandler Instance { get {return instance; } }
 
     private void Awake() {
-        if (Instance == null) {
-            Instance = this;
-            DontDestroyOnLoad(gameObject);
-        }
-        else {
-            Destroy(gameObject);
-            return;
+        if (instance != null && instance != this)
+        {
+            Destroy(this.gameObject);
+        } else {
+            instance = this;
         }
 
-        var inputAction = _playerInput.FindActionMap(ACTION_MAP_NAME);
+        _currentActionMap = DefaultActionMap;
 
-        _moveAction = inputAction.FindAction(MOVE);
-        _lookAction = inputAction.FindAction(LOOK);
-        _jumpAction = inputAction.FindAction(JUMP);
-        _sprintAction = inputAction.FindAction(SPRINT);
-        _crouchAction = inputAction.FindAction(CROUCH);
-        _shootAction = inputAction.FindAction(SHOOT);
-        _grappleAction = inputAction.FindAction(GRAPPLE);
-        _scanAction = inputAction.FindAction(SCAN);
-        _consoleAction = inputAction.FindAction(CONSOLE);
-        _grappleAction = inputAction.FindAction(GRAPPLE);
-        _noclipAction = inputAction.FindAction(NOCLIP);
-        _interactAction = inputAction.FindAction(INTERACT);
-        _overlayAction = inputAction.FindAction(OVERLAY);
-        _verticalMoveAction = inputAction.FindAction(VERTICALMOVE);
+        var playerInputAction = _playerInput.FindActionMap(DefaultActionMap);
+
+        PLAYER_moveAction = playerInputAction.FindAction("Movement");
+        PLAYER_lookAction = playerInputAction.FindAction("Look");
+        PLAYER_jumpAction = playerInputAction.FindAction("Jump");
+        PLAYER_sprintAction = playerInputAction.FindAction("Sprint");
+        PLAYER_crouchAction = playerInputAction.FindAction("Crouch");
+        PLAYER_shootAction = playerInputAction.FindAction("Shoot");
+        PLAYER_grappleAction = playerInputAction.FindAction("Grapple");
+        PLAYER_scanAction = playerInputAction.FindAction("Scan");
+        PLAYER_consoleAction = playerInputAction.FindAction("Console");
+        PLAYER_noclipAction = playerInputAction.FindAction("Noclip");
+        PLAYER_interactAction = playerInputAction.FindAction("Interact");
+        PLAYER_overlayAction = playerInputAction.FindAction("Overlay");
+        PLAYER_verticalMoveAction = playerInputAction.FindAction("VerticalMovement");
+
+        var drivingInputAction = _playerInput.FindActionMap("Driving");
+
+        DRIVING_moveAction = drivingInputAction.FindAction("Movement");
+        DRIVING_lookAction = drivingInputAction.FindAction("Look");
+        DRIVING_leaveAction = drivingInputAction.FindAction("Leave");
+        DRIVING_overlayAction = drivingInputAction.FindAction("Overlay");
+        DRIVING_consoleAction = drivingInputAction.FindAction("Console");
+        DRIVING_scanAction = drivingInputAction.FindAction("Scan");
 
         RegisterInputActions();
     }
 
     private void RegisterInputActions() {
-        _moveAction.performed += context => MoveVector = context.ReadValue<Vector2>();
-        _moveAction.canceled += context => MoveVector = Vector2.zero;
+        PLAYER_moveAction.performed += context => PLAYER_MoveVector = context.ReadValue<Vector2>();
+        PLAYER_moveAction.canceled += context => PLAYER_MoveVector = Vector2.zero;
 
-        _lookAction.performed += context => LookVector = context.ReadValue<Vector2>();
-        _lookAction.canceled += context => LookVector = Vector2.zero;
+        PLAYER_lookAction.performed += context => PLAYER_LookVector = context.ReadValue<Vector2>();
+        PLAYER_lookAction.canceled += context => PLAYER_LookVector = Vector2.zero;
 
-        _sprintAction.performed += context => Sprint = true;
-        _sprintAction.canceled += context => Sprint = false;
+        PLAYER_sprintAction.performed += context => PLAYER_Sprint = true;
+        PLAYER_sprintAction.canceled += context => PLAYER_Sprint = false;
 
-        _jumpAction.performed += context => Jump = true;
-        _jumpAction.canceled += context => Jump = false;
+        PLAYER_jumpAction.performed += context => PLAYER_Jump = true;
+        PLAYER_jumpAction.canceled += context => PLAYER_Jump = false;
         
-        _crouchAction.performed += context => Crouch = true;
-        _crouchAction.canceled += context => Crouch = false;
+        PLAYER_crouchAction.performed += context => PLAYER_Crouch = true;
+        PLAYER_crouchAction.canceled += context => PLAYER_Crouch = false;
         
-        _shootAction.performed += context => Shoot = true;
-        _shootAction.canceled += context => Shoot = false;
+        PLAYER_shootAction.performed += context => PLAYER_Shoot = true;
+        PLAYER_shootAction.canceled += context => PLAYER_Shoot = false;
         
-        _grappleAction.performed += context => Grapple = true;
-        _grappleAction.canceled += context => Grapple = false;
+        PLAYER_grappleAction.performed += context => PLAYER_Grapple = true;
+        PLAYER_grappleAction.canceled += context => PLAYER_Grapple = false;
 
-        _scanAction.performed += context => Scan = true;
-        _scanAction.canceled += context => Scan = false;
+        PLAYER_scanAction.performed += context => PLAYER_Scan = true;
+        PLAYER_scanAction.canceled += context => PLAYER_Scan = false;
 
-        _consoleAction.performed += context => Console = true;
-        _consoleAction.canceled += context => Console = false;
+        PLAYER_consoleAction.performed += context => PLAYER_Console = true;
+        PLAYER_consoleAction.canceled += context => PLAYER_Console = false;
 
-        _noclipAction.performed += context => Noclip = true;
-        _noclipAction.canceled += context => Noclip = false;
+        PLAYER_noclipAction.performed += context => PLAYER_Noclip = true;
+        PLAYER_noclipAction.canceled += context => PLAYER_Noclip = false;
 
-        _interactAction.performed += context => Interact = true;
-        _interactAction.canceled += context => Interact = false;
+        PLAYER_interactAction.performed += context => PLAYER_Interact = true;
+        PLAYER_interactAction.canceled += context => PLAYER_Interact = false;
 
-        _overlayAction.performed += context => Overlay = true;
-        _overlayAction.canceled += context => Overlay = false;
+        PLAYER_overlayAction.performed += context => PLAYER_Overlay = true;
+        PLAYER_overlayAction.canceled += context => PLAYER_Overlay = false;
 
-        _verticalMoveAction.performed += context => VerticalMoveVector = context.ReadValue<float>();
-        _verticalMoveAction.canceled += context => VerticalMoveVector = 0;
+        PLAYER_verticalMoveAction.performed += context => PLAYER_VerticalMoveVector = context.ReadValue<float>();
+        PLAYER_verticalMoveAction.canceled += context => PLAYER_VerticalMoveVector = 0;
+
+        DRIVING_moveAction.performed += context => DRIVING_MoveVector = context.ReadValue<Vector2>();
+        DRIVING_moveAction.canceled += context => DRIVING_MoveVector = Vector2.zero;
+
+        DRIVING_lookAction.performed += context => Driving_LookVector = context.ReadValue<Vector2>();
+        DRIVING_lookAction.canceled += context => Driving_LookVector = Vector2.zero;
+
+        DRIVING_leaveAction.performed += context => DRIVING_Leave = true;
+        DRIVING_leaveAction.canceled += context => DRIVING_Leave = false;
+
+        DRIVING_overlayAction.performed += context => DRIVING_Overlay = true;
+        DRIVING_overlayAction.canceled += context => DRIVING_Overlay = false;
+
+        DRIVING_consoleAction.performed += context => DRIVING_Console = true;
+        DRIVING_consoleAction.canceled += context => DRIVING_Console = false;
+
+        DRIVING_scanAction.performed += context => DRIVING_Scan = true;
+        DRIVING_scanAction.canceled += context => DRIVING_Scan = false;
     }
 
     private void OnEnable() {
-        _moveAction.Enable();
-        _lookAction.Enable();
-        _jumpAction.Enable();
-        _sprintAction.Enable();
-        _crouchAction.Enable();
-        _shootAction.Enable();
-        _grappleAction.Enable();
-        _scanAction.Enable();
-        _consoleAction.Enable();
-        _noclipAction.Enable();
-        _interactAction.Enable();
-        _overlayAction.Enable();
-        _verticalMoveAction.Enable();
+        PLAYER_moveAction.Enable();
+        PLAYER_lookAction.Enable();
+        PLAYER_jumpAction.Enable();
+        PLAYER_sprintAction.Enable();
+        PLAYER_crouchAction.Enable();
+        PLAYER_shootAction.Enable();
+        PLAYER_grappleAction.Enable();
+        PLAYER_scanAction.Enable();
+        PLAYER_consoleAction.Enable();
+        PLAYER_noclipAction.Enable();
+        PLAYER_interactAction.Enable();
+        PLAYER_overlayAction.Enable();
+        PLAYER_verticalMoveAction.Enable();
+        DRIVING_moveAction.Enable();
+        DRIVING_lookAction.Enable();
+        DRIVING_leaveAction.Enable();
+        DRIVING_overlayAction.Enable();
+        DRIVING_consoleAction.Enable();
+        DRIVING_scanAction.Enable();
     }
 
     private void OnDisable() {
-        _moveAction.Disable();
-        _lookAction.Disable();
-        _jumpAction.Disable();
-        _sprintAction.Disable();
-        _crouchAction.Disable();
-        _shootAction.Disable();
-        _grappleAction.Disable();
-        _scanAction.Disable();
-        _consoleAction.Disable();
-        _noclipAction.Disable();
-        _interactAction.Disable();
-        _overlayAction.Disable();
-        _verticalMoveAction.Disable();
+        PLAYER_moveAction.Disable();
+        PLAYER_lookAction.Disable();
+        PLAYER_jumpAction.Disable();
+        PLAYER_sprintAction.Disable();
+        PLAYER_crouchAction.Disable();
+        PLAYER_shootAction.Disable();
+        PLAYER_grappleAction.Disable();
+        PLAYER_scanAction.Disable();
+        PLAYER_consoleAction.Disable();
+        PLAYER_noclipAction.Disable();
+        PLAYER_interactAction.Disable();
+        PLAYER_overlayAction.Disable();
+        PLAYER_verticalMoveAction.Disable();
+        DRIVING_moveAction.Disable();
+        DRIVING_lookAction.Disable();
+        DRIVING_leaveAction.Disable();
+        DRIVING_overlayAction.Disable();
+        DRIVING_consoleAction.Disable();
+        DRIVING_scanAction.Disable();
+    }
+
+
+
+    public void SwitchActiveInputMap(string actionMapName) {
+        _playerInput.FindActionMap(_currentActionMap).Disable();
+        _playerInput.FindActionMap(actionMapName).Enable();
+        _currentActionMap = actionMapName;
     }
 }
