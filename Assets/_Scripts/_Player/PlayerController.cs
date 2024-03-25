@@ -80,14 +80,14 @@ public class PlayerController : MonoBehaviour
     private Rigidbody _rb;
     private Collider _collider;
     
-    private bool _jumping;
-    private bool _resetJump;
-    private bool _sprintingForward;
-    private bool _sprinting;
-    private bool _crouching;
-    private bool _grounded;
-    private bool _useVelocity = true;
-    private bool _useGravity = true;
+    [HideInInspector] public bool _jumping;
+    [HideInInspector] public bool _resetJump;
+    [HideInInspector] public bool _sprintingForward;
+    [HideInInspector] public bool _sprinting;
+    [HideInInspector] public bool _crouching;
+    [HideInInspector] public bool _grounded;
+    [HideInInspector] public bool _useVelocity = true;
+    [HideInInspector] public bool _useGravity = true;
     
     private float _currentWaterHeight;
 
