@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 4425.812, g: 2871.673, b: 2111.448, a: 1}
+  m_IndirectSpecularColor: {r: 4426.203, g: 2871.9412, b: 2111.5479, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -328,6 +328,36 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: NewPlayerPrefab
+      objectReference: {fileID: 0}
+    - target: {fileID: 8006249604740443719, guid: 9251f6c58d15c7b428fef40ec34ce952,
+        type: 3}
+      propertyPath: field of view
+      value: 60.000004
+      objectReference: {fileID: 0}
+    - target: {fileID: 8573639786141903827, guid: 9251f6c58d15c7b428fef40ec34ce952,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0.8000002
+      objectReference: {fileID: 0}
+    - target: {fileID: 8573639786141903827, guid: 9251f6c58d15c7b428fef40ec34ce952,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.8000002
+      objectReference: {fileID: 0}
+    - target: {fileID: 8573639786141903827, guid: 9251f6c58d15c7b428fef40ec34ce952,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -4
+      objectReference: {fileID: 0}
+    - target: {fileID: 8573639786141903827, guid: 9251f6c58d15c7b428fef40ec34ce952,
+        type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8573639786141903827, guid: 9251f6c58d15c7b428fef40ec34ce952,
+        type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 2257831180584907511, guid: 9251f6c58d15c7b428fef40ec34ce952, type: 3}
@@ -1320,7 +1350,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _scanEffectVolume: {fileID: 971802134}
-  _scanOrigin: {fileID: 1744278994}
+  _scanOrigin: {fileID: 281930238}
   _scanDistance: 200
   _scanDuration: 2
   _scanHangDuration: 1
@@ -3228,12 +3258,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: e66d8ec576fd4a944ab638eb9e7b0099, type: 3}
---- !u!4 &1744278994 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 7579844485692665664, guid: 9251f6c58d15c7b428fef40ec34ce952,
-    type: 3}
-  m_PrefabInstance: {fileID: 281930233}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1784951601
 GameObject:
   m_ObjectHideFlags: 0

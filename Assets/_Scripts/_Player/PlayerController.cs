@@ -47,7 +47,7 @@ public class PlayerController : MonoBehaviour
     
     [Header("Vectors")]
     [SerializeField, Tooltip("Current position")] private Vector3 _position;
-    [SerializeField, Tooltip("Current velocity")] private Vector3 _velocity;
+    [SerializeField, Tooltip("Current velocity")] public Vector3 _velocity; // Referenced by PlayerAnimHandler, clean up in function or property if you want -Matthew
     [SerializeField, Tooltip("Current acceleration")] private Vector3 _acceleration;
     [SerializeField, Tooltip("Normal of ground")] private Vector3 _normalVector;
     [SerializeField] private float _velocityMagnitude;
