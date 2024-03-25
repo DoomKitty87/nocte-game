@@ -1,10 +1,9 @@
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class PlayerGrapple : MonoBehaviour
 {
     private InputHandler _input;
-
-    public KeyCode _grappleButton = KeyCode.Mouse1;
     
     [Header("References")]
     [SerializeField] private bool _useOutsideScriptControl;
@@ -49,6 +48,9 @@ public class PlayerGrapple : MonoBehaviour
     private void Start() {
         _input = InputHandler.Instance;
 
+        _input._grappleAction.performed += StartGrapple;
+        _input._grappleAction.canceled += StopGrapple;
+
         _playerController = GetComponent<PlayerController>();
 
         PlayerController.Freeze += FreezeGrapple;
@@ -59,8 +61,6 @@ public class PlayerGrapple : MonoBehaviour
         if (_frozen) return;
         if (_grapplingCoolDownTimer > 0)
             _grapplingCoolDownTimer -= Time.deltaTime;
-        if (_input.Grapple) StartGrapple();
-        if (Input.GetKeyUp(_grappleButton)) StopGrapple();
     }
 
     private void FixedUpdate() {
@@ -72,7 +72,7 @@ public class PlayerGrapple : MonoBehaviour
         }
     }
 
-    public void StartGrapple()
+    public void StartGrapple(InputAction.CallbackContext context)
     {
         if (_grapplingCoolDownTimer > 0) return;
         
@@ -121,6 +121,18 @@ public class PlayerGrapple : MonoBehaviour
         return direction * magnitude;
     }
     
+    private void StopGrapple(InputAction.CallbackContext context)
+    {
+        if (_currentlyGrappling) {
+            _currentlyGrappling = false;
+            _grapplingCoolDownTimer = _grapplingCoolDown;
+        }
+
+        _renderGrapple = false;
+
+        _playerController.State = PlayerController.PlayerStates.Air;
+    }
+
     private void StopGrapple()
     {
         if (_currentlyGrappling) {
@@ -132,6 +144,7 @@ public class PlayerGrapple : MonoBehaviour
 
         _playerController.State = PlayerController.PlayerStates.Air;
     }
+
 
     private void FreezeGrapple() {
         _frozen = true;

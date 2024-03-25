@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using Console.Commands;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 namespace Console
 {
@@ -13,9 +14,6 @@ namespace Console
         [SerializeField] private GameObject _console;
 
         private ConsoleUI _consoleUI;
-
-        public KeyCode _consoleKey = KeyCode.BackQuote;
-        public KeyCode _noclipKey = KeyCode.V;
 
         private static Action _consoleOpen;
         private static Action _consoleClosed;
@@ -72,6 +70,9 @@ namespace Console
         private void Start() {
             _input = InputHandler.Instance;
 
+            _input._consoleAction.performed += SwapConsoleState;
+            _input._noclipAction.performed += TryNoclip;
+
             _consoleUI = _console.GetComponentInChildren<ConsoleUI>();
             
             CloseConsole();
@@ -103,21 +104,20 @@ namespace Console
         }
 
         private void ReadKeyInput() {
-            if (_input.Console)
-                SwapConsoleState();
-
-            if (_input.Noclip && BackgroundInfo._enableCheats && !_console.activeInHierarchy) {
-                _consoleUI.ApplyCommand("noclip toggle");
-            }
-
             if (_console.activeInHierarchy && _input.MoveVector.y > 0) 
                 _consoleUI.GetPreviousMessage(1);
             
             if (_console.activeInHierarchy && _input.MoveVector.y < 0) 
                 _consoleUI.GetPreviousMessage(-1);
         }
+
+        private void TryNoclip(InputAction.CallbackContext context) {
+            if (BackgroundInfo._enableCheats && !_console.activeInHierarchy) {
+                _consoleUI.ApplyCommand("noclip toggle");
+            }
+        }
         
-        private void SwapConsoleState() {
+        private void SwapConsoleState(InputAction.CallbackContext context) {
             if (_console == null) throw new NullReferenceException("No console object set in ConsoleController.");
             
             bool isOpen = _console.activeInHierarchy;

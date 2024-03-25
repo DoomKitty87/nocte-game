@@ -24,19 +24,19 @@ public class InputHandler : MonoBehaviour
     [SerializeField] private string OVERLAY = "Overlay";
     [SerializeField] private string VERTICALMOVE = "VerticalMovement";
 
-    private InputAction _moveAction;
-    private InputAction _lookAction;
-    private InputAction _jumpAction;
-    private InputAction _sprintAction;
-    private InputAction _crouchAction;
-    private InputAction _shootAction;
-    private InputAction _grappleAction;
-    private InputAction _scanAction;
-    private InputAction _consoleAction;
-    private InputAction _noclipAction;
-    private InputAction _interactAction;
-    private InputAction _overlayAction;
-    private InputAction _verticalMoveAction;
+    public InputAction _moveAction;
+    public InputAction _lookAction;
+    public InputAction _jumpAction;
+    public InputAction _sprintAction;
+    public InputAction _crouchAction;
+    public InputAction _shootAction;
+    public InputAction _grappleAction;
+    public InputAction _scanAction;
+    public InputAction _consoleAction;
+    public InputAction _noclipAction;
+    public InputAction _interactAction;
+    public InputAction _overlayAction;
+    public InputAction _verticalMoveAction;
 
     public Vector2 MoveVector { get; private set; }
     public Vector2 LookVector { get; private set; }

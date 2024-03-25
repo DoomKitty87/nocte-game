@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0, g: 0, b: 0, a: 1}
+  m_IndirectSpecularColor: {r: 360.06033, g: 142.188, b: 66.6023, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -6455,6 +6455,21 @@ PrefabInstance:
       propertyPath: _worldGen
       value: 
       objectReference: {fileID: 4258144910533491457}
+    - target: {fileID: 1411075424346787586, guid: 9251f6c58d15c7b428fef40ec34ce952,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -0.3250122
+      objectReference: {fileID: 0}
+    - target: {fileID: 1411075424346787586, guid: 9251f6c58d15c7b428fef40ec34ce952,
+        type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.89641666
+      objectReference: {fileID: 0}
+    - target: {fileID: 1411075424346787586, guid: 9251f6c58d15c7b428fef40ec34ce952,
+        type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0.4432123
+      objectReference: {fileID: 0}
     - target: {fileID: 2882977137503334130, guid: 9251f6c58d15c7b428fef40ec34ce952,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -6510,6 +6525,11 @@ PrefabInstance:
       propertyPath: _console
       value: 
       objectReference: {fileID: 448989663}
+    - target: {fileID: 4798468513531427306, guid: 9251f6c58d15c7b428fef40ec34ce952,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.7999878
+      objectReference: {fileID: 0}
     - target: {fileID: 5766149443483151228, guid: 9251f6c58d15c7b428fef40ec34ce952,
         type: 3}
       propertyPath: m_LocalPosition.y
@@ -6524,6 +6544,36 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: NewPlayerPrefab
+      objectReference: {fileID: 0}
+    - target: {fileID: 8006249604740443719, guid: 9251f6c58d15c7b428fef40ec34ce952,
+        type: 3}
+      propertyPath: field of view
+      value: 80
+      objectReference: {fileID: 0}
+    - target: {fileID: 8573639786141903827, guid: 9251f6c58d15c7b428fef40ec34ce952,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 8573639786141903827, guid: 9251f6c58d15c7b428fef40ec34ce952,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -1.0484009
+      objectReference: {fileID: 0}
+    - target: {fileID: 8573639786141903827, guid: 9251f6c58d15c7b428fef40ec34ce952,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -1.4303026
+      objectReference: {fileID: 0}
+    - target: {fileID: 8573639786141903827, guid: 9251f6c58d15c7b428fef40ec34ce952,
+        type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.89641666
+      objectReference: {fileID: 0}
+    - target: {fileID: 8573639786141903827, guid: 9251f6c58d15c7b428fef40ec34ce952,
+        type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0.4432123
       objectReference: {fileID: 0}
     - target: {fileID: 9222094017749289078, guid: 9251f6c58d15c7b428fef40ec34ce952,
         type: 3}
@@ -16335,8 +16385,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _console: {fileID: 448989663}
-  _consoleKey: 96
-  _noclipKey: 118
   _enableCheats: 1
 --- !u!33 &942790403729031582
 MeshFilter:
@@ -16372,7 +16420,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5236b29f77166d4b8e548c63c8d17e5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _grappleButton: 324
   _useOutsideScriptControl: 0
   _camera: {fileID: 2500354741781696888}
   _gunEnd: {fileID: 3582929410681435891}
