@@ -6,7 +6,7 @@ using UnityEngine;
 [RequireComponent(typeof(HealthInterface))]
 public class PlayerCombatCore : MonoBehaviour
 {
-  private InputHandler _input;
+  private PlayerInput _input;
 
   [Header("Dependencies")]
   public Camera _mainCamera;
@@ -88,7 +88,7 @@ public class PlayerCombatCore : MonoBehaviour
   
   // Start is called before the first frame update
   private void Start() {
-    _input = InputHandler.Instance;
+    _input = InputReader.Instance.PlayerInput;
 
     _fire1LastFrame = false;
     // _fire2LastFrame = false;

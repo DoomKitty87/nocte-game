@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 public class HudOverlays : MonoBehaviour
 {
-  private InputHandler _input;
+  private PlayerInput _input;
 
   [System.Serializable]
   public struct Overlay
@@ -17,14 +17,19 @@ public class HudOverlays : MonoBehaviour
 
   void Start()
   {
-    _input = InputHandler.Instance;
+    _input = InputReader.Instance.PlayerInput;
+
+    _input.Player.Overlay.performed += _input => ActivateOverlay();
   }
 
-  private void Update() {
+  void OnDisable()
+  {
+    _input.Player.Overlay.performed -= _input => ActivateOverlay();
+  }
+
+  private void ActivateOverlay() {
     foreach (Overlay overlay in _overlays) {
-      if (_input.GENERAL_Overlay) {
-        overlay.reference.SetActive(!overlay.reference.activeSelf);
-      }
+        overlay.reference.SetActive(true);
     }
   }
 

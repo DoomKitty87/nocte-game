@@ -6,7 +6,7 @@ using UnityEngine.Rendering;
 
 public class ScanEffect : MonoBehaviour
 {
-	private InputHandler _input;
+	private PlayerInput _input;
 
     [Header("Dependencies")]
     [SerializeField] private Volume _scanEffectVolume;
@@ -55,7 +55,7 @@ public class ScanEffect : MonoBehaviour
     // Start is called before the first frame update
     private void Start()
     {
-        _input = InputHandler.Instance;
+        _input = InputReader.Instance.PlayerInput;
 
         if (_scanEffectVolume.profile.TryGet<ScannerEffectPostProcessVolume>(out var effect)) {
             _effect = effect;
