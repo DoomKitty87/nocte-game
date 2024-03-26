@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 345.88577, g: 137.70226, b: 64.05683, a: 1}
+  m_IndirectSpecularColor: {r: 359.83633, g: 143.01694, b: 67.26551, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -8034,6 +8034,30 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _menuScene: VisualTesting
   _gameScene: ProcgenTesting
+--- !u!114 &932557398
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 932557394}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 28cbc3f61ae7c6740b95ac220f04c081, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &932557399
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 932557394}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 175da796892bd054da6106046ce25b97, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &955900335
 GameObject:
   m_ObjectHideFlags: 0
@@ -10459,6 +10483,14 @@ PrefabInstance:
         type: 3}
       insertIndex: -1
       addedObject: {fileID: 932557397}
+    - targetCorrespondingSourceObject: {fileID: 8348581581803096828, guid: c3c92e21110174b00ae36d165b0388d0,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 932557398}
+    - targetCorrespondingSourceObject: {fileID: 8348581581803096828, guid: c3c92e21110174b00ae36d165b0388d0,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 932557399}
   m_SourcePrefab: {fileID: 100100000, guid: c3c92e21110174b00ae36d165b0388d0, type: 3}
 --- !u!1 &1744140703
 GameObject:
@@ -11054,7 +11086,7 @@ MonoBehaviour:
   _chunkStructureChance: 1
   _availableStructures:
   - {fileID: 8822680120617020803, guid: 11fd3de349e270f44a20d64c6aa5b82d, type: 3}
-  - {fileID: 7301654918860019335, guid: 1afbf1bd0ad244c4e8bfc1e6e60b4d9d, type: 3}
+  - {fileID: 6324266856721594258, guid: 714ccb4673d0da940a9f535db7c54ac3, type: 3}
 --- !u!1 &1919250529
 GameObject:
   m_ObjectHideFlags: 0
