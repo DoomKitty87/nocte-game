@@ -1,0 +1,53 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.SceneManagement;
+
+public class SceneHandler : MonoBehaviour
+{
+
+  private bool _inGame;
+
+  [SerializeField] private string _menuScene;
+  [SerializeField] private string _gameScene;
+
+  private static SceneHandler _instance;
+
+  public static SceneHandler Instance { get {return _instance; } }
+
+  private void OnEnable() {
+    if (_instance == null) {
+      _instance = this;
+    } else {
+      Destroy(this);
+    }
+
+    if (SceneManager.GetActiveScene().name == _gameScene) {
+      _inGame = true;
+    }
+  }
+
+  public void EnterGame() {
+    SceneManager.LoadScene(_gameScene);
+    _inGame = true;
+  }
+
+  public void ExitToMenu() {
+    Debug.Log("Exiting to menu");
+    StartCoroutine(ToMenu());
+  }
+
+  private IEnumerator ToMenu() {
+    if (_inGame) {
+      _inGame = false;
+      if (CheckJobs()) {
+        yield return new WaitUntil(() => !CheckJobs());
+      }
+      SceneManager.LoadScene(_menuScene);
+    }
+  }
+
+  private bool CheckJobs() {
+    return WorldGenInfo._worldGenerator.IsGenerating();
+  }
+}

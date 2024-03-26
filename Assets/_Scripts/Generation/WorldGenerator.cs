@@ -7,6 +7,7 @@ using Unity.Collections;
 using UnityEngine.Rendering;
 using IEnumerator = System.Collections.IEnumerator;
 using static AmalgamNoise;
+using System;
 
 public class WorldGenerator : MonoBehaviour
 {
@@ -281,6 +282,10 @@ public class WorldGenerator : MonoBehaviour
     }
 
     return (meshes, positions);
+  }
+
+  public bool IsGenerating() {
+    return _currentlyGenerating > 0 || _currentlyUpdating > 0;
   }
 
   #endregion

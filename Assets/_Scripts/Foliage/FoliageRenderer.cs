@@ -203,13 +203,13 @@ namespace Foliage
 
       //Debug.Log(lod);
       if (lod != -1) {
-        Graphics.DrawMeshInstancedIndirect(_meshes[lod], 0, _material, new Bounds(new Vector3(0, 0, 0), Vector3.one * 10000f), _argsBuffer);
+        Graphics.DrawMeshInstancedIndirect(_meshes[lod], 0, _material, new Bounds(new Vector3(0, 0, 0), Vector3.one * 1000000000f), _argsBuffer);
         if (_useSubmesh) {
-          Graphics.DrawMeshInstancedIndirect(_meshes[lod], 1, _material2, new Bounds(new Vector3(0, 0, 0), Vector3.one * 10000f), _argsBuffer2);
+          Graphics.DrawMeshInstancedIndirect(_meshes[lod], 1, _material2, new Bounds(new Vector3(0, 0, 0), Vector3.one * 1000000000f), _argsBuffer2);
         }
       }
       else if (_useBillboard) {
-        Graphics.DrawMeshInstancedIndirect(_billboardMesh, 0, _billboardMaterial, new Bounds(new Vector3(0, 0, 0), Vector3.one * 10000f), _argsBuffer);
+        Graphics.DrawMeshInstancedIndirect(_billboardMesh, 0, _billboardMaterial, new Bounds(new Vector3(0, 0, 0), Vector3.one * 1000000000f), _argsBuffer);
       }
 
       //Debug.Log($"Rendering mesh");

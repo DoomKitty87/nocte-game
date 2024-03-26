@@ -12,6 +12,8 @@ public class OnHealthChangedEvent : UnityEvent<float, float, float> {}
 public class OnDamageEvent : UnityEvent<Vector3> {}
 [Serializable]
 public class OnHealEvent : UnityEvent {}
+[Serializable]
+public class OnHealthZeroEvent : UnityEvent {}
 public class HealthInterface : MonoBehaviour
 {
 
@@ -28,7 +30,7 @@ public class HealthInterface : MonoBehaviour
   [SerializeField] private float _currentHealth;
   [SerializeField] private float _maxHealth;
   [Tooltip("OnHealthInitialize(_maxHealth)")] public OnHealthInitializeEvent _onHealthInitialize;
-  [Tooltip("OnHealthZero()")] public UnityEvent _onHealthZero;
+  [Tooltip("OnHealthZero()")] public OnHealthZeroEvent _onHealthZero;
   [Tooltip("OnHealthChanged(healthBeforeDamage, _currentHealth, _maxHealth) Doesn't fire when health changes to a value below zero.")] public OnHealthChangedEvent _onHealthChanged;
   [Tooltip("OnDamage(hitPosition)")] public OnDamageEvent _onDamage;
   [Tooltip("OnHeal()")] public OnHealEvent _onHeal;
