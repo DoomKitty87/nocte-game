@@ -16,6 +16,7 @@ public class InputHandler : MonoBehaviour
     [HideInInspector] public InputAction PLAYER_sprintAction;
     [HideInInspector] public InputAction PLAYER_crouchAction;
     [HideInInspector] public InputAction PLAYER_shootAction;
+    [HideInInspector] public InputAction PLAYER_ADSAction;
     [HideInInspector] public InputAction PLAYER_grappleAction;
     [HideInInspector] public InputAction PLAYER_scanAction;
     [HideInInspector] public InputAction PLAYER_consoleAction;
@@ -37,6 +38,7 @@ public class InputHandler : MonoBehaviour
     public bool PLAYER_Sprint { get; private set; }
     public bool PLAYER_Crouch { get; private set; }
     public bool PLAYER_Shoot { get; private set; }
+    public bool PLAYER_ADS { get; private set; }
     public bool PLAYER_Grapple { get; private set; }
     public bool PLAYER_Scan { get; private set; }
     public bool PLAYER_Console { get; private set; }
@@ -94,6 +96,7 @@ public class InputHandler : MonoBehaviour
         PLAYER_sprintAction = playerInputAction.FindAction("Sprint");
         PLAYER_crouchAction = playerInputAction.FindAction("Crouch");
         PLAYER_shootAction = playerInputAction.FindAction("Shoot");
+        PLAYER_ADSAction = playerInputAction.FindAction("ADS");
         PLAYER_grappleAction = playerInputAction.FindAction("Grapple");
         PLAYER_scanAction = playerInputAction.FindAction("Scan");
         PLAYER_consoleAction = playerInputAction.FindAction("Console");
@@ -132,6 +135,9 @@ public class InputHandler : MonoBehaviour
         
         PLAYER_shootAction.performed += context => PLAYER_Shoot = true;
         PLAYER_shootAction.canceled += context => PLAYER_Shoot = false;
+        
+        PLAYER_ADSAction.performed += context => PLAYER_ADS = true;
+        PLAYER_ADSAction.canceled += context => PLAYER_ADS = false;
         
         PLAYER_grappleAction.performed += context => PLAYER_Grapple = true;
         PLAYER_grappleAction.canceled += context => PLAYER_Grapple = false;
@@ -180,6 +186,7 @@ public class InputHandler : MonoBehaviour
         PLAYER_sprintAction.Enable();
         PLAYER_crouchAction.Enable();
         PLAYER_shootAction.Enable();
+        PLAYER_ADSAction.Enable();
         PLAYER_grappleAction.Enable();
         PLAYER_scanAction.Enable();
         PLAYER_consoleAction.Enable();
@@ -202,6 +209,7 @@ public class InputHandler : MonoBehaviour
         PLAYER_sprintAction.Disable();
         PLAYER_crouchAction.Disable();
         PLAYER_shootAction.Disable();
+        PLAYER_ADSAction.Disable();
         PLAYER_grappleAction.Disable();
         PLAYER_scanAction.Disable();
         PLAYER_consoleAction.Disable();

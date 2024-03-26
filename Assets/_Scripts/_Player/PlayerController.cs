@@ -58,14 +58,6 @@ public class PlayerController : MonoBehaviour
     
     [Header("Ground")]
     [SerializeField, Tooltip("Layer for ground")] private LayerMask _groundMask;
-    
-    [Header("Keybinds")]
-    public KeyCode _jumpKey = KeyCode.Space;
-    public KeyCode _sprintKey = KeyCode.LeftShift;
-    public KeyCode _crouchKey = KeyCode.LeftControl;
-    public KeyCode _upKey = KeyCode.E;
-    public KeyCode _downKey = KeyCode.Q;
-    
     #endregion
     
     #region Events

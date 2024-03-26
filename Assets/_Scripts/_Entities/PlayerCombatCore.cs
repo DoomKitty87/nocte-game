@@ -10,7 +10,6 @@ public class PlayerCombatCore : MonoBehaviour
 
   [Header("Dependencies")]
   public Camera _mainCamera;
-  [SerializeField] private CinemachineThirdPersonFollow _cinemachine3rdPersonFollow;
   [SerializeField] private GameObject _weaponContainer;
   [SerializeField] private WeaponItem _currentWeaponItem;
   [Header("Info - Dont change in editor")]
@@ -67,7 +66,7 @@ public class PlayerCombatCore : MonoBehaviour
       }
       _fire1LastFrame = false;
     }
-    if (_input.PLAYER_Grapple) { 
+    if (_input.PLAYER_ADS) { 
       if (_fire2LastFrame == false) {
         _instanceScript.Fire2Down();
         // _weaponUI.UpdateAmmoCount(_instanceScript.GetAmmo);

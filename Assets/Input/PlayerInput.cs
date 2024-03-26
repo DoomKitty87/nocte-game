@@ -82,7 +82,7 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
                     ""initialStateCheck"": false
                 },
                 {
-                    ""name"": ""ADS"",
+                    ""name"": ""Ads"",
                     ""type"": ""Button"",
                     ""id"": ""1d33d0e3-7243-4e3f-bad9-735510065bdf"",
                     ""expectedControlType"": ""Button"",
@@ -525,7 +525,7 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""ADS"",
+                    ""action"": ""Ads"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 },
@@ -536,7 +536,7 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""ADS"",
+                    ""action"": ""Ads"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -863,7 +863,7 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
         m_Player_Sprint = m_Player.FindAction("Sprint", throwIfNotFound: true);
         m_Player_Crouch = m_Player.FindAction("Crouch", throwIfNotFound: true);
         m_Player_Shoot = m_Player.FindAction("Shoot", throwIfNotFound: true);
-        m_Player_ADS = m_Player.FindAction("ADS", throwIfNotFound: true);
+        m_Player_Ads = m_Player.FindAction("Ads", throwIfNotFound: true);
         m_Player_Grapple = m_Player.FindAction("Grapple", throwIfNotFound: true);
         m_Player_Scan = m_Player.FindAction("Scan", throwIfNotFound: true);
         m_Player_Console = m_Player.FindAction("Console", throwIfNotFound: true);
@@ -949,7 +949,7 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_Sprint;
     private readonly InputAction m_Player_Crouch;
     private readonly InputAction m_Player_Shoot;
-    private readonly InputAction m_Player_ADS;
+    private readonly InputAction m_Player_Ads;
     private readonly InputAction m_Player_Grapple;
     private readonly InputAction m_Player_Scan;
     private readonly InputAction m_Player_Console;
@@ -967,7 +967,7 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
         public InputAction @Sprint => m_Wrapper.m_Player_Sprint;
         public InputAction @Crouch => m_Wrapper.m_Player_Crouch;
         public InputAction @Shoot => m_Wrapper.m_Player_Shoot;
-        public InputAction @ADS => m_Wrapper.m_Player_ADS;
+        public InputAction @Ads => m_Wrapper.m_Player_Ads;
         public InputAction @Grapple => m_Wrapper.m_Player_Grapple;
         public InputAction @Scan => m_Wrapper.m_Player_Scan;
         public InputAction @Console => m_Wrapper.m_Player_Console;
@@ -1002,9 +1002,9 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
             @Shoot.started += instance.OnShoot;
             @Shoot.performed += instance.OnShoot;
             @Shoot.canceled += instance.OnShoot;
-            @ADS.started += instance.OnADS;
-            @ADS.performed += instance.OnADS;
-            @ADS.canceled += instance.OnADS;
+            @Ads.started += instance.OnAds;
+            @Ads.performed += instance.OnAds;
+            @Ads.canceled += instance.OnAds;
             @Grapple.started += instance.OnGrapple;
             @Grapple.performed += instance.OnGrapple;
             @Grapple.canceled += instance.OnGrapple;
@@ -1048,9 +1048,9 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
             @Shoot.started -= instance.OnShoot;
             @Shoot.performed -= instance.OnShoot;
             @Shoot.canceled -= instance.OnShoot;
-            @ADS.started -= instance.OnADS;
-            @ADS.performed -= instance.OnADS;
-            @ADS.canceled -= instance.OnADS;
+            @Ads.started -= instance.OnAds;
+            @Ads.performed -= instance.OnAds;
+            @Ads.canceled -= instance.OnAds;
             @Grapple.started -= instance.OnGrapple;
             @Grapple.performed -= instance.OnGrapple;
             @Grapple.canceled -= instance.OnGrapple;
@@ -1247,7 +1247,7 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
         void OnSprint(InputAction.CallbackContext context);
         void OnCrouch(InputAction.CallbackContext context);
         void OnShoot(InputAction.CallbackContext context);
-        void OnADS(InputAction.CallbackContext context);
+        void OnAds(InputAction.CallbackContext context);
         void OnGrapple(InputAction.CallbackContext context);
         void OnScan(InputAction.CallbackContext context);
         void OnConsole(InputAction.CallbackContext context);
