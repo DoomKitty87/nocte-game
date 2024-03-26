@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0, g: 0, b: 0, a: 1}
+  m_IndirectSpecularColor: {r: 360.34818, g: 142.8776, b: 67.48243, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -6528,17 +6528,17 @@ PrefabInstance:
     - target: {fileID: 1411075424346787586, guid: 9251f6c58d15c7b428fef40ec34ce952,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0.3250122
+      value: -0.30493164
       objectReference: {fileID: 0}
     - target: {fileID: 1411075424346787586, guid: 9251f6c58d15c7b428fef40ec34ce952,
         type: 3}
       propertyPath: m_LocalRotation.w
-      value: 0.89641666
+      value: 0.9914483
       objectReference: {fileID: 0}
     - target: {fileID: 1411075424346787586, guid: 9251f6c58d15c7b428fef40ec34ce952,
         type: 3}
       propertyPath: m_LocalRotation.x
-      value: -0.4432123
+      value: -0.13050054
       objectReference: {fileID: 0}
     - target: {fileID: 2507234909810743687, guid: 9251f6c58d15c7b428fef40ec34ce952,
         type: 3}
@@ -6603,7 +6603,7 @@ PrefabInstance:
     - target: {fileID: 4798468513531427306, guid: 9251f6c58d15c7b428fef40ec34ce952,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.7999878
+      value: 1.25
       objectReference: {fileID: 0}
     - target: {fileID: 5766149443483151228, guid: 9251f6c58d15c7b428fef40ec34ce952,
         type: 3}
@@ -6698,22 +6698,22 @@ PrefabInstance:
     - target: {fileID: 8573639786141903827, guid: 9251f6c58d15c7b428fef40ec34ce952,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: -1.0484009
+      value: 0.17803955
       objectReference: {fileID: 0}
     - target: {fileID: 8573639786141903827, guid: 9251f6c58d15c7b428fef40ec34ce952,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: -1.4303026
+      value: -1.2676411
       objectReference: {fileID: 0}
     - target: {fileID: 8573639786141903827, guid: 9251f6c58d15c7b428fef40ec34ce952,
         type: 3}
       propertyPath: m_LocalRotation.w
-      value: 0.89641666
+      value: 0.9914483
       objectReference: {fileID: 0}
     - target: {fileID: 8573639786141903827, guid: 9251f6c58d15c7b428fef40ec34ce952,
         type: 3}
       propertyPath: m_LocalRotation.x
-      value: -0.4432123
+      value: -0.13050054
       objectReference: {fileID: 0}
     - target: {fileID: 8957003776507278256, guid: 9251f6c58d15c7b428fef40ec34ce952,
         type: 3}
@@ -10873,7 +10873,6 @@ MonoBehaviour:
   _currentWeaponItem: {fileID: 11400000, guid: dc95d4731caee0d47921b965cee96a44, type: 2}
   _weaponInstance: {fileID: 0}
   _instanceScript: {fileID: 0}
-  _weaponUI: {fileID: 1829040298}
 --- !u!114 &1829040281
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -16865,8 +16864,10 @@ MonoBehaviour:
   _crouchingCameraPosition: {x: 0, y: -0.2, z: 0}
   _disableMovement: 0
   _state: 0
-  _orientation: {fileID: 5411564956631394664}
+  _movementOrientation: {fileID: 0}
+  _modelOrientation: {fileID: 0}
   _worldGen: {fileID: 4258144910533491457}
+  _rotationSpeed: 360
   _walkSpeed: 4
   _swimmingSpeed: 3
   _sprintSpeed: 6
@@ -16891,11 +16892,6 @@ MonoBehaviour:
   _groundMask:
     serializedVersion: 2
     m_Bits: 65
-  _jumpKey: 32
-  _sprintKey: 304
-  _crouchKey: 306
-  _upKey: 101
-  _downKey: 113
   _jumping: 0
   _resetJump: 0
   _walking: 0
@@ -17127,8 +17123,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _freezeOnTimescale0: 1
   _playerFreeze: 0
-  _camera: {fileID: 8790353011537939874}
-  _orientation: {fileID: 5411564956631394664}
+  _cameraTarget: {fileID: 0}
   _lookSensitivityX: 2
   _lookSensitivityY: 2
   _upperLookLimit: 80
