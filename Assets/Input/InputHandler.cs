@@ -10,19 +10,20 @@ public class InputHandler : MonoBehaviour
   [SerializeField] private string DefaultActionMap = "Player";
   private string _currentActionMap;
 
-  [HideInInspector] public InputAction PLAYER_moveAction;
-  [HideInInspector] public InputAction PLAYER_lookAction;
-  [HideInInspector] public InputAction PLAYER_jumpAction;
-  [HideInInspector] public InputAction PLAYER_sprintAction;
-  [HideInInspector] public InputAction PLAYER_crouchAction;
-  [HideInInspector] public InputAction PLAYER_shootAction;
-  [HideInInspector] public InputAction PLAYER_grappleAction;
-  [HideInInspector] public InputAction PLAYER_scanAction;
-  [HideInInspector] public InputAction PLAYER_consoleAction;
-  [HideInInspector] public InputAction PLAYER_noclipAction;
-  [HideInInspector] public InputAction PLAYER_interactAction;
-  [HideInInspector] public InputAction PLAYER_overlayAction;
-  [HideInInspector] public InputAction PLAYER_verticalMoveAction;
+    [HideInInspector] public InputAction PLAYER_moveAction;
+    [HideInInspector] public InputAction PLAYER_lookAction;
+    [HideInInspector] public InputAction PLAYER_jumpAction;
+    [HideInInspector] public InputAction PLAYER_sprintAction;
+    [HideInInspector] public InputAction PLAYER_crouchAction;
+    [HideInInspector] public InputAction PLAYER_shootAction;
+    [HideInInspector] public InputAction PLAYER_ADSAction;
+    [HideInInspector] public InputAction PLAYER_grappleAction;
+    [HideInInspector] public InputAction PLAYER_scanAction;
+    [HideInInspector] public InputAction PLAYER_consoleAction;
+    [HideInInspector] public InputAction PLAYER_noclipAction;
+    [HideInInspector] public InputAction PLAYER_interactAction;
+    [HideInInspector] public InputAction PLAYER_overlayAction;
+    [HideInInspector] public InputAction PLAYER_verticalMoveAction;
 
   [HideInInspector] public InputAction DRIVING_moveAction;
   [HideInInspector] public InputAction DRIVING_leaveAction;
@@ -31,19 +32,20 @@ public class InputHandler : MonoBehaviour
   [HideInInspector] public InputAction DRIVING_scanAction;
   [HideInInspector] public InputAction DRIVING_lookAction;
 
-  public Vector2 PLAYER_MoveVector { get; private set; }
-  public Vector2 PLAYER_LookVector { get; private set; }
-  public bool PLAYER_Jump { get; private set; }
-  public bool PLAYER_Sprint { get; private set; }
-  public bool PLAYER_Crouch { get; private set; }
-  public bool PLAYER_Shoot { get; private set; }
-  public bool PLAYER_Grapple { get; private set; }
-  public bool PLAYER_Scan { get; private set; }
-  public bool PLAYER_Console { get; private set; }
-  public bool PLAYER_Noclip { get; private set; }
-  public bool PLAYER_Interact { get; private set; }
-  public bool PLAYER_Overlay { get; private set; }
-  public float PLAYER_VerticalMoveVector { get; private set; }
+    public Vector2 PLAYER_MoveVector { get; private set; }
+    public Vector2 PLAYER_LookVector { get; private set; }
+    public bool PLAYER_Jump { get; private set; }
+    public bool PLAYER_Sprint { get; private set; }
+    public bool PLAYER_Crouch { get; private set; }
+    public bool PLAYER_Shoot { get; private set; }
+    public bool PLAYER_ADS { get; private set; }
+    public bool PLAYER_Grapple { get; private set; }
+    public bool PLAYER_Scan { get; private set; }
+    public bool PLAYER_Console { get; private set; }
+    public bool PLAYER_Noclip { get; private set; }
+    public bool PLAYER_Interact { get; private set; }
+    public bool PLAYER_Overlay { get; private set; }
+    public float PLAYER_VerticalMoveVector { get; private set; }
 
   public Vector2 DRIVING_MoveVector { get; private set; }
   public Vector2 Driving_LookVector { get; private set; }
@@ -88,19 +90,20 @@ public class InputHandler : MonoBehaviour
 
     var playerInputAction = _playerInput.FindActionMap(DefaultActionMap);
 
-    PLAYER_moveAction = playerInputAction.FindAction("Movement");
-    PLAYER_lookAction = playerInputAction.FindAction("Look");
-    PLAYER_jumpAction = playerInputAction.FindAction("Jump");
-    PLAYER_sprintAction = playerInputAction.FindAction("Sprint");
-    PLAYER_crouchAction = playerInputAction.FindAction("Crouch");
-    PLAYER_shootAction = playerInputAction.FindAction("Shoot");
-    PLAYER_grappleAction = playerInputAction.FindAction("Grapple");
-    PLAYER_scanAction = playerInputAction.FindAction("Scan");
-    PLAYER_consoleAction = playerInputAction.FindAction("Console");
-    PLAYER_noclipAction = playerInputAction.FindAction("Noclip");
-    PLAYER_interactAction = playerInputAction.FindAction("Interact");
-    PLAYER_overlayAction = playerInputAction.FindAction("Overlay");
-    PLAYER_verticalMoveAction = playerInputAction.FindAction("VerticalMovement");
+        PLAYER_moveAction = playerInputAction.FindAction("Movement");
+        PLAYER_lookAction = playerInputAction.FindAction("Look");
+        PLAYER_jumpAction = playerInputAction.FindAction("Jump");
+        PLAYER_sprintAction = playerInputAction.FindAction("Sprint");
+        PLAYER_crouchAction = playerInputAction.FindAction("Crouch");
+        PLAYER_shootAction = playerInputAction.FindAction("Shoot");
+        PLAYER_ADSAction = playerInputAction.FindAction("ADS");
+        PLAYER_grappleAction = playerInputAction.FindAction("Grapple");
+        PLAYER_scanAction = playerInputAction.FindAction("Scan");
+        PLAYER_consoleAction = playerInputAction.FindAction("Console");
+        PLAYER_noclipAction = playerInputAction.FindAction("Noclip");
+        PLAYER_interactAction = playerInputAction.FindAction("Interact");
+        PLAYER_overlayAction = playerInputAction.FindAction("Overlay");
+        PLAYER_verticalMoveAction = playerInputAction.FindAction("VerticalMovement");
 
     var drivingInputAction = _playerInput.FindActionMap("Driving");
 
@@ -124,17 +127,20 @@ public class InputHandler : MonoBehaviour
     PLAYER_sprintAction.performed += context => PLAYER_Sprint = true;
     PLAYER_sprintAction.canceled += context => PLAYER_Sprint = false;
 
-    PLAYER_jumpAction.performed += context => PLAYER_Jump = true;
-    PLAYER_jumpAction.canceled += context => PLAYER_Jump = false;
-    
-    PLAYER_crouchAction.performed += context => PLAYER_Crouch = true;
-    PLAYER_crouchAction.canceled += context => PLAYER_Crouch = false;
-    
-    PLAYER_shootAction.performed += context => PLAYER_Shoot = true;
-    PLAYER_shootAction.canceled += context => PLAYER_Shoot = false;
-    
-    PLAYER_grappleAction.performed += context => PLAYER_Grapple = true;
-    PLAYER_grappleAction.canceled += context => PLAYER_Grapple = false;
+        PLAYER_jumpAction.performed += context => PLAYER_Jump = true;
+        PLAYER_jumpAction.canceled += context => PLAYER_Jump = false;
+        
+        PLAYER_crouchAction.performed += context => PLAYER_Crouch = true;
+        PLAYER_crouchAction.canceled += context => PLAYER_Crouch = false;
+        
+        PLAYER_shootAction.performed += context => PLAYER_Shoot = true;
+        PLAYER_shootAction.canceled += context => PLAYER_Shoot = false;
+        
+        PLAYER_ADSAction.performed += context => PLAYER_ADS = true;
+        PLAYER_ADSAction.canceled += context => PLAYER_ADS = false;
+        
+        PLAYER_grappleAction.performed += context => PLAYER_Grapple = true;
+        PLAYER_grappleAction.canceled += context => PLAYER_Grapple = false;
 
     PLAYER_scanAction.performed += context => PLAYER_Scan = true;
     PLAYER_scanAction.canceled += context => PLAYER_Scan = false;
@@ -173,49 +179,51 @@ public class InputHandler : MonoBehaviour
     DRIVING_scanAction.canceled += context => DRIVING_Scan = false;
   }
 
-  private void OnEnable() {
-    PLAYER_moveAction.Enable();
-    PLAYER_lookAction.Enable();
-    PLAYER_jumpAction.Enable();
-    PLAYER_sprintAction.Enable();
-    PLAYER_crouchAction.Enable();
-    PLAYER_shootAction.Enable();
-    PLAYER_grappleAction.Enable();
-    PLAYER_scanAction.Enable();
-    PLAYER_consoleAction.Enable();
-    PLAYER_noclipAction.Enable();
-    PLAYER_interactAction.Enable();
-    PLAYER_overlayAction.Enable();
-    PLAYER_verticalMoveAction.Enable();
-    DRIVING_moveAction.Enable();
-    DRIVING_lookAction.Enable();
-    DRIVING_leaveAction.Enable();
-    DRIVING_overlayAction.Enable();
-    DRIVING_consoleAction.Enable();
-    DRIVING_scanAction.Enable();
-  }
+    private void OnEnable() {
+        PLAYER_moveAction.Enable();
+        PLAYER_lookAction.Enable();
+        PLAYER_jumpAction.Enable();
+        PLAYER_sprintAction.Enable();
+        PLAYER_crouchAction.Enable();
+        PLAYER_shootAction.Enable();
+        PLAYER_ADSAction.Enable();
+        PLAYER_grappleAction.Enable();
+        PLAYER_scanAction.Enable();
+        PLAYER_consoleAction.Enable();
+        PLAYER_noclipAction.Enable();
+        PLAYER_interactAction.Enable();
+        PLAYER_overlayAction.Enable();
+        PLAYER_verticalMoveAction.Enable();
+        DRIVING_moveAction.Enable();
+        DRIVING_lookAction.Enable();
+        DRIVING_leaveAction.Enable();
+        DRIVING_overlayAction.Enable();
+        DRIVING_consoleAction.Enable();
+        DRIVING_scanAction.Enable();
+    }
 
-  private void OnDisable() {
-    PLAYER_moveAction.Disable();
-    PLAYER_lookAction.Disable();
-    PLAYER_jumpAction.Disable();
-    PLAYER_sprintAction.Disable();
-    PLAYER_crouchAction.Disable();
-    PLAYER_shootAction.Disable();
-    PLAYER_grappleAction.Disable();
-    PLAYER_scanAction.Disable();
-    PLAYER_consoleAction.Disable();
-    PLAYER_noclipAction.Disable();
-    PLAYER_interactAction.Disable();
-    PLAYER_overlayAction.Disable();
-    PLAYER_verticalMoveAction.Disable();
-    DRIVING_moveAction.Disable();
-    DRIVING_lookAction.Disable();
-    DRIVING_leaveAction.Disable();
-    DRIVING_overlayAction.Disable();
-    DRIVING_consoleAction.Disable();
-    DRIVING_scanAction.Disable();
-  }
+    private void OnDisable() {
+        PLAYER_moveAction.Disable();
+        PLAYER_lookAction.Disable();
+        PLAYER_jumpAction.Disable();
+        PLAYER_sprintAction.Disable();
+        PLAYER_crouchAction.Disable();
+        PLAYER_shootAction.Disable();
+        PLAYER_ADSAction.Disable();
+        PLAYER_grappleAction.Disable();
+        PLAYER_scanAction.Disable();
+        PLAYER_consoleAction.Disable();
+        PLAYER_noclipAction.Disable();
+        PLAYER_interactAction.Disable();
+        PLAYER_overlayAction.Disable();
+        PLAYER_verticalMoveAction.Disable();
+        DRIVING_moveAction.Disable();
+        DRIVING_lookAction.Disable();
+        DRIVING_leaveAction.Disable();
+        DRIVING_overlayAction.Disable();
+        DRIVING_consoleAction.Disable();
+        DRIVING_scanAction.Disable();
+    }
 
   public void SwitchActiveInputMap(string actionMapName) {
     _playerInput.FindActionMap(_currentActionMap).Disable();
