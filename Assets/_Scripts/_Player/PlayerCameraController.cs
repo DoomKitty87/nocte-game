@@ -10,8 +10,7 @@ public class PlayerCameraController : MonoBehaviour
 
     [HideInInspector] public bool _playerFreeze;
     
-    [SerializeField] private Transform _camera;
-    [SerializeField] private Transform _orientation;
+    [SerializeField] private Transform _cameraTarget;
     
     [Header("Look Parameters")]
     [SerializeField, Range(1, 10)] private float _lookSensitivityX = 2.0f;
@@ -62,12 +61,11 @@ public class PlayerCameraController : MonoBehaviour
         _xRotation = Mathf.Clamp(_xRotation, -_lowerLookLimit, _upperLookLimit);
 
         _currentRotation = Quaternion.Euler(_xRotation, _desiredX, 0);
-        _orientation.localRotation = Quaternion.Euler(0, _desiredX, 0) ;
 
         if (_usingParent)
-            _camera.rotation = _parent.rotation * _currentRotation;
+            _cameraTarget.rotation = _parent.rotation * _currentRotation;
         else
-            _camera.rotation = _currentRotation;
+            _cameraTarget.rotation = _currentRotation;
     }
 
     public void ResetRotation() {
