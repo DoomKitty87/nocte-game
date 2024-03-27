@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using System.Linq.Expressions; //Javyn wuz here 2
+using System.Linq.Expressions;
 using _Scripts._BehaviorTree;
 using UnityEngine;
 using Vector3 = UnityEngine.Vector3;
@@ -24,7 +24,7 @@ namespace _Scripts._Entities.Creatures.CreatureAI
 		[SerializeField] private float _distanceChase;
 		[SerializeField] private float _distanceGoal;
 		[SerializeField] private float _distanceHeal;
-		[SerializeField] private float _range; //Javyn wuz here
+		[SerializeField] private float _range;
 		[SerializeField] private float _staminaLimit;
 		[SerializeField] private float _leaveLimit;
 		[SerializeField] private float _recencyLimit;
@@ -39,7 +39,6 @@ namespace _Scripts._Entities.Creatures.CreatureAI
 				new Sequencer(new List<TreeNode> {
 					new Invertor(new CheckState(_controller, EnemyController.PlayerStates.Air)),
 					new Invertor(new StaminaLessThan(_controller, _staminaLimit)),
-					new ChangeStamina(_controller, -0.5f * Time.deltaTime),
 					new Sequencer(new List<TreeNode> { // enemy just attacked? cannot attack again
 						new CheckAttackRecent(_creatureCombat, _recencyLimit),
 						new SetState(_controller, EnemyController.PlayerStates.Walking)
@@ -58,27 +57,23 @@ namespace _Scripts._Entities.Creatures.CreatureAI
 							new FaceTransform(_transform, _playerTransform, true, false, true, false),
 							new SetMovementToDirection(_transform.forward, _controller),
 							new Invertor(new CheckAttackRecent(_creatureCombat, _recencyLimit)),
-							new SetState(_controller, EnemyController.PlayerStates.Sprinting)
+							new SetState(_controller, EnemyController.PlayerStates.Sprinting),
+							new ChangeStamina(_controller, -0.5f * Time.deltaTime),
 						}),
 						new Sequencer(new List<TreeNode> { // checks if the enemy is far from the player and starts roaming
-							new Invertor(new DistanceTransformLessThan(_transform, _playerTransform, _distanceChase)),
-							new Invertor(new CheckGoalExists(_controller)),
-							new PlaceRandomGoal(_controller, _transform, _range),
-							new SetState(_controller, EnemyController.PlayerStates.Walking)
+							// new Invertor(new DistanceTransformLessThan(_transform, _playerTransform, _distanceChase)),
+							// new Invertor(new CheckGoalExists(_controller)),
+							// new PlaceRandomGoal(_controller, _transform, _range),
+							new SetState(_controller, EnemyController.PlayerStates.Walking),
+							new CheckGoalExists(_controller),
+							new FaceGoal(_controller, _transform, true, false, true),
+							new SetMovementToDirection(_transform.forward, _controller),
+							new CheckStuck(_transform),
+							new PlaceRandomGoal(_controller, _transform, _range)
 						})
 					}),
 					new Sequencer(new List<TreeNode> { // checks if the enemy is close to the goal and makes a new one
-						new CheckGoalExists(_controller),
 						new DistanceGoalLessThan(_controller, _transform, _distanceGoal),
-						new PlaceRandomGoal(_controller, _transform, _range)
-					}),
-					new Sequencer(new List<TreeNode> { // checks if the enemy is far from the goal and makes him move closer
-						new Invertor(new DistanceTransformLessThan(_transform, _playerTransform, _distanceChase)),
-						new SetState(_controller, EnemyController.PlayerStates.Walking),
-						new CheckGoalExists(_controller),
-						new FaceGoal(_controller, _transform, true, false, true),
-						new SetMovementToDirection(_transform.forward, _controller),
-						new CheckStuck(_transform),
 						new PlaceRandomGoal(_controller, _transform, _range)
 					})
 				}),
