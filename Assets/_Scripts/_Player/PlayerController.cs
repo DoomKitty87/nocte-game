@@ -80,6 +80,7 @@ public class PlayerController : MonoBehaviour
     [HideInInspector] public bool _sprintingForward;
     [HideInInspector] public bool _sprinting;
     [HideInInspector] public bool _crouching;
+    [HideInInspector] public bool _grappling;
     [HideInInspector] public bool _grounded;
     [HideInInspector] public bool _useVelocity = true;
     [HideInInspector] public bool _useGravity = true;

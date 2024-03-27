@@ -99,6 +99,7 @@ public class PlayerGrapple : MonoBehaviour
     private float _time;
     
     private void ExecuteGrapple() {
+        _playerController._grappling = true;
         _currentlyGrappling = true;
         _playerController.State = PlayerController.PlayerStates.Grappling;
         _time = 0;
@@ -132,6 +133,7 @@ public class PlayerGrapple : MonoBehaviour
     private void StopGrapple()
     {
         if (_currentlyGrappling) {
+            _playerController._grappling = false;
             _currentlyGrappling = false;
             _grapplingCoolDownTimer = _grapplingCoolDown;
         }
