@@ -19,8 +19,24 @@ public class EntryAnimationHandler : MonoBehaviour
   private Vector3 _startingPosition;
   private Vector3 _landingPosition;
 
+  private bool _animating = false;
+  private float t = 0;
+
   private void Start() {
     WorldGenerator.GenerationComplete += StartAnimation;
+  }
+
+  private void Update() {
+    if (_animating) {
+      if (t < 1) {
+        t += Time.deltaTime * _entrySpeed;
+        _landingPod.position = Vector3.Lerp(_startingPosition, _landingPosition, _entryCurve.Evaluate(t));
+      } else {
+        _animating = false;
+        // Do player walk out animation
+        Done();
+      }
+    }
   }
 
   public void StartAnimation() {
@@ -29,19 +45,7 @@ public class EntryAnimationHandler : MonoBehaviour
     _startingPosition = _landingPosition + Quaternion.Euler(_entryAngle, 0, 0) * new Vector3(0, _entryHeight, 0);
     _landingPod.position = _startingPosition;
     _landingPod.rotation = Quaternion.Euler(_entryAngle, 0, 0);
-    StartCoroutine(EntryAnimation());
-  }
-
-  private IEnumerator EntryAnimation() {
-    float t = 0;
-    while (t < 1) {
-      t += Time.deltaTime * _entrySpeed;
-      _landingPod.position = Vector3.Lerp(_startingPosition, _landingPosition, _entryCurve.Evaluate(t));
-      yield return null;
-    }
-    // Do player walk out animation
-
-    Done();
+    _animating = true;
   }
   
   private void Done() {
