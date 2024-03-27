@@ -9,7 +9,7 @@ namespace Console
 {
     public class ConsoleController : MonoBehaviour
     {
-	    private InputHandler _input;
+	    private PlayerInput _input;
 
         [SerializeField] private GameObject _console;
 
@@ -68,12 +68,12 @@ namespace Console
         }
 
         private void Start() {
-            _input = InputHandler.Instance;
+            _input = InputReader.Instance.PlayerInput;
 
-            _input.PLAYER_consoleAction.started += SwapConsoleState;
-            _input.DRIVING_consoleAction.started += SwapConsoleState;
+            _input.Player.Console.performed += SwapConsoleState;
+            _input.Driving.Console.performed += SwapConsoleState;
 
-            _input.PLAYER_noclipAction.started += TryNoclip;
+            _input.Player.Noclip.performed += TryNoclip;
 
             _consoleUI = _console.GetComponentInChildren<ConsoleUI>();
             
@@ -91,6 +91,11 @@ namespace Console
 
         private void OnDisable() {
             _exitConsole -= CloseConsole;
+
+            _input.Player.Console.performed -= SwapConsoleState;
+            _input.Driving.Console.performed -= SwapConsoleState;
+
+            _input.Player.Noclip.performed -= TryNoclip;
         }
 
         private void SetupConsoleComponents() {
@@ -106,10 +111,15 @@ namespace Console
         }
 
         private void ReadKeyInput() {
-            if (_console.activeInHierarchy && _input.GENERAL_MoveVector.y > 0) 
+            // A bad way of checking for multiple values
+            float vectorY;
+            if (_input.Player.Movement.ReadValue<Vector2>().y == 0) vectorY = _input.Driving.Movement.ReadValue<Vector2>().y;
+            else vectorY = _input.Player.Movement.ReadValue<Vector2>().y;
+
+            if (_console.activeInHierarchy && vectorY > 0) 
                 _consoleUI.GetPreviousMessage(1);
             
-            if (_console.activeInHierarchy && _input.GENERAL_MoveVector.y < 0) 
+            if (_console.activeInHierarchy && vectorY < 0) 
                 _consoleUI.GetPreviousMessage(-1);
         }
 

@@ -6,11 +6,11 @@ using UnityEngine.UIElements;
 
 public class PlayerDriving : MonoBehaviour
 {
-  private InputHandler _input;
+  private PlayerInput _input;
 
   [SerializeField] private MonoBehaviour[] _toDisable; 
   
-  private PlayerCameraController _playerCameraController;
+  // private PlayerCameraController _playerCameraController;
   
   private bool _hasVehicle;
   private List<GameObject> _availableVehicles = new List<GameObject>();
@@ -18,37 +18,35 @@ public class PlayerDriving : MonoBehaviour
   private GameObject _currentVehicle;
 
   private void Awake() {
-    _playerCameraController = GetComponent<PlayerCameraController>();
+    // _playerCameraController = GetComponent<PlayerCameraController>();
   }
 
   void Start()
   {
-    _input = InputHandler.Instance;
+    _input = InputReader.Instance.PlayerInput;
 
-    _input.PLAYER_interactAction.performed += TryEnterVehicle;
-    //_input.DRIVING_leaveAction.performed += TryExitVehicle;
+    _input.Player.Interact.performed += TryEnterVehicle;
+    _input.Driving.Leave.performed += TryExitVehicle;
 
   }
 
   void OnDisable()
   {
-    _input.PLAYER_interactAction.performed -= TryEnterVehicle;
-    _input.DRIVING_leaveAction.performed -= TryExitVehicle;
+    _input.Player.Interact.performed -= TryEnterVehicle;
+    _input.Driving.Leave.performed -= TryExitVehicle;
   }
 
   private void TryEnterVehicle(InputAction.CallbackContext context) {
     if (_hasVehicle && !_inVehicle) {
-      Debug.Log(context);
-      Debug.Log("Driving");
-      _input.SwitchActiveInputMap("Driving");
+      Debug.Log("Enter Vehicle");
+      InputReader.Instance.EnableDriving();
       EnterVehicle(_availableVehicles[0]);
     }
   }
 
   private void TryExitVehicle(InputAction.CallbackContext context) {
     if (_inVehicle) {
-      Debug.Log("Player");
-      _input.SwitchActiveInputMap("Player");
+      InputReader.Instance.EnablePlayer();
       ExitVehicle();
     }
   }
@@ -73,8 +71,8 @@ public class PlayerDriving : MonoBehaviour
 
   private void EnterVehicle(GameObject toEnter) {
     for (int i = 0; i < _toDisable.Length; i++) {
-      Debug.Log(_toDisable.Length);
-      // _toDisable[i].enabled = false;
+      Debug.Log(_toDisable.Length); //
+      _toDisable[i].enabled = false;
     }
 
     PlayerController.Instance.State = PlayerController.PlayerStates.Driving;
@@ -90,13 +88,13 @@ public class PlayerDriving : MonoBehaviour
 
   private void ExitVehicle() {
     for (int i = 0; i < _toDisable.Length; i++) {
-      // _toDisable[i].enabled = true;
+      _toDisable[i].enabled = true;
     }
     
     _inVehicle = false;
     _currentVehicle.GetComponent<VehicleControl>().ExitVehicle();
-    _playerCameraController.ResetParent();
-    _playerCameraController.ResetRotation();
+    // _playerCameraController.ResetParent();
+    // _playerCameraController.ResetRotation();
     // _playerCameraController.ResetClamp();
 
     PlayerController.Instance.State = PlayerController.PlayerStates.Idle;

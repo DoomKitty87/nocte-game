@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
-    private InputHandler _input;
+    private PlayerInput _input;
 
     public static PlayerController Instance { get; private set; }
     
@@ -136,7 +136,19 @@ public class PlayerController : MonoBehaviour
     }
 
     void Start() {
-        _input = InputHandler.Instance;
+        _input = InputReader.Instance.PlayerInput;
+
+        _input.Player.Jump.performed += _ => _jumping = true;
+        _input.Player.Jump.canceled += _ => _jumping = false;
+
+        _input.Player.Sprint.performed += _ => _sprinting = true;
+        _input.Player.Sprint.canceled += _ => _sprinting = false;
+
+        _input.Player.Crouch.performed += _ => _crouching = true;
+        _input.Player.Crouch.canceled += _ => _crouching = false;
+
+        _input.Player.Movement.performed += context => _inputVector = new Vector3(context.ReadValue<Vector2>().x, 0, context.ReadValue<Vector2>().y);
+        _input.Player.Movement.canceled += _ => _inputVector = Vector3.zero;
     }
 
     #region State Machine
@@ -245,11 +257,7 @@ public class PlayerController : MonoBehaviour
     #region Input
 
     private void GetInput() {
-        _inputVector = new Vector3(_input.PLAYER_MoveVector.x, 0, _input.PLAYER_MoveVector.y);
-        _jumping = _input.PLAYER_Jump;
-        _sprinting = _input.PLAYER_Sprint;
         _sprintingForward = (_sprinting && _inputVector.z > 0); // Can only sprint when forward component in input
-        _crouching = _input.PLAYER_Crouch;
 
         // Little bit dumb but it works
         _walking = _inputVector != Vector3.zero && !_sprinting;
@@ -501,8 +509,9 @@ public class PlayerController : MonoBehaviour
                     (_inputVector.x * mainCamera.right + _inputVector.z * mainCamera.forward).
                     normalized;
 
-                if (_input.PLAYER_VerticalMoveVector > 0) inputDirection += mainCamera.up;
-                if (_input.PLAYER_VerticalMoveVector < 0) inputDirection -= mainCamera.up;
+                float verticalMove = _input.Player.VerticalMovement.ReadValue<float>();
+                if (verticalMove > 0) inputDirection += mainCamera.up;
+                if (verticalMove < 0) inputDirection -= mainCamera.up;
 
                 // Horrible but funny
                 _velocity = inputDirection *

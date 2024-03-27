@@ -45,60 +45,31 @@ public class PlayerCombatCore : MonoBehaviour
     }
     _instanceScript._instancingPlayerCombatCoreScript = this;
   }
-  
-  // please decouple this from weapon ui ansel - weapon ui should depend on this, not the other way around
-  private void UpdateControls() {
-    if (_input.PLAYER_Shoot) {
-      if (_fire1LastFrame == false) {
-        _instanceScript.FireDown();
-        // _weaponUI.UpdateAmmoCount(_instanceScript.GetAmmo);
-      }
-      else {
-        _instanceScript.FireHold();
-        // _weaponUI.UpdateAmmoCount(_instanceScript.GetAmmo);
-      }
-      _fire1LastFrame = true;
-    }
-    else {
-      if (_fire1LastFrame) {
-        _instanceScript.FireUp();
-        // _weaponUI.UpdateAmmoCount(_instanceScript.GetAmmo);
-      }
-      _fire1LastFrame = false;
-    }
-    if (_input.PLAYER_ADS) { 
-      if (_fire2LastFrame == false) {
-        _instanceScript.Fire2Down();
-        // _weaponUI.UpdateAmmoCount(_instanceScript.GetAmmo);
-      }
-      else {
-        _instanceScript.Fire2Hold();
-        // _weaponUI.UpdateAmmoCount(_instanceScript.GetAmmo);
-      }
-      _fire2LastFrame = true;
-    }
-    else {
-      if (_fire2LastFrame) {
-        _instanceScript.Fire2Up();
-        // _weaponUI.UpdateAmmoCount(_instanceScript.GetAmmo);
-      }
-      _fire2LastFrame = false;
-    }
-  }
-  
+    
   // Start is called before the first frame update
   private void Start() {
     _input = InputReader.Instance.PlayerInput;
 
-    _fire1LastFrame = false;
-    // _fire2LastFrame = false;
+    _input.Player.Shoot.started += _ => _instanceScript.FireDown();
+    _input.Player.Shoot.performed += _ => _instanceScript.FireHold();
+    _input.Player.Shoot.canceled += _ => _instanceScript.FireUp();
+
+    _input.Player.ADS.started += _ => _instanceScript.Fire2Down();
+    _input.Player.ADS.performed += _ => _instanceScript.Fire2Hold();
+    _input.Player.ADS.canceled += _ => _instanceScript.Fire2Up();
+
     if (_currentWeaponItem != null) InstanceWeaponItem();
   }
-  
-  // Update is called once per frame
-  private void Update() {
-    if (_instanceScript != null) {
-      UpdateControls();
-    }
+
+  void OnDisable()
+  {
+    _input.Player.Shoot.started -= _ => _instanceScript.FireDown();
+    _input.Player.Shoot.performed -= _ => _instanceScript.FireHold();
+    _input.Player.Shoot.canceled -= _ => _instanceScript.FireUp();
+
+    _input.Player.ADS.started -= _ => _instanceScript.Fire2Down();
+    _input.Player.ADS.performed -= _ => _instanceScript.Fire2Hold();
+    _input.Player.ADS.canceled -= _ => _instanceScript.Fire2Up();
   }
+
 }

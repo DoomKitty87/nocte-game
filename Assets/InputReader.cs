@@ -14,5 +14,27 @@ public class InputReader : MonoBehaviour
         else {
             Destroy(this);
         }
+
+        PlayerInput = new PlayerInput();
+    }
+
+    public void EnablePlayer() {
+        Debug.Log("Enable Player");
+        PlayerInput.Driving.Disable();
+        PlayerInput.UI.Disable();
+        PlayerInput.Player.Enable();
+    }
+
+    public void EnableDriving() {
+        Debug.Log("Enable Driving");
+        PlayerInput.Player.Disable();
+        PlayerInput.UI.Disable();
+        PlayerInput.Driving.Enable();
+    }
+
+    public void EnableUI() {
+        PlayerInput.Player.Disable();
+        PlayerInput.Driving.Disable();
+        PlayerInput.UI.Enable();
     }
 }

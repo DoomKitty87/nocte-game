@@ -3,7 +3,7 @@ using UnityEngine.InputSystem;
 
 public class PlayerGrapple : MonoBehaviour
 {
-    private InputHandler _input;
+    private PlayerInput _input;
     
     [Header("References")]
     [SerializeField] private bool _useOutsideScriptControl;
@@ -46,10 +46,11 @@ public class PlayerGrapple : MonoBehaviour
     }
 
     private void Start() {
-        _input = InputHandler.Instance;
+        _input = InputReader.Instance.PlayerInput;
 
-        _input.PLAYER_grappleAction.performed += StartGrapple;
-        _input.PLAYER_grappleAction.canceled += StopGrapple;
+        _input.Player.Grapple.performed += StartGrapple;
+        _input.Player.Grapple.canceled += StopGrapple;
+        _input.Player.Grapple.canceled += _ => _disableGrapple = true;
 
         _playerController = GetComponent<PlayerController>();
 
@@ -59,8 +60,9 @@ public class PlayerGrapple : MonoBehaviour
 
     void OnDisable()
     {
-        _input.PLAYER_grappleAction.performed -= StartGrapple;
-        _input.PLAYER_grappleAction.canceled -= StopGrapple;
+        _input.Player.Grapple.performed -= StartGrapple;
+        _input.Player.Grapple.canceled -= StopGrapple;
+        _input.Player.Grapple.canceled -= _ => _disableGrapple = true;
 
         PlayerController.Freeze -= FreezeGrapple;
         PlayerController.UnFreeze -= UnFreezeGrapple;
@@ -100,8 +102,12 @@ public class PlayerGrapple : MonoBehaviour
 
     private float _time;
     
+    private bool _disableGrapple;
     private void ExecuteGrapple() {
-        if (!_input.PLAYER_Grapple) return;
+        if (_disableGrapple) {
+            _disableGrapple = false;
+            return;
+        }
         _currentlyGrappling = true;
         _playerController.State = PlayerController.PlayerStates.Grappling;
         _time = 0;
