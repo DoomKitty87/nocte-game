@@ -85,8 +85,6 @@ public class PlayerGrapple : MonoBehaviour
 
     public void StartGrapple(InputAction.CallbackContext context)
     {
-        Debug.Log("Grapple");
-
         if (_grapplingCoolDownTimer > 0) return;
         
         RaycastHit hit;

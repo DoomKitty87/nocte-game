@@ -19,14 +19,12 @@ public class InputReader : MonoBehaviour
     }
 
     public void EnablePlayer() {
-        Debug.Log("Enable Player");
         PlayerInput.Driving.Disable();
         PlayerInput.UI.Disable();
         PlayerInput.Player.Enable();
     }
 
     public void EnableDriving() {
-        Debug.Log("Enable Driving");
         PlayerInput.Player.Disable();
         PlayerInput.UI.Disable();
         PlayerInput.Driving.Enable();
