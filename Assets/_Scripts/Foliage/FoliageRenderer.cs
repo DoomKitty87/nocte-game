@@ -23,6 +23,7 @@ namespace Foliage
     private int _previousLOD;
 
     private readonly ComputeShader _positionCompute;
+    private readonly ComputeShader _cullingCompute;
 
     private readonly uint[] _args = new uint[5];
     private readonly uint[] _args2 = new uint[5];
@@ -40,6 +41,8 @@ namespace Foliage
 
     public static Bounds _bounds = new Bounds(Vector3.zero, Vector3.one * 1000000000f);
 
+    private uint _currentInstanceCount;
+
     public FoliageRenderer(FoliageScriptable scriptable, Vector2Int chunkPos, float chunkSize, Vector2 cameraPosition) {
       _position = new Vector3(chunkPos.x * chunkSize, 0, chunkPos.y * chunkSize);
       _chunkSize = chunkSize;
@@ -52,6 +55,7 @@ namespace Foliage
       _chunkDensity = new int[numberOfLODs];
 
       _positionCompute = _scriptable._positionComputeShader;
+      _cullingCompute = _scriptable._cullingComputeShader;
     
       _material = new Material(_scriptable.Material);
       _useSubmesh = _scriptable._useSubmesh;
@@ -86,6 +90,29 @@ namespace Foliage
       Initialize(lod);
     
       ComputePositions(lod);
+
+      if (lod != -1) {
+        _args[0] = (uint)_meshes[lod].GetIndexCount(0);
+        _args[1] = _currentInstanceCount;
+        _args[2] = (uint)_meshes[lod].GetIndexStart(0);
+        _args[3] = (uint)_meshes[lod].GetBaseVertex(0);
+        if (_useSubmesh) {
+          _args2[0] = (uint)_meshes[lod].GetIndexCount(1);
+          _args2[1] = _currentInstanceCount;
+          _args2[2] = (uint)_meshes[lod].GetIndexStart(1);
+          _args2[3] = (uint)_meshes[lod].GetBaseVertex(1);
+          _argsBuffer2.SetData(_args2);
+        }
+        _argsBuffer.SetData(_args);
+      }
+      else if (_useBillboard) {
+        _args[0] = (uint)_billboardMesh.GetIndexCount(0);
+        _args[1] = _currentInstanceCount;
+        _args[2] = (uint)_billboardMesh.GetIndexStart(0);
+        _args[3] = (uint)_billboardMesh.GetBaseVertex(0);
+        _argsBuffer.SetData(_args);
+      }
+
       if (lod == 0) UpdateColliders(lod);
     
       _material.SetBuffer(PositionBuffer, _positionsBuffer);
@@ -120,6 +147,36 @@ namespace Foliage
       _positionCompute.GetKernelThreadGroupSizes(kernelIndex, out uint threadX, out _, out _);
       _positionCompute.Dispatch(kernelIndex, Mathf.CeilToInt(_chunkDensity[lod] * _chunkDensity[lod] / (float)threadX), 1, 1);
     
+      var voteBuffer = new ComputeBuffer(_chunkDensity[lod] * _chunkDensity[lod], sizeof(uint));
+      var sumBuffer = new ComputeBuffer(_chunkDensity[lod] * _chunkDensity[lod], sizeof(uint));
+      var culledCountBuffer = new ComputeBuffer(1, sizeof(uint));
+
+      _cullingCompute.SetInt(Shader.PropertyToID("_inputCount"), _chunkDensity[lod] * _chunkDensity[lod]);
+
+      var kernelIndexVote = _cullingCompute.FindKernel("Vote");
+      _cullingCompute.SetBuffer(kernelIndexVote, Shader.PropertyToID("_inputBuffer"), _positionsBuffer);
+      _cullingCompute.SetBuffer(kernelIndexVote, Shader.PropertyToID("_voteBuffer"), voteBuffer);
+      _cullingCompute.GetKernelThreadGroupSizes(kernelIndexVote, out threadX, out _, out _);
+      _cullingCompute.Dispatch(kernelIndexVote, Mathf.CeilToInt(_chunkDensity[lod] * _chunkDensity[lod] / (float)threadX), 1, 1);
+
+      var kernelIndexSum = _cullingCompute.FindKernel("Sum");
+      _cullingCompute.SetBuffer(kernelIndexSum, Shader.PropertyToID("_voteBuffer"), voteBuffer);
+      _cullingCompute.SetBuffer(kernelIndexSum, Shader.PropertyToID("_sumBuffer"), sumBuffer);
+      _cullingCompute.GetKernelThreadGroupSizes(kernelIndexSum, out threadX, out _, out _);
+      _cullingCompute.Dispatch(kernelIndexSum, Mathf.CeilToInt(_chunkDensity[lod] * _chunkDensity[lod] / (float)threadX), 1, 1);
+
+      var kernelIndexCompact = _cullingCompute.FindKernel("Compact");
+      _cullingCompute.SetBuffer(kernelIndexCompact, Shader.PropertyToID("_inputBuffer"), _positionsBuffer);
+      _cullingCompute.SetBuffer(kernelIndexCompact, Shader.PropertyToID("_sumBuffer"), sumBuffer);      
+      _cullingCompute.SetBuffer(kernelIndexCompact, Shader.PropertyToID("_voteBuffer"), voteBuffer);
+      _cullingCompute.SetBuffer(kernelIndexCompact, Shader.PropertyToID("_culledCount"), culledCountBuffer);
+      _cullingCompute.GetKernelThreadGroupSizes(kernelIndexCompact, out threadX, out _, out _);
+      _cullingCompute.Dispatch(kernelIndexCompact, Mathf.CeilToInt(_chunkDensity[lod] * _chunkDensity[lod] / (float)threadX), 1, 1);
+
+      var culledCount = new uint[1];
+      culledCountBuffer.GetData(culledCount);
+      _currentInstanceCount = culledCount[0];
+      // Debug.Log(_currentInstanceCount);
     }
     
     private void Initialize(int lod) {
@@ -131,28 +188,6 @@ namespace Foliage
       _centerPosition = new Vector2(_position.x + _chunkSize / 2, _position.z + _chunkSize / 2);
 
       _positionsBuffer = new ComputeBuffer(_chunkDensity[lod == -1 ? ^1 : lod] * _chunkDensity[lod == -1 ? ^1 : lod], sizeof(float) * 4);
-
-      if (lod != -1) {
-        _args[0] = (uint)_meshes[lod].GetIndexCount(0);
-        _args[1] = (uint)(_chunkDensity[lod] * _chunkDensity[lod]);
-        _args[2] = (uint)_meshes[lod].GetIndexStart(0);
-        _args[3] = (uint)_meshes[lod].GetBaseVertex(0);
-        if (_useSubmesh) {
-          _args2[0] = (uint)_meshes[lod].GetIndexCount(1);
-          _args2[1] = (uint)(_chunkDensity[lod] * _chunkDensity[lod]);
-          _args2[2] = (uint)_meshes[lod].GetIndexStart(1);
-          _args2[3] = (uint)_meshes[lod].GetBaseVertex(1);
-          _argsBuffer2.SetData(_args2);
-        }
-        _argsBuffer.SetData(_args);
-      }
-      else if (_useBillboard) {
-        _args[0] = (uint)_billboardMesh.GetIndexCount(0);
-        _args[1] = (uint)(_chunkDensity[^1] * _chunkDensity[^1]);
-        _args[2] = (uint)_billboardMesh.GetIndexStart(0);
-        _args[3] = (uint)_billboardMesh.GetBaseVertex(0);
-        _argsBuffer.SetData(_args);
-      }
       
       _previousLOD = lod;
     }
@@ -174,16 +209,17 @@ namespace Foliage
 
       if (lod != _previousLOD) {
           if (lod != -1 && _previousLOD != -1) UpdateDensity(lod);
+
           if (lod != -1) {
             _args[0] = (uint)_meshes[lod].GetIndexCount(0);
-            _args[1] = (uint)(_chunkDensity[lod] * _chunkDensity[lod]);
+            _args[1] = _currentInstanceCount;
             _args[2] = (uint)_meshes[lod].GetIndexStart(0);
             _args[3] = (uint)_meshes[lod].GetBaseVertex(0);
             _argsBuffer.SetData(_args);
 
             if (_useSubmesh) {
               _args2[0] = (uint)_meshes[lod].GetIndexCount(1);
-              _args2[1] = (uint)(_chunkDensity[lod] * _chunkDensity[lod]);
+              _args2[1] = _currentInstanceCount;
               _args2[2] = (uint)_meshes[lod].GetIndexStart(1);
               _args2[3] = (uint)_meshes[lod].GetBaseVertex(1);
               _argsBuffer2.SetData(_args2);
@@ -191,7 +227,7 @@ namespace Foliage
           }
           else if (_useBillboard) {
             _args[0] = (uint)_billboardMesh.GetIndexCount(0);
-            _args[1] = (uint)(_chunkDensity[^1] * _chunkDensity[^1]);
+            _args[1] = _currentInstanceCount;
             _args[2] = (uint)_billboardMesh.GetIndexStart(0);
             _args[3] = (uint)_billboardMesh.GetBaseVertex(0);
             _argsBuffer.SetData(_args);

@@ -1,0 +1,47 @@
+#pragma kernel Vote
+#pragma kernel Sum
+#pragma kernel Compact
+
+RWStructuredBuffer<float4> _inputBuffer;
+RWStructuredBuffer<uint> _voteBuffer;
+RWStructuredBuffer<uint> _sumBuffer;
+
+uniform uint _inputCount;
+
+RWStructuredBuffer<uint> _culledCount;
+
+[numthreads(64, 1, 1)]
+void Vote(uint3 id : SV_DispatchThreadID)
+{
+  uint index = id.x;
+  float4 value = _inputBuffer[index];
+  uint vote = 0;
+  if (value.y > 10)
+  {
+    vote = 1;
+  }
+  _voteBuffer[index] = vote;
+}
+
+[numthreads(64, 1, 1)]
+void Sum(uint3 id : SV_DispatchThreadID)
+{
+  uint index = id.x;
+  uint sum = 0;
+  for (uint i = 0; i < index; i++)
+  {
+    sum += _voteBuffer[i];
+  }
+  _sumBuffer[index] = sum;
+}
+
+[numthreads(64, 1, 1)]
+void Compact(uint3 id : SV_DispatchThreadID)
+{
+  uint index = id.x;
+  if (_voteBuffer[index] > 0)
+  {
+    _inputBuffer[_sumBuffer[index]] = _inputBuffer[index];
+  }
+  if (index == _inputCount - 1) _culledCount[0] = _sumBuffer[_inputCount - 1] + _voteBuffer[_inputCount - 1];
+}
