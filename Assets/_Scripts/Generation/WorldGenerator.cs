@@ -300,6 +300,7 @@ public class WorldGenerator : MonoBehaviour
   }
 
   private void Awake() {
+    _seed = DateTime.Now.Millisecond;
     if (_tileCount % 2 == 0) {
       _tileCount++;
       Debug.LogWarning("Tile count must be odd. Increasing tile count by 1.");
