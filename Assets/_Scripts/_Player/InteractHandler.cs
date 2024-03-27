@@ -33,6 +33,11 @@ public class InteractHandler : MonoBehaviour
       _interactibles.Add(other.gameObject);
       if (_promptText != null) _promptText.text = "Press " + _interactKey.ToString() + " to interact with " + other.gameObject.name;
     }
+
+    if (other.CompareTag("Core")) {
+      Destroy(other.gameObject);
+      PlayerMetaProgression.Instance.AddCore();
+    }
   }
 
   private void OnTriggerExit(Collider other) {

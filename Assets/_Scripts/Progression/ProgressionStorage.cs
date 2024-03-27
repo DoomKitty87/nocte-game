@@ -7,11 +7,14 @@ public class ProgressionStorage : MonoBehaviour
 
   public struct ProgressionData
   {
-    public int level;
-    public int experience;
+    public int cores;
+    public int usedcores;
   }
 
   public ProgressionData _progression = new ProgressionData();
+
+  private static ProgressionStorage _instance;
+  public static ProgressionStorage Instance { get { return _instance; } }
 
   public void SaveProgressionData()
   {

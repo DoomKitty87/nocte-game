@@ -25,10 +25,13 @@ public class PlayerController : MonoBehaviour
     }
 
     [Header("References")]
-    [SerializeField, Tooltip("Player's local")] private Transform _orientation;
+    [SerializeField] private Transform _movementOrientation;
+    [SerializeField, Tooltip("Player's local")] private Transform _modelOrientation;
+
     [SerializeField] private WorldGenerator _worldGen;
     
     [Header("Movement")]
+    [SerializeField, Tooltip("Speed at which model rotates to follow movement")] private float _rotationSpeed = 360;
     [SerializeField, Tooltip("Default walk speed on ground")] private float _walkSpeed;
     [SerializeField, Tooltip("Default walk speed in water")] private float _swimmingSpeed;
     [SerializeField, Tooltip("Sprint speed on ground")] private float _sprintSpeed;
@@ -55,14 +58,6 @@ public class PlayerController : MonoBehaviour
     
     [Header("Ground")]
     [SerializeField, Tooltip("Layer for ground")] private LayerMask _groundMask;
-    
-    [Header("Keybinds")]
-    public KeyCode _jumpKey = KeyCode.Space;
-    public KeyCode _sprintKey = KeyCode.LeftShift;
-    public KeyCode _crouchKey = KeyCode.LeftControl;
-    public KeyCode _upKey = KeyCode.E;
-    public KeyCode _downKey = KeyCode.Q;
-    
     #endregion
     
     #region Events
@@ -315,7 +310,6 @@ public class PlayerController : MonoBehaviour
 
         if (State is PlayerStates.Frozen) return;
 
-        HandleCrouchingCameraPosition();
 
         _position = transform.position;
         _velocity = _rb.velocity;
@@ -327,8 +321,10 @@ public class PlayerController : MonoBehaviour
         _velocityMagnitude = _velocity.magnitude;
         _horizontalVelocityMagnitude = _horizontalVelocity.magnitude;
 
-        Vector3 forwardDirection = _orientation.forward;
-        Vector3 rightDirection = _orientation.right;
+        Vector3 forwardDirection = new Vector3(_movementOrientation.forward.x, 0, _movementOrientation.forward.z).normalized;
+        Vector3 rightDirection = new Vector3(_movementOrientation.right.x, 0, _movementOrientation.right.z).normalized;
+        
+        RotateModelOrientationToMovement((_inputVector.x * rightDirection + _inputVector.z * forwardDirection).normalized);
 
         switch (State) {
             case PlayerStates.Walking: {
@@ -530,9 +526,12 @@ public class PlayerController : MonoBehaviour
             _rb.velocity = _velocity + _acceleration;
     }
     
-    private void HandleCrouchingCameraPosition() {
-        // TEMPORARY FIX
-        _cameraPosition.localPosition = _crouching ? _crouchingCameraPosition : _defaultCameraPosition;
+    private void RotateModelOrientationToMovement(Vector3 inputVector) {
+        if (inputVector != Vector3.zero)
+        {
+            Quaternion toRotation = Quaternion.LookRotation(inputVector, Vector3.up);
+            _modelOrientation.rotation = Quaternion.RotateTowards(_modelOrientation.rotation, toRotation, _rotationSpeed * Time.deltaTime);            
+        }
     }
     
     #endregion

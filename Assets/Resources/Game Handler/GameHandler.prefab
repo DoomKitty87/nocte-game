@@ -10,6 +10,9 @@ GameObject:
   m_Component:
   - component: {fileID: 6637136524576167759}
   - component: {fileID: 1916450391311550783}
+  - component: {fileID: 3584479393340225555}
+  - component: {fileID: 3289401921681535588}
+  - component: {fileID: 7900035901117525388}
   m_Layer: 0
   m_Name: GameHandler
   m_TagString: GameHandler
@@ -97,6 +100,15 @@ MonoBehaviour:
     m_Type: 0
     m_ExpectedControlType: 
     m_Id: fb841b31-606b-427b-9fad-7eb73655eaa9
+    m_Processors: 
+    m_Interactions: 
+    m_SingletonActionBindings: []
+    m_Flags: 0
+  PLAYER_ADSAction:
+    m_Name: 
+    m_Type: 0
+    m_ExpectedControlType: 
+    m_Id: f2196853-0743-4c72-a111-a6f9453b08e8
     m_Processors: 
     m_Interactions: 
     m_SingletonActionBindings: []
@@ -218,3 +230,41 @@ MonoBehaviour:
     m_Interactions: 
     m_SingletonActionBindings: []
     m_Flags: 0
+--- !u!114 &3584479393340225555
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8348581581803096828}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1d6270840a314664baffe1667ce5cf9d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _menuScene: MenuTesting
+  _gameScene: ProcgenTesting
+--- !u!114 &3289401921681535588
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8348581581803096828}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 28cbc3f61ae7c6740b95ac220f04c081, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &7900035901117525388
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8348581581803096828}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 175da796892bd054da6106046ce25b97, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
