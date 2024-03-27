@@ -12,10 +12,6 @@ public class PlayerWorldGeneratorCompatibility : MonoBehaviour
 
     public static bool _entryAnimationFinished = false;
 
-    public void SetEntryAnimationFinished() {
-      _entryAnimationFinished = true;
-    }
-
     private void Awake() {
       _playerController = GetComponent<PlayerController>();
       _rainShape = _rain.shape;
@@ -25,11 +21,6 @@ public class PlayerWorldGeneratorCompatibility : MonoBehaviour
       _worldGeneratorObject = WorldGenInfo._worldGenerator;
 
       _playerController._disableMovement = true;
-      WorldGenerator.GenerationComplete += SetEntryAnimationFinished;
-    }
-
-    private void OnDisable() {
-      WorldGenerator.GenerationComplete -= SetEntryAnimationFinished;
     }
 
     private void Update() {
@@ -42,7 +33,8 @@ public class PlayerWorldGeneratorCompatibility : MonoBehaviour
     }
 
     private void EnablePlayer() {
-      _playerController.SetPosition(Vector3.up * WorldGenInfo._worldGenerator.GetHeightValue(Vector2.zero) + Vector3.up * 2f);
+      // Debug.Log(EntryAnimationHandler._dropPosition);
+      _playerController.SetPosition(EntryAnimationHandler._dropPosition + Vector3.up * 2f);
       _playerController._disableMovement = false;
       _hasInitialized = true;
       _entryAnimationFinished = false;

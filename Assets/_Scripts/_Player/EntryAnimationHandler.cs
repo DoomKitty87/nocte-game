@@ -14,7 +14,10 @@ public class EntryAnimationHandler : MonoBehaviour
   [SerializeField] private AnimationCurve _entryCurve;
 
   [SerializeField] private CinemachineCamera _camera;
-  [SerializeField]private GameObject _uiCanvas;
+  [SerializeField] private GameObject _uiCanvas;
+
+  [SerializeField] private float _dropRange = 250.0f;
+  
 
   private Vector3 _startingPosition;
   private Vector3 _landingPosition;
@@ -22,6 +25,8 @@ public class EntryAnimationHandler : MonoBehaviour
   private bool _animating = false;
   private float t = 0;
   private bool _startAnimation = false;
+
+  public static Vector3 _dropPosition;
 
   private void Start() {
     WorldGenerator.GenerationComplete += EnableAnimation;
@@ -43,6 +48,7 @@ public class EntryAnimationHandler : MonoBehaviour
         _landingPod.position = Vector3.Lerp(_startingPosition, _landingPosition, _entryCurve.Evaluate(t));
       } else {
         _animating = false;
+        _landingPod.position = _landingPosition;
         // Do player walk out animation
         Done();
       }
@@ -51,9 +57,35 @@ public class EntryAnimationHandler : MonoBehaviour
 
   public void StartAnimation() {
     _startAnimation = false;
-    Debug.Log(_uiCanvas.name);
+    // Debug.Log(_uiCanvas.name);
     _uiCanvas.SetActive(false);
-    _landingPosition = new Vector3(0, WorldGenInfo._worldGenerator.GetHeightValue(new Vector2(0, 0)), 0);
+
+    Vector2 landPos = new Vector2(0, 0);
+    int attempts = 0;
+    bool foundPos = false;
+    while (foundPos == false) {
+      if (attempts > 100) {
+        Debug.LogError("Could not find a valid landing position");
+        landPos = new Vector2(0, 0);
+        break;
+      }
+      landPos = new Vector2(Random.Range(-_dropRange, _dropRange),
+        Random.Range(-_dropRange, _dropRange));
+      float pointA = WorldGenInfo._worldGenerator.GetHeightValue(landPos);
+      float pointB = WorldGenInfo._worldGenerator.GetHeightValue(landPos + new Vector2(1, 0));
+      float pointC = WorldGenInfo._worldGenerator.GetHeightValue(landPos + new Vector2(0, 1));
+
+      Vector3 landNorm = new Vector3(pointA - pointB, 1, pointA - pointC).normalized;
+
+      if (WorldGenInfo._worldGenerator.GetHeightValue(landPos) > 0 && landNorm.y > 0.7f) {
+        foundPos = true;
+      }
+
+      attempts++;
+    }
+
+    _landingPosition = new Vector3(landPos.x, WorldGenInfo._worldGenerator.GetHeightValue(landPos), landPos.y);
+    _dropPosition = _landingPosition;
     _startingPosition = _landingPosition + Quaternion.Euler(_entryAngle, 0, 0) * new Vector3(0, _entryHeight, 0);
     _landingPod.position = _startingPosition;
     _landingPod.rotation = Quaternion.Euler(_entryAngle, 0, 0);
