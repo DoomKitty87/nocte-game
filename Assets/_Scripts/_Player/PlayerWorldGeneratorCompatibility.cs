@@ -32,6 +32,8 @@ public class PlayerWorldGeneratorCompatibility : MonoBehaviour
       if (_entryAnimationFinished) EnablePlayer();
       if (!_hasInitialized) return;
 
+      if (_ignoreLackOfWorldGenerator) return;
+
       _worldGeneratorObject.UpdatePlayerLoadedChunks(transform.position);
       _rainShape.position = transform.position + Vector3.up * 25f;
       Shader.SetGlobalVector("_PlayerPosition", transform.position);

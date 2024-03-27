@@ -59,7 +59,7 @@ public class PlayerAnimHandler : MonoBehaviour
 			_animator.SetBool("Grappling", true);
 		}
 		else {
-			_animator.SetBool("Grappling", false);
+			// _animator.SetBool("Grappling", false);
 		}
 		_lastLastVelocity = _lastVelocity;
 		_lastVelocity = _playerController._velocity;
