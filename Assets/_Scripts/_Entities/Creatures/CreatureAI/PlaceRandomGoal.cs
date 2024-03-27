@@ -16,22 +16,32 @@ namespace _Scripts._Entities.Creatures.CreatureAI
     private EnemyController _controller;
     private Transform _transform;
     private float _range;
+    private WorldGenerator _worldGenerator;
     
-    public PlaceRandomGoal(EnemyController controller, Transform transform, float range) {
+    public PlaceRandomGoal(EnemyController controller, Transform transform, float range, WorldGenerator worldGenerator) {
       _controller = controller;
       _transform = transform;
       _range = range;
+      _worldGenerator = worldGenerator;
     }
 
     public override TreeNodeState Evaluate() {
-      float r = Mathf.Abs(_range * Mathf.Sqrt(Random.value));
-      float theta = Random.value * 2 * Mathf.PI;
-      float x = _transform.position.x + r * Mathf.Cos(theta);
-      float z = _transform.position.z + r * Mathf.Sin(theta); 
-      _controller.SetGoalPos(new Vector2(x, z));
+      Vector2 location;
+      do {
+        location = ChooseLocation();
+      } while (_worldGenerator.GetWaterHeight(location) == -1);
+      _controller.SetGoalPos(location);
       
       _nodeState = TreeNodeState.SUCCESS;
       return _nodeState;
+    }
+
+    private Vector2 ChooseLocation() {
+      float r = Mathf.Abs(_range * Mathf.Sqrt(Random.value));
+      float theta = Random.value * 2 * Mathf.PI;
+      float x = _transform.position.x + r * Mathf.Cos(theta);
+      float z = _transform.position.z + r * Mathf.Sin(theta);
+      return new Vector2(x, z);
     }
   }
 }
