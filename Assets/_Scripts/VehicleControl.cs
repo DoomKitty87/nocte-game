@@ -4,12 +4,15 @@ public class VehicleControl : MonoBehaviour
 {
   private PlayerInput _input;
 
+  private WorldGenerator _worldGenerator;
+
   public float motorTorque = 2000;
   public float brakeTorque = 2000;
   public float maxSpeed = 20;
   public float steeringRange = 30;
   public float steeringRangeAtMaxSpeed = 10;
   public float centreOfGravityOffset = -1f;
+  public float boyantForce = 18f;
 
   WheelControl[] wheels;
   Rigidbody rigidBody;
@@ -22,6 +25,7 @@ public class VehicleControl : MonoBehaviour
   void Start()
   {
     _input = InputReader.Instance.PlayerInput;
+    _worldGenerator = WorldGenInfo._worldGenerator;
 
     rigidBody = GetComponent<Rigidbody>();
 
@@ -40,7 +44,6 @@ public class VehicleControl : MonoBehaviour
 
   public void ExitVehicle() {
     rigidBody.velocity = Vector3.zero;
-    rigidBody.isKinematic = true;
     _inUse = false;
   }
 
@@ -99,6 +102,28 @@ public class VehicleControl : MonoBehaviour
         wheel.WheelCollider.brakeTorque = Mathf.Abs(vInput) * brakeTorque;
         wheel.WheelCollider.motorTorque = 0;
       }
+    }
+
+    ApplybuoyantForce();
+
+    // If the car is not moving for 1 sec, disable the rigidbody to save performance
+    if (Vector3.Distance(rigidBody.velocity, Vector3.zero) < 0.3f && !_inUse) {
+      Invoke("CheckDisableRigidbody", 1f);
+    }
+  }
+
+  private void ApplybuoyantForce() {
+    if (rigidBody.isKinematic) return;
+    float waterLevel = _worldGenerator.GetWater(new Vector2(transform.position.x, transform.position.z));
+    if (waterLevel == -1) return;
+    if (transform.position.y - waterLevel > 0) return;
+
+    rigidBody.AddForce(Vector3.up * boyantForce, ForceMode.Acceleration);
+  }
+
+  private void CheckDisableRigidbody() {
+    if (Vector3.Distance(rigidBody.velocity, Vector3.zero) < 0.3f && !_inUse) {
+      rigidBody.isKinematic = true;
     }
   }
 }

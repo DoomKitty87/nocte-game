@@ -889,12 +889,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 63c39819adb560347ab37a5ed655db4e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  UnderWater: 0
   motorTorque: 10000
   brakeTorque: 8000
   maxSpeed: 120
   steeringRange: 30
   steeringRangeAtMaxSpeed: 10
-  centreOfGravityOffset: -1
+  centreOfGravityOffset: -2
+  boyantForce: 40
   _playerSeat: {fileID: 8534072694919893816}
 --- !u!135 &1962996738124158567
 SphereCollider:
@@ -940,7 +942,7 @@ Rigidbody:
   m_ImplicitCom: 1
   m_ImplicitTensor: 1
   m_UseGravity: 1
-  m_IsKinematic: 1
+  m_IsKinematic: 0
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0

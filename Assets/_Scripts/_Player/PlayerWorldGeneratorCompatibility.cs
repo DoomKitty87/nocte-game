@@ -4,7 +4,7 @@ using UnityEngine.VFX;
 public class PlayerWorldGeneratorCompatibility : MonoBehaviour
 {
     public PlayerController _playerController;
-    [SerializeField] private WorldGenerator _worldGeneratorObject;
+    private WorldGenerator _worldGeneratorObject;
     [SerializeField] private ParticleSystem _rain;
     [SerializeField] private LayerMask _groundMask;
     private bool _hasInitialized;
@@ -17,16 +17,13 @@ public class PlayerWorldGeneratorCompatibility : MonoBehaviour
     }
 
     private void Awake() {
-      if (enabled && _worldGeneratorObject == null) {
-        Debug.LogWarning($"No WorldGeneratorObject found on {this.name}");
-        this.enabled = false;
-      }
-
       _playerController = GetComponent<PlayerController>();
       _rainShape = _rain.shape;
     }
 
     private void Start() {
+      _worldGeneratorObject = WorldGenInfo._worldGenerator;
+
       _playerController._disableMovement = true;
       WorldGenerator.GenerationComplete += SetEntryAnimationFinished;
     }
