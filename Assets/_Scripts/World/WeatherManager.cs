@@ -38,8 +38,8 @@ public class WeatherManager : MonoBehaviour
   [SerializeField] private int _frameUpdateDelay2;
   [SerializeField] private Vector3 _sunAxis;
   [SerializeField] private float _spaceFactorInitial;
+  [SerializeField] private float _windScrollSpeed;
   
-
   // X value represents day cycle, Y represents cloud density, and Z represents rain density.
   private Vector4 _weatherState = new Vector3();
 
@@ -57,6 +57,7 @@ public class WeatherManager : MonoBehaviour
   private int _updateCounter;
   private int _updateCounter2;
   private float _windDirection = 2f;
+  private Vector2 _windTimeOffset = new Vector2(0, 0);
   private ParticleSystem.EmissionModule _rainEmission;
 
   private void Start() {
@@ -101,6 +102,9 @@ public class WeatherManager : MonoBehaviour
     _weatherPhases.z %= 1;
     _spacePhase %= 1;
     _spacePhaseMajor %= 1;
+    _windTimeOffset.x -= Time.deltaTime * Mathf.Sin(_windDirection) * _weatherState.w * _windScrollSpeed;
+    _windTimeOffset.y -= Time.deltaTime * Mathf.Cos(_windDirection) * _weatherState.w * _windScrollSpeed;
+    Shader.SetGlobalVector("_WindTimeOffset", _windTimeOffset);
     float nightFactor = Mathf.SmoothStep(1, 0, Mathf.Pow(_weatherState.x > 0.5f ? 1 - _weatherState.x : _weatherState.x, 1.25f) * 4);
     if (_updateCounter2 < _frameUpdateDelay2) {
       _updateCounter2++;
