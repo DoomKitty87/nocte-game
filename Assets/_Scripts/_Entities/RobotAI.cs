@@ -34,9 +34,9 @@ public class RobotAI : MonoBehaviour
   }
 
   private void Attack() {
+    _lastAttack = 0;
     Debug.Log("Attacking player");
     _playerTransform.GetComponent<HealthInterface>().Damage(_attackDamage, Vector3.zero);
-    _lastAttack = 0;
   }
 
 }
