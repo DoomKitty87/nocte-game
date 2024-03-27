@@ -1,7 +1,7 @@
-using UnityEngine;
+ using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class InputHandler : MonoBehaviour
+public class InputHandler_ : MonoBehaviour
 {
   [Header("Input Actions")]
   [SerializeField] private InputActionAsset _playerInput;
@@ -74,9 +74,9 @@ public class InputHandler : MonoBehaviour
     get { return _currentActionMap == "Player" ? PLAYER_Scan : DRIVING_Scan; }
   }
 
-  private static InputHandler instance;
+  private static InputHandler_ instance;
 
-  public static InputHandler Instance { get {return instance; } }
+  public static InputHandler_ Instance { get {return instance; } }
 
   private void Awake() {
     if (instance != null && instance != this)

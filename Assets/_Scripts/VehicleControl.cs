@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class VehicleControl : MonoBehaviour
 {
-  private InputHandler _input;
+  private PlayerInput _input;
 
   public float motorTorque = 2000;
   public float brakeTorque = 2000;
@@ -21,7 +21,7 @@ public class VehicleControl : MonoBehaviour
   // Start is called before the first frame update
   void Start()
   {
-    _input = InputHandler.Instance;
+    _input = InputReader.Instance.PlayerInput;
 
     rigidBody = GetComponent<Rigidbody>();
 
@@ -48,8 +48,8 @@ public class VehicleControl : MonoBehaviour
   void Update()
   {
 
-    float vInput = -_input.DRIVING_MoveVector.y;
-    float hInput = _input.DRIVING_MoveVector.x;
+    float vInput = -_input.Driving.Movement.ReadValue<Vector2>().y;
+    float hInput = _input.Driving.Movement.ReadValue<Vector2>().x;
     if (!_inUse) {
       vInput = 0;
       hInput = 0;

@@ -5,15 +5,16 @@ using UnityEngine.InputSystem;
 
 public class PlayerAnimHandler : MonoBehaviour
 {
-	private InputHandler _inputHandler;
+	private PlayerInput _input;
 	
 	[SerializeField] private Animator _animator;
 	[SerializeField] private PlayerController _playerController;
 	private void Start() {
+		_input = InputReader.Instance.PlayerInput;
+		
 		if (_playerController == null) {
 			Debug.LogError("PlayerAnimHandler: PlayerController is not set.");
 		}
-		_inputHandler = InputHandler.Instance;
 	}
 
 	private bool _jumpBoolLastFrame;

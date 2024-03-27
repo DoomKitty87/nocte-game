@@ -6,7 +6,7 @@ using UnityEngine.Rendering;
 
 public class ScanEffect : MonoBehaviour
 {
-	private InputHandler _input;
+	private PlayerInput _input;
 
     [Header("Dependencies")]
     [SerializeField] private Volume _scanEffectVolume;
@@ -55,7 +55,10 @@ public class ScanEffect : MonoBehaviour
     // Start is called before the first frame update
     private void Start()
     {
-        _input = InputHandler.Instance;
+        _input = InputReader.Instance.PlayerInput;
+
+        _input.Player.Scan.performed += _ => TriggerScan();
+        _input.Driving.Scan.performed += _ => TriggerScan();
 
         if (_scanEffectVolume.profile.TryGet<ScannerEffectPostProcessVolume>(out var effect)) {
             _effect = effect;
@@ -65,18 +68,23 @@ public class ScanEffect : MonoBehaviour
         }
     }
 
+    void OnDisable()
+    {
+        _input.Player.Scan.performed -= _ => TriggerScan();
+        _input.Driving.Scan.performed -= _ => TriggerScan();
+    }
+
     private float _timeSinceLastScan = 0;
     // Update is called once per frame
     private void Update()
     {
-        if (_input.PLAYER_Scan && !_scanning && _timeSinceLastScan > _scanCooldown) {
-            _timeSinceLastScan = 0;
-            StartCoroutine(Scan());
-        }
         _timeSinceLastScan += Time.deltaTime;
     }
 
-    private void OnDestroy() {
-        
+    private void TriggerScan() {
+        if (!_scanning && _timeSinceLastScan > _scanCooldown) {
+            _timeSinceLastScan = 0;
+            StartCoroutine(Scan());
+        }
     }
 }

@@ -5,7 +5,7 @@ using TMPro;
 
 public class InteractHandler : MonoBehaviour
 {
-  private InputHandler _input;
+  private PlayerInput _input;
 
   [SerializeField] private TextMeshProUGUI _promptText;
   
@@ -15,11 +15,20 @@ public class InteractHandler : MonoBehaviour
 
   void Start()
   {
-    _input = InputHandler.Instance;
+    _input = InputReader.Instance.PlayerInput;
+
+    _input.Player.Interact.performed += _ => TryInteract();
+    _input.Driving.Leave.performed += _ => TryInteract();
   }
 
-  private void Update() {
-    if ((_input.PLAYER_Interact || _input.DRIVING_Leave) && _interactibles.Count > 0) {
+  void OnDisable()
+  {
+    _input.Player.Interact.performed -= _ => TryInteract();
+    _input.Driving.Leave.performed -= _ => TryInteract();
+  }
+
+  private void TryInteract() {
+    if (_interactibles.Count > 0) {
       _interactibles[0].GetComponent<Interactible>()._onInteract.Invoke();
       _interactibles.RemoveAt(0);
       if (_promptText == null) return;

@@ -44,6 +44,8 @@ public class PlayerWorldGeneratorCompatibility : MonoBehaviour
             Invoke(nameof(ActivatePlayer), 0.1f);
             _hasInitialized = true;
             _enablePlayer = false;
+            
+            InputReader.Instance.EnablePlayer();
         }
     }
 

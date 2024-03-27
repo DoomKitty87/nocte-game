@@ -4,7 +4,7 @@ using UnityEngine.Serialization;
 
 public class PlayerCameraController : MonoBehaviour
 {
-    private InputHandler _input;
+    private PlayerInput _input;
 
     [SerializeField] private bool _freezeOnTimescale0;
 
@@ -26,7 +26,7 @@ public class PlayerCameraController : MonoBehaviour
     private float _clampAngle;
     
     private void Start() {
-        _input = InputHandler.Instance;
+        _input = InputReader.Instance.PlayerInput;
 
         PlayerController.Freeze += CameraFreeze;
         PlayerController.UnFreeze += CameraUnFreeze;
@@ -44,8 +44,13 @@ public class PlayerCameraController : MonoBehaviour
     private float _desiredX;
 
     private void Look() {
-        float mouseX = _input.GENERAL_LookVector.x * _lookSensitivityX;
-        float mouseY = _input.GENERAL_LookVector.y * _lookSensitivityY;
+
+        Vector2 lookDelta;
+        if (_input.Player.Look.ReadValue<Vector2>() == Vector2.zero) lookDelta = _input.Driving.Look.ReadValue<Vector2>();
+        else lookDelta = _input.Player.Look.ReadValue<Vector2>();
+
+        float mouseX = lookDelta.x * _lookSensitivityX;
+        float mouseY = lookDelta.y * _lookSensitivityY;
 
         Vector3 rot = _currentRotation.eulerAngles;
         _desiredX = rot.y + mouseX;
