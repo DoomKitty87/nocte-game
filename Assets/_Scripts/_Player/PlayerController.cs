@@ -221,8 +221,7 @@ public class PlayerController : MonoBehaviour
     private void UpdateStates() {
         if (!_disableWorldGen) {
             if (_worldGen != null) {
-                _currentWaterHeight = _worldGen.GetWaterHeight(new Vector2(transform.position.x, transform.position.z));
-                _currentWaterHeight = Math.Max(_currentWaterHeight, WorldGenInfo._lakePlaneHeight);
+                _currentWaterHeight = _worldGen.GetWater(new Vector2(transform.position.x, transform.position.z));
             }
             else
                 _disableWorldGen = true;
