@@ -16,6 +16,6 @@ public class WaterColliderObjectHandler : MonoBehaviour
     void Update() {
         Vector2 positionXZ = new Vector2(transform.position.x, transform.position.z);
         float height = _worldGenerator.GetWater(positionXZ);
-        _waterColliderObject.position = new Vector3(0, height, 0);
+        _waterColliderObject.position = new Vector3(transform.position.x, height, transform.position.z);
     }
 }
