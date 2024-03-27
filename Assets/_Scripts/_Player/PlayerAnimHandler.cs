@@ -18,6 +18,8 @@ public class PlayerAnimHandler : MonoBehaviour
 	}
 
 	private bool _jumpBoolLastFrame;
+	private Vector3 _lastVelocity;
+	private Vector3 _lastLastVelocity;
 	private void Update() {
 		// this is bad, deal with new input system later
 		if (_playerController.State == PlayerController.PlayerStates.Idle) {
@@ -26,7 +28,7 @@ public class PlayerAnimHandler : MonoBehaviour
 		if (_playerController.State == PlayerController.PlayerStates.Walking || _playerController._walking) {
 			_animator.SetBool("Walking", true);
 		}
-		if (_playerController.State == PlayerController.PlayerStates.Sprinting || _playerController._sprinting) {
+		if (_playerController.State == PlayerController.PlayerStates.Sprinting) {
 			_animator.SetBool("Running", true);
 		}
 		else {
@@ -38,6 +40,7 @@ public class PlayerAnimHandler : MonoBehaviour
 		else {
 			_animator.SetBool("Crouching", false);
 		}
+		_animator.SetFloat("VerticalSpeed", _lastLastVelocity.y);
 		if (_playerController.State == PlayerController.PlayerStates.Air) {
 			_animator.SetBool("Air", true);
 		}
@@ -52,6 +55,13 @@ public class PlayerAnimHandler : MonoBehaviour
 			_animator.SetBool("Jump", false);
 			_jumpBoolLastFrame = _playerController._jumping;
 		}
-		_animator.SetFloat("VerticalSpeed", _playerController._velocity.y);
+		if (_playerController.State == PlayerController.PlayerStates.Grappling) {
+			_animator.SetBool("Grappling", true);
+		}
+		else {
+			// _animator.SetBool("Grappling", false);
+		}
+		_lastLastVelocity = _lastVelocity;
+		_lastVelocity = _playerController._velocity;
 	}
 }
