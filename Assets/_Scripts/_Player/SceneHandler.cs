@@ -28,8 +28,8 @@ public class SceneHandler : MonoBehaviour
   }
 
   public void EnterGame() {
-    SceneManager.LoadScene(_gameScene);
     _inGame = true;
+    SceneManager.LoadScene(_gameScene);
   }
 
   public void ExitToMenu() {
@@ -43,6 +43,8 @@ public class SceneHandler : MonoBehaviour
       if (CheckJobs()) {
         yield return new WaitUntil(() => !CheckJobs());
       }
+      Cursor.lockState = CursorLockMode.None;
+      Cursor.visible = true;
       SceneManager.LoadScene(_menuScene);
     }
   }
