@@ -38,6 +38,8 @@ namespace Foliage
     private FoliageScriptable _scriptable;
     private static readonly int PositionBuffer = Shader.PropertyToID("_instancePositions");
 
+    public static Bounds _bounds = new Bounds(Vector3.zero, Vector3.one * 1000000000f);
+
     public FoliageRenderer(FoliageScriptable scriptable, Vector2Int chunkPos, float chunkSize, Vector2 cameraPosition) {
       _position = new Vector3(chunkPos.x * chunkSize, 0, chunkPos.y * chunkSize);
       _chunkSize = chunkSize;
@@ -203,13 +205,13 @@ namespace Foliage
 
       //Debug.Log(lod);
       if (lod != -1) {
-        Graphics.DrawMeshInstancedIndirect(_meshes[lod], 0, _material, new Bounds(new Vector3(0, 0, 0), Vector3.one * 1000000000f), _argsBuffer);
+        Graphics.DrawMeshInstancedIndirect(_meshes[lod], 0, _material, _bounds, _argsBuffer);
         if (_useSubmesh) {
-          Graphics.DrawMeshInstancedIndirect(_meshes[lod], 1, _material2, new Bounds(new Vector3(0, 0, 0), Vector3.one * 1000000000f), _argsBuffer2);
+          Graphics.DrawMeshInstancedIndirect(_meshes[lod], 1, _material2, _bounds, _argsBuffer2);
         }
       }
       else if (_useBillboard) {
-        Graphics.DrawMeshInstancedIndirect(_billboardMesh, 0, _billboardMaterial, new Bounds(new Vector3(0, 0, 0), Vector3.one * 1000000000f), _argsBuffer);
+        Graphics.DrawMeshInstancedIndirect(_billboardMesh, 0, _billboardMaterial, _bounds, _argsBuffer);
       }
 
       //Debug.Log($"Rendering mesh");
