@@ -18,7 +18,7 @@ namespace _Scripts._Entities.Creatures.CreatureAI
 		private CreatureCombat _creatureCombat;
 		private EnemyController _controller;
 		private Transform _playerTransform;
-		private WorldGenerator _worldGenerator;
+		//private WorldGenerator _worldGenerator;
 
 		[Header("Settings")] 
 		[SerializeField] private float _distanceAttack;
@@ -36,7 +36,7 @@ namespace _Scripts._Entities.Creatures.CreatureAI
 			_controller = gameObject.GetComponent<EnemyController>();
 			_creatureCombat = gameObject.GetComponent<CreatureCombat>();
 			_playerTransform = GameObject.FindGameObjectWithTag("Player").transform;
-			_worldGenerator = WorldGenInfo._worldGenerator;
+			//_worldGenerator = WorldGenInfo._worldGenerator;
 			return new Noder(new List<TreeNode> {
 				new Sequencer(new List<TreeNode> {
 					new Invertor(new CheckState(_controller, EnemyController.PlayerStates.Air)),
@@ -73,13 +73,13 @@ namespace _Scripts._Entities.Creatures.CreatureAI
 						}),
 						new Sequencer(new List<TreeNode> {
 							new CheckStuck(_transform),
-							new PlaceRandomGoal(_controller, _transform, _range, _worldGenerator)
+							//new PlaceRandomGoal(_controller, _transform, _range, _worldGenerator)
 						})
 					})
 				}),
 				new Sequencer(new List<TreeNode> { // checks if the enemy is close to the goal and makes a new one
 					new DistanceGoalLessThan(_controller, _transform, _distanceGoal),
-					new PlaceRandomGoal(_controller, _transform, _range, _worldGenerator)
+					//new PlaceRandomGoal(_controller, _transform, _range, _worldGenerator)
 				}),
 				new Selector(new List<TreeNode> {
 					new Sequencer(new List<TreeNode> { // keeps coyote at den to heal up before leaving

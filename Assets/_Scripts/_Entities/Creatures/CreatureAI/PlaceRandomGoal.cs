@@ -16,24 +16,25 @@ namespace _Scripts._Entities.Creatures.CreatureAI
     private EnemyController _controller;
     private Transform _transform;
     private float _range;
-    private WorldGenerator _worldGenerator;
+    //private WorldGenerator _worldGenerator;
     
-    public PlaceRandomGoal(EnemyController controller, Transform transform, float range, WorldGenerator worldGenerator) {
+    public PlaceRandomGoal(EnemyController controller, Transform transform, float range) {
       _controller = controller;
       _transform = transform;
       _range = range;
-      _worldGenerator = worldGenerator;
+     // _worldGenerator = worldGenerator;
     }
 
     public override TreeNodeState Evaluate() {
-      Vector2 location;
-      do {
-        location = ChooseLocation();
-      } while (_worldGenerator.GetWaterHeight(location) == -1);
-      _controller.SetGoalPos(location);
+      return TreeNodeState.SUCCESS;
+      // Vector2 location;
+      // do {
+      //   location = ChooseLocation();
+      // } while (_worldGenerator.GetWaterHeight(location) == -1);
+      // _controller.SetGoalPos(location);
       
-      _nodeState = TreeNodeState.SUCCESS;
-      return _nodeState;
+      // _nodeState = TreeNodeState.SUCCESS;
+      // return _nodeState;
     }
 
     private Vector2 ChooseLocation() {
