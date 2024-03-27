@@ -48,9 +48,8 @@ public class PlayerGrapple : MonoBehaviour
     private void Start() {
         _input = InputReader.Instance.PlayerInput;
 
-        _input.Player.Grapple.performed += StartGrapple;
-        _input.Player.Grapple.canceled += StopGrapple;
-        _input.Player.Grapple.canceled += _ => _disableGrapple = true;
+        _input.Player.Grapple.performed += _ => StartGrapple();
+        _input.Player.Grapple.canceled += _ => StopGrapple();
 
         _playerController = GetComponent<PlayerController>();
 
@@ -60,9 +59,8 @@ public class PlayerGrapple : MonoBehaviour
 
     void OnDisable()
     {
-        _input.Player.Grapple.performed -= StartGrapple;
-        _input.Player.Grapple.canceled -= StopGrapple;
-        _input.Player.Grapple.canceled -= _ => _disableGrapple = true;
+        _input.Player.Grapple.performed -= _ => StartGrapple();
+        _input.Player.Grapple.canceled -= _ => StopGrapple();
 
         PlayerController.Freeze -= FreezeGrapple;
         PlayerController.UnFreeze -= UnFreezeGrapple;
@@ -83,7 +81,7 @@ public class PlayerGrapple : MonoBehaviour
         }
     }
 
-    public void StartGrapple(InputAction.CallbackContext context)
+    public void StartGrapple()
     {
         if (_grapplingCoolDownTimer > 0) return;
         
@@ -100,12 +98,7 @@ public class PlayerGrapple : MonoBehaviour
 
     private float _time;
     
-    private bool _disableGrapple;
     private void ExecuteGrapple() {
-        if (_disableGrapple) {
-            _disableGrapple = false;
-            return;
-        }
         _currentlyGrappling = true;
         _playerController.State = PlayerController.PlayerStates.Grappling;
         _time = 0;
@@ -134,18 +127,6 @@ public class PlayerGrapple : MonoBehaviour
         float magnitude = _rb.velocity.magnitude * _airFriction;
         
         return direction * magnitude;
-    }
-    
-    private void StopGrapple(InputAction.CallbackContext context)
-    {
-        if (_currentlyGrappling) {
-            _currentlyGrappling = false;
-            _grapplingCoolDownTimer = _grapplingCoolDown;
-        }
-
-        _renderGrapple = false;
-
-        _playerController.State = PlayerController.PlayerStates.Air;
     }
 
     private void StopGrapple()
