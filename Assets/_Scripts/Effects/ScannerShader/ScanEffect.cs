@@ -10,18 +10,25 @@ public class ScanEffect : MonoBehaviour
 
     [Header("Dependencies")]
     [SerializeField] private Volume _scanEffectVolume;
-    [SerializeField] private Transform _scanOrigin;
+    public Transform _scanOrigin;
     private ScannerEffectPostProcessVolume _effect;
     [Header("Settings")]
-    [SerializeField] private float _scanDistance = 10f;
-    [SerializeField] private float _scanDuration = 1.5f;
+    public float _scanDistance = 10f;
+    public float _scanDuration = 1.5f;
     [SerializeField] private float _scanHangDuration = 2;
     [SerializeField] private AnimationCurve _scanSpeedCurve = AnimationCurve.EaseInOut(0, 0, 1, 1);
     [SerializeField] private AnimationCurve _scanFadeOutCurve;
     [SerializeField] private float _scanFadeOutDuration;
     [SerializeField] private float _scanCooldown = 3f;
 
+    public static event Action OnScan;
+
     private bool _scanning = false;
+
+    public static ScanEffect Instance { get; private set; }
+
+    public AnimationCurve _inverseSpeedCurve;
+
     private IEnumerator Scan() {
         _scanning = true;
         _effect._intensity.value = 1;
@@ -55,6 +62,13 @@ public class ScanEffect : MonoBehaviour
     // Start is called before the first frame update
     private void Start()
     {
+
+        _inverseSpeedCurve = new AnimationCurve();
+        for (int i = 0; i < _scanSpeedCurve.keys.Length; i++) {
+            _inverseSpeedCurve.AddKey(new Keyframe(_scanSpeedCurve.keys[i].value, _scanSpeedCurve.keys[i].time));
+        }
+
+        Instance = this;
         _input = InputReader.Instance.PlayerInput;
 
         _input.Player.Scan.performed += _ => TriggerScan();
@@ -84,6 +98,7 @@ public class ScanEffect : MonoBehaviour
     private void TriggerScan() {
         if (!_scanning && _timeSinceLastScan > _scanCooldown) {
             _timeSinceLastScan = 0;
+            OnScan?.Invoke();
             StartCoroutine(Scan());
         }
     }
