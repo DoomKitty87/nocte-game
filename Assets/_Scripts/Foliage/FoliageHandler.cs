@@ -32,6 +32,11 @@ namespace Foliage
       FoliagePool._pool = new Dictionary<FoliageScriptable, List<GameObject>>();
     }
 
+    private void OnDisable() {
+      WorldGenerator.GenerationComplete -= Initialize;
+      WorldGenerator.PlayerMove -= UpdatePlayerPosition;
+    }
+
     private void Start() {
       _scriptables = Resources.LoadAll<FoliageScriptable>("FoliageObjects");
       

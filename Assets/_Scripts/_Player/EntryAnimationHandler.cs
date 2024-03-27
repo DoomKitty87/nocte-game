@@ -13,20 +13,30 @@ public class EntryAnimationHandler : MonoBehaviour
   [SerializeField] private float _entryAngle = 45.0f;
   [SerializeField] private AnimationCurve _entryCurve;
 
-  [SerializeField] private GameObject _uiCanvas;
   [SerializeField] private CinemachineCamera _camera;
+  [SerializeField]private GameObject _uiCanvas;
 
   private Vector3 _startingPosition;
   private Vector3 _landingPosition;
 
   private bool _animating = false;
   private float t = 0;
+  private bool _startAnimation = false;
 
   private void Start() {
-    WorldGenerator.GenerationComplete += StartAnimation;
+    WorldGenerator.GenerationComplete += EnableAnimation;
+  }
+
+  private void OnDisable() {
+    WorldGenerator.GenerationComplete -= EnableAnimation;
+  }
+
+  public void EnableAnimation() {
+    _startAnimation = true;
   }
 
   private void Update() {
+    if (_startAnimation) StartAnimation();
     if (_animating) {
       if (t < 1) {
         t += Time.deltaTime * _entrySpeed;
@@ -40,6 +50,8 @@ public class EntryAnimationHandler : MonoBehaviour
   }
 
   public void StartAnimation() {
+    _startAnimation = false;
+    Debug.Log(_uiCanvas.name);
     _uiCanvas.SetActive(false);
     _landingPosition = new Vector3(0, WorldGenInfo._worldGenerator.GetHeightValue(new Vector2(0, 0)), 0);
     _startingPosition = _landingPosition + Quaternion.Euler(_entryAngle, 0, 0) * new Vector3(0, _entryHeight, 0);

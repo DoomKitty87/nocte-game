@@ -12,6 +12,10 @@ public class PlayerWorldGeneratorCompatibility : MonoBehaviour
 
     public static bool _entryAnimationFinished = false;
 
+    public void SetEntryAnimationFinished() {
+      _entryAnimationFinished = true;
+    }
+
     private void Awake() {
       if (enabled && _worldGeneratorObject == null) {
         Debug.LogWarning($"No WorldGeneratorObject found on {this.name}");
@@ -24,6 +28,11 @@ public class PlayerWorldGeneratorCompatibility : MonoBehaviour
 
     private void Start() {
       _playerController._disableMovement = true;
+      WorldGenerator.GenerationComplete += SetEntryAnimationFinished;
+    }
+
+    private void OnDisable() {
+      WorldGenerator.GenerationComplete -= SetEntryAnimationFinished;
     }
 
     private void Update() {

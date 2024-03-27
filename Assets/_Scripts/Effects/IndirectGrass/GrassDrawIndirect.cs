@@ -25,6 +25,11 @@ public class GrassDrawIndirect : MonoBehaviour
     WorldGenerator.GenerationComplete += Initialize;
   }
 
+  private void OnDisable() {
+    WorldGenerator.GenerationComplete -= Initialize;
+    WorldGenerator.PlayerMove -= UpdatePlayerPosition;
+  }
+
   public void Initialize() {
     _cameraPosition = Camera.main.transform;
     _camera = Camera.main;
