@@ -255,14 +255,8 @@ public class WorldGenerator : MonoBehaviour
 
   // Returns height of water, or -1 if no water.
   public float GetWater(Vector2 worldPosition) {
-    float worldHeight = GetHeightValue(worldPosition);
-    if (worldHeight < _lakePlaneHeight) return _lakePlaneHeight;
-
-    float riverValue = GetRiverValue(worldPosition);
-    if (riverValue == 0) return -1;
-
-    float riverHeight = GetWaterHeight(worldPosition);
-    return riverHeight;
+    float waterHeight = GetWaterHeight(worldPosition);
+    return Mathf.Max(waterHeight, WorldGenInfo._lakePlaneHeight);
   }
 
   public (Texture2D, Texture2D) GetHeightmapTexture(Vector2 position) {

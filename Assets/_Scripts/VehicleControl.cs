@@ -13,6 +13,7 @@ public class VehicleControl : MonoBehaviour
   public float steeringRangeAtMaxSpeed = 10;
   public float centreOfGravityOffset = -1f;
   public float boyantForce = 18f;
+  public float carHeight;
 
   WheelControl[] wheels;
   Rigidbody rigidBody;
@@ -34,6 +35,8 @@ public class VehicleControl : MonoBehaviour
 
     // Find all child GameObjects that have the WheelControl script attached
     wheels = GetComponentsInChildren<WheelControl>();
+
+    Invoke("DisableRigidBody", 10f);
   }
 
   public void EnterVehicle() {
@@ -45,6 +48,7 @@ public class VehicleControl : MonoBehaviour
   public void ExitVehicle() {
     rigidBody.velocity = Vector3.zero;
     _inUse = false;
+    Invoke("DisableRigidBody", 10f);
   }
 
   // Update is called once per frame
@@ -116,14 +120,24 @@ public class VehicleControl : MonoBehaviour
     if (rigidBody.isKinematic) return;
     float waterLevel = _worldGenerator.GetWater(new Vector2(transform.position.x, transform.position.z));
     if (waterLevel == -1) return;
-    if (transform.position.y - waterLevel > 0) return;
+    float waterOffset = waterLevel - transform.position.y; // Technically negative value because reasons
+    if (waterOffset < 0) return;
 
-    rigidBody.AddForce(Vector3.up * boyantForce, ForceMode.Acceleration);
+    float forceFactor;
+
+    if (waterOffset > carHeight) forceFactor = 1;
+    else forceFactor = (waterOffset - carHeight) / carHeight;
+
+    rigidBody.AddForce(Vector3.up * boyantForce * forceFactor, ForceMode.Acceleration);
   }
 
   private void CheckDisableRigidbody() {
     if (Vector3.Distance(rigidBody.velocity, Vector3.zero) < 0.3f && !_inUse) {
       rigidBody.isKinematic = true;
     }
+  }
+
+  private void DisableRigidBody() {
+    rigidBody.isKinematic = true;
   }
 }
