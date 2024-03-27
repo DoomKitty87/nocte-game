@@ -18,10 +18,6 @@ public class PlayerCombatCore : MonoBehaviour
   
   // See line 48
   // [SerializeField] private WeaponUI _weaponUI;
-  
-  private bool _fire1LastFrame;
-  private bool _fire2LastFrame;
-
 
   public void SetWeaponItem(WeaponItem weaponItem) {
     _currentWeaponItem = weaponItem;
@@ -50,26 +46,42 @@ public class PlayerCombatCore : MonoBehaviour
   private void Start() {
     _input = InputReader.Instance.PlayerInput;
 
-    _input.Player.Shoot.started += _ => _instanceScript.FireDown();
-    _input.Player.Shoot.performed += _ => _instanceScript.FireHold();
+    _input.Player.Shoot.performed += _ => _instanceScript.FireDown();
+    _input.Player.Shoot.performed += _ => _fire1Down = true;
     _input.Player.Shoot.canceled += _ => _instanceScript.FireUp();
+    _input.Player.Shoot.canceled += _ => _fire1Down = false;
 
-    _input.Player.ADS.started += _ => _instanceScript.Fire2Down();
-    _input.Player.ADS.performed += _ => _instanceScript.Fire2Hold();
+    _input.Player.ADS.performed += _ => _instanceScript.Fire2Down();
+    _input.Player.ADS.performed += _ => _fire2Down = true;
     _input.Player.ADS.canceled += _ => _instanceScript.Fire2Up();
+    _input.Player.ADS.canceled += _ => _fire2Down = false;
 
     if (_currentWeaponItem != null) InstanceWeaponItem();
   }
 
   void OnDisable()
   {
-    _input.Player.Shoot.started -= _ => _instanceScript.FireDown();
-    _input.Player.Shoot.performed -= _ => _instanceScript.FireHold();
+    _input.Player.Shoot.performed -= _ => _instanceScript.FireDown();
+    _input.Player.Shoot.performed -= _ => _fire1Down = true;
     _input.Player.Shoot.canceled -= _ => _instanceScript.FireUp();
+    _input.Player.Shoot.canceled -= _ => _fire1Down = false;
 
-    _input.Player.ADS.started -= _ => _instanceScript.Fire2Down();
-    _input.Player.ADS.performed -= _ => _instanceScript.Fire2Hold();
+    _input.Player.ADS.performed -= _ => _instanceScript.Fire2Down();
+    _input.Player.ADS.performed -= _ => _fire2Down = true;
     _input.Player.ADS.canceled -= _ => _instanceScript.Fire2Up();
+    _input.Player.ADS.canceled -= _ => _fire2Down = false;
+  }
+
+  private bool _fire1Down;
+  private bool _fire2Down;
+  private void Update() {
+    // Yeah its not great but it works :shrug:
+    if (_fire1Down) {
+      _instanceScript.FireHold();
+    }
+    if (_fire2Down) {
+      _instanceScript.Fire2Hold();
+    }
   }
 
 }
