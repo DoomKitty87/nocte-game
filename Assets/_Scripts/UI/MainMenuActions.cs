@@ -16,8 +16,4 @@ public class MainMenuActions : MonoBehaviour
     SceneManager.LoadScene(_shipScene);
   }
 
-  public void OpenOptions() {
-    Debug.Log("Opening options");
-  }
-
 }
