@@ -54,6 +54,8 @@ public class GrassDrawIndirect : MonoBehaviour
 
   public void UpdatePlayerPosition(Vector2 playerPosition) {
     Vector2Int moveDelta = new Vector2Int(Mathf.FloorToInt(playerPosition.x / _chunkSize) - _middleChunk.x, Mathf.FloorToInt(playerPosition.y / _chunkSize) - _middleChunk.y);
+    moveDelta.x = Mathf.Clamp(moveDelta.x, -1, 1);
+    moveDelta.y = Mathf.Clamp(moveDelta.y, -1, 1);
     if (moveDelta != Vector2Int.zero) {
       UpdateGrass(moveDelta);
     }
