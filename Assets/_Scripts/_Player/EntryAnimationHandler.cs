@@ -12,6 +12,8 @@ public class EntryAnimationHandler : MonoBehaviour
   [SerializeField] private float _entryAngle = 45.0f;
   [SerializeField] private AnimationCurve _entryCurve;
 
+  [SerializeField] private GameObject _uiCanvas;
+
   private Vector3 _startingPosition;
   private Vector3 _landingPosition;
 
@@ -20,13 +22,11 @@ public class EntryAnimationHandler : MonoBehaviour
   }
 
   public void StartAnimation() {
+    _uiCanvas.SetActive(false);
     _landingPosition = new Vector3(0, WorldGenInfo._worldGenerator.GetHeightValue(new Vector2(0, 0)), 0);
     _startingPosition = _landingPosition + Quaternion.Euler(_entryAngle, 0, 0) * new Vector3(0, _entryHeight, 0);
     _landingPod.position = _startingPosition;
     _landingPod.rotation = Quaternion.Euler(_entryAngle, 0, 0);
-    _playerTransform.parent = _landingPod;
-    _playerTransform.GetComponent<Rigidbody>().velocity = Vector3.zero;
-    _playerTransform.localPosition = Vector3.zero;
     StartCoroutine(EntryAnimation());
   }
 
@@ -35,17 +35,15 @@ public class EntryAnimationHandler : MonoBehaviour
     while (t < 1) {
       t += Time.deltaTime * _entrySpeed;
       _landingPod.position = Vector3.Lerp(_startingPosition, _landingPosition, _entryCurve.Evaluate(t));
-      _playerTransform.localPosition = Vector3.zero;
       yield return null;
     }
-    _playerTransform.parent = null;
-    _playerTransform.position = _landingPosition;
     // Do player walk out animation
 
     Done();
   }
   
   private void Done() {
+    _uiCanvas.SetActive(true);
     PlayerWorldGeneratorCompatibility._entryAnimationFinished = true;
   }
 

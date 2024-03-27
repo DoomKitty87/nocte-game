@@ -14,31 +14,32 @@ public class PlayerWorldGeneratorCompatibility : MonoBehaviour
     public static bool _entryAnimationFinished = false;
 
     private void Awake() {
-        if (enabled && _worldGeneratorObject == null) {
-            Debug.LogWarning($"No WorldGeneratorObject found on {this.name}");
-            this.enabled = false;
-        }
+      if (enabled && _worldGeneratorObject == null) {
+        Debug.LogWarning($"No WorldGeneratorObject found on {this.name}");
+        this.enabled = false;
+      }
 
-        _playerController = GetComponent<PlayerController>();
-        _rainShape = _rain.shape;
+      _playerController = GetComponent<PlayerController>();
+      _rainShape = _rain.shape;
     }
 
     private void Start() {
-        _playerController._disableMovement = true;
+      _playerController._disableMovement = true;
 
-        WorldGenerator.GenerationComplete += InitiateEnablePlayer;
+      WorldGenerator.GenerationComplete += InitiateEnablePlayer;
     }
 
     private void Update() {
-        if (_enablePlayer && _entryAnimationFinished) EnablePlayer();
-        if (!_hasInitialized) return;
+      if (_enablePlayer && _entryAnimationFinished) EnablePlayer();
+      if (!_hasInitialized) return;
 
-        _worldGeneratorObject.UpdatePlayerLoadedChunks(transform.position);
-        _rainShape.position = transform.position + Vector3.up * 25f;
-        Shader.SetGlobalVector("_PlayerPosition", transform.position);
+      _worldGeneratorObject.UpdatePlayerLoadedChunks(transform.position);
+      _rainShape.position = transform.position + Vector3.up * 25f;
+      Shader.SetGlobalVector("_PlayerPosition", transform.position);
     }
 
     private void EnablePlayer() {
+      _playerController.SetPosition(Vector3.up * WorldGenInfo._worldGenerator.GetHeightOrRiver(Vector2.zero) + Vector3.up * 2f);
       _playerController._disableMovement = false;
       _hasInitialized = true;
       _enablePlayer = false;
@@ -47,7 +48,7 @@ public class PlayerWorldGeneratorCompatibility : MonoBehaviour
     }
 
     private static void InitiateEnablePlayer() {
-        _enablePlayer = true;
+      _enablePlayer = true;
     }
 
 }
