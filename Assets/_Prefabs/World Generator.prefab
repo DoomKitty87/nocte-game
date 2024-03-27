@@ -11,6 +11,8 @@ GameObject:
   - component: {fileID: 8951891336655120199}
   - component: {fileID: 8819276947174590073}
   - component: {fileID: 7336471431426695701}
+  - component: {fileID: 5599089152639715107}
+  - component: {fileID: 7813382659237616052}
   m_Layer: 0
   m_Name: World Generator
   m_TagString: Untagged
@@ -45,63 +47,68 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 67c43eb278576c646b814952f91643c8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _seed: 0
-  _tileCount: 51
-  _size: 16
-  _resolution: 12
-  _maxUpdatesPerFrame: 0.25
+  _seed: 5
+  _tileCount: 21
+  _size: 32
+  _resolution: 30
+  _maxUpdatesPerFrame: 0.1
   _enableColliders: 1
   _colliderRange: 5
   _forceBakeThreshold: 50
-  _material: {fileID: 2100000, guid: 9b13907d982f93045a90c3127b8e3ecd, type: 2}
+  _material: {fileID: 2100000, guid: dd21b70b04efe5e4b801fa131391384f, type: 2}
   _noiseParameters:
     octaves: 10
     lacunarity: 2
-    persistence: 0.5
-    sharpnessScale: 2500
-    sharpnessAmplitude: 0.2
-    sharpnessMean: 0.5
+    persistence: 0.45
+    sharpnessScale: 3500
+    sharpnessAmplitude: 0
+    sharpnessMean: 0.56
     scaleScale: 500
     scaleAmplitude: 0
-    scaleMean: 3000
-    amplitudeScale: 5000
-    amplitudeAmplitude: 1400
-    amplitudeMean: 800
+    scaleMean: 5000
+    amplitudeScale: 13000
+    amplitudeAmplitude: 7300
+    amplitudeMean: 500
     warpStrengthScale: 2000
     warpStrengthAmplitude: 0.2
-    warpStrengthMean: 1
+    warpStrengthMean: 250
     warpScaleScale: 1200
     warpScaleAmplitude: 0
     warpScaleMean: 2500
-    amplitudePower: 0
-    scaleMeanAmplitude: 0
-    sharpnessScaleAmplitude: 0
+    amplitudePower: 1.6
+    scaleMeanAmplitude: 1200
+    sharpnessScaleAmplitude: 2000
     sharpnessAmplitudeAmplitude: 0
     sharpnessMeanAmplitude: 0
-    amplitudeScaleAmplitude: 0
-    amplitudeAmplitudeAmplitude: 0
-    amplitudeMeanAmplitude: 0
+    amplitudeScaleAmplitude: 8000
+    amplitudeAmplitudeAmplitude: 1500
+    amplitudeMeanAmplitude: 800
     warpStrengthAmplitudeAmplitude: 0
     warpStrengthMeanAmplitude: 0
     warpScaleMeanAmplitude: 0
     amplitudePowerAmplitude: 0
   _refreshButton: 0
   _lodLevels:
-  - distance: 2
+  - distance: 5
+    factor: 3
+  - distance: 8
     factor: 2
-  - distance: 3
+  - distance: 10
     factor: 1
   _defaultLOD: 0
+  _enableGrass: 1
+  _grass: {fileID: 5599089152639715107}
+  _grassNormalCutoff: 0.85
   _enableRivers: 1
   _riverParameters:
-    scale: 2500
-    amplitude: 15
-    octaves: 2
+    scale: 8500
+    amplitude: 75
+    octaves: 5
     lacunarity: 2
-    persistence: 0.5
+    persistence: 0.45
     warpScale: 500
     warpStrength: 0
-    waterLevel: 0
+    waterLevel: 15
     noiseCurve:
       serializedVersion: 2
       m_Curve:
@@ -111,18 +118,27 @@ MonoBehaviour:
         inSlope: 0
         outSlope: 0
         tangentMode: 0
-        weightedMode: 0
+        weightedMode: 2
         inWeight: 0
+        outWeight: 0.32356855
+      - serializedVersion: 3
+        time: 0.062549144
+        value: 0.055526555
+        inSlope: -25.852016
+        outSlope: -25.852016
+        tangentMode: 0
+        weightedMode: 3
+        inWeight: 0.5406525
         outWeight: 0.33333334
       - serializedVersion: 3
-        time: 0.08
+        time: 0.07
         value: 0
         inSlope: 0
         outSlope: 0
         tangentMode: 0
-        weightedMode: 0
-        inWeight: 0.33333334
-        outWeight: 0
+        weightedMode: 3
+        inWeight: 0.048680782
+        outWeight: 0.55663645
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
@@ -139,7 +155,7 @@ MonoBehaviour:
         inWeight: 0
         outWeight: 0
       - serializedVersion: 3
-        time: 0.7
+        time: 0.3
         value: 0
         inSlope: 0
         outSlope: 0
@@ -154,10 +170,10 @@ MonoBehaviour:
       serializedVersion: 2
       m_Curve:
       - serializedVersion: 3
-        time: 0.4
+        time: 0.75
         value: 0
-        inSlope: 2
-        outSlope: 2
+        inSlope: 0
+        outSlope: 0
         tangentMode: 0
         weightedMode: 0
         inWeight: 0
@@ -175,7 +191,7 @@ MonoBehaviour:
       m_PostInfinity: 2
       m_RotationOrder: 4
     obj: {fileID: 0}
-  _lakePlaneHeight: 350
+  _lakePlaneHeight: 425
   _structures: {fileID: 0}
   _storyStructures: {fileID: 0}
 --- !u!114 &7336471431426695701
@@ -190,22 +206,67 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b16edc30e1d83124d967f3715cd094d0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _dayNightCycleSpeed: 5
-  _cloudCycleSpeed: 0
-  _windCycleSpeed: 0
-  _rainCycleSpeed: 0
-  _rainMaxIntensity: 0
-  _maxWindSpeed: 0
-  _maxSpaceIntensity: 0
-  _maxAsteroidRate: 0
-  _spaceCycleSpeed: 0
+  _dayNightCycleSpeed: 600
+  _cloudCycleSpeed: 0.002
+  _windCycleSpeed: 0.002
+  _rainCycleSpeed: 0.002
+  _rainMaxIntensity: 5000
+  _maxWindSpeed: 500
+  _maxSpaceIntensity: 4000
+  _maxAsteroidRate: 0.2
+  _spaceCycleSpeed: 1000
   _spaceCycleCurve:
     serializedVersion: 2
-    m_Curve: []
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0.3
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 0.15
+      value: 0.5
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.2452194
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 0.4
+      value: 0.5
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.67447495
+    - serializedVersion: 3
+      time: 0.65
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0.3
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  _cloudDensityCurve:
+  _cloudShapeCurve:
     serializedVersion: 2
     m_Curve:
     - serializedVersion: 3
@@ -218,8 +279,41 @@ MonoBehaviour:
       inWeight: 0
       outWeight: 0
     - serializedVersion: 3
+      time: 0.5
+      value: 0.9
+      inSlope: 0.011520346
+      outSlope: 0.011520346
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.3447155
+    - serializedVersion: 3
       time: 1
-      value: 1
+      value: 0.8
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  _cloudDensityCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0.8
+      value: 0.35
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 0.9
+      value: 0.2
       inSlope: 0
       outSlope: 0
       tangentMode: 0
@@ -231,7 +325,34 @@ MonoBehaviour:
     m_RotationOrder: 4
   _windSpeedCurve:
     serializedVersion: 2
-    m_Curve: []
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0.5
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 0.5
+      value: 0.5
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 0.5
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
@@ -240,13 +361,31 @@ MonoBehaviour:
     m_Curve:
     - serializedVersion: 3
       time: 0
-      value: 0
+      value: 1
       inSlope: 0
       outSlope: 0
       tangentMode: 0
       weightedMode: 0
       inWeight: 0
       outWeight: 0
+    - serializedVersion: 3
+      time: 0.4
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 0.6
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
     - serializedVersion: 3
       time: 1
       value: 1
@@ -259,12 +398,49 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  _worldGenerator: {fileID: 0}
-  _cloudVolume: {fileID: 0}
+  _worldGenerator: {fileID: 8819276947174590073}
+  _cloudVolume: {fileID: 11400000, guid: ed50cdbd5e2854f8abde4770fad595af, type: 2}
   _sunTransform: {fileID: 0}
   _rainEffect: {fileID: 0}
   _asteroidEffect: {fileID: 0}
-  _frameUpdateDelay: 0
-  _frameUpdateDelay2: 0
-  _sunAxis: {x: 0, y: 0, z: 0}
-  _spaceFactorInitial: 0
+  _frameUpdateDelay: 25
+  _frameUpdateDelay2: 5
+  _sunAxis: {x: 1, y: 0, z: 0}
+  _spaceFactorInitial: 0.5
+  _windScrollSpeed: 10
+--- !u!114 &5599089152639715107
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7828621975473438852}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8901d01b1ec976449b26f9ac05943e4b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _positionCompute: {fileID: 7200000, guid: ad2522b6a715ee54d8ae10d592b5a0cc, type: 3}
+  _grassMaterial: {fileID: 2100000, guid: 4b8739522c0da4d14a83a4ac06b5aa6d, type: 2}
+  _grassMeshes:
+  - {fileID: 6272463214150983, guid: 82ca8cc96c2980e4d92e49b5bfe50816, type: 3}
+  - {fileID: 1237130334405037093, guid: 82ca8cc96c2980e4d92e49b5bfe50816, type: 3}
+  - {fileID: 1237130334405037093, guid: 82ca8cc96c2980e4d92e49b5bfe50816, type: 3}
+  - {fileID: 1237130334405037093, guid: 82ca8cc96c2980e4d92e49b5bfe50816, type: 3}
+  _lodValues: 320000006400000096000000
+  _chunkCount: 15
+  _chunkSize: 15
+  _grassDensity: 6400000032000000190000000a000000
+--- !u!114 &7813382659237616052
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7828621975473438852}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 18a4e77c39ca141739a8cee42705b5e8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _chunkSize: 240
