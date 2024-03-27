@@ -17,6 +17,11 @@ namespace Foliage
     public int _maxBillboardDistance;
     public ComputeShader _positionComputeShader;
     public ComputeShader _cullingComputeShader;
+    public float _noiseScale;
+    public int _noiseOctaves;
+    public float _noisePersistence;
+    public float _noiseLacunarity;
+    public float _noiseCutoff;
   }
 
 

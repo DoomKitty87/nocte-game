@@ -43,6 +43,13 @@ namespace Foliage
 
     private uint _currentInstanceCount;
 
+    private float _noiseScale;
+    private int _noiseOctaves;
+    private float _noisePersistence;
+    private float _noiseLacunarity;
+    private float _noiseOffset;
+    private float _noiseCutoff;
+
     public FoliageRenderer(FoliageScriptable scriptable, Vector2Int chunkPos, float chunkSize, Vector2 cameraPosition) {
       _position = new Vector3(chunkPos.x * chunkSize, 0, chunkPos.y * chunkSize);
       _chunkSize = chunkSize;
@@ -56,6 +63,13 @@ namespace Foliage
 
       _positionCompute = _scriptable._positionComputeShader;
       _cullingCompute = _scriptable._cullingComputeShader;
+
+      _noiseScale = 1f / _scriptable._noiseScale;
+      _noiseOctaves = _scriptable._noiseOctaves;
+      _noisePersistence = _scriptable._noisePersistence;
+      _noiseLacunarity = _scriptable._noiseLacunarity;
+      _noiseOffset = WorldGenInfo._seed;
+      _noiseCutoff = _scriptable._noiseCutoff;
     
       _material = new Material(_scriptable.Material);
       _useSubmesh = _scriptable._useSubmesh;
@@ -144,6 +158,12 @@ namespace Foliage
       _positionCompute.SetTexture(kernelIndex, Shader.PropertyToID("_tileHeightmapTexture"), _heightmapTexture);
       _positionCompute.SetTexture(kernelIndex, Shader.PropertyToID("_tileGrowthTexture"), _growthTexture);
       _positionCompute.SetBuffer(kernelIndex, Shader.PropertyToID("_positionOutputBuffer"), _positionsBuffer);
+      _positionCompute.SetFloat("_noiseScale", _noiseScale);
+      _positionCompute.SetInt("_noiseOctaves", _noiseOctaves);
+      _positionCompute.SetFloat("_noisePersistence", _noisePersistence);
+      _positionCompute.SetFloat("_noiseLacunarity", _noiseLacunarity);
+      _positionCompute.SetFloat("_noiseOffset", _noiseOffset);
+      _positionCompute.SetFloat("_noiseCutoff", _noiseCutoff);
       _positionCompute.GetKernelThreadGroupSizes(kernelIndex, out uint threadX, out _, out _);
       _positionCompute.Dispatch(kernelIndex, Mathf.CeilToInt(_chunkDensity[lod] * _chunkDensity[lod] / (float)threadX), 1, 1);
     
@@ -177,6 +197,10 @@ namespace Foliage
       culledCountBuffer.GetData(culledCount);
       _currentInstanceCount = culledCount[0];
       // Debug.Log(_currentInstanceCount);
+
+      voteBuffer.Release();
+      sumBuffer.Release();
+      culledCountBuffer.Release();
     }
     
     private void Initialize(int lod) {

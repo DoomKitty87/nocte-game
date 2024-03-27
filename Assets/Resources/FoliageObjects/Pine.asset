@@ -31,8 +31,13 @@ MonoBehaviour:
   - Mesh: {fileID: 6608440108915591259, guid: 1b91a623045c44e278d9d62b73579250, type: 3}
     Distance: 3
     Density: 5
-  _maxBillboardDistance: 2000
+  _maxBillboardDistance: 5000
   _positionComputeShader: {fileID: 7200000, guid: 35ecb218547bc4a4884dab047d206d42,
     type: 3}
   _cullingComputeShader: {fileID: 7200000, guid: b0f0eaf7b295bf142832600abb2b0265,
     type: 3}
+  _noiseScale: 500
+  _noiseOctaves: 4
+  _noisePersistence: 0.8
+  _noiseLacunarity: 2
+  _noiseCutoff: -0.12
