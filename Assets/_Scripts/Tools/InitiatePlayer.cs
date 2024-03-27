@@ -5,6 +5,10 @@ public class InitiatePlayer : MonoBehaviour
 {
   private GameObject _gameHandler;
 
+  [SerializeField]
+  private static Transform _playerTransform;
+  public static Transform PlayerTransform { get { return _playerTransform; } }
+
   private void Awake() {
     if (GameObject.FindWithTag("GameHandler") == null) {
       _gameHandler = Resources.Load<GameObject>("Game Handler/GameHandler");
