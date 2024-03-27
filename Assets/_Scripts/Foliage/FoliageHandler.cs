@@ -27,7 +27,10 @@ namespace Foliage
     private int _chunkDistance;
     private Camera _camera;
 
+    public static Transform Instance;
+
     private void Awake() {
+      Instance = this.transform;
       WorldGenerator.GenerationComplete += Initialize;
       FoliagePool._pool = new Dictionary<FoliageScriptable, List<GameObject>>();
     }
@@ -39,8 +42,9 @@ namespace Foliage
 
     private void Start() {
       _scriptables = Resources.LoadAll<FoliageScriptable>("FoliageObjects");
-      
-      foreach (var scriptable in _scriptables) {
+
+      for (int i = 0; i < _scriptables.Length; i++) {
+        FoliageScriptable scriptable = _scriptables[i];
         FoliagePool._pool.Add(scriptable, new List<GameObject>());
       }
 

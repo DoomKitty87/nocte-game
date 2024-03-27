@@ -224,6 +224,7 @@ namespace Foliage
         foreach (Vector4 v in data) {
           if (FoliagePool._pool[_scriptable].Count == 0) {
             var collider = GameObject.Instantiate(_scriptable.ColliderPrefab, new Vector3(v.x, v.y, v.z), Quaternion.identity);
+            collider.transform.parent = FoliageHandler.Instance;
             _activeColliders.Add(collider);
           }
           else {
