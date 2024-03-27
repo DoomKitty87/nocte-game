@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro.EditorUtilities;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -18,50 +19,24 @@ public class PlayerAnimHandler : MonoBehaviour
 	}
 
 	private bool _jumpBoolLastFrame;
+	private bool _grappleBoolLastFrame;
 	private Vector3 _lastVelocity;
 	private Vector3 _lastLastVelocity;
+
 	private void Update() {
-		// this is bad, deal with new input system later
-		if (_playerController.State == PlayerController.PlayerStates.Idle) {
-			_animator.SetBool("Walking", false);
-		}
-		if (_playerController.State == PlayerController.PlayerStates.Walking || _playerController._walking) {
-			_animator.SetBool("Walking", true);
-		}
-		if (_playerController.State == PlayerController.PlayerStates.Sprinting) {
-			_animator.SetBool("Running", true);
-		}
-		else {
-			_animator.SetBool("Running", false);
-		}
-		if (_playerController.State == PlayerController.PlayerStates.Crouching || _playerController._crouching) {
-			_animator.SetBool("Crouching", true);
-		}
-		else {
-			_animator.SetBool("Crouching", false);
-		}
-		_animator.SetFloat("VerticalSpeed", _lastLastVelocity.y);
-		if (_playerController.State == PlayerController.PlayerStates.Air) {
-			_animator.SetBool("Air", true);
-		}
-		else {
-			_animator.SetBool("Air", false);
-		}
-		if (_playerController._jumping && !_jumpBoolLastFrame) {
-			_animator.SetBool("Jump", true);
-			_jumpBoolLastFrame = _playerController._jumping;
-		}
-		else {
-			_animator.SetBool("Jump", false);
-			_jumpBoolLastFrame = _playerController._jumping;
-		}
-		if (_playerController.State == PlayerController.PlayerStates.Grappling) {
-			_animator.SetBool("Grappling", true);
-		}
-		else {
-			// _animator.SetBool("Grappling", false);
-		}
-		_lastLastVelocity = _lastVelocity;
-		_lastVelocity = _playerController._velocity;
+		_animator.SetBool("IdleState", _playerController.State == PlayerController.PlayerStates.Idle);
+		_animator.SetBool("WalkingState", _playerController.State == PlayerController.PlayerStates.Walking);
+		_animator.SetBool("SprintState", _playerController.State == PlayerController.PlayerStates.Sprinting);
+		_animator.SetBool("CrouchState", _playerController.State == PlayerController.PlayerStates.Crouching);
+		_animator.SetBool("SlideState", _playerController.State == PlayerController.PlayerStates.Sliding);
+		_animator.SetBool("AirState", _playerController.State == PlayerController.PlayerStates.Air);
+		_animator.SetBool("SwimState", _playerController.State == PlayerController.PlayerStates.Swimming);
+		_animator.SetBool("GrappleState", _playerController.State == PlayerController.PlayerStates.Grappling);
+		_animator.SetBool("DrivingState", _playerController.State == PlayerController.PlayerStates.Driving);
+		_animator.SetBool("WalkingInput", _playerController._walking);
+		_animator.SetBool("SprintInput", _playerController._sprinting);
+		_animator.SetBool("CrouchInput", _playerController._crouching);
+		_animator.SetBool("JumpInput", _playerController._jumping);
+		// _animator.SetBool("GrappleInput", _playerController._grappling);
 	}
 }
