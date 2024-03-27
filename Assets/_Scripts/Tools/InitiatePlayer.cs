@@ -9,6 +9,11 @@ public class InitiatePlayer : MonoBehaviour
     if (GameObject.FindWithTag("GameHandler") == null) {
       _gameHandler = Resources.Load<GameObject>("Game Handler/GameHandler");
       Instantiate(_gameHandler);
+      DontDestroyOnLoad(_gameHandler);
+    }
+    else {
+      _gameHandler = GameObject.FindWithTag("GameHandler");
+      DontDestroyOnLoad(_gameHandler);
     }
 
     int numberOfChildren = transform.childCount;
