@@ -11,6 +11,8 @@ public class PlayerWorldGeneratorCompatibility : MonoBehaviour
     private ParticleSystem.ShapeModule _rainShape;
 
     public static bool _entryAnimationFinished = false;
+    
+    [SerializeField] private bool _ignoreLackOfWorldGenerator;
 
     private void Awake() {
       _playerController = GetComponent<PlayerController>();
@@ -19,8 +21,11 @@ public class PlayerWorldGeneratorCompatibility : MonoBehaviour
 
     private void Start() {
       _worldGeneratorObject = WorldGenInfo._worldGenerator;
-
+  
       _playerController._disableMovement = true;
+      if (_ignoreLackOfWorldGenerator) {
+        EnablePlayer();
+      }
     }
 
     private void Update() {
