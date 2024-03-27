@@ -223,6 +223,7 @@ public class WorldGenerator : MonoBehaviour
 
   #region Public Fetch Functions
 
+  // Gets the height value at a given world position.
   public float GetHeightValue(Vector2 worldPosition) {
     float heightVal = AmalgamNoise.GetPosition(worldPosition.x + _seed, worldPosition.y + _seed, _noiseParameters.octaves, _noiseParameters.lacunarity, _noiseParameters.persistence, _noiseParameters.sharpnessScale,
     _noiseParameters.sharpnessAmplitude, _noiseParameters.sharpnessMean, _noiseParameters.scaleScale, _noiseParameters.scaleAmplitude,
@@ -234,20 +235,13 @@ public class WorldGenerator : MonoBehaviour
     return heightVal;
   }
 
-  public float GetHeightOrRiver(Vector2 worldPosition) {
-    float heightVal = AmalgamNoise.GetPosition(worldPosition.x + _seed, worldPosition.y + _seed, _noiseParameters.octaves, _noiseParameters.lacunarity, _noiseParameters.persistence, _noiseParameters.sharpnessScale,
-    _noiseParameters.sharpnessAmplitude, _noiseParameters.sharpnessMean, _noiseParameters.scaleScale, _noiseParameters.scaleAmplitude,
-    _noiseParameters.scaleMean, _noiseParameters.amplitudeScale, _noiseParameters.amplitudeAmplitude, _noiseParameters.amplitudeMean,
-    _noiseParameters.warpStrengthScale, _noiseParameters.warpStrengthAmplitude, _noiseParameters.warpStrengthMean,
-    _noiseParameters.warpScaleScale, _noiseParameters.warpScaleAmplitude, _noiseParameters.warpScaleMean, _noiseParameters.amplitudePower);
-    return heightVal;
-  }
-
+  // Returns 'value' of rivers from range 0 to 1, ignoring lakes.
   public float GetRiverValue(Vector2 worldPosition) {
     return _riverParameters.heightCurve.Evaluate(worldPosition.y / _maxPossibleHeight) * _riverParameters.noiseCurve.Evaluate(AmalgamNoise.GetRiverValue(
       worldPosition.x + _seed % 216812, worldPosition.y + _seed % 216812, _riverParameters.scale, _riverParameters.octaves, _riverParameters.lacunarity, _riverParameters.persistence, _riverParameters.warpScale, _riverParameters.warpStrength));
   }
 
+  // Returns height of rivers, or -1 if no river. Ignores lakes.
   public float GetWaterHeight(Vector2 worldPosition) {
     float heightVal = AmalgamNoise.GetPosition(worldPosition.x + _seed, worldPosition.y + _seed, _noiseParameters.octaves, _noiseParameters.lacunarity, _noiseParameters.persistence, _noiseParameters.sharpnessScale,
       _noiseParameters.sharpnessAmplitude, _noiseParameters.sharpnessMean, _noiseParameters.scaleScale, _noiseParameters.scaleAmplitude,
@@ -257,6 +251,18 @@ public class WorldGenerator : MonoBehaviour
     float waterFactor = _riverParameters.heightCurve.Evaluate(heightVal / _maxPossibleHeight) * _riverParameters.noiseCurve.Evaluate(AmalgamNoise.GetRiverValue(
         worldPosition.x + _seed % 216812, worldPosition.y + _seed % 216812, _riverParameters.scale, _riverParameters.octaves, _riverParameters.lacunarity, _riverParameters.persistence, _riverParameters.warpScale, _riverParameters.warpStrength));
     return waterFactor == 0 ? -1 : (heightVal - _riverParameters.waterLevel);
+  }
+
+  // Returns height of water, or -1 if no water.
+  public float GetWater(Vector2 worldPosition) {
+    float worldHeight = GetHeightValue(worldPosition);
+    if (worldHeight < _lakePlaneHeight) return _lakePlaneHeight;
+
+    float riverValue = GetRiverValue(worldPosition);
+    if (riverValue == 0) return -1;
+
+    float riverHeight = GetWaterHeight(worldPosition);
+    return riverHeight;
   }
 
   public (Texture2D, Texture2D) GetHeightmapTexture(Vector2 position) {
