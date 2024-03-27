@@ -146,7 +146,7 @@ public class PlayerController : MonoBehaviour
 
         _input.Player.Crouch.performed += _ => _crouching = true;
         _input.Player.Crouch.canceled += _ => _crouching = false;
-
+        
         _input.Player.Movement.performed += context => _inputVector = new Vector3(context.ReadValue<Vector2>().x, 0, context.ReadValue<Vector2>().y);
         _input.Player.Movement.canceled += _ => _inputVector = Vector3.zero;
     }
