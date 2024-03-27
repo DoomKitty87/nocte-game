@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections;
+using Unity.Cinemachine;
 
 public class EntryAnimationHandler : MonoBehaviour
 {
@@ -13,6 +14,7 @@ public class EntryAnimationHandler : MonoBehaviour
   [SerializeField] private AnimationCurve _entryCurve;
 
   [SerializeField] private GameObject _uiCanvas;
+  [SerializeField] private CinemachineCamera _camera;
 
   private Vector3 _startingPosition;
   private Vector3 _landingPosition;
@@ -43,6 +45,7 @@ public class EntryAnimationHandler : MonoBehaviour
   }
   
   private void Done() {
+    _camera.enabled = false;
     _uiCanvas.SetActive(true);
     PlayerWorldGeneratorCompatibility._entryAnimationFinished = true;
   }

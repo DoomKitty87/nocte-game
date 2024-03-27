@@ -10,7 +10,6 @@ public class PlayerWorldGeneratorCompatibility : MonoBehaviour
     private bool _hasInitialized;
     private ParticleSystem.ShapeModule _rainShape;
 
-    private static bool _enablePlayer;
     public static bool _entryAnimationFinished = false;
 
     private void Awake() {
@@ -25,12 +24,10 @@ public class PlayerWorldGeneratorCompatibility : MonoBehaviour
 
     private void Start() {
       _playerController._disableMovement = true;
-
-      WorldGenerator.GenerationComplete += InitiateEnablePlayer;
     }
 
     private void Update() {
-      if (_enablePlayer && _entryAnimationFinished) EnablePlayer();
+      if (_entryAnimationFinished) EnablePlayer();
       if (!_hasInitialized) return;
 
       _worldGeneratorObject.UpdatePlayerLoadedChunks(transform.position);
@@ -39,16 +36,12 @@ public class PlayerWorldGeneratorCompatibility : MonoBehaviour
     }
 
     private void EnablePlayer() {
-      _playerController.SetPosition(Vector3.up * WorldGenInfo._worldGenerator.GetHeightOrRiver(Vector2.zero) + Vector3.up * 2f);
+      _playerController.SetPosition(Vector3.up * WorldGenInfo._worldGenerator.GetHeightValue(Vector2.zero) + Vector3.up * 2f);
       _playerController._disableMovement = false;
       _hasInitialized = true;
-      _enablePlayer = false;
+      _entryAnimationFinished = false;
       
       InputReader.Instance.EnablePlayer();
-    }
-
-    private static void InitiateEnablePlayer() {
-      _enablePlayer = true;
     }
 
 }
