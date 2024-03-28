@@ -61,7 +61,7 @@ public class EntryAnimationHandler : MonoBehaviour
     // Debug.Log(_uiCanvas.name);
     _uiCanvas.SetActive(false);
 
-    Vector2 landPos = new Vector2(0, 0);
+    Vector2 landPos = PlaceStructures.CentralPosition;
     int attempts = 0;
     bool foundPos = false;
     while (foundPos == false) {
@@ -71,7 +71,7 @@ public class EntryAnimationHandler : MonoBehaviour
         break;
       }
       landPos = new Vector2(Random.Range(-_dropRange, _dropRange),
-        Random.Range(-_dropRange, _dropRange));
+        Random.Range(-_dropRange, _dropRange)) + PlaceStructures.CentralPosition;
       float pointA = WorldGenInfo._worldGenerator.GetHeightValue(landPos);
       float pointB = WorldGenInfo._worldGenerator.GetHeightValue(landPos + new Vector2(1, 0));
       float pointC = WorldGenInfo._worldGenerator.GetHeightValue(landPos + new Vector2(0, 1));

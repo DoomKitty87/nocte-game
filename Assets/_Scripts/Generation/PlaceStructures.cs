@@ -4,6 +4,7 @@ using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
 using Unity.Mathematics;
+using Random = UnityEngine.Random;
 
 public class PlaceStructures : MonoBehaviour
 {
@@ -17,7 +18,8 @@ public class PlaceStructures : MonoBehaviour
   [SerializeField] private float _groundInset;
   [SerializeField] private int _structureRenderDistance = 2500; // [World Units]
   [SerializeField] private float _centerOffsetRadiusAmplitude;
-  [SerializeField] private float _heightCutoff;
+  [SerializeField] private float _normalCutoff;
+  [SerializeField] private float _normalRadius;
   [SerializeField] private float _roadResolution;
   [SerializeField] private float _roadWidth;
   [SerializeField] private float _roadDepth;
@@ -32,6 +34,8 @@ public class PlaceStructures : MonoBehaviour
   private Vector3[] _structurePositions;
   private List<Transform> _structures = new List<Transform>();
 
+  public static Vector2 CentralPosition;
+
   private int[] _beamWindingOrder = {
     1, 2, 0, 1, 3, 2, // Bottom Face
     4, 6, 5, 6, 7, 5, // Top Face
@@ -42,26 +46,35 @@ public class PlaceStructures : MonoBehaviour
   };
 
   private void Start() {
-    float offsetAngle = Mathf.PerlinNoise(_worldGen.Seed % 681, _worldGen.Seed % 918) * Mathf.PI * 2;
-    Vector3 positionOffset = new Vector3(Mathf.Cos(offsetAngle), 0, Mathf.Sin(offsetAngle)) * (Mathf.PerlinNoise(_worldGen.Seed % 6913, _worldGen.Seed % 1052) - 0.5f) * _centerOffsetRadiusAmplitude;
+    Random.InitState(_worldGen.Seed);
+    float offsetAngle = Random.value * Mathf.PI * 2;
+    Vector3 positionOffset = new Vector3(Mathf.Cos(offsetAngle), 0, Mathf.Sin(offsetAngle)) * Random.value * _centerOffsetRadiusAmplitude;
     _structurePositions = new Vector3[_outerStructures.Length + 1];
     Vector3 mainPosition = positionOffset;
     mainPosition.y = _worldGen.GetHeightValue(new Vector2(mainPosition.x, mainPosition.z));
+    float pointA = _worldGen.GetHeightValue(new Vector2(mainPosition.x - _normalRadius, mainPosition.z));
+    float pointB = _worldGen.GetHeightValue(new Vector2(mainPosition.x + _normalRadius, mainPosition.z));
+    float pointC = _worldGen.GetHeightValue(new Vector2(mainPosition.x, mainPosition.z - _normalRadius));
+    float pointD = _worldGen.GetHeightValue(new Vector2(mainPosition.x, mainPosition.z + _normalRadius));
+    Vector3 normal = -Vector3.Cross(new Vector3(1, pointB, 0) - new Vector3(-1, pointA, 0),
+      new Vector3(0, pointD, 1) - new Vector3(0, pointC, -1)).normalized;
     int s = 1;
-    while (mainPosition.y > _heightCutoff) {
-      offsetAngle = Mathf.PerlinNoise(_worldGen.Seed % (s * 32.5619f), _worldGen.Seed % (s * 81.3229f)) * Mathf.PI * 2;
-      positionOffset = new Vector3(Mathf.Cos(offsetAngle), 0, Mathf.Sin(offsetAngle)) * (Mathf.PerlinNoise(_worldGen.Seed % (s * 91.5619f), _worldGen.Seed % (s * 81.3229f)) - 0.5f) * _centerOffsetRadiusAmplitude;
+    while (normal.y < _normalCutoff || _worldGen.GetWaterSaturation(new Vector2(mainPosition.x, mainPosition.z))) {
+      offsetAngle = Random.value * Mathf.PI * 2;
+      // Debug.Log(offsetAngle);
+      positionOffset = new Vector3(Mathf.Cos(offsetAngle), 0, Mathf.Sin(offsetAngle)) * Random.value * _centerOffsetRadiusAmplitude;
       mainPosition = positionOffset;
       mainPosition.y = _worldGen.GetHeightValue(new Vector2(mainPosition.x, mainPosition.z));
+      pointA = _worldGen.GetHeightValue(new Vector2(mainPosition.x - _normalRadius, mainPosition.z));
+      pointB = _worldGen.GetHeightValue(new Vector2(mainPosition.x + _normalRadius, mainPosition.z));
+      pointC = _worldGen.GetHeightValue(new Vector2(mainPosition.x, mainPosition.z - _normalRadius));
+      pointD = _worldGen.GetHeightValue(new Vector2(mainPosition.x, mainPosition.z + _normalRadius));
+      normal = -Vector3.Cross(new Vector3(1, pointB, 0) - new Vector3(-1, pointA, 0),
+        new Vector3(0, pointD, 1) - new Vector3(0, pointC, -1)).normalized;
       s++;
     }
-    float heighta = _worldGen.GetHeightValue(new Vector2(mainPosition.x - 1, mainPosition.z));
-    float heightb = _worldGen.GetHeightValue(new Vector2(mainPosition.x + 1, mainPosition.z));
-    float heightc = _worldGen.GetHeightValue(new Vector2(mainPosition.x, mainPosition.z - 1));
-    float heightd = _worldGen.GetHeightValue(new Vector2(mainPosition.x, mainPosition.z + 1));
-    Vector3 normal = -Vector3.Cross(new Vector3(1, heightb, 0) - new Vector3(-1, heighta, 0),
-      new Vector3(0, heightd, 1) - new Vector3(0, heightc, -1)).normalized;
     // GameObject go = Instantiate(_centralStructure, mainPosition, Quaternion.FromToRotation(Vector3.up, normal));
+    CentralPosition = mainPosition;
     GameObject go = Instantiate(_centralStructure, mainPosition, Quaternion.identity);
     _structurePositions[0] = mainPosition;
     Vector2 bounds;
@@ -125,20 +138,33 @@ public class PlaceStructures : MonoBehaviour
     // }
     float[] rotations = new float[_outerStructures.Length];
     for (int i = 0; i < _outerStructures.Length; i++) {
-      float nodeRotation = Mathf.PerlinNoise(_worldGen.Seed % (395.956f * (i * 58 + 1)), _worldGen.Seed % (928.132f * (i * 81 + 1))) * Mathf.PI * 2;
+      float nodeRotation = Random.value * Mathf.PI * 2;
       for (int j = 0; j < i; j++) {
         if (Mathf.Abs(nodeRotation - rotations[j]) < Mathf.PI / 4) nodeRotation += Mathf.PI / 2;
       }
       rotations[i] = nodeRotation;
-      float nodeRadius = _nodeDistance * (Mathf.PerlinNoise(_worldGen.Seed % (156.292f * (i * 91 + 1)), _worldGen.Seed % (613.671f * (i * 26 + 1))) + 0.5f);
+      float nodeRadius = _nodeDistance * (Random.value + 0.5f);
       Vector3 outPosition = new Vector3(nodeRadius * Mathf.Cos(nodeRotation), 0, nodeRadius * Mathf.Sin(nodeRotation)) + positionOffset;
       outPosition.y = _worldGen.GetHeightValue(new Vector2(outPosition.x, outPosition.z));
-      s = 1 + (i * 1000);
-      while (outPosition.y > _heightCutoff) {
-        nodeRotation = Mathf.PerlinNoise(_worldGen.Seed % (891.623f * (i * 71 + 1) * s), _worldGen.Seed % (476.193f * (i * 23 + 1) * s)) * Mathf.PI * 2;
-        nodeRadius = _nodeDistance * (Mathf.PerlinNoise(_worldGen.Seed % (998.132f * (i * 61 + 1) * s), _worldGen.Seed % (319.254f * (i * 42 + 1) * s)) + 0.5f);
+      s = 1;
+      float heighta = _worldGen.GetHeightValue(new Vector2(outPosition.x - _normalRadius, outPosition.z));
+      float heightb = _worldGen.GetHeightValue(new Vector2(outPosition.x + _normalRadius, outPosition.z));
+      float heightc = _worldGen.GetHeightValue(new Vector2(outPosition.x, outPosition.z - _normalRadius));
+      float heightd = _worldGen.GetHeightValue(new Vector2(outPosition.x, outPosition.z + _normalRadius));
+      normal = -Vector3.Cross(new Vector3(1, heightb, 0) - new Vector3(-1, heighta, 0),
+        new Vector3(0, heightd, 1) - new Vector3(0, heightc, -1)).normalized;
+      while (normal.y < _normalCutoff || _worldGen.GetWaterSaturation(new Vector2(outPosition.x, outPosition.z))) {
+        nodeRotation = Random.value * Mathf.PI * 2;
+        // Debug.Log(nodeRotation);
+        nodeRadius = _nodeDistance * (Random.value + 0.5f);
         outPosition = new Vector3(nodeRadius * Mathf.Cos(nodeRotation), 0, nodeRadius * Mathf.Sin(nodeRotation)) + positionOffset;
         outPosition.y = _worldGen.GetHeightValue(new Vector2(outPosition.x, outPosition.z));
+        heighta = _worldGen.GetHeightValue(new Vector2(outPosition.x - _normalRadius, outPosition.z));
+        heightb = _worldGen.GetHeightValue(new Vector2(outPosition.x + _normalRadius, outPosition.z));
+        heightc = _worldGen.GetHeightValue(new Vector2(outPosition.x, outPosition.z - _normalRadius));
+        heightd = _worldGen.GetHeightValue(new Vector2(outPosition.x, outPosition.z + _normalRadius));
+        normal = -Vector3.Cross(new Vector3(1, heightb, 0) - new Vector3(-1, heighta, 0),
+          new Vector3(0, heightd, 1) - new Vector3(0, heightc, -1)).normalized;
         s++;
       }
 
@@ -170,12 +196,6 @@ public class PlaceStructures : MonoBehaviour
       obj.AddComponent<MeshCollider>();
       obj.name = "RoadSegment";
       obj.transform.parent = transform;
-      heighta = _worldGen.GetHeightValue(new Vector2(outPosition.x - 1, outPosition.z));
-      heightb = _worldGen.GetHeightValue(new Vector2(outPosition.x + 1, outPosition.z));
-      heightc = _worldGen.GetHeightValue(new Vector2(outPosition.x, outPosition.z - 1));
-      heightd = _worldGen.GetHeightValue(new Vector2(outPosition.x, outPosition.z + 1));
-      normal = -Vector3.Cross(new Vector3(1, heightb, 0) - new Vector3(-1, heighta, 0),
-        new Vector3(0, heightd, 1) - new Vector3(0, heightc, -1)).normalized;
       // go = Instantiate(_outerStructures[nodeChoice], outPosition, Quaternion.FromToRotation(Vector3.up, normal));
       go = Instantiate(_outerStructures[i], outPosition, Quaternion.identity);
       _structurePositions[i + 1] = outPosition;

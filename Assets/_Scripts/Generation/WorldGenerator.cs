@@ -253,6 +253,15 @@ public class WorldGenerator : MonoBehaviour
     return waterFactor == 0 ? -1 : (heightVal - _riverParameters.waterLevel);
   }
 
+  public bool GetWaterSaturation(Vector2 worldPosition) {
+    float river = GetRiverValue(worldPosition);
+    if (river == 0) {
+      if (GetHeightValue(worldPosition) < WorldGenInfo._lakePlaneHeight) return true;
+      else return false;
+    }
+    return true;
+  }
+
   // Returns height of water, or -1 if no water.
   public float GetWater(Vector2 worldPosition) {
     float waterHeight = GetWaterHeight(worldPosition);
@@ -309,7 +318,7 @@ public class WorldGenerator : MonoBehaviour
   }
 
   private void Awake() {
-    _seed = DateTime.Now.Millisecond;
+   // _seed = DateTime.Now.Millisecond;
     if (_tileCount % 2 == 0) {
       _tileCount++;
       Debug.LogWarning("Tile count must be odd. Increasing tile count by 1.");

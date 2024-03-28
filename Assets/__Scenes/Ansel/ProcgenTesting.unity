@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 221.16106, g: 153.47098, b: 90.825096, a: 1}
+  m_IndirectSpecularColor: {r: 0, g: 0, b: 0, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -6655,15 +6655,16 @@ MonoBehaviour:
   _outerStructures:
   - {fileID: 7453258109037728848, guid: 26a84eda139585f4986d86d14a1201a6, type: 3}
   - {fileID: 8610528419109309939, guid: c2f5aad09bc80ec49a60347b2622961f, type: 3}
-  _nodeDistance: 5000
+  _nodeDistance: 2000
   _beamWidth: 5
   _beamMaterial: {fileID: -6478536213147159724, guid: e30265bac54dc452faabf2f5ef0e78bd,
     type: 3}
   _groundInset: 5
   _structureRenderDistance: 2500
-  _centerOffsetRadiusAmplitude: 5000
-  _heightCutoff: 2500
-  _roadResolution: 5
+  _centerOffsetRadiusAmplitude: 10000
+  _normalCutoff: 0.8
+  _normalRadius: 50
+  _roadResolution: 10
   _roadWidth: 25
   _roadDepth: 5.25
   _roadInset: 9
@@ -6671,7 +6672,7 @@ MonoBehaviour:
   _roadWaterImpact: 70
   _roadNoiseAmplitude: 50
   _roadPathfindingPoints: 2
-  _roadMaxAngle: 45
+  _roadMaxAngle: 25
   _roadMaterial: {fileID: 2100000, guid: 0b575891d2861ca4f964e919cca70067, type: 2}
 --- !u!114 &1849557963
 MonoBehaviour:
@@ -12004,8 +12005,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _landingPod: {fileID: 2039313167}
   _playerTransform: {fileID: 485706946}
-  _entrySpeed: 0.2
-  _entryHeight: 500
+  _entrySpeed: 0.3
+  _entryHeight: 800
   _entryAngle: 20
   _entryCurve:
     serializedVersion: 2
