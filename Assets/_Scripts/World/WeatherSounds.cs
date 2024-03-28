@@ -14,7 +14,8 @@ public class WeatherSounds : MonoBehaviour
 
   [SerializeField] private WeatherLevel[] _rainWeatherLevels;
 
-  private AudioSource _audioSource;
+  [SerializeField] private AudioSource _rainAudioSource;
+  private float _currentVolume;
 
   public static WeatherSounds Instance { get; private set; }
 
@@ -22,37 +23,34 @@ public class WeatherSounds : MonoBehaviour
     Instance = this;
   }
 
-  private void Start() {
-    _audioSource = GetComponent<AudioSource>();
-  }
-
   public void UpdateWeather(float rainLevel) {
     for (int i = 0; i < _rainWeatherLevels.Length; i++) {
       if (rainLevel >= _rainWeatherLevels[i].threshold) {
-        _audioSource.clip = _rainWeatherLevels[i].clip;
-        _audioSource.volume = _rainWeatherLevels[i].volume;
-        if (!_audioSource.isPlaying) StartCoroutine(FadeInAudio());
+        _rainAudioSource.clip = _rainWeatherLevels[i].clip;
+        _rainAudioSource.volume = _rainWeatherLevels[i].volume;
+        _currentVolume = _rainWeatherLevels[i].volume;
+        if (!_rainAudioSource.isPlaying) StartCoroutine(FadeInRain());
         return;
       }
     }
-    StartCoroutine(FadeOutAudio());
+    StartCoroutine(FadeOutRain());
   }
 
-  private IEnumerator FadeInAudio() {
-    _audioSource.Play();
-    _audioSource.volume = 0;
-    while (_audioSource.volume < _audioSource.volume) {
-      _audioSource.volume += Time.deltaTime;
+  private IEnumerator FadeInRain() {
+    _rainAudioSource.Play();
+    _rainAudioSource.volume = 0;
+    while (_rainAudioSource.volume < _currentVolume) {
+      _rainAudioSource.volume += Time.deltaTime;
       yield return null;
     }
   }
 
-  private IEnumerator FadeOutAudio() {
-    while (_audioSource.volume > 0) {
-      _audioSource.volume -= Time.deltaTime;
+  private IEnumerator FadeOutRain() {
+    while (_rainAudioSource.volume > 0) {
+      _rainAudioSource.volume -= Time.deltaTime;
       yield return null;
     }
-    _audioSource.Stop();
+    _rainAudioSource.Stop();
   }
 
 }

@@ -143,12 +143,10 @@ public class PlaceStructures : MonoBehaviour
       Vector2 mainPosition2 = new Vector2(mainPosition.x, mainPosition.z);
       Vector2 outPosition2 = new Vector2(outPosition.x, outPosition.z);
       int roadPoints = Mathf.FloorToInt(Vector2.Distance(mainPosition2, outPosition2) / _roadResolution);
-      Vector2[] roadPath = new Vector2[roadPoints];
       Vector2 val0 = mainPosition2 + (outPosition2 - mainPosition2).normalized * 25;
       Vector2 val1 = outPosition2 + (mainPosition2 - outPosition2).normalized * 25;
-      for (int j = 0; j < roadPoints; j++) {
-        roadPath[j] = Vector2.Lerp(val0, val1, (float) j / (roadPoints - 1));
-      }
+
+      Vector2[] roadPath = RoadGenerator.GenerateRoadPath(val0, val1, roadPoints);
 
       Vector2[] roadPlane =
         RoadGenerator.PlanePointsFromLine(roadPath, _roadWidth, _roadNoiseAmplitude);

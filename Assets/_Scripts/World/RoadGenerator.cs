@@ -6,6 +6,36 @@ using Unity.Mathematics;
 public static class RoadGenerator
 {
 
+  public static Vector2[] GenerateRoadPath(Vector2 start, Vector2 end, int points) {
+    Vector2[] path = new Vector2[points];
+    path[0] = start;
+    Vector2 lastPoint = start;
+    for (int i = 1; i < points - 1; i++) {
+      Vector2 direction = (end - lastPoint).normalized;
+      Vector2[] options = new Vector2[3];
+      float distance = Vector2.Distance(lastPoint, end) / (points - i);
+      options[0] = direction * distance;
+      options[1] = Quaternion.AngleAxis(20, Vector3.forward) * direction * distance;
+      options[2] = Quaternion.AngleAxis(-20, Vector3.forward) * direction * distance;
+      float[] scores = new float[3];
+      for (int j = 0; j < 3; j++) {
+        scores[j] = WorldGenInfo._worldGenerator.GetHeightValue(lastPoint + options[j]);
+      }
+
+      int bestIndex = 0;
+      for (int j = 1; j < 3; j++) {
+        if (scores[j] < scores[bestIndex]) {
+          bestIndex = j;
+        }
+      }
+
+      lastPoint += options[bestIndex];
+      path[i] = lastPoint;
+    }
+    path[points - 1] = end;
+    return path;
+  }
+
   public static Vector2[] PlanePointsFromLine(Vector2[] points, float width, float noiseAmplitude) {
 
     Vector2[] perpVectors = new Vector2[points.Length];

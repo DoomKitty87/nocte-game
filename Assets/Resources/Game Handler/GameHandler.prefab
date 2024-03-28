@@ -15,6 +15,7 @@ GameObject:
   - component: {fileID: 4430769355980498370}
   - component: {fileID: 5710209087091153334}
   - component: {fileID: -81209109024723935}
+  - component: {fileID: -8099925424339084712}
   m_Layer: 0
   m_Name: GameHandler
   m_TagString: GameHandler
@@ -63,6 +64,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 28cbc3f61ae7c6740b95ac220f04c081, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _progression:
+    cores: 0
+    usedcores: 0
+    blueprints: []
 --- !u!114 &7900035901117525388
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -128,5 +133,17 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ba0eceddf03d23c499dbe091f28e476e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &-8099925424339084712
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8348581581803096828}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 56eaf4f4b3e2714488df48209f23c978, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
