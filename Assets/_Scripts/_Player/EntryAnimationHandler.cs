@@ -62,13 +62,13 @@ public class EntryAnimationHandler : MonoBehaviour
     // Debug.Log(_uiCanvas.name);
     _uiCanvas.SetActive(false);
 
-    Vector2 landPos = PlaceStructures.CentralPosition;
+    Vector2 landPos = PlaceStructures.CentralPosition + new Vector2(_dropRange, _dropRange) / 2;
     int attempts = 0;
     bool foundPos = false;
     while (foundPos == false) {
       if (attempts > 100) {
         Debug.LogError("Could not find a valid landing position");
-        landPos = new Vector2(0, 0);
+        landPos = PlaceStructures.CentralPosition + new Vector2(_dropRange, _dropRange) / 2;
         break;
       }
       landPos = new Vector2(Random.Range(-_dropRange, _dropRange),
@@ -90,6 +90,7 @@ public class EntryAnimationHandler : MonoBehaviour
     GrassDrawIndirect.Instance.UpdatePlayerPosition(landPos);
     FoliageHandler.InstanceFoliageHandler.UpdatePlayerPosition(landPos);
     _dropPosition = _landingPosition;
+    Connection._centerPosition = landPos;
     _startingPosition = _landingPosition + Quaternion.Euler(_entryAngle, 0, 0) * new Vector3(0, _entryHeight, 0);
     _landingPod.position = _startingPosition;
     _landingPod.rotation = Quaternion.Euler(_entryAngle, 0, 0);

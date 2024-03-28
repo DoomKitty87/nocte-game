@@ -8,6 +8,8 @@ public class ExtractionGenerator : MonoBehaviour, IInteractable
 
   [SerializeField] private int _extractorIndex;
 
+  public string interactPrompt => "Activate Extractor";
+
   public void Interact() {
     ExtractionSiteManager.Instance.ActivateExtractor(_extractorIndex);
   }

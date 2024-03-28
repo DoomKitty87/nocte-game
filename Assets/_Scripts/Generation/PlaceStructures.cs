@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Unity.Mathematics;
 using Random = UnityEngine.Random;
+using UnityEngine.SceneManagement;
 
 public class PlaceStructures : MonoBehaviour
 {
@@ -60,6 +61,10 @@ public class PlaceStructures : MonoBehaviour
       new Vector3(0, pointD, 1) - new Vector3(0, pointC, -1)).normalized;
     int s = 1;
     while (normal.y < _normalCutoff || _worldGen.GetWaterSaturation(new Vector2(mainPosition.x, mainPosition.z))) {
+      if (s > 10000) {
+        Debug.LogError("Could not find a valid central position");
+        break;
+      }
       offsetAngle = Random.value * Mathf.PI * 2;
       // Debug.Log(offsetAngle);
       positionOffset = new Vector3(Mathf.Cos(offsetAngle), 0, Mathf.Sin(offsetAngle)) * Random.value * _centerOffsetRadiusAmplitude;
@@ -74,7 +79,7 @@ public class PlaceStructures : MonoBehaviour
       s++;
     }
     // GameObject go = Instantiate(_centralStructure, mainPosition, Quaternion.FromToRotation(Vector3.up, normal));
-    CentralPosition = mainPosition;
+    CentralPosition = new Vector2(mainPosition.x, mainPosition.z);
     GameObject go = Instantiate(_centralStructure, mainPosition, Quaternion.identity);
     _structurePositions[0] = mainPosition;
     Vector2 bounds;
@@ -154,6 +159,10 @@ public class PlaceStructures : MonoBehaviour
       normal = -Vector3.Cross(new Vector3(1, heightb, 0) - new Vector3(-1, heighta, 0),
         new Vector3(0, heightd, 1) - new Vector3(0, heightc, -1)).normalized;
       while (normal.y < _normalCutoff || _worldGen.GetWaterSaturation(new Vector2(outPosition.x, outPosition.z))) {
+        if (s > 10000) {
+          Debug.LogError("Could not find a valid outer position");
+          break;
+        }
         nodeRotation = Random.value * Mathf.PI * 2;
         // Debug.Log(nodeRotation);
         nodeRadius = _nodeDistance * (Random.value + 0.5f);

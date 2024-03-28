@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 221.34622, g: 153.50671, b: 90.90676, a: 1}
+  m_IndirectSpecularColor: {r: 218.29453, g: 152.80962, b: 88.94315, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -119,6 +119,18 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!114 &4008570 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 3776677182066510204, guid: 9251f6c58d15c7b428fef40ec34ce952,
+    type: 3}
+  m_PrefabInstance: {fileID: 485706944}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &76653200
 GameObject:
   m_ObjectHideFlags: 0
@@ -6488,6 +6500,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _InteractRange: 10
+  _promptText: {fileID: 4008570}
+  _interactLayerMask:
+    serializedVersion: 2
+    m_Bits: 2241
 --- !u!1001 &1728950810
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -12034,7 +12050,7 @@ MonoBehaviour:
     m_RotationOrder: 4
   _camera: {fileID: 1521104474}
   _uiCanvas: {fileID: 1103998695}
-  _dropRange: 250
+  _dropRange: 100
 --- !u!1001 &4258144910533491455
 PrefabInstance:
   m_ObjectHideFlags: 0
