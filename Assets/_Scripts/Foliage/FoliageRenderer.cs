@@ -19,6 +19,7 @@ namespace Foliage
     private readonly float _billboardDistance;
     private readonly Mesh _billboardMesh;
     private readonly bool _useBillboard;
+    private readonly bool _useColliders;
 
     private int _previousLOD;
 
@@ -73,6 +74,7 @@ namespace Foliage
     
       _material = new Material(_scriptable.Material);
       _useSubmesh = _scriptable._useSubmesh;
+      _useColliders = _scriptable._useColliders;
       if (_useSubmesh) _material2 = new Material(_scriptable.Material2);
       _useBillboard = _scriptable.UseBillboard;
       
@@ -279,6 +281,7 @@ namespace Foliage
     }
 
     private void UpdateColliders(int lod) {
+      if (!_useColliders) return;
       if (lod == 0) {
         Vector4[] data = new Vector4[_currentInstanceCount];
         _positionsBuffer.GetData(data);

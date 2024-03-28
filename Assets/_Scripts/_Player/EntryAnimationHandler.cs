@@ -56,6 +56,7 @@ public class EntryAnimationHandler : MonoBehaviour
   }
 
   public void StartAnimation() {
+    Settings.Instance.LoadSettings();
     _startAnimation = false;
     // Debug.Log(_uiCanvas.name);
     _uiCanvas.SetActive(false);

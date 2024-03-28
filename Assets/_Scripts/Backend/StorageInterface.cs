@@ -13,6 +13,10 @@ public static class StorageInterface
   public static void SaveData(string fileName, object data)
   {
     BinaryFormatter bf = new BinaryFormatter();
+    if (!Directory.Exists(Application.persistentDataPath + "/savedata/"))
+    {
+      Directory.CreateDirectory(Application.persistentDataPath + "/savedata/");
+    }
     FileStream file = File.Create(Application.persistentDataPath + "/savedata/" + fileName);
     bf.Serialize(file, data);
     file.Close();

@@ -60,6 +60,8 @@ public class WeatherManager : MonoBehaviour
   private Vector2 _windTimeOffset = new Vector2(0, 0);
   private ParticleSystem.EmissionModule _rainEmission;
 
+  public static WeatherManager Instance { get; private set; }
+
   private void Start() {
     _spacePhase = _spaceFactorInitial;
     _sunInitRot = _sunTransform.localRotation;
@@ -75,6 +77,14 @@ public class WeatherManager : MonoBehaviour
     _cloudVolume.TryGet<PhysicallyBasedSky>(out _physicalSky);
     _environment.windOrientation.value = Mathf.PerlinNoise(_seed * 10, -_seed * 10) * 360;
     _rainEmission = _rainEffect.emission;
+  }
+
+  private void Awake() {
+    Instance = this;
+  }
+
+  public VolumetricClouds GetClouds() {
+    return _clouds;
   }
 
   private void Update() {
@@ -132,5 +142,7 @@ public class WeatherManager : MonoBehaviour
     _rainEmission.rateOverTime = _weatherState.z * _rainMaxIntensity;
     _physicalSky.spaceEmissionMultiplier.value = nightFactor * _maxSpaceIntensity * _spaceCycleCurve.Evaluate(_spacePhaseMajor);
     _asteroidEffect.SetFloat("SpawnRate", nightFactor * _maxAsteroidRate);
+
+    WeatherSounds.Instance.UpdateWeather(_weatherState.z);
   }
 }

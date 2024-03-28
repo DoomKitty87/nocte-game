@@ -6,7 +6,7 @@ using UnityEngine.SceneManagement;
 public class SceneHandler : MonoBehaviour
 {
 
-  private bool _inGame;
+  public static bool _inGame { get; private set; } = false;
 
   [SerializeField] private string _menuScene;
   [SerializeField] private string _gameScene;
@@ -29,11 +29,14 @@ public class SceneHandler : MonoBehaviour
 
   public void EnterGame() {
     _inGame = true;
+    PlayerMetaProgression.Instance.SaveData();
     SceneManager.LoadScene(_gameScene);
   }
 
   public void ExitToMenu() {
     Debug.Log("Exiting to menu");
+    PlayerMetaProgression.Instance.UnlockBlueprints();
+    PlayerMetaProgression.Instance.SaveData();
     StartCoroutine(ToMenu());
   }
 

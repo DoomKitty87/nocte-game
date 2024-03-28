@@ -10,96 +10,124 @@ using UnityEngine.UI;
 namespace UpgradeSystem
 {
     
-    [System.Serializable]
-    public class UpgradeNode : MonoBehaviour
-    {
-        [SerializeField] private UpgradeScriptable _data;
+  [System.Serializable]
+  public class UpgradeNode : MonoBehaviour
+  {
+    private int _upgradeTreeIndex;
+    private int _upgradeNodeIndex;
+    [SerializeField] private UpgradeScriptable _data;
 
-        public List<UpgradeNode> _children;
+    public List<UpgradeNode> _children;
 
-        [SerializeField] private TextMeshProUGUI _upgradeName;
-        [SerializeField] private TextMeshProUGUI _upgradeDiscription;
-        [SerializeField] private TextMeshProUGUI _levelText;
+    [SerializeField] private TextMeshProUGUI _upgradeName;
+    [SerializeField] private TextMeshProUGUI _upgradeDiscription;
+    [SerializeField] private TextMeshProUGUI _levelText;
 
-        private Image image;
-        [SerializeField] private  Color _enabledColor;
-        [SerializeField] private  Color _disableColor;
-        
-        private int _maxLevel;
-        private int _upgradeCost;
+    private Image image;
+    [SerializeField] private  Color _enabledColor;
+    [SerializeField] private  Color _disableColor;
+    
+    private int _maxLevel;
+    private int _upgradeCost;
 
-        [HideInInspector] public bool _enabled = false;
-        private int _currentLevel = 0;
+    [HideInInspector] public bool _enabled = false;
+    private int _currentLevel = 0;
 
-        private void Awake() {
-            _maxLevel = _data._upgradeMaxLevel;
-            _upgradeCost = _data._upgradeCost;
+    private void Awake() {
+      _maxLevel = _data._upgradeMaxLevel;
+      _upgradeCost = _data._upgradeCost;
 
-            image = GetComponent<Image>();
+      image = GetComponent<Image>();
 
-            image.color = _disableColor;
-            _levelText.text = " ";
-            _upgradeName.text = "Locked";
-            _upgradeDiscription.text = "This upgrade is currently locked.";
-        }
+      image.color = _disableColor;
+      _levelText.text = " ";
+      _upgradeName.text = "Locked";
+      _upgradeDiscription.text = "This upgrade is currently locked.";
+    }
 
-        public void EnableNode() {
-            _enabled = true;
-            image.color = _enabledColor;
-            _upgradeName.text = _data._upgradeName;
-            _upgradeDiscription.text = _data._upgradeDescription;
-            _levelText.text = $"0 / {_maxLevel}";
-
-        }
-
-        public bool IncreaseLevel(int upgradeLevels, ref int upgradeCostRef) {
-            if (_currentLevel >= _maxLevel) return false;
-            if (upgradeLevels < _upgradeCost) return false;
-
-            _currentLevel++;
-            upgradeCostRef = _upgradeCost;
-
-            _levelText.text = $"{_currentLevel} / {_maxLevel}";
-
-            if (_currentLevel == 1) {
-                foreach (UpgradeNode child in _children) child.EnableNode();
-            }
-
-            return true;
-        }
-
-        public void ResetNode() {
-            _enabled = false;
-            _currentLevel = 0;
-            _upgradeName.text = "Locked";
-            _upgradeDiscription.text = "This upgrade is currently locked.";
-            _levelText.text = " ";
-            image.color = _disableColor;
-        }
-
-        public void AssignButton(UpgradeTree parentTree) {
-            GetComponent<Button>().onClick.AddListener(() => parentTree.OnClick(this));
-        }
-
-        public void Traverse(Action<UpgradeNode> action)
-        {
-            action(this);  // Call the function on the current node
-
-            foreach (var child in _children)
-            {
-                child.Traverse(action);  // Recursive call for child nodes
-            }
-        }
-
-        public void ResetAllNodes()
-        {
-            Traverse(node => node.ResetNode());  // Call Traverse with a delegate calling Reset()
-        }
-
-        public void AssignAllButtons(UpgradeTree parentTree)
-        {
-            Traverse(node => node.AssignButton(parentTree));
-        }
+    public void EnableNode() {
+      _enabled = true;
+      image.color = _enabledColor;
+      _upgradeName.text = _data._upgradeName;
+      _upgradeDiscription.text = _data._upgradeDescription;
+      _levelText.text = $"0 / {_maxLevel}";
 
     }
+
+    public bool IncreaseLevel(int upgradeLevels, ref int upgradeCostRef) {
+      if (_currentLevel >= _maxLevel) return false;
+      if (upgradeLevels < _upgradeCost) return false;
+
+      _currentLevel++;
+      upgradeCostRef = _upgradeCost;
+
+      _levelText.text = $"{_currentLevel} / {_maxLevel}";
+
+      if (_currentLevel == 1) {
+        foreach (UpgradeNode child in _children) child.EnableNode();
+      }
+
+      PlayerMetaProgression.Instance.SetUpgradeLevel(_upgradeTreeIndex, _upgradeNodeIndex, _currentLevel);
+
+      return true;
+    }
+
+    private void SetLevel(int level) {
+      _currentLevel = level;
+      _levelText.text = $"{level} / {_maxLevel}";
+    }
+
+    public void LoadLevel(int treeIndex, ref int upgradeIndex) {
+      _upgradeTreeIndex = treeIndex;
+      _upgradeNodeIndex = upgradeIndex;
+
+      int upgradeLevel = PlayerMetaProgression.Instance.GetUpgradeLevel(treeIndex, upgradeIndex);
+
+      upgradeIndex++;
+      if (upgradeLevel == 0) return;
+      SetLevel(upgradeLevel);
+    }
+
+    public void ResetNode() {
+      _enabled = false;
+      _currentLevel = 0;
+      _upgradeName.text = "Locked";
+      _upgradeDiscription.text = "This upgrade is currently locked.";
+      _levelText.text = " ";
+      image.color = _disableColor;
+
+      PlayerMetaProgression.Instance.SetUpgradeLevel(_upgradeTreeIndex, _upgradeNodeIndex, _currentLevel);
+    }
+
+    public void AssignButton(UpgradeTree parentTree) {
+      GetComponent<Button>().onClick.AddListener(() => parentTree.OnClick(this));
+    }
+
+    public void Traverse(Action<UpgradeNode> action)
+    {
+      action(this);  // Call the function on the current node
+
+      foreach (var child in _children)
+      {
+        child.Traverse(action);  // Recursive call for child nodes
+      }
+    }
+
+    public void LoadAllLevels(int treeIndex, ref int upgradeIndex) {
+      int index = upgradeIndex;
+      Traverse(node => node.LoadLevel(treeIndex, ref index));
+      upgradeIndex = index;
+    }
+
+    public void ResetAllNodes()
+    {
+      Traverse(node => node.ResetNode());  // Call Traverse with a delegate calling Reset()
+    }
+
+    public void AssignAllButtons(UpgradeTree parentTree)
+    {
+      Traverse(node => node.AssignButton(parentTree));
+    }
+
+  }
 }
