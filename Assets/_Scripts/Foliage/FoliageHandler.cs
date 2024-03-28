@@ -29,7 +29,10 @@ namespace Foliage
 
     public static Transform Instance;
 
+    public static FoliageHandler InstanceFoliageHandler;
+
     private void Awake() {
+      InstanceFoliageHandler = this;
       Instance = this.transform;
       WorldGenerator.GenerationComplete += Initialize;
       FoliagePool._pool = new Dictionary<FoliageScriptable, List<GameObject>>();
@@ -92,11 +95,14 @@ namespace Foliage
     }
 
     public void UpdatePlayerPosition(Vector2 playerPosition) {
-      var moveDelta = new Vector2Int(Mathf.FloorToInt(playerPosition.x / _chunkSize) - _middleChunk.x, Mathf.FloorToInt(playerPosition.y / _chunkSize) - _middleChunk.y);
-      moveDelta.x = Mathf.Clamp(moveDelta.x, -1, 1);
-      moveDelta.y = Mathf.Clamp(moveDelta.y, -1, 1);
-      if (moveDelta != Vector2Int.zero) {
-        UpdateFoliage(moveDelta);
+      Vector2Int moveDelta = new Vector2Int(Mathf.FloorToInt(playerPosition.x / _chunkSize) - _middleChunk.x, Mathf.FloorToInt(playerPosition.y / _chunkSize) - _middleChunk.y);
+      while (moveDelta != Vector2Int.zero) {
+        moveDelta = new Vector2Int(Mathf.FloorToInt(playerPosition.x / _chunkSize) - _middleChunk.x, Mathf.FloorToInt(playerPosition.y / _chunkSize) - _middleChunk.y);
+        moveDelta.x = Mathf.Clamp(moveDelta.x, -1, 1);
+        moveDelta.y = Mathf.Clamp(moveDelta.y, -1, 1);
+        if (moveDelta != Vector2Int.zero) {
+          UpdateFoliage(moveDelta);
+        }
       }
     }
     

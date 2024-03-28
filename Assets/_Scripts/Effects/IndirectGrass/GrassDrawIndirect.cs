@@ -19,7 +19,10 @@ public class GrassDrawIndirect : MonoBehaviour
   private Transform _cameraPosition;
   private Camera _camera;
 
+  public static GrassDrawIndirect Instance;
+
   private void Awake() {
+    Instance = this;
     if (_chunkCount % 2 == 0) _chunkCount++;
 
     WorldGenerator.GenerationComplete += Initialize;
@@ -44,6 +47,7 @@ public class GrassDrawIndirect : MonoBehaviour
       }
     }
     //Debug.Log(_chunkDict.Count);
+    WorldGenerator.PlayerMove += UpdatePlayerPosition;
   }
 
   private void Update() {
@@ -54,10 +58,13 @@ public class GrassDrawIndirect : MonoBehaviour
 
   public void UpdatePlayerPosition(Vector2 playerPosition) {
     Vector2Int moveDelta = new Vector2Int(Mathf.FloorToInt(playerPosition.x / _chunkSize) - _middleChunk.x, Mathf.FloorToInt(playerPosition.y / _chunkSize) - _middleChunk.y);
-    moveDelta.x = Mathf.Clamp(moveDelta.x, -1, 1);
-    moveDelta.y = Mathf.Clamp(moveDelta.y, -1, 1);
-    if (moveDelta != Vector2Int.zero) {
-      UpdateGrass(moveDelta);
+    while (moveDelta != Vector2Int.zero) {
+      moveDelta = new Vector2Int(Mathf.FloorToInt(playerPosition.x / _chunkSize) - _middleChunk.x, Mathf.FloorToInt(playerPosition.y / _chunkSize) - _middleChunk.y);
+      moveDelta.x = Mathf.Clamp(moveDelta.x, -1, 1);
+      moveDelta.y = Mathf.Clamp(moveDelta.y, -1, 1);
+      if (moveDelta != Vector2Int.zero) {
+        UpdateGrass(moveDelta);
+      }
     }
   }
 

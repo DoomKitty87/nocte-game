@@ -44,6 +44,8 @@ public class RenderChunk {
       }
     }
 
+    _densityLevel = lod;
+
     Initialize(lod);
 
     ComputePositions(lod);

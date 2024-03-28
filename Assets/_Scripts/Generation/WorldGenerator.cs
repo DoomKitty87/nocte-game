@@ -403,7 +403,6 @@ public class WorldGenerator : MonoBehaviour
 
   public void UpdatePlayerLoadedChunks(Vector3 playerPos) {
     if (!_doneGenerating) return;
-    if (_enableGrass) _grass.UpdatePlayerPosition(new Vector2(playerPos.x, playerPos.z));
     int playerXChunkScale = Mathf.FloorToInt(playerPos.x / (_size * _resolution));
     int playerZChunkScale = Mathf.FloorToInt(playerPos.z / (_size * _resolution));
 
