@@ -29,11 +29,14 @@ public class SceneHandler : MonoBehaviour
 
   public void EnterGame() {
     _inGame = true;
+    PlayerMetaProgression.Instance.SaveData();
     SceneManager.LoadScene(_gameScene);
   }
 
   public void ExitToMenu() {
     Debug.Log("Exiting to menu");
+    PlayerMetaProgression.Instance.UnlockBlueprints();
+    PlayerMetaProgression.Instance.SaveData();
     StartCoroutine(ToMenu());
   }
 

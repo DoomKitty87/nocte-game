@@ -19,6 +19,14 @@ public class ExtractionSiteManager : MonoBehaviour
     extractorsActive[index] = true;
     extractorsActiveCount++;
     if (extractorsActiveCount == 3) {
+      GeneratorActivated();
     }
   }
+
+  private void GeneratorActivated() {
+    PlayerMetaProgression.Instance.ObtainBlueprint(0);
+    // Animation or whatever
+    Debug.Log("Generator activated; player obtained Utility Blueprint (Grappling Hook)");
+  }
+  
 }

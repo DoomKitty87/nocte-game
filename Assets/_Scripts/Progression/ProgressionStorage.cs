@@ -9,6 +9,9 @@ public class ProgressionStorage : MonoBehaviour
   {
     public int cores;
     public int usedcores;
+    public bool[] ownedBlueprints;
+    public bool[] unlockedBlueprints;
+
   }
 
   public ProgressionData _progression = new ProgressionData();
@@ -34,6 +37,8 @@ public class ProgressionStorage : MonoBehaviour
     if (StorageInterface.LoadData("progression.dat") == null) {
       _progression.cores = 0;
       _progression.usedcores = 0;
+      _progression.ownedBlueprints = new bool[5] {true, true, false, false, true};
+      _progression.unlockedBlueprints = new bool[5] {true, true, false, false, true};
       return _progression;
     }
     ProgressionData data = (ProgressionData)StorageInterface.LoadData("progression.dat");

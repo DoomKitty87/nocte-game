@@ -4,5 +4,10 @@ using UnityEngine;
 
 public class UpgradeHandler : MonoBehaviour
 {
-    public int _upgradeLevels;
+  public int _upgradeLevels;
+
+  private void OnEnable() {
+    _upgradeLevels = PlayerMetaProgression.Instance.AvailableCores;
+  }
+  
 }
