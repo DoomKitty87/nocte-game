@@ -9,38 +9,57 @@ public class UpgradeHandler : MonoBehaviour
   [SerializeField] private UpgradeTree[] _upgradeTrees; 
 
   [SerializeField] private Button _addButton;
+  [SerializeField] private Button _removeButton;
   [SerializeField] private TextMeshProUGUI currentLevelText;
   [SerializeField] private string _currentLevelTextPretext = "Current Level: "; // idk what to call this
 
-  [HideInInspector] public int _upgradeLevels;
+  private int _upgradeLevels;
+  [HideInInspector] public int UpgradeLevels { 
+    get {
+      return _upgradeLevels;
+    }
+    set {
+      _upgradeLevels = value;
+      SetUpgradeLevelText(value);
+      PlayerMetaProgression.Instance.SaveData();
+    }
+  }
 
   private void OnEnable() {
     _addButton.onClick.AddListener(() => Add()); 
+    _removeButton.onClick.AddListener(() => Remove());
 
-    _upgradeLevels = PlayerMetaProgression.Instance.AvailableCores;
+    ChangeValue(PlayerMetaProgression.Instance.AvailableCores);
 
     bool[] unlockedBlueprints = PlayerMetaProgression.Instance.GetAvailableBlueprints();
 
     for (int i = 0; i < _upgradeTrees.Length; i++) {
-      _upgradeTrees[i]._upgradeTreeIndex = i;
-      _upgradeTrees[i]._enabled = unlockedBlueprints[i];
+      var currentTree = _upgradeTrees[i];
+      currentTree._upgradeHandler = this;
+      currentTree._upgradeTreeIndex = i;
+      currentTree._enabled = unlockedBlueprints[i];
     }
   }
 
   private void Add() {
-    Debug.Log("Adding core");
     PlayerMetaProgression.Instance.AddCore(1);
-    PlayerMetaProgression.Instance.SaveData();
     ChangeValue(1);
+    PlayerMetaProgression.Instance.SaveData();
+  }
+
+  private void Remove() {
+    if (UpgradeLevels <= 0) return;
+    PlayerMetaProgression.Instance.AddCore(-1);
+    ChangeValue(-1);
+    PlayerMetaProgression.Instance.SaveData();
+  
   }
 
   public void ChangeValue(int value) {
-    _upgradeLevels += value;
-    currentLevelText.text = _currentLevelTextPretext + _upgradeLevels;
+    UpgradeLevels += value;
   }
 
-  public void SetValue(int value) {
-    _upgradeLevels = value;
+  public void SetUpgradeLevelText(int value) {
     currentLevelText.text = _currentLevelTextPretext + _upgradeLevels;
   }
 }
