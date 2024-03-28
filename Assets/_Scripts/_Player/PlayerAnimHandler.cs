@@ -36,7 +36,13 @@ public class PlayerAnimHandler : MonoBehaviour
 		_animator.SetBool("WalkingInput", _playerController._walking);
 		_animator.SetBool("SprintInput", _playerController._sprinting);
 		_animator.SetBool("CrouchInput", _playerController._crouching);
-		_animator.SetBool("JumpInput", _playerController._jumping);
-		_animator.SetBool("GrappleInput", _playerController._grappling);
+		_animator.SetBool("JumpDown", _playerController._jumping);
+		if (!_grappleBoolLastFrame && _playerController._grappling) _animator.SetBool("GrappleDown", true);
+		else {
+			_animator.SetBool("GrappleDown", false);
+		}
+		_animator.SetBool("Grounded", _playerController._grounded);
+		_animator.SetFloat("SpeedY", _playerController._velocity.y);
+		_grappleBoolLastFrame = _playerController._grappling;
 	}
 }

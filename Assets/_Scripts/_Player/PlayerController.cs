@@ -260,7 +260,7 @@ public class PlayerController : MonoBehaviour
         _sprintingForward = (_sprinting && _inputVector.z > 0); // Can only sprint when forward component in input
 
         // Little bit dumb but it works
-        _walking = _inputVector != Vector3.zero && !_sprinting;
+        _walking = _inputVector != Vector3.zero;
     }
     
     #endregion
