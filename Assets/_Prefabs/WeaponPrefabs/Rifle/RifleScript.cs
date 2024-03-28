@@ -41,11 +41,14 @@ public class RifleScript : WeaponScript
     Vector3 hitPosition = GetCenterScreenWorldPosition();
     StartCoroutine(PlayBullet(hitPosition));
     Vector3 barrelPosition = _barrelPositionMarker.transform.position;
-    Physics.Linecast(barrelPosition, hitPosition, out RaycastHit hit);
+    Physics.Linecast(barrelPosition, hitPosition, out RaycastHit hit, LayerMask.GetMask("Default"));
     Debug.DrawLine(barrelPosition, hitPosition, Color.red, 1f);
     if (hit.collider == null) return;
     if (hit.collider.GetComponent<HealthInterface>() != null) {
       hit.collider.GetComponent<HealthInterface>().Damage(_damage, hit.point);
+    }
+    if (hit.collider.GetComponent<BulletInteract>() != null) {
+      hit.collider.GetComponent<BulletInteract>().Interact(_damage, hit.point);
     }
   }
 
