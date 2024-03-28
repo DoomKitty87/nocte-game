@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0, g: 0, b: 0, a: 1}
+  m_IndirectSpecularColor: {r: 221.34622, g: 153.50671, b: 90.90676, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -6664,7 +6664,7 @@ MonoBehaviour:
   _centerOffsetRadiusAmplitude: 10000
   _normalCutoff: 0.8
   _normalRadius: 50
-  _roadResolution: 10
+  _roadResolution: 25
   _roadWidth: 25
   _roadDepth: 5.25
   _roadInset: 9
@@ -6672,7 +6672,7 @@ MonoBehaviour:
   _roadWaterImpact: 70
   _roadNoiseAmplitude: 50
   _roadPathfindingPoints: 2
-  _roadMaxAngle: 25
+  _roadMaxAngle: 10
   _roadMaterial: {fileID: 2100000, guid: 0b575891d2861ca4f964e919cca70067, type: 2}
 --- !u!114 &1849557963
 MonoBehaviour:
@@ -12083,6 +12083,16 @@ PrefabInstance:
       propertyPath: _riverParameters.obj
       value: 
       objectReference: {fileID: 1610259047}
+    - target: {fileID: 8819276947174590073, guid: 862d92a67177d4c7b84ab88d6b6e0257,
+        type: 3}
+      propertyPath: _noiseParameters.amplitudeMean
+      value: 800
+      objectReference: {fileID: 0}
+    - target: {fileID: 8819276947174590073, guid: 862d92a67177d4c7b84ab88d6b6e0257,
+        type: 3}
+      propertyPath: _noiseParameters.sharpnessScale
+      value: 4500
+      objectReference: {fileID: 0}
     - target: {fileID: 8951891336655120199, guid: 862d92a67177d4c7b84ab88d6b6e0257,
         type: 3}
       propertyPath: m_LocalPosition.x

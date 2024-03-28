@@ -318,7 +318,7 @@ public class WorldGenerator : MonoBehaviour
   }
 
   private void Awake() {
-   // _seed = DateTime.Now.Millisecond;
+    _seed = DateTime.Now.Millisecond;
     if (_tileCount % 2 == 0) {
       _tileCount++;
       Debug.LogWarning("Tile count must be odd. Increasing tile count by 1.");
@@ -335,7 +335,7 @@ public class WorldGenerator : MonoBehaviour
     _seed = int.Parse(Hash128.Compute(_seed).ToString().Substring(0, 6), System.Globalization.NumberStyles.HexNumber);
     // Debug.Log(_seed);
     // Seed-based terrain parameter changes
-    _noiseParameters.Perturb(_seed);
+    // _noiseParameters.Perturb(_seed);
   }
 
   private void Start()  {
