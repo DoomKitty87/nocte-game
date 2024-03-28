@@ -25,6 +25,8 @@ public class PlaceStructures : MonoBehaviour
   [SerializeField] private float _roadBevel;
   [SerializeField] private float _roadWaterImpact;
   [SerializeField] private float _roadNoiseAmplitude;
+  [SerializeField] private int _roadPathfindingPoints;
+  [SerializeField] private float _roadMaxAngle;
   [SerializeField] private Material _roadMaterial;
 
   private Vector3[] _structurePositions;
@@ -146,7 +148,7 @@ public class PlaceStructures : MonoBehaviour
       Vector2 val0 = mainPosition2 + (outPosition2 - mainPosition2).normalized * 25;
       Vector2 val1 = outPosition2 + (mainPosition2 - outPosition2).normalized * 25;
 
-      Vector2[] roadPath = RoadGenerator.GenerateRoadPath(val0, val1, roadPoints);
+      Vector2[] roadPath = RoadGenerator.GenerateRoadPath(val0, val1, roadPoints, _roadPathfindingPoints, _roadMaxAngle);
 
       Vector2[] roadPlane =
         RoadGenerator.PlanePointsFromLine(roadPath, _roadWidth, _roadNoiseAmplitude);
