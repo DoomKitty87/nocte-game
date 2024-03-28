@@ -13,6 +13,7 @@ namespace Foliage
     public Mesh BillboardMesh;
     public bool UseBillboard;
     public GameObject ColliderPrefab;
+    public bool _useColliders;
     public FoliageLODData[] _lodRanges;
     public int _maxBillboardDistance;
     public ComputeShader _positionComputeShader;
