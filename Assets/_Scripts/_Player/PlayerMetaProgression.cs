@@ -25,18 +25,7 @@ public class PlayerMetaProgression : MonoBehaviour
     public Blueprint[] blueprints;
   }
 
-  private int _playerCores;
-
-  private int _usedCoresValue;
-  private int _usedCores { 
-    get { return _usedCoresValue; } 
-    set { 
-      _usedCoresValue = value; 
-      SaveData(); 
-    } 
-  }
-
-  public int AvailableCores { get { return _playerCores - _usedCores; } }
+  public int AvailableCores { get { return _progression.cores - _progression.usedcores; } }
 
   public ProgressionData _progression = new ProgressionData();
 
@@ -56,13 +45,13 @@ public class PlayerMetaProgression : MonoBehaviour
     if (StorageInterface.LoadData("progression.dat") == null) {
       _progression.cores = 0;
       _progression.usedcores = 0;
-        _progression.blueprints = new Blueprint[5] {
-          new Blueprint { owned = true, unlocked = true, upgradeLevels = new int[5] {0, 0, 0, 0, 0} },
-          new Blueprint { owned = true, unlocked = true, upgradeLevels = new int[1] {0} },
-          new Blueprint { owned = false, unlocked = false, upgradeLevels = new int[3] {0, 0, 0} },
-          new Blueprint { owned = false, unlocked = false, upgradeLevels = new int[3] {0, 0, 0} },
-          new Blueprint { owned = true, unlocked = true, upgradeLevels = new int[2] {0, 0} }
-        };
+      _progression.blueprints = new Blueprint[5] {
+        new Blueprint { owned = true, unlocked = true, upgradeLevels = new int[5] {0, 0, 0, 0, 0} },
+        new Blueprint { owned = true, unlocked = true, upgradeLevels = new int[1] {0} },
+        new Blueprint { owned = false, unlocked = false, upgradeLevels = new int[3] {0, 0, 0} },
+        new Blueprint { owned = false, unlocked = false, upgradeLevels = new int[3] {0, 0, 0} },
+        new Blueprint { owned = true, unlocked = true, upgradeLevels = new int[2] {0, 0} }
+      };
 
       return;
     }
@@ -80,27 +69,27 @@ public class PlayerMetaProgression : MonoBehaviour
   }
 
   public void AddCore() {
-    _playerCores++;
+    _progression.cores++;
   }
 
   public void AddCore(int cores) {
-    _playerCores += cores;
+    _progression.cores += cores;
   }
 
   public void UseCore() {
-    _usedCores++;
+    _progression.usedcores++;
   }
 
   public void UseCore(int cores) {
-    _usedCores += cores;
+    _progression.usedcores += cores;
   }
 
   public void FreeCore() {
-    _usedCores--;
+    _progression.usedcores--;
   }
 
   public void FreeCore(int cores) {
-    _usedCores -= cores;
+    _progression.usedcores -= cores;
   }
 
   public bool CheckBlueprintOwned(int index) {
