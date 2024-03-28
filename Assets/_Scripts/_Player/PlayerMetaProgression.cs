@@ -48,8 +48,6 @@ public class PlayerMetaProgression : MonoBehaviour
     }
 
     LoadProgressionData();
-
-    Debug.Log(_progression.blueprints[0].upgradeLevels[0]);
     // Load player cores from save file
   }
 

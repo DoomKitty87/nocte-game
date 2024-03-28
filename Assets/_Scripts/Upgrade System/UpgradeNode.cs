@@ -75,9 +75,11 @@ namespace UpgradeSystem
     private void SetLevel(int level) {
       _currentLevel = level;
       _levelText.text = $"{level} / {_maxLevel}";
+      
+      foreach (UpgradeNode child in _children) child.EnableNode();
     }
 
-    public void LoadLevel(int treeIndex, ref int upgradeIndex) {
+    public void LoadLevel(int treeIndex, ref int upgradeIndex, ref int total) {
       _upgradeTreeIndex = treeIndex;
       _upgradeNodeIndex = upgradeIndex;
 
@@ -86,6 +88,8 @@ namespace UpgradeSystem
       upgradeIndex++;
       if (upgradeLevel == 0) return;
       SetLevel(upgradeLevel);
+
+      total += upgradeLevel;
     }
 
     public void ResetNode() {
@@ -113,10 +117,12 @@ namespace UpgradeSystem
       }
     }
 
-    public void LoadAllLevels(int treeIndex, ref int upgradeIndex) {
+    public void LoadAllLevels(int treeIndex, ref int upgradeIndex, ref int totalUpgradeLevels) {
       int index = upgradeIndex;
-      Traverse(node => node.LoadLevel(treeIndex, ref index));
+      int total = totalUpgradeLevels;
+      Traverse(node => node.LoadLevel(treeIndex, ref index, ref total));
       upgradeIndex = index;
+      totalUpgradeLevels = total;
     }
 
     public void ResetAllNodes()

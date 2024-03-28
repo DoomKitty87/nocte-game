@@ -32,9 +32,11 @@ namespace UpgradeSystem {
       }
 
       int upgradeIndex = 0;
+      int totalUpgradeLevels = 0;
       foreach (var Root in Roots) {
-        Root.LoadAllLevels(_upgradeTreeIndex, ref upgradeIndex);
+        Root.LoadAllLevels(_upgradeTreeIndex, ref upgradeIndex, ref totalUpgradeLevels);
       }
+      _localUpgradeLevels += totalUpgradeLevels;
 
       _resetButton.onClick.AddListener(ResetButton);
     }
