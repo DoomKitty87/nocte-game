@@ -37,6 +37,6 @@ public class PlayerAnimHandler : MonoBehaviour
 		_animator.SetBool("SprintInput", _playerController._sprinting);
 		_animator.SetBool("CrouchInput", _playerController._crouching);
 		_animator.SetBool("JumpInput", _playerController._jumping);
-		// _animator.SetBool("GrappleInput", _playerController._grappling);
+		_animator.SetBool("GrappleInput", _playerController._grappling);
 	}
 }
