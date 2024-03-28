@@ -82,6 +82,8 @@ public class PlayerController : MonoBehaviour
     [HideInInspector] public bool _crouching;
     [HideInInspector] public bool _grappling;
     [HideInInspector] public bool _grounded;
+    [HideInInspector] public bool _leftMouseDown;
+    [HideInInspector] public bool _rightMouseDown;
     [HideInInspector] public bool _useVelocity = true;
     [HideInInspector] public bool _useGravity = true;
     
@@ -147,6 +149,12 @@ public class PlayerController : MonoBehaviour
 
         _input.Player.Crouch.performed += _ => _crouching = true;
         _input.Player.Crouch.canceled += _ => _crouching = false;
+
+        _input.Player.Shoot.performed += _ => _leftMouseDown = true;
+        _input.Player.Shoot.canceled += _ => _leftMouseDown = false;
+
+        _input.Player.ADS.performed += _ => _rightMouseDown = true;
+        _input.Player.ADS.canceled += _ => _rightMouseDown = false;
         
         _input.Player.Movement.performed += context => _inputVector = new Vector3(context.ReadValue<Vector2>().x, 0, context.ReadValue<Vector2>().y);
         _input.Player.Movement.canceled += _ => _inputVector = Vector3.zero;
@@ -259,7 +267,6 @@ public class PlayerController : MonoBehaviour
     private void GetInput() {
         _sprintingForward = (_sprinting && _inputVector.z > 0); // Can only sprint when forward component in input
 
-        // Little bit dumb but it works
         _walking = _inputVector != Vector3.zero;
     }
     
@@ -332,7 +339,20 @@ public class PlayerController : MonoBehaviour
         Vector3 forwardDirection = new Vector3(_movementOrientation.forward.x, 0, _movementOrientation.forward.z).normalized;
         Vector3 rightDirection = new Vector3(_movementOrientation.right.x, 0, _movementOrientation.right.z).normalized;
         
-        RotateModelOrientationToMovement((_inputVector.x * rightDirection + _inputVector.z * forwardDirection).normalized);
+        Vector3 modelOrientation;
+        float rotationSpeed;
+        if (_leftMouseDown || _rightMouseDown) {
+            float angle = _movementOrientation.localEulerAngles.y;
+            angle *= Mathf.Deg2Rad; // Convert to radians
+            modelOrientation = new Vector3(Mathf.Sin(angle), 0, Mathf.Cos(angle)).normalized;
+            rotationSpeed = Mathf.Max(_rotationSpeed, (Quaternion.Angle(_modelOrientation.rotation, _movementOrientation.rotation) / 45) * _rotationSpeed);
+        }
+        else {
+            modelOrientation = (_inputVector.x * rightDirection + _inputVector.z * forwardDirection).normalized;
+            rotationSpeed = _rotationSpeed;
+        }
+        
+        RotateModelOrientation(modelOrientation, rotationSpeed);
 
         switch (State) {
             case PlayerStates.Walking: {
@@ -535,11 +555,11 @@ public class PlayerController : MonoBehaviour
             _rb.velocity = _velocity + _acceleration;
     }
     
-    private void RotateModelOrientationToMovement(Vector3 inputVector) {
+    private void RotateModelOrientation(Vector3 inputVector, float rotationSpeed) {
         if (inputVector != Vector3.zero)
         {
             Quaternion toRotation = Quaternion.LookRotation(inputVector, Vector3.up);
-            _modelOrientation.rotation = Quaternion.RotateTowards(_modelOrientation.rotation, toRotation, _rotationSpeed * Time.deltaTime);            
+            _modelOrientation.rotation = Quaternion.RotateTowards(_modelOrientation.rotation, toRotation, rotationSpeed * Time.deltaTime);            
         }
     }
     
