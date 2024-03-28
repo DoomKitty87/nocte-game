@@ -280,7 +280,7 @@ namespace Foliage
 
     private void UpdateColliders(int lod) {
       if (lod == 0) {
-        Vector4[] data = new Vector4[_chunkDensity[lod] * _chunkDensity[lod]];
+        Vector4[] data = new Vector4[_currentInstanceCount];
         _positionsBuffer.GetData(data);
         //Debug.Log(data[0]);
         foreach (Vector4 v in data) {

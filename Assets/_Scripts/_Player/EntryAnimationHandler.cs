@@ -77,7 +77,7 @@ public class EntryAnimationHandler : MonoBehaviour
 
       Vector3 landNorm = new Vector3(pointA - pointB, 1, pointA - pointC).normalized;
 
-      if (WorldGenInfo._worldGenerator.GetHeightValue(landPos) > 0 && landNorm.y > 0.7f) {
+      if (WorldGenInfo._worldGenerator.GetRiverValue(landPos) == 0 && landNorm.y > 0.7f && WorldGenInfo._worldGenerator.GetHeightValue(landPos) > WorldGenInfo._lakePlaneHeight) {
         foundPos = true;
       }
 
