@@ -5,6 +5,7 @@ using System.Collections.Generic;
 public class ProgressionStorage : MonoBehaviour
 {
 
+  [System.Serializable]
   public struct ProgressionData
   {
     public int cores;

@@ -44,7 +44,8 @@ public class InteractHandler : MonoBehaviour
     }
 
     if (other.CompareTag("Core")) {
-      Destroy(other.gameObject);
+      other.GetComponent<Collider>().enabled = false;
+      other.GetComponent<Renderer>().enabled = false;
       PlayerMetaProgression.Instance.AddCore();
     }
   }
