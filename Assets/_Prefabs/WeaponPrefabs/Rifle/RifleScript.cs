@@ -18,18 +18,11 @@ public class RifleScript : WeaponScript
   
   private float _timeSinceLastShot;
   
-  public Vector3 GetCenterScreenWorldPosition() {
+  public RaycastHit GetCenterScreenWorldRaycast() {
     Camera mainCamera = _instancingPlayerCombatCoreScript._mainCamera;
-    if (mainCamera != null) {
-      // Maybe make a variable for max distance here later?
-      Physics.Raycast(mainCamera.ScreenToWorldPoint(new Vector3(mainCamera.pixelWidth / 2, mainCamera.pixelHeight / 2)), mainCamera.transform.forward, out RaycastHit hit, _maxRaycastDistance, _raycastLayerMask);
-      if (hit.collider != null) {
-        return hit.point;
-      }
-      return mainCamera.ScreenToWorldPoint(new Vector3(mainCamera.pixelWidth / 2, mainCamera.pixelHeight / 2)) + mainCamera.transform.forward * _maxRaycastDistance;
-    }
-    Debug.LogError($"{gameObject.name} RifleScript: Could not find mainCamera!");
-    return Vector3.zero;
+    // Maybe make a variable for max distance here later?
+    Physics.Raycast(mainCamera.ScreenToWorldPoint(new Vector3(mainCamera.pixelWidth / 2, mainCamera.pixelHeight / 2)), mainCamera.transform.forward, out RaycastHit hit, _maxRaycastDistance, _raycastLayerMask);
+    return hit;
   }
 
   public override (float, float) GetAmmo {
@@ -38,17 +31,17 @@ public class RifleScript : WeaponScript
   
   private void RaycastBullet() {
     _timeSinceLastShot = 0;
-    Vector3 hitPosition = GetCenterScreenWorldPosition();
-    StartCoroutine(PlayBullet(hitPosition));
+    RaycastHit raycastHit = GetCenterScreenWorldRaycast(); 
+    // bullet fire sound here
+    StartCoroutine(PlayBullet(raycastHit.point)); // bullet effect
     Vector3 barrelPosition = _barrelPositionMarker.transform.position;
-    Physics.Linecast(barrelPosition, hitPosition, out RaycastHit hit, LayerMask.GetMask("Default"));
-    Debug.DrawLine(barrelPosition, hitPosition, Color.red, 1f);
-    if (hit.collider == null) return;
-    if (hit.collider.GetComponent<HealthInterface>() != null) {
-      hit.collider.GetComponent<HealthInterface>().Damage(_damage, hit.point);
+    Debug.DrawLine(_instancingPlayerCombatCoreScript._mainCamera.transform.position, raycastHit.point, Color.red, 1f);
+    if (raycastHit.collider == null) return;
+    if (raycastHit.collider.GetComponent<HealthInterface>() != null) {
+      raycastHit.collider.GetComponent<HealthInterface>().Damage(_damage, raycastHit.point);
     }
-    if (hit.collider.GetComponent<BulletInteract>() != null) {
-      hit.collider.GetComponent<BulletInteract>().Interact(_damage, hit.point);
+    if (raycastHit.collider.GetComponent<BulletInteract>() != null) {
+      raycastHit.collider.GetComponent<BulletInteract>().Interact(_damage, raycastHit.point);
     }
   }
 
