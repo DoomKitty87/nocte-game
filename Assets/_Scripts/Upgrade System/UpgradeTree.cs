@@ -8,6 +8,7 @@ namespace UpgradeSystem {
   public class UpgradeTree : MonoBehaviour
   {
     public bool _enabled;
+    public int _upgradeTreeIndex;
 
     [SerializeField] private List<UpgradeNode> Roots;
 
@@ -30,6 +31,11 @@ namespace UpgradeSystem {
         Root.AssignAllButtons(this);
       }
 
+      int upgradeIndex = 0;
+      foreach (var Root in Roots) {
+        Root.LoadAllLevels(_upgradeTreeIndex, ref upgradeIndex);
+      }
+
       _resetButton.onClick.AddListener(ResetButton);
     }
 
@@ -47,6 +53,8 @@ namespace UpgradeSystem {
       // Increases level on node in IncreaseLevel function
       if (!node.IncreaseLevel(UpgradeLevels, ref UpgradeCost)) return;
       UpgradeLevels -= UpgradeCost;
+      PlayerMetaProgression.Instance.UseCore(UpgradeCost);
+
       _localUpgradeLevels += UpgradeCost;
 
       currentLevelText.text = _currentLevelTextPretext + UpgradeLevels;
@@ -58,6 +66,8 @@ namespace UpgradeSystem {
         Root.ResetAllNodes();
 
       UpgradeLevels += _localUpgradeLevels;
+      PlayerMetaProgression.Instance.FreeCore(_localUpgradeLevels);
+
       _localUpgradeLevels = 0;
 
       currentLevelText.text = _currentLevelTextPretext + UpgradeLevels;

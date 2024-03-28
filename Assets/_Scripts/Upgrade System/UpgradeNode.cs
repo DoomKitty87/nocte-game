@@ -13,6 +13,8 @@ namespace UpgradeSystem
   [System.Serializable]
   public class UpgradeNode : MonoBehaviour
   {
+    private int _upgradeTreeIndex;
+    private int _upgradeNodeIndex;
     [SerializeField] private UpgradeScriptable _data;
 
     public List<UpgradeNode> _children;
@@ -62,10 +64,28 @@ namespace UpgradeSystem
       _levelText.text = $"{_currentLevel} / {_maxLevel}";
 
       if (_currentLevel == 1) {
-          foreach (UpgradeNode child in _children) child.EnableNode();
+        foreach (UpgradeNode child in _children) child.EnableNode();
       }
 
+      PlayerMetaProgression.Instance.SetUpgradeLevel(_upgradeTreeIndex, _upgradeNodeIndex, _currentLevel);
+
       return true;
+    }
+
+    private void SetLevel(int level) {
+      _currentLevel = level;
+      _levelText.text = $"{level} / {_maxLevel}";
+    }
+
+    public void LoadLevel(int treeIndex, ref int upgradeIndex) {
+      _upgradeTreeIndex = treeIndex;
+      _upgradeNodeIndex = upgradeIndex;
+
+      int upgradeLevel = PlayerMetaProgression.Instance.GetUpgradeLevel(treeIndex, upgradeIndex);
+
+      upgradeIndex++;
+      if (upgradeLevel == 0) return;
+      SetLevel(upgradeLevel);
     }
 
     public void ResetNode() {
@@ -75,6 +95,8 @@ namespace UpgradeSystem
       _upgradeDiscription.text = "This upgrade is currently locked.";
       _levelText.text = " ";
       image.color = _disableColor;
+
+      PlayerMetaProgression.Instance.SetUpgradeLevel(_upgradeTreeIndex, _upgradeNodeIndex, _currentLevel);
     }
 
     public void AssignButton(UpgradeTree parentTree) {
@@ -87,8 +109,14 @@ namespace UpgradeSystem
 
       foreach (var child in _children)
       {
-          child.Traverse(action);  // Recursive call for child nodes
+        child.Traverse(action);  // Recursive call for child nodes
       }
+    }
+
+    public void LoadAllLevels(int treeIndex, ref int upgradeIndex) {
+      int index = upgradeIndex;
+      Traverse(node => node.LoadLevel(treeIndex, ref index));
+      upgradeIndex = index;
     }
 
     public void ResetAllNodes()
