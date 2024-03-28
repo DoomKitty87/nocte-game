@@ -6,7 +6,7 @@ using UnityEngine.SceneManagement;
 public class SceneHandler : MonoBehaviour
 {
 
-  private bool _inGame;
+  public static bool _inGame { get; private set; } = false;
 
   [SerializeField] private string _menuScene;
   [SerializeField] private string _gameScene;
