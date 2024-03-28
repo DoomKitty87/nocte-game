@@ -7,6 +7,8 @@ using UnityEngine.UI;
 namespace UpgradeSystem {
   public class UpgradeTree : MonoBehaviour
   {
+    public bool _enabled;
+
     [SerializeField] private List<UpgradeNode> Roots;
 
     [SerializeField] private Button _resetButton;
@@ -21,6 +23,7 @@ namespace UpgradeSystem {
     private int _localUpgradeLevels = 0;
     
     private void Start() {
+      if (!_enabled) return;
       currentLevelText.text = _currentLevelTextPretext + UpgradeLevels;
       foreach (var Root in Roots) {
         Root.EnableNode();
