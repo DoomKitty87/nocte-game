@@ -12,9 +12,9 @@ public class BoltgunScript : WeaponScript
   [SerializeField] private CinemachineThirdPersonAim _cinemachineThirdPersonAim;
   [SerializeField] private CinemachineThirdPersonFollow _cinemachineThirdPersonFollow;
   [SerializeField] private Animator _playerAnimator;
-  [SerializeField] private string _animationLayerName;
 
   [Header("Prefab Dependencies")]
+  [SerializeField] private string _animationLayerName;
   [SerializeField] private AnimationClip _equipAnimation;
   [SerializeField] private AnimationClip _unequipAnimation;
   [SerializeField] private GameObject _barrelPositionMarker;

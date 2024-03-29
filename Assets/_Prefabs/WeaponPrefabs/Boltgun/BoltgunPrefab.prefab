@@ -43,6 +43,7 @@ GameObject:
   - component: {fileID: 8411492279608253431}
   - component: {fileID: 6139348393665154845}
   - component: {fileID: 6922562393482083765}
+  - component: {fileID: 6309299834763467829}
   m_Layer: 0
   m_Name: BoltgunPrefab
   m_TagString: Untagged
@@ -225,3 +226,32 @@ LineRenderer:
   m_UseWorldSpace: 1
   m_Loop: 0
   m_ApplyActiveColorSpace: 1
+--- !u!114 &6309299834763467829
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3884154174339156827}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d14ae8ea5567e437eb705ab59f6f917a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _instancingPlayerCombatCoreScript: {fileID: 0}
+  _cinemachineThirdPersonAim: {fileID: 0}
+  _cinemachineThirdPersonFollow: {fileID: 0}
+  _playerAnimator: {fileID: 0}
+  _animationLayerName: Boltgun
+  _equipAnimation: {fileID: 0}
+  _unequipAnimation: {fileID: 0}
+  _barrelPositionMarker: {fileID: 0}
+  _boltEffect: {fileID: 0}
+  _damage: 0
+  _reloadTime: 0
+  _maxRaycastDistance: 5000
+  _raycastLayerMask:
+    serializedVersion: 2
+    m_Bits: 0
+  _ammoLoaded: 0
+  _reloading: 0
