@@ -114,6 +114,9 @@
         },
         {
             "m_Id": "e22908e540714933b4988cbcd95ac359"
+        },
+        {
+            "m_Id": "ddc043ad4187411cb7efa906b5c7c792"
         }
     ],
     "m_GroupDatas": [],
@@ -472,8 +475,8 @@
     ],
     "m_VertexContext": {
         "m_Position": {
-            "x": 0.0,
-            "y": 0.0
+            "x": 0.000006198883056640625,
+            "y": -25.00000762939453
         },
         "m_Blocks": [
             {
@@ -489,8 +492,8 @@
     },
     "m_FragmentContext": {
         "m_Position": {
-            "x": 0.0,
-            "y": 206.0
+            "x": 0.000007152557373046875,
+            "y": 241.0
         },
         "m_Blocks": [
             {
@@ -516,6 +519,9 @@
             },
             {
                 "m_Id": "e92dc1d5cd65480a9703c52c004ac448"
+            },
+            {
+                "m_Id": "ddc043ad4187411cb7efa906b5c7c792"
             }
         ]
     },
@@ -1829,6 +1835,21 @@
 
 {
     "m_SGVersion": 0,
+    "m_Type": "UnityEditor.ShaderGraph.Vector1MaterialSlot",
+    "m_ObjectId": "5acf5719d3674860a21e4cb982747203",
+    "m_Id": 0,
+    "m_DisplayName": "Specular Occlusion",
+    "m_SlotType": 0,
+    "m_Hidden": false,
+    "m_ShaderOutputName": "SpecularOcclusion",
+    "m_StageCapability": 2,
+    "m_Value": 0.30000001192092898,
+    "m_DefaultValue": 1.0,
+    "m_Labels": []
+}
+
+{
+    "m_SGVersion": 0,
     "m_Type": "UnityEditor.ShaderGraph.Internal.Texture2DShaderProperty",
     "m_ObjectId": "5cb0bbc8651f41d7bc7ae518878ec4e4",
     "m_Guid": {
@@ -2330,7 +2351,7 @@
     "m_ReceiveSSR": true,
     "m_ReceiveSSRTransparent": false,
     "m_SpecularAA": false,
-    "m_SpecularOcclusionMode": 1,
+    "m_SpecularOcclusionMode": 3,
     "m_OverrideBakedGI": false
 }
 
@@ -3371,6 +3392,40 @@
     },
     "m_Labels": [],
     "m_Space": 4
+}
+
+{
+    "m_SGVersion": 0,
+    "m_Type": "UnityEditor.ShaderGraph.BlockNode",
+    "m_ObjectId": "ddc043ad4187411cb7efa906b5c7c792",
+    "m_Group": {
+        "m_Id": ""
+    },
+    "m_Name": "SurfaceDescription.SpecularOcclusion",
+    "m_DrawState": {
+        "m_Expanded": true,
+        "m_Position": {
+            "serializedVersion": "2",
+            "x": 0.0,
+            "y": 0.0,
+            "width": 0.0,
+            "height": 0.0
+        }
+    },
+    "m_Slots": [
+        {
+            "m_Id": "5acf5719d3674860a21e4cb982747203"
+        }
+    ],
+    "synonyms": [],
+    "m_Precision": 0,
+    "m_PreviewExpanded": true,
+    "m_DismissedVersion": 0,
+    "m_PreviewMode": 0,
+    "m_CustomColors": {
+        "m_SerializableColors": []
+    },
+    "m_SerializedDescriptor": "SurfaceDescription.SpecularOcclusion"
 }
 
 {
