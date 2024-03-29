@@ -15,6 +15,7 @@ namespace Foliage
     private readonly bool _useSubmesh;
     private readonly float _chunkSize;
     private readonly int[] _chunkDensity;
+    private readonly int _scriptableId;
     private readonly int[] _lodDistances;
     private readonly float _billboardDistance;
     private readonly Mesh _billboardMesh;
@@ -55,6 +56,8 @@ namespace Foliage
       _position = new Vector3(chunkPos.x * chunkSize, 0, chunkPos.y * chunkSize);
       _chunkSize = chunkSize;
       _scriptable = scriptable;
+
+      _scriptableId = scriptable.Id;
     
       var numberOfLODs = _scriptable._lodRanges.Length;
 
@@ -151,6 +154,7 @@ namespace Foliage
       var kernelIndex = _positionCompute.FindKernel("ComputePosition");
       _positionCompute.SetBuffer(kernelIndex, Shader.PropertyToID("_boundsBuffer"), FoliagePool._boundsBuffer);
       _positionCompute.SetInt(Shader.PropertyToID("_structureBoundsCount"), FoliagePool._structureBounds.Count);
+      _positionCompute.SetInt(Shader.PropertyToID("_scriptableId"), _scriptableId);
       _positionCompute.SetFloat(Shader.PropertyToID("_samples"), _chunkDensity[lod]);
       _positionCompute.SetFloat(Shader.PropertyToID("_size"), _chunkSize);
       _positionCompute.SetVector(Shader.PropertyToID("_chunkBottomLeftPosition"), _position);

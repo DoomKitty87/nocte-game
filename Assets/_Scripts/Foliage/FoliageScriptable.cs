@@ -16,6 +16,7 @@ namespace Foliage
     public bool _useColliders;
     public FoliageLODData[] _lodRanges;
     public int _maxBillboardDistance;
+    public int Id;
     public ComputeShader _positionComputeShader;
     public ComputeShader _cullingComputeShader;
     public float _noiseScale;
