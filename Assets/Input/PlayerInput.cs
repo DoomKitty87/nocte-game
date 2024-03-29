@@ -152,6 +152,15 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""Reload"",
+                    ""type"": ""Button"",
+                    ""id"": ""d09e6cd8-c669-4ca9-b183-3878751ec985"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -539,6 +548,17 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
                     ""action"": ""ADS"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""d9e42fe0-efc7-44f9-83cc-38a3ec3bbbc1"",
+                    ""path"": ""<Keyboard>/r"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""KeyboardMouse"",
+                    ""action"": ""Reload"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         },
@@ -871,6 +891,7 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
         m_Player_Interact = m_Player.FindAction("Interact", throwIfNotFound: true);
         m_Player_Overlay = m_Player.FindAction("Overlay", throwIfNotFound: true);
         m_Player_VerticalMovement = m_Player.FindAction("VerticalMovement", throwIfNotFound: true);
+        m_Player_Reload = m_Player.FindAction("Reload", throwIfNotFound: true);
         // Driving
         m_Driving = asset.FindActionMap("Driving", throwIfNotFound: true);
         m_Driving_Movement = m_Driving.FindAction("Movement", throwIfNotFound: true);
@@ -957,6 +978,7 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_Interact;
     private readonly InputAction m_Player_Overlay;
     private readonly InputAction m_Player_VerticalMovement;
+    private readonly InputAction m_Player_Reload;
     public struct PlayerActions
     {
         private @PlayerInput m_Wrapper;
@@ -975,6 +997,7 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
         public InputAction @Interact => m_Wrapper.m_Player_Interact;
         public InputAction @Overlay => m_Wrapper.m_Player_Overlay;
         public InputAction @VerticalMovement => m_Wrapper.m_Player_VerticalMovement;
+        public InputAction @Reload => m_Wrapper.m_Player_Reload;
         public InputActionMap Get() { return m_Wrapper.m_Player; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -1026,6 +1049,9 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
             @VerticalMovement.started += instance.OnVerticalMovement;
             @VerticalMovement.performed += instance.OnVerticalMovement;
             @VerticalMovement.canceled += instance.OnVerticalMovement;
+            @Reload.started += instance.OnReload;
+            @Reload.performed += instance.OnReload;
+            @Reload.canceled += instance.OnReload;
         }
 
         private void UnregisterCallbacks(IPlayerActions instance)
@@ -1072,6 +1098,9 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
             @VerticalMovement.started -= instance.OnVerticalMovement;
             @VerticalMovement.performed -= instance.OnVerticalMovement;
             @VerticalMovement.canceled -= instance.OnVerticalMovement;
+            @Reload.started -= instance.OnReload;
+            @Reload.performed -= instance.OnReload;
+            @Reload.canceled -= instance.OnReload;
         }
 
         public void RemoveCallbacks(IPlayerActions instance)
@@ -1255,6 +1284,7 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
         void OnInteract(InputAction.CallbackContext context);
         void OnOverlay(InputAction.CallbackContext context);
         void OnVerticalMovement(InputAction.CallbackContext context);
+        void OnReload(InputAction.CallbackContext context);
     }
     public interface IDrivingActions
     {
