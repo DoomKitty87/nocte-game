@@ -18,7 +18,8 @@ public class EntryAnimationHandler : MonoBehaviour
   [SerializeField] private GameObject _uiCanvas;
 
   [SerializeField] private float _dropRange = 250.0f;
-  
+
+  [SerializeField] private GameObject[] _disableOnFinish;
 
   private Vector3 _startingPosition;
   private Vector3 _landingPosition;
@@ -98,6 +99,9 @@ public class EntryAnimationHandler : MonoBehaviour
   }
   
   private void Done() {
+    foreach (GameObject go in _disableOnFinish) {
+      go.SetActive(false);
+    }
     _camera.enabled = false;
     _uiCanvas.SetActive(true);
     PlayerWorldGeneratorCompatibility._entryAnimationFinished = true;
