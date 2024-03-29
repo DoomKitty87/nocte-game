@@ -6,6 +6,7 @@
 // ====== Settings
 uniform uint _samples;
 uniform float _size;
+uniform uint _scriptableId;
 // ====== Depends
 uniform float3 _chunkBottomLeftPosition;
 // ====== Chunking / Heightmap
@@ -162,8 +163,8 @@ void ComputePosition(uint3 id : SV_DispatchThreadID)
 	samplePosition.y = floor(sampleIndex / _samples);
 	samplePosition.x = sampleIndex % _samples; // never mod by floats, inaccuracies cause issues
 	float3 worldPos = float3(samplePosition.x * spacing + spacing / 2, 0, samplePosition.y * spacing + spacing / 2) + _chunkBottomLeftPosition;
-	worldPos.x += randomRange(float2(id.x, id.x % 0.35) + _chunkBottomLeftPosition.xz, -spacing / 2, spacing / 2);
-	worldPos.z += randomRange(float2(id.x, id.x % 0.52) + _chunkBottomLeftPosition.xz, -spacing / 2, spacing / 2);
+	worldPos.x += randomRange(float2(id.x + _scriptableId, id.x % 0.35) + _chunkBottomLeftPosition.xz, -spacing / 2, spacing / 2);
+	worldPos.z += randomRange(float2(id.x - _scriptableId, id.x % 0.52) + _chunkBottomLeftPosition.xz, -spacing / 2, spacing / 2);
 	worldPos.y = GetHeightmapAtWorldPosition(worldPos.xz);
 
   float worldRot = randomRange(float2(id.x, id.x % 0.35) + _chunkBottomLeftPosition.xz, 0, TWO_PI);
