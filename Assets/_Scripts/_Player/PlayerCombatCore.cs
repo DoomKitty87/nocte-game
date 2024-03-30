@@ -31,7 +31,6 @@ public class PlayerCombatCore : MonoBehaviour
 	
 	private GameObject InstanceWeaponItem(WeaponItem weaponItem) {
 		GameObject instance = Instantiate(weaponItem._weaponPrefab, _weaponContainer.transform);
-		instance.transform.position = weaponItem._weaponContainerOffset;
 		_currentWeaponInstance = instance;
 		_currentInstanceScript = instance.GetComponent<WeaponScript>();
 		if (_currentInstanceScript == null) {
@@ -46,6 +45,7 @@ public class PlayerCombatCore : MonoBehaviour
 		if (_weaponInventory.Count == 0) return;
 		foreach (WeaponInventorySlot slot in _weaponInventory) {
 			GameObject instance = InstanceWeaponItem(slot._weaponItem);
+			slot._weaponInstance = instance;
 			instance.SetActive(false);
 		}
 	}
@@ -169,6 +169,7 @@ public class PlayerCombatCore : MonoBehaviour
 	private void Start() {
 		_input = InputReader.Instance.PlayerInput;
 		InstantiateInventory();
+		EquipWeaponByIndex(0);
 
 		_input.Player.Shoot.performed += _ => _currentInstanceScript.FireDown();
 		_input.Player.Shoot.performed += _ => _fire1Down = true;
