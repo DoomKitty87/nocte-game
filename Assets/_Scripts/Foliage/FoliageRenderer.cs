@@ -108,7 +108,7 @@ namespace Foliage
           if (distance > _lodDistances[i]) lod = i + 1;
       }
 
-      if (distance > _lodDistances[_lodDistances.Length - 1] && distance < _billboardDistance) lod = -1;
+      if (distance > _lodDistances[_lodDistances.Length - 1]) lod = -1;
 
       Initialize(lod);
     
@@ -305,18 +305,18 @@ namespace Foliage
               float angle = Mathf.Rad2Deg * -v.w;
               collider.transform.rotation = Quaternion.Euler(0, angle, 0);
             }
-            Debug.Log("Instantiating collider");
+            // Debug.Log("Instantiating collider");
             collider.transform.parent = FoliageHandler.Instance;
             _activeColliders.Add(collider);
           }
           else {
-            Debug.Log("Reusing collider");
             var collider = FoliagePool._pool[_scriptable][0];
             FoliagePool._pool[_scriptable].RemoveAt(0);
             if (_rotateColliders) {
               float angle = Mathf.Rad2Deg * -v.w;
               collider.transform.rotation = Quaternion.Euler(0, angle, 0);
             }
+            // Debug.Log("Reusing collider");
             collider.transform.position = new Vector3(v.x, v.y, v.z);
             _activeColliders.Add(collider);
           }
