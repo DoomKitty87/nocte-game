@@ -192,8 +192,8 @@ public class PlaceStructures : MonoBehaviour
       for (int j = 0; j < roadPlane.Length; j++) {
         roadPlane3[j] = new Vector3(roadPlane[j].x, _worldGen.GetHeightValue(roadPlane[j]), roadPlane[j].y) + Vector3.up * _roadWaterImpact * _worldGen.GetRiverValue(roadPlane[j]);
         if (roadPlane3[j].y < WorldGenInfo._lakePlaneHeight) roadPlane3[j].y = WorldGenInfo._lakePlaneHeight;
-        roadVertexColors[j] = new Color(roadPlane3[j].y < WorldGenInfo._lakePlaneHeight ? 1 : _worldGen.GetRiverValue(roadPlane[j]), 0, 0, 0);
-        roadVertexColors[j + roadPlane.Length] = new Color(roadPlane3[j].y < WorldGenInfo._lakePlaneHeight ? 1 : _worldGen.GetRiverValue(roadPlane[j]), 0, 0, 0);
+        roadVertexColors[j] = new Color(roadPlane3[j].y == WorldGenInfo._lakePlaneHeight ? 1 : _worldGen.GetRiverValue(roadPlane[j]), 0, 0, 0);
+        roadVertexColors[j + roadPlane.Length] = new Color(roadPlane3[j].y == WorldGenInfo._lakePlaneHeight ? 1 : _worldGen.GetRiverValue(roadPlane[j]), 0, 0, 0);
       }
 
       Mesh road = RoadGenerator.MeshFromPlane(roadPlane3, _roadDepth, _roadInset, _roadBevel);
