@@ -14,6 +14,7 @@ namespace Foliage
     public bool UseBillboard;
     public GameObject ColliderPrefab;
     public bool _useColliders;
+    public bool _rotateColliders;
     public FoliageLODData[] _lodRanges;
     public int _maxBillboardDistance;
     public int Id;

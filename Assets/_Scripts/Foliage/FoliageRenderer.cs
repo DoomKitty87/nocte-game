@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 namespace Foliage
@@ -21,6 +22,7 @@ namespace Foliage
     private readonly Mesh _billboardMesh;
     private readonly bool _useBillboard;
     private readonly bool _useColliders;
+    private readonly bool _rotateColliders;
 
     private int _previousLOD;
 
@@ -74,6 +76,8 @@ namespace Foliage
       _noiseLacunarity = _scriptable._noiseLacunarity;
       _noiseOffset = WorldGenInfo._seed;
       _noiseCutoff = _scriptable._noiseCutoff;
+
+      _rotateColliders = _scriptable._rotateColliders;
     
       _material = new Material(_scriptable.Material);
       _useSubmesh = _scriptable._useSubmesh;
@@ -235,38 +239,42 @@ namespace Foliage
       }
 
       if (distance > _lodDistances[_lodDistances.Length - 1]) lod = -1;
-      if (lod == -1 && !_useBillboard) return;
+      if (lod == -1 && !_useBillboard) {
+        _previousLOD = lod;
+        if (_useColliders) UpdateColliders(lod);
+        return;
+      }
 
       if (lod != _previousLOD) {
-          if (lod != -1 && _previousLOD != -1) UpdateDensity(lod);
+        if (lod != -1 && _previousLOD != -1) UpdateDensity(lod);
 
-          if (lod != -1) {
-            _args[0] = (uint)_meshes[lod].GetIndexCount(0);
-            _args[1] = _currentInstanceCount;
-            _args[2] = (uint)_meshes[lod].GetIndexStart(0);
-            _args[3] = (uint)_meshes[lod].GetBaseVertex(0);
-            _argsBuffer.SetData(_args);
+        if (lod != -1) {
+          _args[0] = (uint)_meshes[lod].GetIndexCount(0);
+          _args[1] = _currentInstanceCount;
+          _args[2] = (uint)_meshes[lod].GetIndexStart(0);
+          _args[3] = (uint)_meshes[lod].GetBaseVertex(0);
+          _argsBuffer.SetData(_args);
 
-            if (_useSubmesh) {
-              _args2[0] = (uint)_meshes[lod].GetIndexCount(1);
-              _args2[1] = _currentInstanceCount;
-              _args2[2] = (uint)_meshes[lod].GetIndexStart(1);
-              _args2[3] = (uint)_meshes[lod].GetBaseVertex(1);
-              _argsBuffer2.SetData(_args2);
-            }
+          if (_useSubmesh) {
+            _args2[0] = (uint)_meshes[lod].GetIndexCount(1);
+            _args2[1] = _currentInstanceCount;
+            _args2[2] = (uint)_meshes[lod].GetIndexStart(1);
+            _args2[3] = (uint)_meshes[lod].GetBaseVertex(1);
+            _argsBuffer2.SetData(_args2);
           }
-          else if (_useBillboard) {
-            _args[0] = (uint)_billboardMesh.GetIndexCount(0);
-            _args[1] = _currentInstanceCount;
-            _args[2] = (uint)_billboardMesh.GetIndexStart(0);
-            _args[3] = (uint)_billboardMesh.GetBaseVertex(0);
-            _argsBuffer.SetData(_args);
-          }
+        }
+        else if (_useBillboard) {
+          _args[0] = (uint)_billboardMesh.GetIndexCount(0);
+          _args[1] = _currentInstanceCount;
+          _args[2] = (uint)_billboardMesh.GetIndexStart(0);
+          _args[3] = (uint)_billboardMesh.GetBaseVertex(0);
+          _argsBuffer.SetData(_args);
+        }
 
-          if (lod == 0) UpdateColliders(lod);
-          else if (_previousLOD == 0) UpdateColliders(lod);
+        if (lod == 0) UpdateColliders(lod);
+        else if (_previousLOD == 0) UpdateColliders(lod);
 
-          _previousLOD = lod;
+        _previousLOD = lod;
       }
 
       //Debug.Log(lod);
@@ -293,12 +301,22 @@ namespace Foliage
         foreach (Vector4 v in data) {
           if (FoliagePool._pool[_scriptable].Count == 0) {
             var collider = GameObject.Instantiate(_scriptable.ColliderPrefab, new Vector3(v.x, v.y, v.z), Quaternion.identity);
+            if (_rotateColliders) {
+              float angle = Mathf.Rad2Deg * -v.w;
+              collider.transform.rotation = Quaternion.Euler(0, angle, 0);
+            }
+            Debug.Log("Instantiating collider");
             collider.transform.parent = FoliageHandler.Instance;
             _activeColliders.Add(collider);
           }
           else {
+            Debug.Log("Reusing collider");
             var collider = FoliagePool._pool[_scriptable][0];
             FoliagePool._pool[_scriptable].RemoveAt(0);
+            if (_rotateColliders) {
+              float angle = Mathf.Rad2Deg * -v.w;
+              collider.transform.rotation = Quaternion.Euler(0, angle, 0);
+            }
             collider.transform.position = new Vector3(v.x, v.y, v.z);
             _activeColliders.Add(collider);
           }
@@ -306,6 +324,7 @@ namespace Foliage
       }
       else {
         foreach (GameObject g in _activeColliders) {
+          g.transform.position = Vector3.zero;
           FoliagePool._pool[_scriptable].Add(g);
         }
         _activeColliders.Clear();
