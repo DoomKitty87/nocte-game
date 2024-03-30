@@ -158,13 +158,10 @@ void ComputePosition(uint3 id : SV_DispatchThreadID)
 
   // Calculate grass position
 	uint sampleIndex = id.x; // useless, but reminds me that id takes into account the number of groups so i never have to suffer again
-	float2 samplePosition;
-  float spacing = _size / _samples;
-	samplePosition.y = floor(sampleIndex / _samples);
-	samplePosition.x = sampleIndex % _samples; // never mod by floats, inaccuracies cause issues
-	float3 worldPos = float3(samplePosition.x * spacing + spacing / 2, 0, samplePosition.y * spacing + spacing / 2) + _chunkBottomLeftPosition;
-	worldPos.x += randomRange(float2(id.x + _scriptableId, id.x % 0.35) + _chunkBottomLeftPosition.xz, -spacing / 2, spacing / 2);
-	worldPos.z += randomRange(float2(id.x - _scriptableId, id.x % 0.52) + _chunkBottomLeftPosition.xz, -spacing / 2, spacing / 2);
+
+	float3 worldPos = _chunkBottomLeftPosition;
+	worldPos.x += randomRange(float2(id.x % 0.26 + _scriptableId % 0.82, id.x % 0.35) + _chunkBottomLeftPosition.xz, 0, _size);
+	worldPos.z += randomRange(float2(id.x % 0.91 - _scriptableId % 0.15, id.x % 0.52) + _chunkBottomLeftPosition.xz, 0, _size);
 	worldPos.y = GetHeightmapAtWorldPosition(worldPos.xz);
 
   float worldRot = randomRange(float2(id.x, id.x % 0.35) + _chunkBottomLeftPosition.xz, 0, TWO_PI);
