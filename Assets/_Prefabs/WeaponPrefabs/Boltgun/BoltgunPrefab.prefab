@@ -263,21 +263,19 @@ MonoBehaviour:
   _cinemachineThirdPersonAim: {fileID: 0}
   _cinemachineThirdPersonFollow: {fileID: 0}
   _playerAnimator: {fileID: 0}
-  _animationLayerName: Boltgun
-  _playerEquipAnimation: {fileID: -3464522749995974024, guid: 910d3ee29baccc54ab33c2f8d5b9db45,
-    type: 3}
-  _playerUnequipAnimation: {fileID: -5874074680085883292, guid: 910d3ee29baccc54ab33c2f8d5b9db45,
-    type: 3}
-  _playerReloadAnimation: {fileID: -1411408172219323521, guid: 910d3ee29baccc54ab33c2f8d5b9db45,
-    type: 3}
+  _animationLayerName: WeaponLayer
   _barrelPositionMarker: {fileID: 2017843549463295565}
   _boltEffect: {fileID: 0}
   _damage: 200
-  _reloadTime: 1
   _maxRaycastDistance: 5000
   _raycastLayerMask:
     serializedVersion: 2
     m_Bits: 1
+  _roundsPerMinute: 200
+  _normalCameraDistance: 0
+  _aimedInCameraDistance: 2
+  _aimSpeed: 6
+  _firing: 0
   _ammoLoaded: 0
   _reloading: 0
 --- !u!1 &3786218933524423113

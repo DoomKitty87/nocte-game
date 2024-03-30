@@ -21,6 +21,8 @@ public class WeaponInventorySlot
 	}
 }
 
+// Note: This depends on the animcontroller layer containing weapon animations to be called WeaponLayer 
+
 [RequireComponent(typeof(HealthInterface))]
 public class PlayerCombatCore : MonoBehaviour
 {
@@ -64,6 +66,7 @@ public class PlayerCombatCore : MonoBehaviour
 		_equippedSlotIndex = _weaponInventory.IndexOf(slot);
 		slot._equipped = true;
 		slot._weaponInstance.SetActive(true);
+		_playerAnimator.SetLayerWeight(_playerAnimator.GetLayerIndex("WeaponLayer"), 1);
 	}
 	
 	public void EquipWeaponByWeaponItem(WeaponItem weaponItem) {
@@ -73,6 +76,7 @@ public class PlayerCombatCore : MonoBehaviour
 				_equippedSlotIndex = i;
 				slot._equipped = true;
 				slot._weaponInstance.SetActive(true);
+				_playerAnimator.SetLayerWeight(_playerAnimator.GetLayerIndex("WeaponLayer"), 1);
 				return;
 			}
 		}
@@ -83,7 +87,7 @@ public class PlayerCombatCore : MonoBehaviour
 		_equippedSlotIndex = index;
 		_weaponInventory[index]._equipped = true;
 		_weaponInventory[index]._weaponInstance.SetActive(true);
-		
+		_playerAnimator.SetLayerWeight(_playerAnimator.GetLayerIndex("WeaponLayer"), 1);
 	}
 
 	public List<WeaponInventorySlot> GetWeaponInventory() {
@@ -108,6 +112,7 @@ public class PlayerCombatCore : MonoBehaviour
 	}
 	public void UnequipCurrentWeapon(bool disableImmediately = false) {
 		WeaponInventorySlot slot = _weaponInventory[_equippedSlotIndex];
+		_playerAnimator.SetLayerWeight(_playerAnimator.GetLayerIndex("WeaponLayer"), 0);
 		if (disableImmediately) {
 			slot._equipped = false;
 			slot._weaponInstance.SetActive(false);
