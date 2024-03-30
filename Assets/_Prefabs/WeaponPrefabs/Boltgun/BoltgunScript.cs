@@ -76,7 +76,6 @@ public class BoltgunScript : WeaponScript
     _reloading = true;
     _playerAnimator.SetTrigger("Weapon_Reload");
     float reloadTime = _playerAnimator.GetNextAnimatorStateInfo(_playerAnimator.GetLayerIndex(_animationLayerName)).length;
-    print(reloadTime);
     yield return new WaitForSeconds(reloadTime);
     _ammoLoaded = true;
     _reloading = false;
