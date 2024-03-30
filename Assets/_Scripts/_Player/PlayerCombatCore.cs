@@ -30,11 +30,6 @@ public class PlayerCombatCore : MonoBehaviour
 	[SerializeField] private int _equippedSlotIndex;
 	
 	private GameObject InstanceWeaponItem(WeaponItem weaponItem) {
-		if (_weaponContainer == null) {
-			Debug.LogError("The variable _weaponContainer of PlayerCombatCore has not been assigned!");
-			throw new Exception();
-		}
-
 		GameObject instance = Instantiate(weaponItem._weaponPrefab, _weaponContainer.transform);
 		instance.transform.position = weaponItem._weaponContainerOffset;
 		_currentWeaponInstance = instance;

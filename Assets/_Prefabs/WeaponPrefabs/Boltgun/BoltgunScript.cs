@@ -15,8 +15,9 @@ public class BoltgunScript : WeaponScript
 
   [Header("Prefab Dependencies")]
   [SerializeField] private string _animationLayerName;
-  [SerializeField] private AnimationClip _equipAnimation;
-  [SerializeField] private AnimationClip _unequipAnimation;
+  [SerializeField] private AnimationClip _playerEquipAnimation;
+  [SerializeField] private AnimationClip _playerUnequipAnimation;
+  [SerializeField] private AnimationClip _playerReloadAnimation;
   [SerializeField] private GameObject _barrelPositionMarker;
   [SerializeField] private LineRenderer _boltEffect;
   [Header("Settings")]
@@ -146,13 +147,13 @@ public class BoltgunScript : WeaponScript
   public override float OnEquip() {
     SoloLayerWithName(_animationLayerName);
     _playerAnimator.SetTrigger("Equip");
-    return _equipAnimation.length;
+    return _playerEquipAnimation.length;
   }
   
   public override float OnUnequip() {
     SoloLayerWithName(_animationLayerName);
     _playerAnimator.SetTrigger("Unequip");
-    return _unequipAnimation.length;
+    return _playerUnequipAnimation.length;
   }
 
 
