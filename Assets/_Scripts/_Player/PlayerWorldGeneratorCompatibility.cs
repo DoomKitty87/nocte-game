@@ -23,7 +23,7 @@ public class PlayerWorldGeneratorCompatibility : MonoBehaviour
       _worldGeneratorObject = WorldGenInfo._worldGenerator;
   
       _playerController._disableMovement = true;
-      if (_ignoreLackOfWorldGenerator) {
+      if (_worldGeneratorObject == null && _ignoreLackOfWorldGenerator) {
         EnablePlayer();
       }
     }
@@ -32,7 +32,7 @@ public class PlayerWorldGeneratorCompatibility : MonoBehaviour
       if (_entryAnimationFinished) EnablePlayer();
       if (!_hasInitialized) return;
 
-      if (_ignoreLackOfWorldGenerator) return;
+      if (_worldGeneratorObject == null && _ignoreLackOfWorldGenerator) return;
 
       _worldGeneratorObject.UpdatePlayerLoadedChunks(transform.position);
       _rainShape.position = transform.position + Vector3.up * 25f;
