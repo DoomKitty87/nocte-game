@@ -92,6 +92,9 @@ public class BoltgunScript : WeaponScript
 
   // Start is called before the first frame update
   private void Start() {
+    _playerAnimator = _instancingPlayerCombatCoreScript._playerAnimator;
+    _cinemachineThirdPersonAim = _instancingPlayerCombatCoreScript._cinemachineThirdPersonAim;
+    _cinemachineThirdPersonFollow = _instancingPlayerCombatCoreScript._cinemachineThirdPersonFollow;
     _ammoLoaded = true;
     _reloading = false;
   }
