@@ -240,8 +240,10 @@ namespace Foliage
 
       if (distance > _lodDistances[_lodDistances.Length - 1]) lod = -1;
       if (lod == -1 && !_useBillboard) {
-        _previousLOD = lod;
-        if (_useColliders) UpdateColliders(lod);
+        if (_previousLOD != -1) {
+          _previousLOD = lod;
+          if (_useColliders) UpdateColliders(lod);
+        }
         return;
       }
 
