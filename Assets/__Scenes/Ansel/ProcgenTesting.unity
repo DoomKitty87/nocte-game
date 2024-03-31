@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 356.10403, g: 141.60765, b: 66.723495, a: 1}
+  m_IndirectSpecularColor: {r: 363.46994, g: 145.28386, b: 68.65658, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -20797,8 +20797,8 @@ MonoBehaviour:
   tessellationFactorFadeRange: 1850
   refractionColor: {r: 0.7707153, g: 0.9626395, b: 1, a: 1}
   maxRefractionDistance: 3.5
-  absorptionDistance: 15
-  scatteringColor: {r: 0.15429474, g: 0.8892391, b: 1, a: 1}
+  absorptionDistance: 7
+  scatteringColor: {r: 0.044630826, g: 0.38887492, b: 0.44530618, a: 1}
   ambientScattering: 1
   heightScattering: 1
   displacementScattering: 1
@@ -20900,11 +20900,11 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  repetitionSize: 150
+  repetitionSize: 25
   largeOrientationValue: 0
-  largeWindSpeed: 15
+  largeWindSpeed: 250
   largeChaos: 1
-  largeBand0Multiplier: 0.3
+  largeBand0Multiplier: 0.4
   largeBand0FadeMode: 2
   largeBand0FadeStart: 1500
   largeBand0FadeDistance: 3000
@@ -26027,7 +26027,7 @@ MonoBehaviour:
   _roadDepth: 5.25
   _roadInset: 9
   _roadBevel: 0.3
-  _roadWaterImpact: 70
+  _roadWaterImpact: 25
   _roadNoiseAmplitude: 50
   _roadPathfindingPoints: 2
   _roadMaxAngle: 10
