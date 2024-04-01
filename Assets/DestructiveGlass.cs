@@ -7,14 +7,14 @@ public class DestructiveGlass : MonoBehaviour
     private Rigidbody[] rb;
     private int index = 0;
 
-    void Start()
+    private void Start()
     {
         rb = transform.GetChild(1).GetComponentsInChildren<Rigidbody>();
 
         transform.GetChild(0).GetComponent<BulletInteract>().Interaction += Explode;
     }
 
-    public void Explode(float damage, Vector3 position) {
+    private void Explode(float damage, Vector3 position) {
         transform.GetChild(0).gameObject.SetActive(false);
         transform.GetChild(1).gameObject.SetActive(true);
 
@@ -24,7 +24,7 @@ public class DestructiveGlass : MonoBehaviour
             r.AddExplosionForce(1000, position, 2);
         }
 
-        Invoke(nameof(DestroyGlass), 0.25f);
+        Invoke(nameof(DestroyGlass), .25f);
     }
 
 

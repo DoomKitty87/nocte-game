@@ -4788,13 +4788,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _cameraPosition: {fileID: 3668390507169330137}
-  _crouchingCameraPosition: {x: 0, y: -0.2, z: 0}
   _disableMovement: 0
   _state: 0
   _movementOrientation: {fileID: 5766149443483151228}
   _modelOrientation: {fileID: 8737222161639352964}
   _worldGen: {fileID: 0}
   _rotationSpeed: 360
+  _sprintInAllDirections: 1
+  _adsCancelsSprint: 1
+  _shootingCancelsSprint: 0
   _walkSpeed: 2
   _swimmingSpeed: 3
   _sprintSpeed: 5
@@ -5318,7 +5320,7 @@ GameObject:
   - component: {fileID: 5330624361841639884}
   - component: {fileID: 3888372041872913813}
   - component: {fileID: 6841940912683404337}
-  m_Layer: 3
+  m_Layer: 1
   m_Name: Interactible Handler
   m_TagString: InventoryManager
   m_Icon: {fileID: 0}
