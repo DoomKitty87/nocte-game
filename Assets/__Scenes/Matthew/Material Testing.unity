@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 4427.3296, g: 2873.1636, b: 2112.3752, a: 1}
+  m_IndirectSpecularColor: {r: 4411.6255, g: 2887.68, b: 2189.3167, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -274,6 +274,11 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1192220085663393874, guid: 9251f6c58d15c7b428fef40ec34ce952,
+        type: 3}
+      propertyPath: _shootingCancelsSprint
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2882977137503334130, guid: 9251f6c58d15c7b428fef40ec34ce952,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -334,12 +339,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 9251f6c58d15c7b428fef40ec34ce952, type: 3}
---- !u!4 &281930238 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 8737222161639352964, guid: 9251f6c58d15c7b428fef40ec34ce952,
-    type: 3}
-  m_PrefabInstance: {fileID: 281930233}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &318149740
 GameObject:
   m_ObjectHideFlags: 0
@@ -1300,7 +1299,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _scanEffectVolume: {fileID: 971802134}
-  _scanOrigin: {fileID: 281930238}
+  _scanOrigin: {fileID: 1875565196}
   _scanDistance: 200
   _scanDuration: 2
   _scanHangDuration: 1
@@ -3373,6 +3372,12 @@ Transform:
   - {fileID: 1784951602}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!4 &1875565196 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 5766149443483151228, guid: 9251f6c58d15c7b428fef40ec34ce952,
+    type: 3}
+  m_PrefabInstance: {fileID: 281930233}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1957678542
 GameObject:
   m_ObjectHideFlags: 0

@@ -10,8 +10,6 @@ public class PlayerController : MonoBehaviour
     
     // Temporary fix for visualizing crouching - See HandleCrouchingCameraPosition()
     [SerializeField] private Transform _cameraPosition;
-    private Vector3 _defaultCameraPosition;
-    [SerializeField] Vector3 _crouchingCameraPosition;
     
     #region Exposed Variables
     
@@ -32,6 +30,10 @@ public class PlayerController : MonoBehaviour
     
     [Header("Movement")]
     [SerializeField, Tooltip("Speed at which model rotates to follow movement")] private float _rotationSpeed = 360;
+
+    [SerializeField, Tooltip("Enable sprinting in every direction")] private bool _sprintInAllDirections = true;
+    [SerializeField] private bool _adsCancelsSprint = true;
+    [SerializeField] private bool _shootingCancelsSprint = true;
     [SerializeField, Tooltip("Default walk speed on ground")] private float _walkSpeed;
     [SerializeField, Tooltip("Default walk speed in water")] private float _swimmingSpeed;
     [SerializeField, Tooltip("Sprint speed on ground")] private float _sprintSpeed;
@@ -124,7 +126,6 @@ public class PlayerController : MonoBehaviour
         
         _rb = GetComponent<Rigidbody>();
         _collider = GetComponent<Collider>();
-        _defaultCameraPosition = _cameraPosition.localPosition;
     }
 
     private void OnEnable() {
@@ -249,7 +250,7 @@ public class PlayerController : MonoBehaviour
             else
                 SetState(PlayerStates.Sliding);
         }
-        else if (_sprintingForward)
+        else if ((_adsCancelsSprint ? !_rightMouseDown && _sprinting : _sprinting) && (_shootingCancelsSprint ? !_leftMouseDown  && _sprinting : _sprinting) && (_sprintInAllDirections ? _sprinting : _sprintingForward))
             SetState(PlayerStates.Sprinting);
         else
             SetState(PlayerStates.Walking);
@@ -336,12 +337,14 @@ public class PlayerController : MonoBehaviour
         _velocityMagnitude = _velocity.magnitude;
         _horizontalVelocityMagnitude = _horizontalVelocity.magnitude;
 
-        Vector3 forwardDirection = new Vector3(_movementOrientation.forward.x, 0, _movementOrientation.forward.z).normalized;
-        Vector3 rightDirection = new Vector3(_movementOrientation.right.x, 0, _movementOrientation.right.z).normalized;
+        var forward = _movementOrientation.forward;
+        Vector3 forwardDirection = new Vector3(forward.x, 0, forward.z).normalized;
+        var right = _movementOrientation.right;
+        Vector3 rightDirection = new Vector3(right.x, 0, right.z).normalized;
         
         Vector3 modelOrientation;
         float rotationSpeed;
-        if (_leftMouseDown || _rightMouseDown) {
+        if (_sprinting || ((_adsCancelsSprint && _rightMouseDown) || (_shootingCancelsSprint && _leftMouseDown))) {
             float angle = _movementOrientation.localEulerAngles.y;
             angle *= Mathf.Deg2Rad; // Convert to radians
             modelOrientation = new Vector3(Mathf.Sin(angle), 0, Mathf.Cos(angle)).normalized;
