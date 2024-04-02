@@ -94,7 +94,7 @@ public class BoltgunScript : WeaponScript
     _cinemachineThirdPersonFollow.CameraDistance = Mathf.Lerp(_normalCameraDistance, _aimedInCameraDistance, _aimParam);
     _playerAnimator.SetFloat("Weapon_AimedIn", _aimParam);
   }
-  private void LerpAimingParameters(bool aimedIn) {
+  private void LerpAimingParameters(bool aimedIn) { 
     if (aimedIn) {
       _aimParamTarget = 1;
     } else {
