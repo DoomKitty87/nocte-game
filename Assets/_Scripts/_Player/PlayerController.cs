@@ -344,7 +344,7 @@ public class PlayerController : MonoBehaviour
         
         Vector3 modelOrientation;
         float rotationSpeed;
-        if (_sprinting || ((_adsCancelsSprint && _rightMouseDown) || (_shootingCancelsSprint && _leftMouseDown))) {
+        if (_rightMouseDown) {
             float angle = _movementOrientation.localEulerAngles.y;
             angle *= Mathf.Deg2Rad; // Convert to radians
             modelOrientation = new Vector3(Mathf.Sin(angle), 0, Mathf.Cos(angle)).normalized;
