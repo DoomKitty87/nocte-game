@@ -188,13 +188,13 @@ namespace Foliage
       _cullingCompute.SetBuffer(kernelIndexVote, Shader.PropertyToID("_inputBuffer"), _positionsBuffer);
       _cullingCompute.SetBuffer(kernelIndexVote, Shader.PropertyToID("_voteBuffer"), voteBuffer);
       _cullingCompute.GetKernelThreadGroupSizes(kernelIndexVote, out threadX, out _, out _);
-      _cullingCompute.Dispatch(kernelIndexVote, Mathf.CeilToInt(_chunkDensity[lod] * _chunkDensity[lod]), 1, 1);
+      _cullingCompute.Dispatch(kernelIndexVote, Mathf.CeilToInt(_chunkDensity[lod] * _chunkDensity[lod] / (float)threadX), 1, 1);
 
       var kernelIndexSum = _cullingCompute.FindKernel("Sum");
       _cullingCompute.SetBuffer(kernelIndexSum, Shader.PropertyToID("_voteBuffer"), voteBuffer);
       _cullingCompute.SetBuffer(kernelIndexSum, Shader.PropertyToID("_sumBuffer"), sumBuffer);
       _cullingCompute.GetKernelThreadGroupSizes(kernelIndexSum, out threadX, out _, out _);
-      _cullingCompute.Dispatch(kernelIndexSum, Mathf.CeilToInt(_chunkDensity[lod] * _chunkDensity[lod]), 1, 1);
+      _cullingCompute.Dispatch(kernelIndexSum, Mathf.CeilToInt(_chunkDensity[lod] * _chunkDensity[lod] / (float)threadX), 1, 1);
       
       var kernelIndexCompact = _cullingCompute.FindKernel("Compact");
       _cullingCompute.SetBuffer(kernelIndexCompact, Shader.PropertyToID("_inputBuffer"), _positionsBuffer);
@@ -202,7 +202,7 @@ namespace Foliage
       _cullingCompute.SetBuffer(kernelIndexCompact, Shader.PropertyToID("_voteBuffer"), voteBuffer);
       _cullingCompute.SetBuffer(kernelIndexCompact, Shader.PropertyToID("_culledCount"), culledCountBuffer);
       _cullingCompute.GetKernelThreadGroupSizes(kernelIndexCompact, out threadX, out _, out _);
-      _cullingCompute.Dispatch(kernelIndexCompact, Mathf.CeilToInt(_chunkDensity[lod] * _chunkDensity[lod]), 1, 1);
+      _cullingCompute.Dispatch(kernelIndexCompact, Mathf.CeilToInt(_chunkDensity[lod] * _chunkDensity[lod] / (float)threadX), 1, 1);
 
       var culledCount = new uint[1];
       culledCountBuffer.GetData(culledCount);

@@ -11,10 +11,11 @@ uniform uint _inputCount;
 RWStructuredBuffer<uint> _culledCount;
 
 // Errors come from larger thread groups on mac machines, no clue why
-[numthreads(1, 1, 1)]
+[numthreads(64, 1, 1)]
 void Vote(uint3 id : SV_DispatchThreadID)
 {
   uint index = id.x;
+  if (index >= _inputCount) return;
   float4 value = _inputBuffer[index];
   if (value.y > 10)
   {
@@ -26,10 +27,11 @@ void Vote(uint3 id : SV_DispatchThreadID)
   }
 }
 
-[numthreads(1, 1, 1)]
+[numthreads(64, 1, 1)]
 void Sum(uint3 id : SV_DispatchThreadID)
 {
   uint index = id.x;
+  if (index >= _inputCount) return;
   uint sum = 0;
   for (uint i = 0; i < index; i++)
   {
@@ -38,10 +40,11 @@ void Sum(uint3 id : SV_DispatchThreadID)
   _sumBuffer[index] = sum;
 }
 
-[numthreads(1, 1, 1)]
+[numthreads(64, 1, 1)]
 void Compact(uint3 id : SV_DispatchThreadID)
 {
   uint index = id.x;
+  if (index >= _inputCount) return;
   if (_voteBuffer[index] > 0)
   {
     _inputBuffer[_sumBuffer[index]] = _inputBuffer[index];
