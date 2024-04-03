@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Unity.Mathematics;
 using Unity.VisualScripting;
 using UnityEngine;
 
@@ -187,26 +188,26 @@ namespace Foliage
       _cullingCompute.SetBuffer(kernelIndexVote, Shader.PropertyToID("_inputBuffer"), _positionsBuffer);
       _cullingCompute.SetBuffer(kernelIndexVote, Shader.PropertyToID("_voteBuffer"), voteBuffer);
       _cullingCompute.GetKernelThreadGroupSizes(kernelIndexVote, out threadX, out _, out _);
-      _cullingCompute.Dispatch(kernelIndexVote, Mathf.CeilToInt(_chunkDensity[lod] * _chunkDensity[lod] / (float)threadX), 1, 1);
+      _cullingCompute.Dispatch(kernelIndexVote, Mathf.CeilToInt(_chunkDensity[lod] * _chunkDensity[lod]), 1, 1);
 
       var kernelIndexSum = _cullingCompute.FindKernel("Sum");
       _cullingCompute.SetBuffer(kernelIndexSum, Shader.PropertyToID("_voteBuffer"), voteBuffer);
       _cullingCompute.SetBuffer(kernelIndexSum, Shader.PropertyToID("_sumBuffer"), sumBuffer);
       _cullingCompute.GetKernelThreadGroupSizes(kernelIndexSum, out threadX, out _, out _);
-      _cullingCompute.Dispatch(kernelIndexSum, Mathf.CeilToInt(_chunkDensity[lod] * _chunkDensity[lod] / (float)threadX), 1, 1);
-
+      _cullingCompute.Dispatch(kernelIndexSum, Mathf.CeilToInt(_chunkDensity[lod] * _chunkDensity[lod]), 1, 1);
+      
       var kernelIndexCompact = _cullingCompute.FindKernel("Compact");
       _cullingCompute.SetBuffer(kernelIndexCompact, Shader.PropertyToID("_inputBuffer"), _positionsBuffer);
       _cullingCompute.SetBuffer(kernelIndexCompact, Shader.PropertyToID("_sumBuffer"), sumBuffer);      
       _cullingCompute.SetBuffer(kernelIndexCompact, Shader.PropertyToID("_voteBuffer"), voteBuffer);
       _cullingCompute.SetBuffer(kernelIndexCompact, Shader.PropertyToID("_culledCount"), culledCountBuffer);
       _cullingCompute.GetKernelThreadGroupSizes(kernelIndexCompact, out threadX, out _, out _);
-      _cullingCompute.Dispatch(kernelIndexCompact, Mathf.CeilToInt(_chunkDensity[lod] * _chunkDensity[lod] / (float)threadX), 1, 1);
+      _cullingCompute.Dispatch(kernelIndexCompact, Mathf.CeilToInt(_chunkDensity[lod] * _chunkDensity[lod]), 1, 1);
 
       var culledCount = new uint[1];
       culledCountBuffer.GetData(culledCount);
       _currentInstanceCount = culledCount[0];
-      // Debug.Log(_currentInstanceCount);
+      Debug.Log(_currentInstanceCount + "eewfseioj");
 
       voteBuffer.Release();
       sumBuffer.Release();
@@ -222,6 +223,8 @@ namespace Foliage
       _centerPosition = new Vector2(_position.x + _chunkSize / 2, _position.z + _chunkSize / 2);
 
       _positionsBuffer = new ComputeBuffer(_chunkDensity[lod == -1 ? ^1 : lod] * _chunkDensity[lod == -1 ? ^1 : lod], sizeof(float) * 4);
+
+      //Debug.Log(_positionsBuffer.count + "count " + _positionsBuffer.stride + "stride should be " + _chunkDensity[lod == -1 ? ^1 : lod] * _chunkDensity[lod == -1 ? ^1 : lod]);
       
       _previousLOD = lod;
     }
@@ -297,10 +300,11 @@ namespace Foliage
     private void UpdateColliders(int lod) {
       if (!_useColliders) return;
       if (lod == 0) {
-        Vector4[] data = new Vector4[_currentInstanceCount];
+        //Debug.Log("Trying to fetch " + _currentInstanceCount + " out of max " + _chunkDensity[lod] * _chunkDensity[lod]);
+        float4[] data = new float4[_currentInstanceCount];
         _positionsBuffer.GetData(data);
         //Debug.Log(data[0]);
-        foreach (Vector4 v in data) {
+        foreach (float4 v in data) {
           if (FoliagePool._pool[_scriptable].Count == 0) {
             var collider = GameObject.Instantiate(_scriptable.ColliderPrefab, new Vector3(v.x, v.y, v.z), Quaternion.identity);
             if (_rotateColliders) {

@@ -41,6 +41,8 @@ namespace Foliage
     private void OnDisable() {
       WorldGenerator.GenerationComplete -= Initialize;
       WorldGenerator.PlayerMove -= UpdatePlayerPosition;
+      FoliagePool._boundsBuffer?.Release();
+      FoliagePool._boundsBuffer = null;
     }
 
     private void Start() {
