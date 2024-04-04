@@ -207,7 +207,7 @@ namespace Foliage
       var culledCount = new uint[1];
       culledCountBuffer.GetData(culledCount);
       _currentInstanceCount = culledCount[0];
-      Debug.Log(_currentInstanceCount + "eewfseioj");
+      //Debug.Log(_currentInstanceCount + "eewfseioj");
 
       voteBuffer.Release();
       sumBuffer.Release();
