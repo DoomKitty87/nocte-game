@@ -1,3 +1,4 @@
+using System;
 using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -26,10 +27,10 @@ public class UpgradeHandler : MonoBehaviour
   }
 
   private void OnEnable() {
-    _addButton.onClick.AddListener(() => Add()); 
-    _removeButton.onClick.AddListener(() => Remove());
+    _addButton.onClick.AddListener(Add); 
+    _removeButton.onClick.AddListener(Remove);
 
-    ChangeValue(PlayerMetaProgression.Instance.AvailableCores);
+    SetValue(PlayerMetaProgression.Instance.AvailableCores);
 
     bool[] unlockedBlueprints = PlayerMetaProgression.Instance.GetAvailableBlueprints();
 
@@ -39,6 +40,11 @@ public class UpgradeHandler : MonoBehaviour
       currentTree._upgradeTreeIndex = i;
       currentTree._enabled = unlockedBlueprints[i];
     }
+  }
+
+  private void OnDisable() {
+    _addButton.onClick.RemoveListener(Add);
+    _removeButton.onClick.RemoveListener(Remove);
   }
 
   private void Add() {
@@ -55,11 +61,15 @@ public class UpgradeHandler : MonoBehaviour
   
   }
 
-  public void ChangeValue(int value) {
+  private void ChangeValue(int value) {
     UpgradeLevels += value;
   }
 
-  public void SetUpgradeLevelText(int value) {
+  private void SetValue(int value) {
+    UpgradeLevels = value;
+  }
+
+  private void SetUpgradeLevelText(int value) {
     currentLevelText.text = _currentLevelTextPretext + _upgradeLevels;
   }
 }
