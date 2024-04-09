@@ -3759,7 +3759,7 @@ MonoBehaviour:
       m_Item7:
         transform: {fileID: 0}
         weight: 0
-    m_Offset: {x: -11.5, y: 0, z: 0}
+    m_Offset: {x: -22, y: 0, z: 0}
     m_MinLimit: -180
     m_MaxLimit: 180
     m_AimAxis: 2
@@ -3846,8 +3846,8 @@ MonoBehaviour:
         transform: {fileID: 0}
         weight: 0
     m_Offset: {x: 0, y: 0, z: 0}
-    m_MinLimit: -180
-    m_MaxLimit: 180
+    m_MinLimit: -50
+    m_MaxLimit: 50
     m_AimAxis: 4
     m_UpAxis: 2
     m_WorldUpType: 1
@@ -5533,10 +5533,14 @@ MonoBehaviour:
   _equippedSlotIndex: 0
   _mainCamera: {fileID: 8006249604740443719}
   _playerAnimator: {fileID: 6825996530567685683}
+  _playerAnimationRiggingRig: {fileID: 3243337715232106654}
   _cinemachineThirdPersonFollow: {fileID: 4190060279380810648}
   _cinemachineThirdPersonAim: {fileID: 202254587731404948}
   _weaponFXAudioSource: {fileID: 0}
   _weaponContainer: {fileID: 9204214720551637391}
+  _AimParameter: 0
+  _normalCameraDistance: 0
+  _aimedInCameraDistance: 2
   _currentWeaponItem: {fileID: 11400000, guid: dc95d4731caee0d47921b965cee96a44, type: 2}
   _currentWeaponInstance: {fileID: 0}
   _currentInstanceScript: {fileID: 0}

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using TMPro.EditorUtilities;
 using Unity.Cinemachine;
 using UnityEngine;
+using UnityEngine.Animations.Rigging;
 using Object = UnityEngine.Object;
 
 
@@ -157,11 +158,17 @@ public class PlayerCombatCore : MonoBehaviour
 	public Camera _mainCamera;
 
 	public Animator _playerAnimator;
+	public Rig _playerAnimationRiggingRig;
 	public CinemachineThirdPersonFollow _cinemachineThirdPersonFollow;
 	public CinemachineThirdPersonAim _cinemachineThirdPersonAim;
 	public AudioSource _weaponFXAudioSource;
 	[SerializeField] private GameObject _weaponContainer;
 
+	[Header("Settings")]
+	[Range(0, 1)] public float _AimParameter = 0;
+	[SerializeField] private float _normalCameraDistance;
+	[SerializeField] private float _aimedInCameraDistance = 2;
+    
 	[Header("Info - Dont change in editor")]
 	[SerializeField] private WeaponItem _currentWeaponItem;
 	[SerializeField] private GameObject _currentWeaponInstance;
@@ -170,6 +177,12 @@ public class PlayerCombatCore : MonoBehaviour
 	// See line 48
 	// [SerializeField] private WeaponUI _weaponUI;
 
+	private void ManageAimParameter() {
+		_cinemachineThirdPersonFollow.CameraDistance = Mathf.Lerp(_normalCameraDistance, _aimedInCameraDistance, _AimParameter);
+		_playerAnimationRiggingRig.weight = _AimParameter;
+		_playerAnimator.SetFloat("Weapon_AimedIn", _AimParameter);
+	}
+	
 	// Start is called before the first frame update
 	private void Start() {
 		_input = InputReader.Instance.PlayerInput;
@@ -190,6 +203,8 @@ public class PlayerCombatCore : MonoBehaviour
 		_input.Player.Reload.performed += _ => _reloadDown = true;
 		_input.Player.Reload.canceled += _ => _currentInstanceScript.ReloadUp();
 		_input.Player.Reload.canceled += _ => _reloadDown = false;
+
+		_normalCameraDistance = _cinemachineThirdPersonFollow.CameraDistance;
 	}
 
 	private void OnDisable() {
@@ -214,6 +229,7 @@ public class PlayerCombatCore : MonoBehaviour
 	private bool _reloadDown;
 
 	private void Update() {
+		ManageAimParameter();
 		// Yeah its not great but it works :shrug:
 		if (_fire1Down) _currentInstanceScript.FireHold();
 		if (_fire2Down) _currentInstanceScript.Fire2Hold();

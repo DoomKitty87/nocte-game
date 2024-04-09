@@ -28,8 +28,6 @@ public class BoltgunScript : WeaponScript
   }
 
   [Header("Camera Settings")]
-  private float _normalCameraDistance;
-  [SerializeField] private float _aimedInCameraDistance = 2;
   [SerializeField] private float _aimSpeed = 6f;
   
   [Header("Indicators")]
@@ -86,13 +84,10 @@ public class BoltgunScript : WeaponScript
   }
 
   private float _aimParamTarget;
-  private float _aimParam;
   private void LerpAimingParametersUpdate() {
-    _aimParam = Mathf.Lerp(_aimParam, _aimParamTarget, Time.deltaTime * _aimSpeed);
-    if (_aimParam < 0.02f) _aimParam = 0;
-    if (_aimParam > 0.98f) _aimParam = 1;
-    _cinemachineThirdPersonFollow.CameraDistance = Mathf.Lerp(_normalCameraDistance, _aimedInCameraDistance, _aimParam);
-    _playerAnimator.SetFloat("Weapon_AimedIn", _aimParam);
+    _instancingPlayerCombatCoreScript._AimParameter = Mathf.Lerp(_instancingPlayerCombatCoreScript._AimParameter, _aimParamTarget, Time.deltaTime * _aimSpeed);
+    if (_instancingPlayerCombatCoreScript._AimParameter < 0.02f) _instancingPlayerCombatCoreScript._AimParameter = 0;
+    if (_instancingPlayerCombatCoreScript._AimParameter > 0.98f) _instancingPlayerCombatCoreScript._AimParameter = 1;
   }
   private void LerpAimingParameters(bool aimedIn) { 
     if (aimedIn) {
@@ -119,8 +114,6 @@ public class BoltgunScript : WeaponScript
     _playerAnimator = _instancingPlayerCombatCoreScript._playerAnimator;
     _cinemachineThirdPersonAim = _instancingPlayerCombatCoreScript._cinemachineThirdPersonAim;
     _cinemachineThirdPersonFollow = _instancingPlayerCombatCoreScript._cinemachineThirdPersonFollow;
-
-    _normalCameraDistance = _cinemachineThirdPersonFollow.CameraDistance;
     
     _ammoLoaded = true;
     _reloading = false;
