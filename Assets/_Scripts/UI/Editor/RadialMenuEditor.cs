@@ -15,7 +15,6 @@ public class RadialMenuEditor : Editor
 		base.OnInspectorGUI();
 		_radialMenu = (RadialMenu)target;
 		if (GUILayout.Button("Generate Separators")) {
-			_radialMenu.RemoveOldSeparators();
 			_radialMenu.GenerateSeparators();
 		}
 	}

@@ -84,6 +84,7 @@ public class RadialMenu : MonoBehaviour
 	}
 	
 	public void GenerateSeparators() {
+		print(_separators == null);
 		if (_separators != null) {
 			RemoveOldSeparators();
 		}
