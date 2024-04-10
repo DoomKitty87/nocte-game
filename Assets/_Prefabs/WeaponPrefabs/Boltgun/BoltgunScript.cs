@@ -11,11 +11,14 @@ public class BoltgunScript : WeaponScript
   [Header("CombatCore Dependencies")]
   [SerializeField] private CinemachineThirdPersonAim _cinemachineThirdPersonAim;
   [SerializeField] private CinemachineThirdPersonFollow _cinemachineThirdPersonFollow;
+  [SerializeField] private AudioSource _audioSource;
   [SerializeField] private Animator _playerAnimator;
+  [SerializeField] private string _animationLayerName;
 
   [Header("Prefab Dependencies")]
-  [SerializeField] private string _animationLayerName;
   [SerializeField] private GameObject _barrelPositionMarker;
+  [SerializeField] private GameObject _leftHandPositionMarker;
+  [SerializeField] private AudioClip _fireSound;
   [SerializeField] private LineRenderer _boltEffect;
   
   [Header("Settings")]
@@ -114,6 +117,7 @@ public class BoltgunScript : WeaponScript
     _playerAnimator = _instancingPlayerCombatCoreScript._playerAnimator;
     _cinemachineThirdPersonAim = _instancingPlayerCombatCoreScript._cinemachineThirdPersonAim;
     _cinemachineThirdPersonFollow = _instancingPlayerCombatCoreScript._cinemachineThirdPersonFollow;
+    _audioSource = _instancingPlayerCombatCoreScript._weaponFXAudioSource;
     
     _ammoLoaded = true;
     _reloading = false;
@@ -129,6 +133,7 @@ public class BoltgunScript : WeaponScript
     if (!_ammoLoaded || _reloading) return;
     RaycastBullet();
     PlayFireAnimation();
+    _audioSource.PlayOneShot(_fireSound, 1f);
     _ammoLoaded = false;
   }
 

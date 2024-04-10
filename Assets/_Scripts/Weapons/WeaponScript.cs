@@ -4,7 +4,7 @@ using UnityEngine.Serialization;
 public abstract class WeaponScript : MonoBehaviour
 {
   [FormerlySerializedAs("_instancingCombatCoreScript")] [HideInInspector] public PlayerCombatCore _instancingPlayerCombatCoreScript;
-
+  [HideInInspector] public PlayerInput _inputComponent;
   // Called on any frame fire is down immediately after a frame where fire is up
   public abstract void FireDown();
   // Called for every frame the mouse is down, excluding the FireDown() frame

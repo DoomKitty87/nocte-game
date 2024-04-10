@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
@@ -27,8 +28,14 @@ public class HealthUI : MonoBehaviour
       time += Time.deltaTime;
       yield return null;
     }
-    //_healthNumber.text = currentHealth.ToString();
+    _healthNumber.text = $"{currentHealth} HP";
     _healthBar.fillAmount = currentHealth / maxHealth;
     _changingHealth = false;
+  }
+
+  private void Start() {
+    _playerHealth._onHealthChanged.AddListener(OnHealthChanged);
+    _healthNumber.text = $"{_playerHealth.CurrentHealth} HP";
+    _healthBar.fillAmount = _playerHealth.CurrentHealth / _playerHealth.MaxHealth;
   }
 }

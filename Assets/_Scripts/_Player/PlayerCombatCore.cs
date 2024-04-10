@@ -41,6 +41,7 @@ public class PlayerCombatCore : MonoBehaviour
 			throw new Exception();
 		}
 		_currentInstanceScript._instancingPlayerCombatCoreScript = this;
+		_currentInstanceScript._inputComponent = _input;
 		return instance;
 	}
 	
