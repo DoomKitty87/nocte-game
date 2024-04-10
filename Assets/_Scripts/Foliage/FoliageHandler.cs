@@ -31,6 +31,8 @@ namespace Foliage
 
     public static FoliageHandler InstanceFoliageHandler;
 
+    [SerializeField] private bool _disable; 
+
     private void Awake() {
       InstanceFoliageHandler = this;
       Instance = this.transform;
@@ -39,6 +41,7 @@ namespace Foliage
     }
 
     private void OnDisable() {
+      InstanceFoliageHandler = null;
       WorldGenerator.GenerationComplete -= Initialize;
       WorldGenerator.PlayerMove -= UpdatePlayerPosition;
       FoliagePool._boundsBuffer?.Release();
@@ -62,7 +65,7 @@ namespace Foliage
 
     private bool _initialized = false;
     private void Initialize() {
-      if (_initialized) return;
+      if (_initialized || _disable) return;
 
       FoliagePool._boundsBuffer = new ComputeBuffer(FoliagePool._structureBounds.Count, sizeof(float) * 4);
       Vector4[] bounds = new Vector4[FoliagePool._structureBounds.Count];
@@ -97,6 +100,7 @@ namespace Foliage
     }
 
     public void UpdatePlayerPosition(Vector2 playerPosition) {
+      if (_disable) return;
       Vector2Int moveDelta = new Vector2Int(Mathf.FloorToInt(playerPosition.x / _chunkSize) - _middleChunk.x, Mathf.FloorToInt(playerPosition.y / _chunkSize) - _middleChunk.y);
       while (moveDelta != Vector2Int.zero) {
         moveDelta = new Vector2Int(Mathf.FloorToInt(playerPosition.x / _chunkSize) - _middleChunk.x, Mathf.FloorToInt(playerPosition.y / _chunkSize) - _middleChunk.y);
