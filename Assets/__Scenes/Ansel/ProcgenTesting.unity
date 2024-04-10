@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 298.8502, g: 115.05576, b: 51.154785, a: 1}
+  m_IndirectSpecularColor: {r: 346.1934, g: 137.18997, b: 63.283726, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -31797,15 +31797,15 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 7828621975473438852, guid: 862d92a67177d4c7b84ab88d6b6e0257,
         type: 3}
       insertIndex: -1
-      addedObject: {fileID: 4258144910533491461}
-    - targetCorrespondingSourceObject: {fileID: 7828621975473438852, guid: 862d92a67177d4c7b84ab88d6b6e0257,
-        type: 3}
-      insertIndex: -1
       addedObject: {fileID: 4258144910533491462}
     - targetCorrespondingSourceObject: {fileID: 7828621975473438852, guid: 862d92a67177d4c7b84ab88d6b6e0257,
         type: 3}
       insertIndex: -1
       addedObject: {fileID: 4258144910533491463}
+    - targetCorrespondingSourceObject: {fileID: 7828621975473438852, guid: 862d92a67177d4c7b84ab88d6b6e0257,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 4258144910533491467}
   m_SourcePrefab: {fileID: 100100000, guid: 862d92a67177d4c7b84ab88d6b6e0257, type: 3}
 --- !u!114 &4258144910533491457 stripped
 MonoBehaviour:
@@ -31819,19 +31819,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 67c43eb278576c646b814952f91643c8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &4258144910533491461
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 657453267}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 18a4e77c39ca141739a8cee42705b5e8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _chunkSize: 240
 --- !u!114 &4258144910533491462
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -31946,6 +31933,20 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!114 &4258144910533491467
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 657453267}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 18a4e77c39ca141739a8cee42705b5e8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _chunkSize: 240
+  _disable: 1
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
