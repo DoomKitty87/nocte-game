@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.Cinemachine;
+using UnityEditorInternal;
 using UnityEngine;
 using UnityEngine.VFX;
 
@@ -79,6 +80,7 @@ public class BoltgunScript : WeaponScript
     float reloadTime = _playerAnimator.GetNextAnimatorStateInfo(_playerAnimator.GetLayerIndex(_animationLayerName)).length;
     yield return new WaitForSeconds(reloadTime);
     _ammoLoaded = true;
+    _instancingPlayerCombatCoreScript.Weapon_RaiseAmmoChangedEvent();
     _reloading = false;
   }
   private void PlayReloadAnimation() {
@@ -133,6 +135,7 @@ public class BoltgunScript : WeaponScript
     if (!_ammoLoaded || _reloading) return;
     RaycastBullet();
     PlayFireAnimation();
+    _instancingPlayerCombatCoreScript.Weapon_RaiseAmmoChangedEvent();
     _audioSource.PlayOneShot(_fireSound, 1f);
     _ammoLoaded = false;
   }
@@ -180,7 +183,9 @@ public class BoltgunScript : WeaponScript
     return _playerAnimator.GetNextAnimatorStateInfo(_playerAnimator.GetLayerIndex(_animationLayerName)).length;
   }
 
-  public override (float, float) GetAmmo {
-    get { return (_ammoLoaded ? 1 : 0, 1); }
+  public override (int, int) GetAmmo {
+    get {
+      return (_ammoLoaded ? 1 : 0, 1);
+    }
   }
 }

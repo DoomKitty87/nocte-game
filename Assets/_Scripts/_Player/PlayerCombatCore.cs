@@ -151,6 +151,24 @@ public class PlayerCombatCore : MonoBehaviour
 		_weaponInventory.Clear();
 	}
 
+	// Ammo Helpers
+	public bool WeaponUsesAmmo() {
+		if (_equippedSlotIndex == -1) return false;
+		if (GetAmmo() == (-1, -1)) return false;
+		return true;
+	}
+	public (int, int) GetAmmo() {
+		if (_equippedSlotIndex == -1) return (-1, -1);
+		return _weaponInventory[_equippedSlotIndex]._weaponInstance.GetComponent<WeaponScript>().GetAmmo;
+	}
+	public void Weapon_RaiseAmmoChangedEvent() {
+		(int, int) _ = GetAmmo();
+		AmmoChanged?.Invoke(_.Item1, _.Item2);
+	}
+	
+	public delegate void OnAmmoChanged(int currentAmmo, int maxAmmo);
+	public event OnAmmoChanged AmmoChanged;
+	
 	// Controlling =============================================================
 	
 	private PlayerInput _input;

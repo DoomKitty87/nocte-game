@@ -25,6 +25,9 @@ public abstract class WeaponScript : MonoBehaviour
   // float = time to wait for animations
   public abstract float OnEquip();
   public abstract float OnUnequip();
-
-  public virtual (float, float) GetAmmo { get {return (-1, -1);} }
+  public virtual (int, int) GetAmmo {
+    get {
+      return (-1, -1);
+    }
+  }
 }
