@@ -11,7 +11,7 @@ public class Interactable : MonoBehaviour
     if (_interactTrigger == null) {
       Debug.LogError($"Interactable is lacking a trigger collider! Assign one in the inspector of {gameObject.name}");
     }
-    _interactTrigger.isTrigger = true;
+    _interactTrigger.isTrigger = false;
   }
 
   public void Interact() {
