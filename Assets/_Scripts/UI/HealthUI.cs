@@ -28,7 +28,7 @@ public class HealthUI : MonoBehaviour
       time += Time.deltaTime;
       yield return null;
     }
-    _healthNumber.text = $"{currentHealth} HP";
+    _healthNumber.text = $"{Mathf.FloorToInt(currentHealth)} HP";
     _healthBar.fillAmount = currentHealth / maxHealth;
     _changingHealth = false;
   }
