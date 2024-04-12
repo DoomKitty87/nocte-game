@@ -3518,8 +3518,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4678761156688045521}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 1.4899998, y: 1.2499771, z: -2.7499995}
+  m_LocalRotation: {x: 0.041410133, y: 0.89051795, z: -0.4454354, w: 0.08276673}
+  m_LocalPosition: {x: -11.843667, y: 2.8928509, z: -3.327804}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -3558,7 +3558,7 @@ Camera:
     height: 1
   near clip plane: 0.1
   far clip plane: 50000
-  field of view: 60.000004
+  field of view: 60
   orthographic: 0
   orthographic size: 10
   m_Depth: 0
@@ -6292,8 +6292,8 @@ GameObject:
   - component: {fileID: 8957003776507278256}
   - component: {fileID: 8148235295331429381}
   - component: {fileID: 8138816276790180206}
-  - component: {fileID: 1977628771273771726}
   - component: {fileID: 4215732099380700499}
+  - component: {fileID: 2833376498612640995}
   m_Layer: 3
   m_Name: Player
   m_TagString: Player
@@ -6789,21 +6789,6 @@ MonoBehaviour:
   _highlightPrefab: {fileID: 9211848124300870667, guid: 29d78367b002c4b4baa63c9bc3e1d58d,
     type: 3}
   _highlightParent: {fileID: 7856351968384318760}
---- !u!114 &1977628771273771726
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8882617855007737160}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e0417218eb5aeb64f84110631930d716, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _highlightPrefab: {fileID: 9211848124300870667, guid: 29d78367b002c4b4baa63c9bc3e1d58d,
-    type: 3}
-  _highlightParent: {fileID: 7856351968384318760}
 --- !u!82 &4215732099380700499
 AudioSource:
   m_ObjectHideFlags: 0
@@ -6901,6 +6886,23 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!114 &2833376498612640995
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8882617855007737160}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8f8c0fe7f96f66046a5d3108466fa2dd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  PromptText: Interact
+  _interactTrigger: {fileID: 0}
+  InteractedWith:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &8918270578906605212
 GameObject:
   m_ObjectHideFlags: 0
