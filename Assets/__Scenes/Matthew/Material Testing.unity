@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 4400.934, g: 2885.085, b: 2207.8386, a: 1}
+  m_IndirectSpecularColor: {r: 4428.1606, g: 2875.7834, b: 2116.0784, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -451,6 +451,12 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 7338410974540940135, guid: 9251f6c58d15c7b428fef40ec34ce952,
+        type: 3}
+      propertyPath: m_Material
+      value: 
+      objectReference: {fileID: 13400000, guid: 211008a8d74ef496280746c887bfe194,
+        type: 2}
     - target: {fileID: 8006249604740443719, guid: 9251f6c58d15c7b428fef40ec34ce952,
         type: 3}
       propertyPath: field of view
@@ -583,7 +589,11 @@ MonoBehaviour:
   _moveState: 0
   _procGen: {fileID: 0}
   _delayGroundCheckAfterJumpUpdates: 8
+  _groundCheckDelay: 0
+  _lastInputVector: {x: 0, y: 0, z: 0}
   _timeSinceLastDirectionChange: 0
+  _accel: {x: 0, y: 0, z: 0}
+  _hasInitialized: 0
 --- !u!114 &318149743
 MonoBehaviour:
   m_ObjectHideFlags: 0
