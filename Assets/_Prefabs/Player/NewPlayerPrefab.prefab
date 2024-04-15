@@ -689,8 +689,8 @@ GameObject:
   m_Component:
   - component: {fileID: 8809172478394198058}
   - component: {fileID: 9021792859127111707}
-  - component: {fileID: 386492169325461380}
   - component: {fileID: 6997687232153456373}
+  - component: {fileID: 8141947972617600291}
   m_Layer: 0
   m_Name: Interact Prompt
   m_TagString: Untagged
@@ -715,8 +715,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: -150}
-  m_SizeDelta: {x: 100, y: 30}
+  m_AnchoredPosition: {x: 0, y: -50}
+  m_SizeDelta: {x: 150, y: 40}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &9021792859127111707
 CanvasRenderer:
@@ -726,36 +726,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 781548260537375034}
   m_CullTransparentMesh: 1
---- !u!114 &386492169325461380
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 781548260537375034}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Material: {fileID: 0}
-  m_Color: {r: 0.206, g: 0.206, b: 0.206, a: 0.8352941}
-  m_RaycastTarget: 1
-  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
-  m_Maskable: 1
-  m_OnCullStateChanged:
-    m_PersistentCalls:
-      m_Calls: []
-  m_Sprite: {fileID: 0}
-  m_Type: 0
-  m_PreserveAspect: 0
-  m_FillCenter: 1
-  m_FillMethod: 4
-  m_FillAmount: 1
-  m_FillClockwise: 1
-  m_FillOrigin: 0
-  m_UseSpriteMesh: 0
-  m_PixelsPerUnitMultiplier: 1
 --- !u!225 &6997687232153456373
 CanvasGroup:
   m_ObjectHideFlags: 0
@@ -768,6 +738,32 @@ CanvasGroup:
   m_Interactable: 1
   m_BlocksRaycasts: 1
   m_IgnoreParentGroups: 0
+--- !u!114 &8141947972617600291
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 781548260537375034}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 30649d3a9faa99c48a7b1166b86bf2a0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Padding:
+    m_Left: 0
+    m_Right: 0
+    m_Top: 0
+    m_Bottom: 0
+  m_ChildAlignment: 4
+  m_Spacing: 0
+  m_ChildForceExpandWidth: 1
+  m_ChildForceExpandHeight: 1
+  m_ChildControlWidth: 0
+  m_ChildControlHeight: 0
+  m_ChildScaleWidth: 0
+  m_ChildScaleHeight: 0
+  m_ReverseArrangement: 0
 --- !u!1 &793387505232187912
 GameObject:
   m_ObjectHideFlags: 0
@@ -2108,7 +2104,6 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 4405197145562226085}
-  - {fileID: 1119496564599959337}
   - {fileID: 2869654243351628507}
   m_Father: {fileID: 7579844485692665664}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -3117,9 +3112,9 @@ RectTransform:
   m_Father: {fileID: 8809172478394198058}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 1, y: 1}
+  m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: -10, y: -10}
+  m_SizeDelta: {x: 93.95038, y: 40}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &1977819428702241508
 CanvasRenderer:
@@ -3151,8 +3146,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: INTERACT
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 39103ad5e3c05a7418868a059d25e473, type: 2}
-  m_sharedMaterial: {fileID: 4014546770960750401, guid: 39103ad5e3c05a7418868a059d25e473,
+  m_fontAsset: {fileID: 11400000, guid: df4190ada2b20e547834ac912ea8199b, type: 2}
+  m_sharedMaterial: {fileID: 2655694389454996413, guid: df4190ada2b20e547834ac912ea8199b,
     type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
@@ -3177,17 +3172,17 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 15.35
+  m_fontSize: 14.7
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1
   m_fontSizeMin: 0
   m_fontSizeMax: 72
-  m_fontStyle: 0
+  m_fontStyle: 1
   m_HorizontalAlignment: 2
   m_VerticalAlignment: 512
   m_textAlignment: 65535
-  m_characterSpacing: 0
+  m_characterSpacing: 20
   m_wordSpacing: 0
   m_lineSpacing: 0
   m_lineSpacingMax: 0
@@ -3518,8 +3513,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4678761156688045521}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.041410133, y: 0.89051795, z: -0.4454354, w: 0.08276673}
-  m_LocalPosition: {x: -11.843667, y: 2.8928509, z: -3.327804}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 1.4899998, y: 1.2499771, z: -2.7499995}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -3558,7 +3553,7 @@ Camera:
     height: 1
   near clip plane: 0.1
   far clip plane: 50000
-  field of view: 60
+  field of view: 60.000004
   orthographic: 0
   orthographic size: 10
   m_Depth: 0
@@ -5939,6 +5934,7 @@ MonoBehaviour:
   _playerCombatCore: {fileID: 8957003776507278256}
   _ammoText: {fileID: 8029363306756054561}
   _ammoFill: {fileID: 231526252952957160}
+  _fillAnimateTime: 0.3
 --- !u!1 &8712650310995601662
 GameObject:
   m_ObjectHideFlags: 0
@@ -6316,6 +6312,7 @@ Transform:
   - {fileID: 3668390507169330137}
   - {fileID: 8737222161639352964}
   - {fileID: 6499379936886537626}
+  - {fileID: 1119496564599959337}
   m_Father: {fileID: 2882977137503334130}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!54 &3949705286327227039
@@ -7048,7 +7045,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 6499379936886537626}
+  m_Father: {fileID: 7579844485692665664}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &7979044690947584134
 MonoBehaviour:
@@ -7064,7 +7061,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _interactPromptOverlay: {fileID: 8809172478394198058}
   _interactCanvasGroup: {fileID: 6997687232153456373}
-  _interactWorldRange: 20
+  _interactWorldRange: 2
   _lookingAngleDifference: 5
   _interactLayerMask:
     serializedVersion: 2

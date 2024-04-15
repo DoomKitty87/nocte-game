@@ -92,7 +92,12 @@ public class InteractHandler : MonoBehaviour
       yield return null;
     }
   }
-  
+
+  private void CheckAndCallHoverEnd() {
+    if (_lastSelected == null || _calledEnd) return;
+    _lastSelected.GetComponent<Interactable>().HoverEnd();
+    _calledEnd = true;
+  }
   
   void Start()
   {
@@ -104,20 +109,41 @@ public class InteractHandler : MonoBehaviour
     _interactCanvasGroup.alpha = 0;
   }
 
-  private void Update() {
+  
+  // This sucks and is hard to read but its just how update loop logic goes
+  // I don't want to put in the effort to make this more readable
+  private GameObject _lastSelected;
+  private bool _calledStart = false;
+  private bool _calledEnd = false;
+  private void LateUpdate() {
     _interactibles = ReturnInteractablesInRange(_interactWorldRange);
     if (_interactibles.Count < 1) {
+      CheckAndCallHoverEnd();
+      _calledStart = false;
       _interactCanvasGroup.alpha = 0;
       return;
     }
     int closestIndex = GetClosestToViewInteractableIndex();
     if (closestIndex == -1) {
+      CheckAndCallHoverEnd();
       _interactCanvasGroup.alpha = 0;
+      _calledStart = false;
       return;
     }
     GameObject selected = _interactibles[closestIndex];
-    UpdateOverlayPosition(selected.transform.position);
+    // UpdateOverlayPosition(selected.transform.position);
     _interactCanvasGroup.alpha = 1;
+    if (_lastSelected != selected) {
+      _calledEnd = false;
+      CheckAndCallHoverEnd();
+      _calledStart = false;
+    }
+    if (!_calledStart) {
+      selected.GetComponent<Interactable>().HoverStart();
+      _calledStart = true;
+      _calledEnd = false;
+    }
+    _lastSelected = selected;
   }
 
   private void OnDrawGizmos() {

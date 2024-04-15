@@ -7,7 +7,7 @@ Shader "Custom/Outline/ExpandMaskAndCompositeOutline"
     
     Properties
     {
-        _OutlineWidth("Outline Width", Range(0, 3)) = 0.1
+        _OutlineWidth("Outline Width", Range(0, 10)) = 3
         _InsideOutlineColor("Inside Outline Color", Color) = (0, 0, 0, 0)
         _TakeDiagonalSamples("Take Diagonal Samples", Range(0, 1)) = 1
     }
