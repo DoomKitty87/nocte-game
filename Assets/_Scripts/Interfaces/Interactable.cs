@@ -20,12 +20,10 @@ public class Interactable : MonoBehaviour
 
   public void HoverStart() {
     OnHoverStart?.Invoke();
-    print($"Hover start for {gameObject.name}");
   }
   
   public void HoverEnd() {
     OnHoverEnd?.Invoke();
-    print($"Hover end for {gameObject.name}");
   }
   
   public void Interact() {
