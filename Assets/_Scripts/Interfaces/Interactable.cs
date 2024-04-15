@@ -20,10 +20,12 @@ public class Interactable : MonoBehaviour
 
   public void HoverStart() {
     OnHoverStart?.Invoke();
+    gameObject.layer = LayerMask.NameToLayer("Outlined");
   }
   
   public void HoverEnd() {
     OnHoverEnd?.Invoke();
+    gameObject.layer = LayerMask.NameToLayer("Default");
   }
   
   public void Interact() {
