@@ -68,7 +68,7 @@ public class InteractHandler : MonoBehaviour
     _interactibles = ReturnInteractablesInRange(_interactWorldRange);
     if (_interactibles.Count < 1) return;
     GameObject selected = _interactibles[GetClosestToViewInteractableIndex()];
-    
+    selected.GetComponent<Interactable>().Interact();
   }
 
   private IEnumerator FadeInOverlay() {
