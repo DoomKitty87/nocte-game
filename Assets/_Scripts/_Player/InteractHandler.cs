@@ -12,6 +12,7 @@ public class InteractHandler : MonoBehaviour
   [Header("Critical Settings")]
   [SerializeField] private RectTransform _interactPromptOverlay;
   [SerializeField] private CanvasGroup _interactCanvasGroup;
+  [SerializeField] private TextMeshProUGUI _promptText;
   [SerializeField] private float _interactWorldRange;
   [SerializeField][Range(0, 90)] private float _lookingAngleDifference = 5f;
   [SerializeField] private LayerMask _interactLayerMask;
@@ -142,6 +143,10 @@ public class InteractHandler : MonoBehaviour
       selected.GetComponent<Interactable>().HoverStart();
       _calledStart = true;
       _calledEnd = false;
+    }
+
+    if (selected != null) {
+      _promptText.text = selected.GetComponent<Interactable>().PromptText;
     }
     _lastSelected = selected;
   }
