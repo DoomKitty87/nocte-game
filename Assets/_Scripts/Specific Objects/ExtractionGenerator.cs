@@ -12,8 +12,12 @@ public class ExtractionGenerator : MonoBehaviour
 
   [SerializeField] private Transform _lever;
 
+  private bool _used = false;
+
   public void Interacted() {
+    if (_used) return;
     ExtractionSiteManager.Instance.ActivateExtractor(_extractorIndex);
+    _used = true;
     StartCoroutine(Animation());
   }
 
