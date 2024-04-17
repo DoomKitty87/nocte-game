@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.VFX;
 using System.Collections;
 using Unity.Cinemachine;
 using Foliage;
@@ -20,6 +21,7 @@ public class EntryAnimationHandler : MonoBehaviour
   [SerializeField] private float _dropRange = 250.0f;
 
   [SerializeField] private GameObject[] _disableOnFinish;
+  [SerializeField] private VisualEffect _entryEffect;
 
   private Vector3 _startingPosition;
   private Vector3 _landingPosition;
@@ -102,6 +104,9 @@ public class EntryAnimationHandler : MonoBehaviour
     foreach (GameObject go in _disableOnFinish) {
       go.SetActive(false);
     }
+    _entryEffect.SetBool("Landed", true);
+    _entryEffect.SendEvent("OnLand");
+
     _camera.enabled = false;
     _uiCanvas.SetActive(true);
     PlayerWorldGeneratorCompatibility._entryAnimationFinished = true;
