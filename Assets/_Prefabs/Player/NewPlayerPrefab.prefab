@@ -6344,7 +6344,6 @@ GameObject:
   - component: {fileID: 8148235295331429381}
   - component: {fileID: 8138816276790180206}
   - component: {fileID: 4215732099380700499}
-  - component: {fileID: 3982905021232346088}
   m_Layer: 3
   m_Name: Player
   m_TagString: Player
@@ -6939,31 +6938,6 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
---- !u!114 &3982905021232346088
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8882617855007737160}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d892e4bdc18404fda98b5f60f1133078, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _audioSource: {fileID: 4215732099380700499}
-  _footstepTypes:
-  - _materialID: Dirt
-    _footstepSounds:
-    - {fileID: 8300000, guid: 64bd5052c40d3a24fb82174e512d676a, type: 3}
-    - {fileID: 8300000, guid: 3cda3de0c624e414b9ff473bf63b2bd7, type: 3}
-    - {fileID: 8300000, guid: 596732f7372c3ec4192fc2057b85adaf, type: 3}
-    _groundNormalYValue: 0.7
-    _normalTest: 0
-    _materialLayer:
-      serializedVersion: 2
-      m_Bits: 64
-    _materialTag: Ground
 --- !u!1 &8918270578906605212
 GameObject:
   m_ObjectHideFlags: 0
@@ -8219,6 +8193,10 @@ PrefabInstance:
         type: 3}
       insertIndex: -1
       addedObject: {fileID: 8859849698827991121}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 82a0757253967f043a0448a9d8c0a8bd,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 8741855765979077585}
   m_SourcePrefab: {fileID: 100100000, guid: 82a0757253967f043a0448a9d8c0a8bd, type: 3}
 --- !u!4 &68480037123447279 stripped
 Transform:
@@ -8462,6 +8440,61 @@ MonoBehaviour:
   - {fileID: 4571473194517039381}
   - {fileID: 5489585077950035574}
   - {fileID: 2622164913170371357}
+--- !u!114 &8741855765979077585
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 221014850216961779}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d892e4bdc18404fda98b5f60f1133078, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _audioSource: {fileID: 4215732099380700499}
+  _footstepTypes:
+  - _materialID: Dirt
+    _footstepSounds:
+    - {fileID: 8300000, guid: 64bd5052c40d3a24fb82174e512d676a, type: 3}
+    - {fileID: 8300000, guid: 3cda3de0c624e414b9ff473bf63b2bd7, type: 3}
+    - {fileID: 8300000, guid: 596732f7372c3ec4192fc2057b85adaf, type: 3}
+    - {fileID: 8300000, guid: acd8343ce7df9bd4d8ca006835a1445a, type: 3}
+    - {fileID: 8300000, guid: e7a94d29a547d884d84fa34aa3c97c99, type: 3}
+    - {fileID: 8300000, guid: 0330b6ccdb146354f8b9393c1c75db5f, type: 3}
+    - {fileID: 8300000, guid: 96adb9294dab3e344b1723bf677d25a8, type: 3}
+    - {fileID: 8300000, guid: a1ca093d2d3c51c4786125c067d7943d, type: 3}
+    - {fileID: 8300000, guid: b546efa1a0e43594bb318addaf7c111e, type: 3}
+    - {fileID: 8300000, guid: 6a340bb65da2f7044bd9bfafaaa1f529, type: 3}
+    - {fileID: 8300000, guid: 5375dda56596cb04bba6ff5133cd6959, type: 3}
+    - {fileID: 8300000, guid: 3448e4a0d7c47964fa5f7d5b0893ee47, type: 3}
+    - {fileID: 8300000, guid: 14885357287790f40a10133fec2a87e9, type: 3}
+    _groundNormalYValue: 0.7
+    _normalTest: 0
+    _materialLayer:
+      serializedVersion: 2
+      m_Bits: 64
+    _materialTag: Ground
+  - _materialID: Concrete
+    _footstepSounds:
+    - {fileID: 8300000, guid: 0d9fc39b50de5ef47a0d9f7cabbe662c, type: 3}
+    - {fileID: 8300000, guid: c4b779a9ca1dbd043b51e20f60723519, type: 3}
+    - {fileID: 8300000, guid: 8a742f687f83a904ebc3c1bfb652fbf9, type: 3}
+    - {fileID: 8300000, guid: 07cc5982e2ec7c2448c722b1d32bfe31, type: 3}
+    - {fileID: 8300000, guid: 055eb575a285d554891f2ab50cce132b, type: 3}
+    - {fileID: 8300000, guid: bc9f57e97466cb445b59ff433593fb68, type: 3}
+    - {fileID: 8300000, guid: a18a46a81cb041b478de493fb9584d41, type: 3}
+    - {fileID: 8300000, guid: b0d7038559dfc0d40a96ca19fc7347cf, type: 3}
+    - {fileID: 8300000, guid: 488332a3965a00f4f94a51f9bad40d4e, type: 3}
+    _groundNormalYValue: 0
+    _normalTest: 0
+    _materialLayer:
+      serializedVersion: 2
+      m_Bits: 64
+    _materialTag: Untagged
+  _footTransforms:
+  - {fileID: 2308816769415544499}
+  - {fileID: 5284869741239365937}
 --- !u!4 &249377129342598848 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 911324894319076706, guid: 82a0757253967f043a0448a9d8c0a8bd,

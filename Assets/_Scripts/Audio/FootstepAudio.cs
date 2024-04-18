@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting.FullSerializer;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -38,16 +39,16 @@ public class FootstepType
         bool correctNormal;
         switch (_normalTest) {
             case NormalTest.GreaterThan:
-                correctNormal = _groundNormalYValue > hit.normal.y;
-                break;
-            case NormalTest.LessThan:
                 correctNormal = _groundNormalYValue < hit.normal.y;
                 break;
+            case NormalTest.LessThan:
+                correctNormal = _groundNormalYValue > hit.normal.y;
+                break;
             case NormalTest.GreaterThanOrEqual:
-                correctNormal = _groundNormalYValue >= hit.normal.y;
+                correctNormal = _groundNormalYValue <= hit.normal.y;
                 break;
             case NormalTest.LessThanOrEqual:
-                correctNormal = _groundNormalYValue <= hit.normal.y;
+                correctNormal = _groundNormalYValue >= hit.normal.y;
                 break;
             default:
                 correctNormal = false;
@@ -67,6 +68,7 @@ public class FootstepAudio : MonoBehaviour
     [Header("Dependencies")] 
     [SerializeField] private AudioSource _audioSource;
     [SerializeField] private List<FootstepType> _footstepTypes;
+    [SerializeField] private List<Transform> _footTransforms;
     
     private void Start() {
         if (_audioSource == null || _footstepTypes.Count < 1) {
@@ -74,9 +76,15 @@ public class FootstepAudio : MonoBehaviour
         }
     }
 
-    public void CallFootstep(Transform _footTranform) {
+    public void CallFootstep(int footID) {
+        if (footID >= _footTransforms.Count || footID < 0) {
+            Debug.LogError("FootstepAudio: CallFootstep invoked with invalid footID!");
+        }
+        if (_footTransforms.Count < 1) {
+            Debug.LogError("FootstepAudio: FootTransforms array is empty! Assign positions in the array.");
+        }
         foreach (FootstepType type in _footstepTypes) {
-            if (type.OnMaterial(_footTranform.position)) {
+            if (type.OnMaterial(_footTransforms[footID].position)) {
                 _audioSource.PlayOneShot(type.GetRandomFootstep());
                 break;
             }
