@@ -36,7 +36,6 @@ namespace Foliage
     private void Awake() {
       InstanceFoliageHandler = this;
       Instance = this.transform;
-      WorldGenerator.GenerationComplete += Initialize;
       FoliagePool._pool = new Dictionary<FoliageScriptable, List<GameObject>>();
     }
 
@@ -49,6 +48,8 @@ namespace Foliage
     }
 
     private void Start() {
+      WorldGenerator.GenerationComplete += Initialize;
+      
       _scriptables = Resources.LoadAll<FoliageScriptable>("FoliageObjects");
 
       for (int i = 0; i < _scriptables.Length; i++) {

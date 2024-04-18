@@ -24,7 +24,9 @@ public class GrassDrawIndirect : MonoBehaviour
   private void Awake() {
     Instance = this;
     if (_chunkCount % 2 == 0) _chunkCount++;
+  }
 
+  private void Start() {
     WorldGenerator.GenerationComplete += Initialize;
   }
 
