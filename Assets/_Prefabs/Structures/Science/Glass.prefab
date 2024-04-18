@@ -33179,8 +33179,8 @@ GameObject:
   - component: {fileID: 2112879563306548311}
   - component: {fileID: 1381295590048389362}
   - component: {fileID: 4638551169819578094}
-  - component: {fileID: 342715704021291409}
   - component: {fileID: 8779323662263667896}
+  - component: {fileID: 5766713707802296818}
   m_Layer: 0
   m_Name: Unbroken Glass
   m_TagString: Untagged
@@ -33255,8 +33255,20 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!64 &342715704021291409
-MeshCollider:
+--- !u!114 &8779323662263667896
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7370345552620634306}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 092a6f0cec3e4c3478c6238fe65c72d0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!65 &5766713707802296818
+BoxCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -33273,22 +33285,9 @@ MeshCollider:
   m_IsTrigger: 0
   m_ProvidesContacts: 0
   m_Enabled: 1
-  serializedVersion: 5
-  m_Convex: 0
-  m_CookingOptions: 30
-  m_Mesh: {fileID: -2979635169503437721, guid: 837953bb9e0b5de4d8f0ad546f3efef5, type: 3}
---- !u!114 &8779323662263667896
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7370345552620634306}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 092a6f0cec3e4c3478c6238fe65c72d0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
+  serializedVersion: 3
+  m_Size: {x: 2, y: 1.9999993, z: 2.000005}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &7425213816438806426
 GameObject:
   m_ObjectHideFlags: 0
