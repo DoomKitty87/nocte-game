@@ -3553,7 +3553,7 @@ Camera:
     height: 1
   near clip plane: 0.1
   far clip plane: 50000
-  field of view: 60
+  field of view: 60.000004
   orthographic: 0
   orthographic size: 10
   m_Depth: 0
@@ -6951,8 +6951,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d892e4bdc18404fda98b5f60f1133078, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _audioSource: {fileID: 0}
-  _footstepTypes: []
+  _audioSource: {fileID: 4215732099380700499}
+  _footstepTypes:
+  - _materialID: Dirt
+    _footstepSounds:
+    - {fileID: 8300000, guid: 64bd5052c40d3a24fb82174e512d676a, type: 3}
+    - {fileID: 8300000, guid: 3cda3de0c624e414b9ff473bf63b2bd7, type: 3}
+    - {fileID: 8300000, guid: 596732f7372c3ec4192fc2057b85adaf, type: 3}
+    _groundNormalYValue: 0.7
+    _normalTest: 0
+    _materialLayer:
+      serializedVersion: 2
+      m_Bits: 64
+    _materialTag: Ground
 --- !u!1 &8918270578906605212
 GameObject:
   m_ObjectHideFlags: 0

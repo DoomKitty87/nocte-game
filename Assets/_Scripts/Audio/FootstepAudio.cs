@@ -68,6 +68,18 @@ public class FootstepAudio : MonoBehaviour
     [SerializeField] private AudioSource _audioSource;
     [SerializeField] private List<FootstepType> _footstepTypes;
     
-    
+    private void Start() {
+        if (_audioSource == null || _footstepTypes.Count < 1) {
+            Debug.LogError("FootstepAudio: Please assign references!");
+        }
+    }
 
+    public void CallFootstep(Transform _footTranform) {
+        foreach (FootstepType type in _footstepTypes) {
+            if (type.OnMaterial(_footTranform.position)) {
+                _audioSource.PlayOneShot(type.GetRandomFootstep());
+                break;
+            }
+        }
+    }
 }
