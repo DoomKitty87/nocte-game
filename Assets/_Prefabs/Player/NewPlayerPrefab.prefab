@@ -690,7 +690,7 @@ GameObject:
   - component: {fileID: 8809172478394198058}
   - component: {fileID: 9021792859127111707}
   - component: {fileID: 6997687232153456373}
-  - component: {fileID: 8141947972617600291}
+  - component: {fileID: 795875518966463365}
   m_Layer: 0
   m_Name: Interact Prompt
   m_TagString: Untagged
@@ -738,7 +738,7 @@ CanvasGroup:
   m_Interactable: 1
   m_BlocksRaycasts: 1
   m_IgnoreParentGroups: 0
---- !u!114 &8141947972617600291
+--- !u!114 &795875518966463365
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1407,8 +1407,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1198251880453041267}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 1.4899998, y: 1.2499771, z: -2.7499995}
+  m_LocalRotation: {x: -0, y: 0.000000004916069, z: -0, w: 1}
+  m_LocalPosition: {x: 0.7599001, y: 1.2499771, z: -2.4}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1470,9 +1470,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Damping: {x: 0.1, y: 0.5, z: 0.3}
-  ShoulderOffset: {x: 1.49, y: 0.73, z: -0.15}
+  ShoulderOffset: {x: 1.49, y: 0.73, z: 0.2}
   VerticalArmLength: 0.52
-  CameraSide: 1
+  CameraSide: 0.755
   CameraDistance: 2.6
   AvoidObstacles:
     Enabled: 0
@@ -3513,8 +3513,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4678761156688045521}
   serializedVersion: 2
-  m_LocalRotation: {x: -0.041665625, y: -0.88914675, z: 0.4481658, w: -0.08264017}
-  m_LocalPosition: {x: -7.12, y: 0.17000008, z: -3.327804}
+  m_LocalRotation: {x: -0, y: 0.000000004916069, z: -0, w: 1}
+  m_LocalPosition: {x: 0.7599001, y: 1.2499771, z: -2.4}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -4405,7 +4405,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5770905137072910298}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 910c61ca066e14b5b9c35215c68e7bb7, type: 3}
   m_Name: 
@@ -6344,6 +6344,7 @@ GameObject:
   - component: {fileID: 8148235295331429381}
   - component: {fileID: 8138816276790180206}
   - component: {fileID: 4215732099380700499}
+  - component: {fileID: 3982905021232346088}
   m_Layer: 3
   m_Name: Player
   m_TagString: Player
@@ -6938,6 +6939,20 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!114 &3982905021232346088
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8882617855007737160}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d892e4bdc18404fda98b5f60f1133078, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _audioSource: {fileID: 0}
+  _footstepTypes: []
 --- !u!1 &8918270578906605212
 GameObject:
   m_ObjectHideFlags: 0
