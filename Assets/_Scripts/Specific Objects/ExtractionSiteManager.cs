@@ -1,11 +1,16 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 public class ExtractionSiteManager : MonoBehaviour
 {
 
   public static ExtractionSiteManager Instance {get; private set;}
+
+  [SerializeField] private TextMeshProUGUI _statusText;
+
+  [SerializeField] private TextMeshProUGUI[] _extractorStatus;
 
   private bool[] extractorsActive = new bool[3] {false, false, false};
   private int extractorsActiveCount = 0;
@@ -17,6 +22,8 @@ public class ExtractionSiteManager : MonoBehaviour
   public void ActivateExtractor(int index) {
     if (extractorsActive[index]) return;
     extractorsActive[index] = true;
+    _extractorStatus[index].text = "EXTRACTOR " + index
+    + " ACTIVE";
     extractorsActiveCount++;
     if (extractorsActiveCount == 3) {
       GeneratorActivated();
@@ -24,7 +31,8 @@ public class ExtractionSiteManager : MonoBehaviour
   }
 
   private void GeneratorActivated() {
-    PlayerMetaProgression.Instance.ObtainBlueprint(0);
+    _statusText.text = "EXTRACTORS ONLINE\nGENERATOR ONLINE";
+    PlayerMetaProgression.Instance.ObtainBlueprint(3);
     // Animation or whatever
     Debug.Log("Generator activated; player obtained Utility Blueprint (Grappling Hook)");
   }

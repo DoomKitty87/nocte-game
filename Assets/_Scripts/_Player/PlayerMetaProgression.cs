@@ -102,6 +102,7 @@ public class PlayerMetaProgression : MonoBehaviour
 
   public void ObtainBlueprint(int index) {
     _progression.blueprints[index].owned = true;
+    SaveData();
   }
 
   public bool[] GetAvailableBlueprints() {
