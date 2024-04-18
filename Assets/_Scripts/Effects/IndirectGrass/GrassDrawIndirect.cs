@@ -31,6 +31,7 @@ public class GrassDrawIndirect : MonoBehaviour
   }
 
   private void OnDisable() {
+    Instance = null;
     WorldGenerator.GenerationComplete -= Initialize;
     WorldGenerator.PlayerMove -= UpdatePlayerPosition;
   }

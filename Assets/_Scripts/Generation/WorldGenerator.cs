@@ -318,9 +318,9 @@ public class WorldGenerator : MonoBehaviour
   }
 
   private void Awake() {
-    foreach (var d in GenerationComplete.GetInvocationList()) {
+    if (GenerationComplete != null) { foreach (var d in GenerationComplete.GetInvocationList()) {
       GenerationComplete -= (d as OnGenerationComplete);
-    }
+    }}
     _seed = DateTime.Now.Millisecond;
     if (_tileCount % 2 == 0) {
       _tileCount++;

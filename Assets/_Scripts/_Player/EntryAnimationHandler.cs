@@ -90,14 +90,14 @@ public class EntryAnimationHandler : MonoBehaviour
     }
 
     _landingPosition = new Vector3(landPos.x, WorldGenInfo._worldGenerator.GetHeightValue(landPos), landPos.y);
-    GrassDrawIndirect.Instance.UpdatePlayerPosition(landPos);
-    FoliageHandler.InstanceFoliageHandler?.UpdatePlayerPosition(landPos);
     _dropPosition = _landingPosition;
     Connection._centerPosition = landPos;
     _startingPosition = _landingPosition + Quaternion.Euler(_entryAngle, 0, 0) * new Vector3(0, _entryHeight, 0);
     _landingPod.position = _startingPosition;
     _landingPod.rotation = Quaternion.Euler(_entryAngle, 0, 0);
     _animating = true;
+    GrassDrawIndirect.Instance?.UpdatePlayerPosition(landPos);
+    FoliageHandler.InstanceFoliageHandler?.UpdatePlayerPosition(landPos);
   }
   
   private void Done() {

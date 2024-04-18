@@ -1,3 +1,4 @@
+using Foliage;
 using UnityEngine;
 using UnityEngine.VFX;
 
@@ -21,7 +22,7 @@ public class PlayerWorldGeneratorCompatibility : MonoBehaviour
 
     private void Start() {
       _worldGeneratorObject = WorldGenInfo._worldGenerator;
-  
+    
       _playerController._disableMovement = true;
       if (_worldGeneratorObject == null && _ignoreLackOfWorldGenerator) {
         EnablePlayer();

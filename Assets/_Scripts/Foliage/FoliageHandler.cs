@@ -40,6 +40,7 @@ namespace Foliage
     }
 
     private void OnDisable() {
+      Instance = null;
       InstanceFoliageHandler = null;
       WorldGenerator.GenerationComplete -= Initialize;
       WorldGenerator.PlayerMove -= UpdatePlayerPosition;
