@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 352.59747, g: 139.81801, b: 65.29459, a: 1}
+  m_IndirectSpecularColor: {r: 346.10333, g: 137.53188, b: 63.807293, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -5700,6 +5700,11 @@ PrefabInstance:
       propertyPath: m_LocalRotation.z
       value: 0.4481658
       objectReference: {fileID: 0}
+    - target: {fileID: 9222094017749289078, guid: 9251f6c58d15c7b428fef40ec34ce952,
+        type: 3}
+      propertyPath: _rain
+      value: 
+      objectReference: {fileID: 1919250534}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -6914,6 +6919,7 @@ MonoBehaviour:
   _worldGen: {fileID: 4258144910533491457}
   _structureRenderDistance: 1500
   _chunkStructureChance: 1
+  _chunkStructureAttempts: 3
   _availableStructures:
   - {fileID: 8822680120617020803, guid: 11fd3de349e270f44a20d64c6aa5b82d, type: 3}
   - {fileID: 7301654918860019335, guid: 1afbf1bd0ad244c4e8bfc1e6e60b4d9d, type: 3}
