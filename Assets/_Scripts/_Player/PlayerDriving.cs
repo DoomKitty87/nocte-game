@@ -37,6 +37,7 @@ public class PlayerDriving : MonoBehaviour
   }
 
   private void TryEnterVehicle(InputAction.CallbackContext context) {
+    Debug.Log("Try to enter");
     if (_hasVehicle && !_inVehicle) {
       Debug.Log("Enter Vehicle");
       InputReader.Instance.EnableDriving();
