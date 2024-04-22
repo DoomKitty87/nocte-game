@@ -11,12 +11,12 @@ GameObject:
   - component: {fileID: 6630566905603145425}
   - component: {fileID: 2310969677547801627}
   - component: {fileID: 295211998266258139}
-  - component: {fileID: 2558354009116038741}
   - component: {fileID: 7005774451339244904}
   - component: {fileID: 7454635895247724828}
   - component: {fileID: 2241853167547969901}
   - component: {fileID: 4362584080177631383}
   - component: {fileID: 8892798865153843284}
+  - component: {fileID: 902200679222167695}
   m_Layer: 0
   m_Name: Coyote
   m_TagString: Untagged
@@ -91,29 +91,6 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!136 &2558354009116038741
-CapsuleCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1309179364605712187}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 0.5
-  m_Height: 2
-  m_Direction: 1
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &7005774451339244904
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -263,3 +240,25 @@ MonoBehaviour:
   _onHeal:
     m_PersistentCalls:
       m_Calls: []
+--- !u!64 &902200679222167695
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1309179364605712187}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 10208, guid: 0000000000000000e000000000000000, type: 0}

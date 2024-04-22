@@ -64,6 +64,8 @@ public class PlayerController : MonoBehaviour
     [Header("Ground")]
     [SerializeField, Tooltip("Layer for ground")] private LayerMask _groundMask;
     #endregion
+
+    [SerializeField] private Collider _collider2;
     
     #region Events
     public delegate void OnFreeze();
@@ -706,12 +708,14 @@ public class PlayerController : MonoBehaviour
         _rb.collisionDetectionMode = CollisionDetectionMode.Discrete;
         _rb.isKinematic = true;
         _collider.enabled = false;
+        _collider2.enabled = false;
     }
 
     private void EnableColliders() {
         _rb.isKinematic = false;
         _rb.collisionDetectionMode = CollisionDetectionMode.Continuous;
         _collider.enabled = true;
+        _collider2.enabled = true;
     }
     
     #endregion
