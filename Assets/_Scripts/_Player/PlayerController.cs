@@ -98,6 +98,7 @@ public class PlayerController : MonoBehaviour
     private float _timeSinceGrounded;
     private bool _jumpingActive;
     private float _currentUpwardJumpingForce;
+    private bool _firstFrameOffGround;
     
     private float _currentWaterHeight;
 
@@ -174,13 +175,15 @@ public class PlayerController : MonoBehaviour
     #region State Machine
     
     private void SetState(PlayerStates newState) {
+        if (_state == newState) return;
         
         // Exiting state
         switch (_state) {
             case PlayerStates.Air:
                 _resetJump = true;
-                // _jumpingActive = false;
-                // _currentUpwardJumpingForce = 0;
+                _jumpingActive = false;
+                _currentUpwardJumpingForce = 0;
+                _firstFrameOffGround = false;
                 break; 
             
             case PlayerStates.Grappling:
@@ -213,6 +216,10 @@ public class PlayerController : MonoBehaviour
 
         // Entering new state
         switch (_state) {
+            case PlayerStates.Air:
+                _firstFrameOffGround = true;
+                break;
+            
             case PlayerStates.Grappling:
                 _useVelocity = false;
                 break;
@@ -384,7 +391,9 @@ public class PlayerController : MonoBehaviour
         
         RotateModelOrientation(modelOrientation, rotationSpeed);
 
-        bool useFriction = true;
+        float dragCoefficient = 1f;
+        bool lockVelocityToNormal = false;
+        Vector3 normalVector = Vector3.zero;
         switch (State) {
             case PlayerStates.Walking: {
                 // Transform the input vector to the orientation's forward and right directions
@@ -458,7 +467,7 @@ public class PlayerController : MonoBehaviour
                     InitiateJump();
                 }
 
-                useFriction = false;
+                dragCoefficient = 0.2f;
 
                 break;
             }
@@ -480,6 +489,18 @@ public class PlayerController : MonoBehaviour
                 Vector3 inputDirection =
                     (_inputVector.x * rightDirection + _inputVector.z * forwardDirection).
                     normalized;
+
+                if (_firstFrameOffGround) {
+                    if (!_jumpingActive) {
+                        RaycastHit hit = new RaycastHit();
+                        if (CloseToGroundAndAngle(ref hit)) {
+                            transform.position = hit.point + (Vector3.up * 1.2f);
+                            lockVelocityToNormal = true;
+                            normalVector = hit.normal;
+                        }
+                    }
+                    _firstFrameOffGround = false;
+                }
                 
                 float control = _airControlCurve.Evaluate(Mathf.Clamp01(_timeSinceGrounded));
                 
@@ -518,14 +539,12 @@ public class PlayerController : MonoBehaviour
                     }
                 }
 
-                Debug.Log(_jumpingActive);
                 if (_jumpingActive && !_keyJumping) {
-                    Debug.Log("Down");
                     _acceleration -= Vector3.up * (_currentUpwardJumpingForce * 0.5f);
                     _jumpingActive = false;
-                } 
+                }
 
-                useFriction = false;
+                dragCoefficient = 0.1f;
                 break;
             }
 
@@ -574,7 +593,7 @@ public class PlayerController : MonoBehaviour
 
                 transform.Translate(_velocity * Time.fixedDeltaTime);
 
-                useFriction = false;
+                dragCoefficient = 0.2f;
                 break;
             }
         }
@@ -586,10 +605,13 @@ public class PlayerController : MonoBehaviour
         // Apply forces
         // Boolean used for cases when rb.AddForce is required
         _velocity += _acceleration;
-        if (useFriction) {
-            Vector2 velocityXZ = new Vector2(_velocity.x, _velocity.z);
-            velocityXZ = Vector3.Lerp(velocityXZ, Vector2.zero, _drag * Time.fixedDeltaTime);
-            _velocity = new Vector3(velocityXZ.x, _velocity.y, velocityXZ.y);
+        
+        Vector2 velocityXZ = new Vector2(_velocity.x, _velocity.z);
+        velocityXZ = Vector3.Lerp(velocityXZ, Vector2.zero, _drag * dragCoefficient * Time.fixedDeltaTime);
+        _velocity = new Vector3(velocityXZ.x, _velocity.y, velocityXZ.y);
+
+        if (lockVelocityToNormal) {
+            _velocity = Vector3.ProjectOnPlane(_velocity, normalVector);
         }
 
         if (_useVelocity)
@@ -636,6 +658,18 @@ public class PlayerController : MonoBehaviour
 
     private void DisableJump() {
         _keyJumping = false;
+    }
+
+    private bool CloseToGroundAndAngle(ref RaycastHit hitOut) {
+        Ray ray = new Ray(transform.position - (Vector3.up * 1.2f), Vector3.down);
+
+        float rayDistance = 0.4f;
+        if (Physics.Raycast(ray, out var hit, rayDistance)) {
+            hitOut = hit;
+            return true;
+        }
+
+        return false;
     }
     
     #endregion
