@@ -188,7 +188,7 @@ MeshRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 139579990391205976}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -1407,7 +1407,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1198251880453041267}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: 0.000000004916069, z: -0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0.7599001, y: 1.2499771, z: -2.4}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -3513,7 +3513,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4678761156688045521}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: 0.000000004916069, z: -0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0.7599001, y: 1.2499771, z: -2.4}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -6443,13 +6443,38 @@ MonoBehaviour:
   _sprintInAllDirections: 1
   _adsCancelsSprint: 1
   _shootingCancelsSprint: 0
-  _walkSpeed: 2
+  _walkSpeed: 1.5
   _swimmingSpeed: 3
-  _sprintSpeed: 5
+  _sprintSpeed: 2
   _crouchSpeed: 2
   _airMoveSpeed: 0.4
+  _drag: 7
+  _airControlCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: -1
+      outSlope: -0.18081185
+      tangentMode: 1
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0.75148946
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0.018532144
+      outSlope: -1
+      tangentMode: 1
+      weightedMode: 0
+      inWeight: 0.4188546
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
   _slideThreshold: 7
-  _airSpeedThreshold: 0.5
+  _airSpeedThreshold: 8.5
   _jumpForce: 8
   _swimmingBuoyantForce: 1
   _gravity: 15
@@ -6467,7 +6492,7 @@ MonoBehaviour:
   _groundMask:
     serializedVersion: 2
     m_Bits: 65
-  _jumping: 0
+  _keyJumping: 0
   _resetJump: 0
   _walking: 0
   _sprintingForward: 0

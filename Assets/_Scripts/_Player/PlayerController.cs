@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using Console;
 using UnityEngine;
 
@@ -39,6 +40,8 @@ public class PlayerController : MonoBehaviour
     [SerializeField, Tooltip("Sprint speed on ground")] private float _sprintSpeed;
     [SerializeField, Tooltip("Crouching speed on ground")] private float _crouchSpeed;
     [SerializeField, Tooltip("Air speed")] private float _airMoveSpeed;
+    [SerializeField] private float _drag;
+    [SerializeField] private AnimationCurve _airControlCurve;
     [SerializeField, Tooltip("Slide/Crouch threshold")] private float _slideThreshold;
     [SerializeField, Tooltip("Velocity at which player can accelerate towards")] private float _airSpeedThreshold;
     [SerializeField, Tooltip("Jump force")] private float _jumpForce;
@@ -76,8 +79,9 @@ public class PlayerController : MonoBehaviour
     private Rigidbody _rb;
     private Collider _collider;
     
-    [HideInInspector] public bool _jumping;
+    [HideInInspector] public bool _keyJumping;
     [HideInInspector] public bool _resetJump;
+    private bool _jumpReady;
     [HideInInspector] public bool _walking;
     [HideInInspector] public bool _sprintingForward;
     [HideInInspector] public bool _sprinting;
@@ -88,6 +92,10 @@ public class PlayerController : MonoBehaviour
     [HideInInspector] public bool _rightMouseDown;
     [HideInInspector] public bool _useVelocity = true;
     [HideInInspector] public bool _useGravity = true;
+
+    private float _timeSinceGrounded;
+    private bool _jumpingActive;
+    private float _currentUpwardJumpingForce;
     
     private float _currentWaterHeight;
 
@@ -142,8 +150,8 @@ public class PlayerController : MonoBehaviour
     void Start() {
         _input = InputReader.Instance.PlayerInput;
 
-        _input.Player.Jump.performed += _ => _jumping = true;
-        _input.Player.Jump.canceled += _ => _jumping = false;
+        _input.Player.Jump.performed += _ => TryJump();
+        _input.Player.Jump.canceled += _ => DisableJump();
 
         _input.Player.Sprint.performed += _ => _sprinting = true;
         _input.Player.Sprint.canceled += _ => _sprinting = false;
@@ -169,6 +177,8 @@ public class PlayerController : MonoBehaviour
         switch (_state) {
             case PlayerStates.Air:
                 _resetJump = true;
+                // _jumpingActive = false;
+                // _currentUpwardJumpingForce = 0;
                 break; 
             
             case PlayerStates.Grappling:
@@ -312,10 +322,25 @@ public class PlayerController : MonoBehaviour
     private void Update() {
         GetInput();
         UpdateStates();
+        // Debug.Log(_horizontalVelocity.magnitude);
     }
 
     private void FixedUpdate() {
         Move();
+        UpdateVariables();
+    }
+
+    private void UpdateVariables() {
+        if (!_grounded)
+            _timeSinceGrounded += Time.deltaTime;
+        else
+            _timeSinceGrounded = 0;
+
+        if (_jumpingActive) {
+            _currentUpwardJumpingForce -= _gravity * Time.fixedDeltaTime;
+
+            if (_currentUpwardJumpingForce < 0) _jumpingActive = false;
+        }
     }
     
     #endregion
@@ -357,6 +382,7 @@ public class PlayerController : MonoBehaviour
         
         RotateModelOrientation(modelOrientation, rotationSpeed);
 
+        bool useFriction = true;
         switch (State) {
             case PlayerStates.Walking: {
                 // Transform the input vector to the orientation's forward and right directions
@@ -370,12 +396,10 @@ public class PlayerController : MonoBehaviour
                 _acceleration += fixedVector * _walkSpeed;
 
                 // Friction
-                _acceleration -= Vector3.ProjectOnPlane(_velocity, _normalVector) * _frictionCoefficient;
+                // _acceleration -= Vector3.ProjectOnPlane(_velocity, _normalVector) * _frictionCoefficient;
 
-                if (_jumping && _resetJump) {
-                    _acceleration += _jumpForce * Vector3.up;
-                    _jumping = false;
-                    _resetJump = false;
+                if (_keyJumping && _jumpReady) {
+                    InitiateJump();
                 }
 
                 break;
@@ -393,12 +417,10 @@ public class PlayerController : MonoBehaviour
                 _acceleration += fixedVector * _sprintSpeed;
 
                 // Friction
-                _acceleration -= Vector3.ProjectOnPlane(_velocity, _normalVector) * _frictionCoefficient;
+                // _acceleration -= Vector3.ProjectOnPlane(_velocity, _normalVector) * _frictionCoefficient;
 
-                if (_jumping && _resetJump) {
-                    _acceleration += _jumpForce * Vector3.up;
-                    _jumping = false;
-                    _resetJump = false;
+                if (_keyJumping && _jumpReady) {
+                    InitiateJump();
                 }
 
                 break;
@@ -418,10 +440,8 @@ public class PlayerController : MonoBehaviour
                 // Friction
                 _acceleration -= Vector3.ProjectOnPlane(_velocity, _normalVector) * _frictionCoefficient;
 
-                if (_jumping && _resetJump) {
-                    _acceleration += _jumpForce * Vector3.up;
-                    _jumping = false;
-                    _resetJump = false;
+                if (_keyJumping && _jumpReady) {
+                    InitiateJump();
                 }
 
                 break;
@@ -430,13 +450,13 @@ public class PlayerController : MonoBehaviour
             case PlayerStates.Sliding: {
                 // Note that gravity applies some friction to movement already
 
-                _acceleration -= Vector3.ProjectOnPlane(_velocity, _normalVector) * _slidingFrictionCoefficient;
+                // _acceleration -= Vector3.ProjectOnPlane(_velocity, _normalVector) * _slidingFrictionCoefficient;
 
-                if (_jumping && _resetJump) {
-                    _acceleration += _jumpForce * Vector3.up;
-                    _jumping = false;
-                    _resetJump = false;
+                if (_keyJumping && _jumpReady) {
+                    InitiateJump();
                 }
+
+                useFriction = false;
 
                 break;
             }
@@ -444,12 +464,10 @@ public class PlayerController : MonoBehaviour
             case PlayerStates.Idle: {
 
                 // Friction
-                _acceleration -= Vector3.ProjectOnPlane(_velocity, _normalVector) * _frictionCoefficient;
+                // _acceleration -= Vector3.ProjectOnPlane(_velocity, _normalVector) * _frictionCoefficient;
 
-                if (_jumping && _resetJump) {
-                    _acceleration += _jumpForce * Vector3.up;
-                    _jumping = false;
-                    _resetJump = false;
+                if (_keyJumping && _jumpReady) {
+                    InitiateJump();
                 }
 
                 break;
@@ -460,13 +478,15 @@ public class PlayerController : MonoBehaviour
                 Vector3 inputDirection =
                     (_inputVector.x * rightDirection + _inputVector.z * forwardDirection).
                     normalized;
-
+                
+                float control = _airControlCurve.Evaluate(Mathf.Clamp01(_timeSinceGrounded));
+                
                 // 4 different cases:
                 if (_horizontalVelocityMagnitude < _airSpeedThreshold) {
                     if ((_horizontalVelocity + inputDirection * _airMoveSpeed).magnitude > _airSpeedThreshold) {
                         // Case 1: Previous velocity is less then cutoff and new velocity is less then cutoff.
                         // New velocity is calculated normally
-                        _acceleration += inputDirection * _airMoveSpeed;
+                        _acceleration += inputDirection * (_airMoveSpeed * control);
                     }
                     else {
                         // Case 2: Previous velocity is less then cutoff and new velocity is more then cutoff.
@@ -474,14 +494,14 @@ public class PlayerController : MonoBehaviour
                         Vector3 newVelocity = _horizontalVelocity + inputDirection * _airMoveSpeed;
                         Vector3 cappedNewVelocity = Vector3.ClampMagnitude(newVelocity, _airSpeedThreshold);
                         Vector3 acceleration = cappedNewVelocity - _horizontalVelocity;
-                        _acceleration += acceleration;
+                        _acceleration += acceleration * control;
                     }
                 }
                 else {
                     if ((_horizontalVelocity + inputDirection * _airMoveSpeed).magnitude < _airSpeedThreshold) {
                         // Case 3: Previous velocity is more then cutoff and new velocity is less then cutoff.
                         // New velocity is calculated normally
-                        _acceleration += inputDirection * _airMoveSpeed;
+                        _acceleration += inputDirection * (_airMoveSpeed * control);
                     }
                     else {
                         // Case 4: Previous velocity is more then cutoff and new velocity ism ore then cutoff.
@@ -492,10 +512,18 @@ public class PlayerController : MonoBehaviour
                             _horizontalVelocityMagnitude
                         );
                         Vector3 acceleration = cappedNewVelocity - _horizontalVelocity;
-                        _acceleration += acceleration;
+                        _acceleration += acceleration * control;
                     }
                 }
 
+                Debug.Log(_jumpingActive);
+                if (_jumpingActive && !_keyJumping) {
+                    Debug.Log("Down");
+                    _acceleration -= Vector3.up * (_currentUpwardJumpingForce * 0.5f);
+                    _jumpingActive = false;
+                } 
+
+                useFriction = false;
                 break;
             }
 
@@ -505,7 +533,7 @@ public class PlayerController : MonoBehaviour
                     normalized;
 
                 _acceleration += inputDirection * _swimmingSpeed;
-                _acceleration -= _velocity * _waterFrictionCoefficient;
+                // _acceleration -= _velocity * _waterFrictionCoefficient;
 
 
                 _acceleration += Vector3.up * (_swimmingBuoyantForce *
@@ -544,6 +572,7 @@ public class PlayerController : MonoBehaviour
 
                 transform.Translate(_velocity * Time.fixedDeltaTime);
 
+                useFriction = false;
                 break;
             }
         }
@@ -554,8 +583,15 @@ public class PlayerController : MonoBehaviour
         
         // Apply forces
         // Boolean used for cases when rb.AddForce is required
+        _velocity += _acceleration;
+        if (useFriction) {
+            Vector2 velocityXZ = new Vector2(_velocity.x, _velocity.z);
+            velocityXZ = Vector3.Lerp(velocityXZ, Vector2.zero, _drag * Time.fixedDeltaTime);
+            _velocity = new Vector3(velocityXZ.x, _velocity.y, velocityXZ.y);
+        }
+
         if (_useVelocity)
-            _rb.velocity = _velocity + _acceleration;
+            _rb.velocity =_velocity;
     }
     
     private void RotateModelOrientation(Vector3 inputVector, float rotationSpeed) {
@@ -564,6 +600,40 @@ public class PlayerController : MonoBehaviour
             Quaternion toRotation = Quaternion.LookRotation(inputVector, Vector3.up);
             _modelOrientation.rotation = Quaternion.RotateTowards(_modelOrientation.rotation, toRotation, rotationSpeed * Time.deltaTime);            
         }
+    }
+
+    private void InitiateJump() {
+        if (!_jumpReady) return;
+        _acceleration += _jumpForce * Vector3.up;
+        _jumpingActive = true;
+        _jumpReady = false;
+        _currentUpwardJumpingForce = _jumpForce;
+    }
+
+    private void TryJump() {
+        _keyJumping = true;
+        if (_grounded) _jumpReady = true;
+        else StartCoroutine(TryJumpAgainCoroutine());
+    }
+
+    // Coyote time on jumping
+    private IEnumerator TryJumpAgainCoroutine() {
+        float time = 0;
+        while (time < 0.2f) {
+            time += Time.deltaTime;
+            if (TryJumpAgain()) break;
+            yield return null;
+        }
+    }
+    private bool TryJumpAgain() {
+        if (!_grounded || !_keyJumping) return false;
+        _jumpReady = true;
+        return true;
+
+    }
+
+    private void DisableJump() {
+        _keyJumping = false;
     }
     
     #endregion
