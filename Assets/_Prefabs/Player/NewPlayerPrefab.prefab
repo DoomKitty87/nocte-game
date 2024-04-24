@@ -1407,7 +1407,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1198251880453041267}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: -0, y: 0.000000004916069, z: -0, w: 1}
   m_LocalPosition: {x: 0.7599001, y: 1.2499771, z: -2.4}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -3513,8 +3513,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4678761156688045521}
   serializedVersion: 2
-  m_LocalRotation: {x: -0.041665625, y: -0.88914675, z: 0.4481658, w: -0.08264017}
-  m_LocalPosition: {x: -7.12, y: 0.17000008, z: -3.327804}
+  m_LocalRotation: {x: -0, y: 0.000000004916069, z: -0, w: 1}
+  m_LocalPosition: {x: 0.7599001, y: 1.2499771, z: -2.4}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -3553,7 +3553,7 @@ Camera:
     height: 1
   near clip plane: 0.1
   far clip plane: 50000
-  field of view: 60
+  field of view: 60.000004
   orthographic: 0
   orthographic size: 10
   m_Depth: 0
@@ -5662,7 +5662,7 @@ Transform:
   m_GameObject: {fileID: 8132356503677570781}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.1, z: 0}
+  m_LocalPosition: {x: 0, y: -0.147, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -5688,9 +5688,9 @@ CapsuleCollider:
   m_Enabled: 1
   serializedVersion: 2
   m_Radius: 0.55
-  m_Height: 1.9
+  m_Height: 1.8
   m_Direction: 1
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Center: {x: 0, y: 0.2, z: 0}
 --- !u!1 &8167700179998215793
 GameObject:
   m_ObjectHideFlags: 0
@@ -6482,7 +6482,7 @@ MonoBehaviour:
   _waterFrictionCoefficient: 0.8
   _slidingFrictionCoefficient: 0
   _maxSlopeAngle: 60
-  _NoclipSpeed: 60
+  _NoclipSpeed: 12
   _position: {x: 0, y: 0, z: 0}
   _velocity: {x: 0, y: 0, z: 0}
   _acceleration: {x: 0, y: 0, z: 0}
@@ -7108,6 +7108,7 @@ GameObject:
   - component: {fileID: 3888372041872913813}
   - component: {fileID: 6841940912683404337}
   - component: {fileID: 1461467483088505852}
+  - component: {fileID: 8396833365185803326}
   m_Layer: 1
   m_Name: Interactible Handler
   m_TagString: InventoryManager
@@ -7222,6 +7223,27 @@ MonoBehaviour:
     type: 3}
   _tapeAudioSource: {fileID: 0}
 --- !u!135 &1461467483088505852
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9040125934920656371}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Radius: 2
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!135 &8396833365185803326
 SphereCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8500,19 +8522,18 @@ MonoBehaviour:
   _footstepTypes:
   - _materialID: Dirt
     _footstepSounds:
-    - {fileID: 8300000, guid: 64bd5052c40d3a24fb82174e512d676a, type: 3}
-    - {fileID: 8300000, guid: 3cda3de0c624e414b9ff473bf63b2bd7, type: 3}
-    - {fileID: 8300000, guid: 596732f7372c3ec4192fc2057b85adaf, type: 3}
-    - {fileID: 8300000, guid: acd8343ce7df9bd4d8ca006835a1445a, type: 3}
-    - {fileID: 8300000, guid: e7a94d29a547d884d84fa34aa3c97c99, type: 3}
-    - {fileID: 8300000, guid: 0330b6ccdb146354f8b9393c1c75db5f, type: 3}
-    - {fileID: 8300000, guid: 96adb9294dab3e344b1723bf677d25a8, type: 3}
-    - {fileID: 8300000, guid: a1ca093d2d3c51c4786125c067d7943d, type: 3}
-    - {fileID: 8300000, guid: b546efa1a0e43594bb318addaf7c111e, type: 3}
-    - {fileID: 8300000, guid: 6a340bb65da2f7044bd9bfafaaa1f529, type: 3}
-    - {fileID: 8300000, guid: 5375dda56596cb04bba6ff5133cd6959, type: 3}
-    - {fileID: 8300000, guid: 3448e4a0d7c47964fa5f7d5b0893ee47, type: 3}
-    - {fileID: 8300000, guid: 14885357287790f40a10133fec2a87e9, type: 3}
+    - {fileID: 8300000, guid: 1a2cf97e6c5d74857b31b1c598e41870, type: 3}
+    - {fileID: 8300000, guid: 45e3c053474554626bac04b93433744c, type: 3}
+    - {fileID: 8300000, guid: 7410453ddb4c249aebca213cc3060eb4, type: 3}
+    - {fileID: 8300000, guid: bf95b33a5a9d14a95bb16f9f8357689b, type: 3}
+    - {fileID: 8300000, guid: bd76bbd6ede724e73b5db85f036606d6, type: 3}
+    - {fileID: 8300000, guid: e6986792731824958903ee2d19b49890, type: 3}
+    - {fileID: 8300000, guid: db7f848e8c7ff49018a3613b21f310a3, type: 3}
+    - {fileID: 8300000, guid: 4b98670e39f4041499c4aedfd84edd44, type: 3}
+    - {fileID: 8300000, guid: 63167571e5fea4ab19bcd36c01a22333, type: 3}
+    - {fileID: 8300000, guid: a121c0ca6582648fe9a4038d7f0feade, type: 3}
+    - {fileID: 8300000, guid: 78e042530059c4685bbc444765b62b76, type: 3}
+    - {fileID: 8300000, guid: b8cc7d36320b443078e46cabdc207a68, type: 3}
     _groundNormalYValue: 0.7
     _normalTest: 0
     _materialLayer:
@@ -8521,15 +8542,13 @@ MonoBehaviour:
     _materialTag: Ground
   - _materialID: Concrete
     _footstepSounds:
-    - {fileID: 8300000, guid: 0d9fc39b50de5ef47a0d9f7cabbe662c, type: 3}
-    - {fileID: 8300000, guid: c4b779a9ca1dbd043b51e20f60723519, type: 3}
-    - {fileID: 8300000, guid: 8a742f687f83a904ebc3c1bfb652fbf9, type: 3}
-    - {fileID: 8300000, guid: 07cc5982e2ec7c2448c722b1d32bfe31, type: 3}
-    - {fileID: 8300000, guid: 055eb575a285d554891f2ab50cce132b, type: 3}
-    - {fileID: 8300000, guid: bc9f57e97466cb445b59ff433593fb68, type: 3}
-    - {fileID: 8300000, guid: a18a46a81cb041b478de493fb9584d41, type: 3}
-    - {fileID: 8300000, guid: b0d7038559dfc0d40a96ca19fc7347cf, type: 3}
-    - {fileID: 8300000, guid: 488332a3965a00f4f94a51f9bad40d4e, type: 3}
+    - {fileID: 8300000, guid: 7c1a56e6ca9654c0f9e5de8c4941a612, type: 3}
+    - {fileID: 8300000, guid: 33310b553db4f4a78acee88c4bf6cb2d, type: 3}
+    - {fileID: 8300000, guid: fa5181d21925c40b7a9074ee0fad3032, type: 3}
+    - {fileID: 8300000, guid: 1afc20e7bbe4c4284b86bbc5117b8912, type: 3}
+    - {fileID: 8300000, guid: a8ec8b147d0084ce887f1edde48ccff8, type: 3}
+    - {fileID: 8300000, guid: 5e82ee409f5c14037957aa19847d92eb, type: 3}
+    - {fileID: 8300000, guid: 63539b97ba179439b8a52d9d4e8b6f26, type: 3}
     _groundNormalYValue: 0
     _normalTest: 0
     _materialLayer:

@@ -498,6 +498,11 @@ public class PlayerController : MonoBehaviour
                             lockVelocityToNormal = true;
                             normalVector = hit.normal;
                         }
+
+                        if (_velocity.y > 0) {
+                            // _acceleration.y = -(_acceleration.y + _velocity.y);
+                        }
+                        // Debug.Log("Air");
                     }
                     _firstFrameOffGround = false;
                 }
@@ -628,7 +633,8 @@ public class PlayerController : MonoBehaviour
 
     private void InitiateJump() {
         if (!_jumpReady) return;
-        _acceleration += _jumpForce * Vector3.up;
+        _acceleration += (_jumpForce - _velocity.y - _acceleration.y) * Vector3.up;
+        // _velocity.y = _jumpForce * Time.fixedDeltaTime;
         _jumpingActive = true;
         _jumpReady = false;
         _currentUpwardJumpingForce = _jumpForce;
