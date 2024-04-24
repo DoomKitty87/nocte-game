@@ -115,7 +115,7 @@ public class WeatherManager : MonoBehaviour
     _windTimeOffset.x -= Time.deltaTime * Mathf.Sin(_windDirection) * _weatherState.w * _windScrollSpeed;
     _windTimeOffset.y -= Time.deltaTime * Mathf.Cos(_windDirection) * _weatherState.w * _windScrollSpeed;
     Shader.SetGlobalVector("_WindTimeOffset", _windTimeOffset);
-    float nightFactor = Mathf.SmoothStep(1, 0, Mathf.Pow(_weatherState.x > 0.5f ? 1 - _weatherState.x : _weatherState.x, 1.25f) * 4);
+    float nightFactor = Mathf.SmoothStep(1, 0, Mathf.Pow(_spacePhase > 0.5f ? 1 - _spacePhase : _spacePhase, 1.25f) * 4);
     if (_updateCounter2 < _frameUpdateDelay2) {
       _updateCounter2++;
     } else {
