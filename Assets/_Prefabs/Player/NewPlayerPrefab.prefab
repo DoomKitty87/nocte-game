@@ -1407,7 +1407,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1198251880453041267}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: 0.000000004916069, z: -0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0.7599001, y: 1.2499771, z: -2.4}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -3513,8 +3513,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4678761156688045521}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: 0.000000004916069, z: -0, w: 1}
-  m_LocalPosition: {x: 0.7599001, y: 1.2499771, z: -2.4}
+  m_LocalRotation: {x: -0.041665625, y: -0.88914675, z: 0.4481658, w: -0.08264017}
+  m_LocalPosition: {x: -7.12, y: 0.17000008, z: -3.327804}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -3553,7 +3553,7 @@ Camera:
     height: 1
   near clip plane: 0.1
   far clip plane: 50000
-  field of view: 60.000004
+  field of view: 60
   orthographic: 0
   orthographic size: 10
   m_Depth: 0
@@ -6492,6 +6492,7 @@ MonoBehaviour:
   _groundMask:
     serializedVersion: 2
     m_Bits: 65
+  _collider2: {fileID: 7338410974540940135}
   _keyJumping: 0
   _resetJump: 0
   _walking: 0
@@ -7106,6 +7107,7 @@ GameObject:
   - component: {fileID: 7367233380419851896}
   - component: {fileID: 3888372041872913813}
   - component: {fileID: 6841940912683404337}
+  - component: {fileID: 1461467483088505852}
   m_Layer: 1
   m_Name: Interactible Handler
   m_TagString: InventoryManager
@@ -7219,6 +7221,27 @@ MonoBehaviour:
   _tapePrefab: {fileID: 4962482264314122204, guid: 0cffb90d270b4ca46adb2fb7af17f9fc,
     type: 3}
   _tapeAudioSource: {fileID: 0}
+--- !u!135 &1461467483088505852
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9040125934920656371}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Radius: 2
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &9204214720551637391
 GameObject:
   m_ObjectHideFlags: 0
