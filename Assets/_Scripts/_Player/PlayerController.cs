@@ -258,10 +258,10 @@ public class PlayerController : MonoBehaviour
 
         if (State is PlayerStates.Frozen or PlayerStates.Noclip or PlayerStates.Grappling or PlayerStates.Driving)
             return;
-
+        
         if (!_grounded)
             SetState(PlayerStates.Air);
-        else if (Vector3.Distance(_velocity, Vector3.zero) < 0.1f && _inputVector == Vector3.zero)
+        else if (Vector3.Distance(_horizontalVelocity, Vector3.zero) < 0.1f && _inputVector == Vector3.zero)
             SetState(PlayerStates.Idle);
         else if (_crouching) {
             if (_horizontalVelocityMagnitude < _slideThreshold)
@@ -588,7 +588,7 @@ public class PlayerController : MonoBehaviour
                 // Horrible but funny
                 _velocity = inputDirection *
                             (_crouching
-                                ? (_sprinting ? _NoclipSpeed * 10 : _NoclipSpeed / 2)
+                                ? (_sprinting ? _NoclipSpeed * 50  : _NoclipSpeed / 2)
                                 : (_sprinting ? _NoclipSpeed * 3 : _NoclipSpeed));
 
                 transform.Translate(_velocity * Time.fixedDeltaTime);
