@@ -19,6 +19,9 @@ public class VehicleControl : MonoBehaviour
   Rigidbody rigidBody;
 
   public Transform _playerSeat;
+  public AudioSource _engineSound;
+
+  public AnimationCurve _enginePitchCurve;
 
   private bool _inUse = false;
 
@@ -35,19 +38,22 @@ public class VehicleControl : MonoBehaviour
 
     // Find all child GameObjects that have the WheelControl script attached
     wheels = GetComponentsInChildren<WheelControl>();
-
+    _engineSound.enabled = false;
     Invoke("DisableRigidBody", 10f);
   }
 
   public void EnterVehicle() {
     rigidBody.isKinematic = false;
     _inUse = true;
+    _engineSound.enabled = true;
+    _engineSound.Play();
     WorldGenInfo._secondaryStructures.RemoveStructure(gameObject);
   }
 
   public void ExitVehicle() {
     rigidBody.velocity = Vector3.zero;
     _inUse = false;
+    _engineSound.enabled = false;
     Invoke("DisableRigidBody", 10f);
   }
 
@@ -107,6 +113,9 @@ public class VehicleControl : MonoBehaviour
         wheel.WheelCollider.motorTorque = 0;
       }
     }
+
+    // Update the engine sound pitch
+    _engineSound.pitch = _enginePitchCurve.Evaluate(speedFactor);
 
     ApplybuoyantForce();
 
