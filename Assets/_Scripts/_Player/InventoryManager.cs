@@ -21,6 +21,16 @@ public class InventoryManager : MonoBehaviour
   
   private List<AudioTape> _audioTapes = new List<AudioTape>();
 
+  public static InventoryManager _instance;
+
+  private void Awake() {
+    _instance = this;
+  }
+
+  private void OnDisable() {
+    _instance = null;
+  }
+
   public AudioTape[] GetOwnedTapes() {
     return _audioTapes.ToArray();
   }
