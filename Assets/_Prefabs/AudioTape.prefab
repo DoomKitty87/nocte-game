@@ -96,6 +96,9 @@ GameObject:
   - component: {fileID: 1834651283443358310}
   - component: {fileID: 6955998807062899960}
   - component: {fileID: 1553356924166746151}
+  - component: {fileID: 2905851619801551972}
+  - component: {fileID: 4074969678731927486}
+  - component: {fileID: 8253216480216094636}
   m_Layer: 0
   m_Name: Cube
   m_TagString: Untagged
@@ -173,6 +176,78 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!114 &2905851619801551972
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2378606473620575372}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8f8c0fe7f96f66046a5d3108466fa2dd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  PromptText: Pick Up Tape
+  _interactTrigger: {fileID: 8253216480216094636}
+  InteractedWith:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 4074969678731927486}
+        m_TargetAssemblyTypeName: AudioTape, Assembly-CSharp
+        m_MethodName: Pickup
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  OnHoverStart:
+    m_PersistentCalls:
+      m_Calls: []
+  OnHoverEnd:
+    m_PersistentCalls:
+      m_Calls: []
+--- !u!114 &4074969678731927486
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2378606473620575372}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 52ca22296de3840ddb6de94bf5df33dd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  name: Test
+  audio: {fileID: 8300000, guid: 38e6d252c7aa8af42a5676feb8da0f7d, type: 3}
+  icon: {fileID: 21300000, guid: b21134bb9fd7fe04e8e14ed27f83e024, type: 3}
+  deleteParent: {fileID: 2760578622909995961}
+--- !u!65 &8253216480216094636
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2378606473620575372}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1.1978787, y: 8.233995, z: 4.999999}
+  m_Center: {x: -0.019318108, y: 2.7452677e-16, z: 0}
 --- !u!1 &2760578622909995961
 GameObject:
   m_ObjectHideFlags: 0
@@ -216,9 +291,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6688214529085630053}
-  - component: {fileID: 8382585270618757532}
-  - component: {fileID: 3084970638269996269}
-  - component: {fileID: 3252269313337559591}
   m_Layer: 0
   m_Name: AudioTape
   m_TagString: Interactible
@@ -242,77 +314,6 @@ Transform:
   - {fileID: 3243817744007037187}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!65 &8382585270618757532
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3647316738645460703}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 2, y: 2, z: 2}
-  m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &3084970638269996269
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3647316738645460703}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 52ca22296de3840ddb6de94bf5df33dd, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  name: Test
-  audio: {fileID: 8300000, guid: 38e6d252c7aa8af42a5676feb8da0f7d, type: 3}
-  icon: {fileID: 21300000, guid: b21134bb9fd7fe04e8e14ed27f83e024, type: 3}
---- !u!114 &3252269313337559591
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3647316738645460703}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8f8c0fe7f96f66046a5d3108466fa2dd, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  PromptText: Pick Up Tape
-  _interactTrigger: {fileID: 8382585270618757532}
-  InteractedWith:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 3084970638269996269}
-        m_TargetAssemblyTypeName: AudioTape, Assembly-CSharp
-        m_MethodName: Pickup
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-  OnHoverStart:
-    m_PersistentCalls:
-      m_Calls: []
-  OnHoverEnd:
-    m_PersistentCalls:
-      m_Calls: []
 --- !u!1 &5922741375359681022
 GameObject:
   m_ObjectHideFlags: 0
