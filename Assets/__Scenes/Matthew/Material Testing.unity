@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 4426.357, g: 2871.1292, b: 2021.1213, a: 1}
+  m_IndirectSpecularColor: {r: 4325.0444, g: 2866.8796, b: 2334.201, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -385,6 +385,11 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4798468513531427306, guid: 9251f6c58d15c7b428fef40ec34ce952,
+        type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0.000000004916069
+      objectReference: {fileID: 0}
     - target: {fileID: 6057207074736297204, guid: 9251f6c58d15c7b428fef40ec34ce952,
         type: 3}
       propertyPath: m_Name
@@ -409,6 +414,46 @@ PrefabInstance:
         type: 3}
       propertyPath: m_AnchoredPosition.y
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8006249604740443719, guid: 9251f6c58d15c7b428fef40ec34ce952,
+        type: 3}
+      propertyPath: field of view
+      value: 60.000004
+      objectReference: {fileID: 0}
+    - target: {fileID: 8573639786141903827, guid: 9251f6c58d15c7b428fef40ec34ce952,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0.7599001
+      objectReference: {fileID: 0}
+    - target: {fileID: 8573639786141903827, guid: 9251f6c58d15c7b428fef40ec34ce952,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 1.2499771
+      objectReference: {fileID: 0}
+    - target: {fileID: 8573639786141903827, guid: 9251f6c58d15c7b428fef40ec34ce952,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -2.4
+      objectReference: {fileID: 0}
+    - target: {fileID: 8573639786141903827, guid: 9251f6c58d15c7b428fef40ec34ce952,
+        type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8573639786141903827, guid: 9251f6c58d15c7b428fef40ec34ce952,
+        type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8573639786141903827, guid: 9251f6c58d15c7b428fef40ec34ce952,
+        type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0.000000004916069
+      objectReference: {fileID: 0}
+    - target: {fileID: 8573639786141903827, guid: 9251f6c58d15c7b428fef40ec34ce952,
+        type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -1967,6 +2012,55 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!1 &976773612
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 976773613}
+  - component: {fileID: 976773614}
+  m_Layer: 0
+  m_Name: FlyJets
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &976773613
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 976773612}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &976773614
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 976773612}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 63379c58292b26d4aa602b272c8de94b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _jetPrefab: {fileID: 1781905694103744419, guid: 061a05410d305c04293a29edfd86297a,
+    type: 3}
+  _spawnRate: 2
+  _spawnChance: 1
+  _jetHeight: 2500
 --- !u!1 &1087242014
 GameObject:
   m_ObjectHideFlags: 0
@@ -3227,3 +3321,4 @@ SceneRoots:
   - {fileID: 281930233}
   - {fileID: 695144525}
   - {fileID: 885714601}
+  - {fileID: 976773613}
