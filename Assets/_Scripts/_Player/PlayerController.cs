@@ -549,7 +549,7 @@ public class PlayerController : MonoBehaviour
                     _jumpingActive = false;
                 }
 
-                dragCoefficient = 0.1f;
+                dragCoefficient = _inputVector == Vector3.zero ? 0.2f : 0.1f;
                 break;
             }
 
