@@ -12,7 +12,6 @@ GameObject:
   - component: {fileID: 8819276947174590073}
   - component: {fileID: 7336471431426695701}
   - component: {fileID: 5599089152639715107}
-  - component: {fileID: 2787277793838052223}
   - component: {fileID: 4573217790872793150}
   - component: {fileID: 301953405021559863}
   m_Layer: 0
@@ -432,23 +431,6 @@ MonoBehaviour:
   _chunkCount: 10
   _chunkSize: 15
   _grassDensity: 5a000000320000001e000000
---- !u!114 &2787277793838052223
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7828621975473438852}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b56ef79c077ff74489db05fc151d4b3d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _rainWeatherLevels:
-  - clip: {fileID: 8300000, guid: 2f227dd51da9cd14e8296fd5b36156fd, type: 3}
-    volume: 1
-    threshold: 0.5
-  _rainAudioSource: {fileID: 4573217790872793150}
 --- !u!82 &4573217790872793150
 AudioSource:
   m_ObjectHideFlags: 0
