@@ -5,7 +5,7 @@ using UnityEngine;
 public class ConstantMove : MonoBehaviour
 {
 
-  [SerializeField] private float _speed;
+  [HideInInspector] public float _speed;
 
   [SerializeField] private float _lifetime;
 
@@ -14,9 +14,9 @@ public class ConstantMove : MonoBehaviour
     Destroy(gameObject, _lifetime);
   }
 
-  void Update()
-  {
-    transform.position += transform.forward * _speed * Time.deltaTime;
+  private void Update() {
+    var t = transform;
+    t.position += t.forward * (_speed * Time.deltaTime);
   }
 
 }
