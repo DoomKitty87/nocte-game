@@ -27,7 +27,7 @@ public class SpawnJets : MonoBehaviour
       _timer = 0;
       _rate = _spawnRate + (Random.Range(-1, 1) * _spawnRateVariance);;
       float theta = Random.Range(0, Mathf.PI * 2);
-      Vector3 position = new Vector3(Mathf.Cos(theta), 0, Mathf.Sin(theta)) * 10000;
+      Vector3 position = new Vector3(Mathf.Cos(theta), 0, Mathf.Sin(theta)) * 20000;
       
       float height = _jetHeight + (Random.Range(-1, 1) * _jetHeightVariance);
       

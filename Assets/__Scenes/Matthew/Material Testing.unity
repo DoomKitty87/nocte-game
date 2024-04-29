@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 4423.4575, g: 2875.7551, b: 2126.3928, a: 1}
+  m_IndirectSpecularColor: {r: 4425.8657, g: 2880.68, b: 2135.0823, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -2056,11 +2056,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 63379c58292b26d4aa602b272c8de94b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _jetPrefab: {fileID: 1781905694103744419, guid: 061a05410d305c04293a29edfd86297a,
+  _jetPrefab: {fileID: 6458812028293525591, guid: 061a05410d305c04293a29edfd86297a,
     type: 3}
-  _spawnRate: 2
-  _spawnChance: 1
-  _jetHeight: 6000
+  _spawnRate: 30
+  _spawnRateVariance: 10
+  _jetHeight: 2500
+  _jetHeightVariance: 500
+  _jetSpeed: 2250
+  _jetSpeedVariance: 500
 --- !u!1 &1087242014
 GameObject:
   m_ObjectHideFlags: 0
