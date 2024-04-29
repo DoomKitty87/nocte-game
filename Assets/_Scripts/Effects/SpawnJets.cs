@@ -12,6 +12,7 @@ public class SpawnJets : MonoBehaviour
   [SerializeField] private float _jetHeightVariance;
   [SerializeField] private float _jetSpeed;
   [SerializeField] private float _jetSpeedVariance;
+  [SerializeField] private float _jetAngleVariance = 90f;
 
   private float _timer;
 
@@ -26,7 +27,7 @@ public class SpawnJets : MonoBehaviour
       float height = _jetHeight + (Random.Range(-1, 1) * _jetHeightVariance);
       
       Quaternion lookDirection = Quaternion.LookRotation(-position, Vector3.up);
-      float randomShift = Random.Range(-90f, 90f);
+      float randomShift = Random.Range(-_jetAngleVariance, _jetAngleVariance);
       Quaternion randomizedDirection = Quaternion.Euler(0f, randomShift, 0f) * lookDirection;
       GameObject jet = Instantiate(_jetPrefab, position + Vector3.up * height, randomizedDirection);
       jet.transform.SetParent(transform);
