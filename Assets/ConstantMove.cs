@@ -5,7 +5,7 @@ using UnityEngine;
 public class ConstantMove : MonoBehaviour
 {
 
-  [HideInInspector] public float _speed;
+  [HideInInspector] public float _speed = 1f;
 
   [SerializeField] private float _lifetime;
 
