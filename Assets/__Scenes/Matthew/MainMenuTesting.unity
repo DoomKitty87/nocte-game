@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 419.20013, g: 179.44353, b: 85.29397, a: 1}
+  m_IndirectSpecularColor: {r: 319.4106, g: 116.8732, b: 48.27516, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -152,10 +152,11 @@ MonoBehaviour:
     type: 3}
   _spawnRate: 5
   _spawnChance: 0.8
-  _jetHeight: 2000
-  _jetHeightVariance: 200
+  _jetHeight: 5000
+  _jetHeightVariance: 500
   _jetSpeed: 1000
   _jetSpeedVariance: 100
+  _jetAngleVariance: 5
 --- !u!4 &22896555
 Transform:
   m_ObjectHideFlags: 0
@@ -838,7 +839,7 @@ ParticleSystem:
         m_RotationOrder: 4
     randomizeRotationDirection: 0
     gravitySource: 0
-    maxNumParticles: 25000
+    maxNumParticles: 50000
     customEmitterVelocity: {x: 0, y: 0, z: 0}
     size3D: 1
     rotation3D: 0
@@ -11660,7 +11661,7 @@ MonoBehaviour:
   _cloudCycleSpeed: 0.002
   _windCycleSpeed: 0.002
   _rainCycleSpeed: 0.002
-  _rainMaxIntensity: 5000
+  _rainMaxIntensity: 30000
   _maxWindSpeed: 2500
   _maxSpaceIntensity: 1500
   _maxAsteroidRate: 0.2
