@@ -32,10 +32,15 @@ public class MoonManager : MonoBehaviour
   [SerializeField] private OrbitVisualizer _orbitVisualizer;
   public float _distanceMultiplier = 1.0f; // Used to scale the distance of the moons from the planet
 
+  private int _seed;
+
   private void Awake() {
     if (_worldGenerator == null) {
       Debug.LogWarning($"No WorldGeneratorObject found on {this.name}");
-      this.enabled = false;
+      //this.enabled = false;
+      _seed = 0;
+    } else {
+      _seed = _worldGenerator.Seed;
     }
   }
 
@@ -44,10 +49,10 @@ public class MoonManager : MonoBehaviour
     for (int i = 0; i < _moons.Length; i++)
     {
       _moons[i].initialRotation = _moons[i].moon.localRotation;
-      _moons[i].phase = Mathf.PerlinNoise(_worldGenerator.Seed + i * 42.235f, _worldGenerator.Seed + i * 17.532f) * 2 * Mathf.PI;
-      _moons[i].orbitAxis += new Vector3(Mathf.Sin(_worldGenerator.Seed * 0.529f + i) * _moons[i].offsetAmplitude, _moons[i].yBias * Mathf.Tan(_worldGenerator.Seed * 0.185f + i), Mathf.Cos(_worldGenerator.Seed * 0.328f + i) * _moons[i].offsetAmplitude);
-      _moons[i].spinPhase = Mathf.PerlinNoise(_worldGenerator.Seed + i * 12.291f, _worldGenerator.Seed + i * 91.215f) * 2 * Mathf.PI;
-      _moons[i].spinAxis += new Vector3(Mathf.Sin(_worldGenerator.Seed * 5.123f + i) * _moons[i].offsetAmplitude, _moons[i].yBias * Mathf.Tan(_worldGenerator.Seed * 8.519f + i), Mathf.Cos(_worldGenerator.Seed * 2.614f + i) * _moons[i].spinOffsetAmplitude);
+      _moons[i].phase = Mathf.PerlinNoise(_seed + i * 42.235f, _seed + i * 17.532f) * 2 * Mathf.PI;
+      _moons[i].orbitAxis += new Vector3(Mathf.Sin(_seed * 0.529f + i) * _moons[i].offsetAmplitude, _moons[i].yBias * Mathf.Tan(_seed * 0.185f + i), Mathf.Cos(_seed * 0.328f + i) * _moons[i].offsetAmplitude);
+      _moons[i].spinPhase = Mathf.PerlinNoise(_seed + i * 12.291f, _seed + i * 91.215f) * 2 * Mathf.PI;
+      _moons[i].spinAxis += new Vector3(Mathf.Sin(_seed * 5.123f + i) * _moons[i].offsetAmplitude, _moons[i].yBias * Mathf.Tan(_seed * 8.519f + i), Mathf.Cos(_seed * 2.614f + i) * _moons[i].spinOffsetAmplitude);
     }
     if (_orbitVisualizer) _orbitVisualizer.Initialize();
   }

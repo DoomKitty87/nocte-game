@@ -65,7 +65,12 @@ public class WeatherManager : MonoBehaviour
   private void Start() {
     _spacePhase = _spaceFactorInitial;
     _sunInitRot = _sunTransform.localRotation;
-    _seed = (int)_worldGenerator.GetSeedHash();
+    if (_worldGenerator != null) {
+      _seed = (int)_worldGenerator.GetSeedHash();
+    }
+    else {
+      _seed = Random.Range(0, 1000000);
+    }
     _weatherPhases = new Vector2(Mathf.PerlinNoise(_seed, _seed), Mathf.PerlinNoise(-_seed, -_seed));
     _spaceRotationAxis = new Vector3(
       Mathf.PerlinNoise(_seed % 250, _seed % 250),
