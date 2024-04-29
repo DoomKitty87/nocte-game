@@ -119,6 +119,7 @@ public class PlayerController : MonoBehaviour
         Air,
         Swimming,
         Grappling,
+        Mantling,
         Driving,
         Frozen,
         Noclip
@@ -258,9 +259,11 @@ public class PlayerController : MonoBehaviour
 
         if (State is PlayerStates.Frozen or PlayerStates.Noclip or PlayerStates.Grappling or PlayerStates.Driving)
             return;
-        
-        if (!_grounded)
-            SetState(PlayerStates.Air);
+
+        if (!_grounded) {
+            if (_keyJumping && TryMantle()) SetState(PlayerStates.Mantling);
+            else SetState(PlayerStates.Air);
+        }
         else if (Vector3.Distance(_horizontalVelocity, Vector3.zero) < 0.1f && _inputVector == Vector3.zero)
             SetState(PlayerStates.Idle);
         else if (_crouching) {
@@ -675,6 +678,18 @@ public class PlayerController : MonoBehaviour
             return true;
         }
 
+        return false;
+    }
+
+    private bool TryMantle() {
+        if (_velocity.y > 0) return false; // Can only mantle while moving downwards
+        if (_inputVector.z < 0) return false; // Can only mantle while moving forwards
+
+        var t = transform;
+        Ray ray = new Ray(t.position, _movementOrientation.forward);
+        RaycastHit hit = new RaycastHit();
+        if (!Physics.Raycast(ray, out hit, 0.6f)) return false; // Can only mantle if an object is close enough
+        // Debug.Log("Try Mantle");
         return false;
     }
     
