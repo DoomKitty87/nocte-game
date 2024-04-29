@@ -7,7 +7,7 @@ public class SpawnJets : MonoBehaviour
 
   [SerializeField] private GameObject _jetPrefab;
   [SerializeField] private float _spawnRate;
-  [SerializeField] private float _spawnRateVariance;
+  [SerializeField] [Range(0, 1)] private float _spawnChance;
   [SerializeField] private float _jetHeight;
   [SerializeField] private float _jetHeightVariance;
   [SerializeField] private float _jetSpeed;
@@ -15,17 +15,11 @@ public class SpawnJets : MonoBehaviour
 
   private float _timer;
 
-  private float _rate;
-
-  private void Start() {
-    _rate = _spawnRate + (Random.Range(-1, 1) * _spawnRateVariance);;
-  }
-
   void Update() {
     _timer += Time.deltaTime;
-    if (_timer >= _rate) {
+    if (_timer >= _spawnRate) {
       _timer = 0;
-      _rate = _spawnRate + (Random.Range(-1, 1) * _spawnRateVariance);;
+      if (Random.value > _spawnChance) return;
       float theta = Random.Range(0, Mathf.PI * 2);
       Vector3 position = new Vector3(Mathf.Cos(theta), 0, Mathf.Sin(theta)) * 20000;
       
