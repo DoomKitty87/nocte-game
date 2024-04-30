@@ -15,6 +15,8 @@ public class LoadNewSceneSmoothly : MonoBehaviour
     private CanvasGroup _canvasGroup;
     private List<AudioSource> _audioSources;
     
+    private bool _parentAlreadyDDOL = false;
+    
     private bool _loading = false;
     
     private void InitalizeDarken() {
@@ -72,11 +74,22 @@ public class LoadNewSceneSmoothly : MonoBehaviour
             yield return null;
         }
         _loading = false;
-        Destroy(this);
         Destroy(_darkenObject);
+        if (!_parentAlreadyDDOL) {
+            Destroy(gameObject);
+        }
+        else {
+            Destroy(this);
+        }
     }
     public void LoadNewScene() {
         if (_loading) return;
+        if (gameObject.scene.name == "DontDestroyOnLoad") {
+            _parentAlreadyDDOL = true;
+        }
+        else {
+            DontDestroyOnLoad(this);
+        }
         StartCoroutine(LoadNewSceneCoroutine());
     }
 }
