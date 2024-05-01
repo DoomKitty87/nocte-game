@@ -321,7 +321,7 @@ public class WorldGenerator : MonoBehaviour
     if (GenerationComplete != null) { foreach (var d in GenerationComplete.GetInvocationList()) {
       GenerationComplete -= (d as OnGenerationComplete);
     }}
-    //_seed = DateTime.Now.Millisecond;
+    _seed = DateTime.Now.Millisecond;
     if (_tileCount % 2 == 0) {
       _tileCount++;
       Debug.LogWarning("Tile count must be odd. Increasing tile count by 1.");
@@ -577,7 +577,7 @@ public class WorldGenerator : MonoBehaviour
     // If you need to put anything else (tag, components, etc) on the tile, do it here. If it needs to change every time the LOD is changed, do it in the UpdateTile function.
     go.tag = "Ground";
     go.layer = 6;
-    //_structures.GenerateChunkStructures(new Vector2(x * _size * _resolution, z * _size * _resolution), new Vector2((x + 1) * _size * _resolution, (z + 1) * _size * _resolution));
+    _structures.GenerateChunkStructures(new Vector2(x * _size * _resolution, z * _size * _resolution), new Vector2((x + 1) * _size * _resolution, (z + 1) * _size * _resolution));
     _generatedStructureTiles.Add(new Vector2(x, z));
     tile.mesh = msh;
     tile.obj = go;
@@ -683,7 +683,7 @@ public class WorldGenerator : MonoBehaviour
     for (int i = 0, n = 0; i < heightMods.Length; i++) {
       heightMods[i] = _riverParameters.noiseCurve.Evaluate(heightMods[i]) * _riverParameters.heightCurve.Evaluate(vertices[i].y / _maxPossibleHeight) * _riverParameters.normalCurve.Evaluate(Mathf.Abs(normals[i].y));
       if (i % tmpSize > 0 && i % tmpSize < tmpSize - 3 && i / tmpSize > 0 && i / tmpSize < tmpSize - 3) {
-        if (heightMods[i] > 0.2f || vertices[i].y < _lakePlaneHeight - _riverParameters.waterLevel || normals[i].normalized.y < _grassNormalCutoff)
+        if (heightMods[i] > 0.2f || vertices[i].y < _lakePlaneHeight - _riverParameters.waterLevel + 1 || normals[i].normalized.y < _grassNormalCutoff)
           data[n] = 0;
         else
           data[n] = 1;
@@ -898,7 +898,7 @@ public class WorldGenerator : MonoBehaviour
     for (int i = 0, n = 0; i < heightMods.Length; i++) {
       heightMods[i] = _riverParameters.noiseCurve.Evaluate(heightMods[i]) * _riverParameters.heightCurve.Evaluate(vertices[i].y / _maxPossibleHeight) * _riverParameters.normalCurve.Evaluate(Mathf.Abs(normals[i].y));
       if (i % tmpSize > 0 && i % tmpSize < tmpSize - 3 && i / tmpSize > 0 && i / tmpSize < tmpSize - 3) {
-        if (heightMods[i] > 0.2f || vertices[i].y < _lakePlaneHeight - _riverParameters.waterLevel || normals[i].y < _grassNormalCutoff)
+        if (heightMods[i] > 0.2f || vertices[i].y < _lakePlaneHeight - _riverParameters.waterLevel + 1 || normals[i].y < _grassNormalCutoff)
           data[n] = 0;
         else
           data[n] = 1;
