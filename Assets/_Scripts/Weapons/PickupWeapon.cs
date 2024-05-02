@@ -5,9 +5,11 @@ public class PickupWeapon : MonoBehaviour
   [SerializeField] private WeaponItem _weapon;
   [SerializeField] private GameObject _deleteParent;
 
-  public void Pickup()
-  {
-    GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerCombatCore>().AddWeapon(_weapon);
+  public void Pickup() {
+    GameObject go = GameObject.FindGameObjectWithTag("Player");
+    PlayerCombatCore combatCore = go.GetComponent<PlayerCombatCore>();
+    combatCore.AddWeapon(_weapon);
+    combatCore.EquipWeaponByWeaponItem(_weapon);
     Destroy(_deleteParent);
   }
 }
