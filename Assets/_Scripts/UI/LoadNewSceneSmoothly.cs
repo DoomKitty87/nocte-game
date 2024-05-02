@@ -38,7 +38,7 @@ public class LoadNewSceneSmoothly : MonoBehaviour
 
     private List<AudioSource> FindAllAudioSources() {
         List<AudioSource> audioSources = new List<AudioSource>();
-        foreach (AudioSource audioSource in FindObjectsOfType<AudioSource>()) {
+        foreach (AudioSource audioSource in FindObjectsByType<AudioSource>(FindObjectsSortMode.None)) {
             audioSources.Add(audioSource);
         }
         return audioSources;
