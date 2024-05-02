@@ -18,7 +18,6 @@ public class BoltgunScript : WeaponScript
 
   [Header("Prefab Dependencies")]
   [SerializeField] private GameObject _barrelPositionMarker;
-  [SerializeField] private GameObject _leftHandPositionMarker;
   [SerializeField] private AudioClip _fireSound;
   [SerializeField] private LineRenderer _boltEffect;
   
@@ -27,12 +26,10 @@ public class BoltgunScript : WeaponScript
   [SerializeField] private float _maxRaycastDistance = 5000f;
   [SerializeField] private LayerMask _raycastLayerMask;
   [SerializeField] private float _roundsPerMinute;
+  [SerializeField] private RecoilProfile _recoilProfile;
   private float RoundsPerMinuteToWaitTime(float roundsPerMinute) {
     return 60f / roundsPerMinute;
   }
-
-  [Header("Camera Settings")]
-  [SerializeField] private float _aimSpeed = 6f;
   
   [Header("Indicators")]
   [SerializeField] private bool _firing;
@@ -87,20 +84,6 @@ public class BoltgunScript : WeaponScript
     if (_reloading) return;
     StartCoroutine(PlayReloadAnimationCoroutine());
   }
-
-  private float _aimParamTarget;
-  private void LerpAimingParametersUpdate() {
-    _instancingPlayerCombatCoreScript._AimParameter = Mathf.Lerp(_instancingPlayerCombatCoreScript._AimParameter, _aimParamTarget, Time.deltaTime * _aimSpeed);
-    if (_instancingPlayerCombatCoreScript._AimParameter < 0.02f) _instancingPlayerCombatCoreScript._AimParameter = 0;
-    if (_instancingPlayerCombatCoreScript._AimParameter > 0.98f) _instancingPlayerCombatCoreScript._AimParameter = 1;
-  }
-  private void LerpAimingParameters(bool aimedIn) { 
-    if (aimedIn) {
-      _aimParamTarget = 1;
-    } else {
-      _aimParamTarget = 0;
-    }
-  }
   
   // private IEnumerator PlayBoltEffect(Vector3 hitPosition) {
   //   _boltEffect.enabled = true;
@@ -134,6 +117,7 @@ public class BoltgunScript : WeaponScript
   public override void FireDown() {
     if (!_ammoLoaded || _reloading) return;
     RaycastBullet();
+    _instancingPlayerCombatCoreScript._recoilCameraScript.AddRecoil();
     PlayFireAnimation();
     _instancingPlayerCombatCoreScript.Weapon_RaiseAmmoChangedEvent();
     _audioSource.PlayOneShot(_fireSound, 1f);
@@ -174,12 +158,15 @@ public class BoltgunScript : WeaponScript
   }
 
   public override float OnEquip() {
-    _playerAnimator.SetTrigger("Equip");
+    _playerAnimator = _instancingPlayerCombatCoreScript._playerAnimator;
+    _playerAnimator.SetTrigger("Weapon_Equip");
+    _instancingPlayerCombatCoreScript._recoilCameraScript.SetRecoilProfile(_recoilProfile);
     return _playerAnimator.GetNextAnimatorStateInfo(_playerAnimator.GetLayerIndex(_animationLayerName)).length;
   }
   
   public override float OnUnequip() {
-    _playerAnimator.SetTrigger("Unequip");
+    _playerAnimator.SetTrigger("Weapon_Unequip");
+    _instancingPlayerCombatCoreScript._recoilCameraScript.SetRecoilProfile(null);
     return _playerAnimator.GetNextAnimatorStateInfo(_playerAnimator.GetLayerIndex(_animationLayerName)).length;
   }
 

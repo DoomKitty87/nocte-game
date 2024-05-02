@@ -334,6 +334,19 @@ public class PlayerController : MonoBehaviour
     private void Update() {
         GetInput();
         UpdateStates();
+        Vector3 modelOrientation;
+        float rotationSpeed;
+        if (_rightMouseDown) {
+            float angle = _movementOrientation.localEulerAngles.y;
+            angle *= Mathf.Deg2Rad; // Convert to radians
+            modelOrientation = new Vector3(Mathf.Sin(angle), 0, Mathf.Cos(angle)).normalized;
+            rotationSpeed = Mathf.Max(_rotationSpeed, (Quaternion.Angle(_modelOrientation.rotation, _movementOrientation.rotation) / 45) * _rotationSpeed);
+        }
+        else {
+            modelOrientation = (_inputVector.x * _movementOrientation.right + _inputVector.z * new Vector3(_movementOrientation.forward.x, 0, _movementOrientation.forward.z)).normalized;
+            rotationSpeed = _rotationSpeed;
+        }
+        RotateModelOrientation(modelOrientation, rotationSpeed);
         // Debug.Log(_horizontalVelocity.magnitude);
     }
 
@@ -379,20 +392,9 @@ public class PlayerController : MonoBehaviour
         var right = _movementOrientation.right;
         Vector3 rightDirection = new Vector3(right.x, 0, right.z).normalized;
         
-        Vector3 modelOrientation;
-        float rotationSpeed;
-        if (_rightMouseDown) {
-            float angle = _movementOrientation.localEulerAngles.y;
-            angle *= Mathf.Deg2Rad; // Convert to radians
-            modelOrientation = new Vector3(Mathf.Sin(angle), 0, Mathf.Cos(angle)).normalized;
-            rotationSpeed = Mathf.Max(_rotationSpeed, (Quaternion.Angle(_modelOrientation.rotation, _movementOrientation.rotation) / 45) * _rotationSpeed);
-        }
-        else {
-            modelOrientation = (_inputVector.x * rightDirection + _inputVector.z * forwardDirection).normalized;
-            rotationSpeed = _rotationSpeed;
-        }
         
-        RotateModelOrientation(modelOrientation, rotationSpeed);
+        
+        
 
         float dragCoefficient = 1f;
         bool lockVelocityToNormal = false;

@@ -41,7 +41,6 @@ public class PlayerCombatCore : MonoBehaviour
 			throw new Exception();
 		}
 		_currentInstanceScript._instancingPlayerCombatCoreScript = this;
-		_currentInstanceScript._inputComponent = _input;
 		return instance;
 	}
 	
@@ -61,24 +60,37 @@ public class PlayerCombatCore : MonoBehaviour
 		_weaponInventory.Add(newSlot);
 	}
 
-	private void EquipWeapon(WeaponInventorySlot slot) {
+	private bool _equipping;
+	private IEnumerator EquipWeaponCoroutine(WeaponInventorySlot slot) {
+		_equipping = true;
 		if (_equippedSlotIndex != -1) {
 			UnequipCurrentWeapon(true);
 		}
-		_equippedSlotIndex = _weaponInventory.IndexOf(slot);
-		slot._equipped = true;
-		slot._weaponInstance.SetActive(true);
+		while (_unequipping) {
+			yield return null;
+		}
+		_currentInstanceScript = slot._weaponInstance.GetComponent<WeaponScript>();
 		_playerAnimator.SetLayerWeight(_playerAnimator.GetLayerIndex("WeaponLayer"), 1);
+		slot._weaponInstance.SetActive(true);
+		_leftHandGrabTarget.position = _currentInstanceScript._leftHandPosMarker.position;
+		_leftHandGrabTarget.rotation = _currentInstanceScript._leftHandPosMarker.rotation;
+		float waitTime = slot._weaponInstance.GetComponent<WeaponScript>().OnEquip();
+		yield return new WaitForSeconds(waitTime);
+		AssignInputEventsToCurrentInstanceScript();
+		slot._equipped = true;
+		_equippedSlotIndex = _weaponInventory.IndexOf(slot);
+		_equipping = false;
+	}
+	private void EquipWeapon(WeaponInventorySlot slot) {
+		if (_equipping) return;
+		StartCoroutine(EquipWeaponCoroutine(slot));
 	}
 	
 	public void EquipWeaponByWeaponItem(WeaponItem weaponItem) {
 		for (int i = 0; i < _weaponInventory.Count; i++) {
 			WeaponInventorySlot slot = _weaponInventory[i];
 			if (slot._weaponItem == weaponItem) {
-				_equippedSlotIndex = i;
-				slot._equipped = true;
-				slot._weaponInstance.SetActive(true);
-				_playerAnimator.SetLayerWeight(_playerAnimator.GetLayerIndex("WeaponLayer"), 1);
+				EquipWeapon(slot);
 				return;
 			}
 		}
@@ -86,10 +98,7 @@ public class PlayerCombatCore : MonoBehaviour
 
 	public void EquipWeaponByIndex(int index) {
 		if (index < 0 || index >= _weaponInventory.Count) return;
-		_equippedSlotIndex = index;
-		_weaponInventory[index]._equipped = true;
-		_weaponInventory[index]._weaponInstance.SetActive(true);
-		_playerAnimator.SetLayerWeight(_playerAnimator.GetLayerIndex("WeaponLayer"), 1);
+		EquipWeapon(_weaponInventory[index]);
 	}
 
 	public List<WeaponInventorySlot> GetWeaponInventory() {
@@ -105,14 +114,20 @@ public class PlayerCombatCore : MonoBehaviour
 		return _weaponInventory[_equippedSlotIndex];
 	}
 	
+	private bool _unequipping;
 	private IEnumerator UnequipCurrentWeaponCoroutine(WeaponInventorySlot slot) {
+		_unequipping = true;
 		float waitTime = slot._weaponInstance.GetComponent<WeaponScript>().OnUnequip();
 		yield return new WaitForSeconds(waitTime);
+		UnassignInputEventsFromCurrentInstanceScript();
+		_currentInstanceScript = null;
 		slot._equipped = false;
 		slot._weaponInstance.SetActive(false);
 		_equippedSlotIndex = -1;
+		_unequipping = false;
 	}
 	public void UnequipCurrentWeapon(bool disableImmediately = false) {
+		if (_equipping || _unequipping) return;
 		WeaponInventorySlot slot = _weaponInventory[_equippedSlotIndex];
 		_playerAnimator.SetLayerWeight(_playerAnimator.GetLayerIndex("WeaponLayer"), 0);
 		if (disableImmediately) {
@@ -175,12 +190,13 @@ public class PlayerCombatCore : MonoBehaviour
 
 	[Header("Dependencies")]
 	public Camera _mainCamera;
-
 	public Animator _playerAnimator;
 	public Rig _playerAnimationRiggingRig;
 	public CinemachineThirdPersonFollow _cinemachineThirdPersonFollow;
 	public CinemachineThirdPersonAim _cinemachineThirdPersonAim;
 	public AudioSource _weaponFXAudioSource;
+	public RecoilCamera _recoilCameraScript;
+	public Transform _leftHandGrabTarget;
 	[SerializeField] private GameObject _weaponContainer;
 
 	[Header("Settings")]
@@ -201,13 +217,8 @@ public class PlayerCombatCore : MonoBehaviour
 		_playerAnimationRiggingRig.weight = _AimParameter;
 		_playerAnimator.SetFloat("Weapon_AimedIn", _AimParameter);
 	}
-	
-	// Start is called before the first frame update
-	private void Start() {
-		_input = InputReader.Instance.PlayerInput;
-		InstantiateInventory();
-		EquipWeaponByIndex(0);
 
+	private void AssignInputEventsToCurrentInstanceScript() {
 		_input.Player.Shoot.performed += _ => _currentInstanceScript.FireDown();
 		_input.Player.Shoot.performed += _ => _fire1Down = true;
 		_input.Player.Shoot.canceled += _ => _currentInstanceScript.FireUp();
@@ -222,11 +233,9 @@ public class PlayerCombatCore : MonoBehaviour
 		_input.Player.Reload.performed += _ => _reloadDown = true;
 		_input.Player.Reload.canceled += _ => _currentInstanceScript.ReloadUp();
 		_input.Player.Reload.canceled += _ => _reloadDown = false;
-
-		_normalCameraDistance = _cinemachineThirdPersonFollow.CameraDistance;
 	}
 
-	private void OnDisable() {
+	private void UnassignInputEventsFromCurrentInstanceScript() {
 		_input.Player.Shoot.performed -= _ => _currentInstanceScript.FireDown();
 		_input.Player.Shoot.performed -= _ => _fire1Down = true;
 		_input.Player.Shoot.canceled -= _ => _currentInstanceScript.FireUp();
@@ -242,6 +251,21 @@ public class PlayerCombatCore : MonoBehaviour
 		_input.Player.Reload.canceled -= _ => _currentInstanceScript.ReloadUp();
 		_input.Player.Reload.canceled -= _ => _reloadDown = false;
 	}
+	
+	// Start is called before the first frame update
+	private void Start() {
+		_input = InputReader.Instance.PlayerInput;
+		InstantiateInventory();
+
+		
+		_normalCameraDistance = _cinemachineThirdPersonFollow.CameraDistance;
+	}
+
+	private void OnDisable() {
+		if (_currentInstanceScript != null) {
+			UnassignInputEventsFromCurrentInstanceScript();
+		}
+	}
 
 	private bool _fire1Down;
 	private bool _fire2Down;
@@ -249,6 +273,8 @@ public class PlayerCombatCore : MonoBehaviour
 
 	private void Update() {
 		ManageAimParameter();
+		_leftHandGrabTarget.position = _currentInstanceScript._leftHandPosMarker.position;
+		_leftHandGrabTarget.rotation = _currentInstanceScript._leftHandPosMarker.rotation;
 		// Yeah its not great but it works :shrug:
 		if (_fire1Down) _currentInstanceScript.FireHold();
 		if (_fire2Down) _currentInstanceScript.Fire2Hold();

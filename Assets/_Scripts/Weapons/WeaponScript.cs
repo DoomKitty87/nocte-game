@@ -4,7 +4,25 @@ using UnityEngine.Serialization;
 public abstract class WeaponScript : MonoBehaviour
 {
   [FormerlySerializedAs("_instancingCombatCoreScript")] [HideInInspector] public PlayerCombatCore _instancingPlayerCombatCoreScript;
-  [HideInInspector] public PlayerInput _inputComponent;
+
+  [Header("WeaponScript Dependencies")]
+  public Transform _leftHandPosMarker;
+  [SerializeField] protected float _aimSpeed = 6f;
+  
+  private float _aimParamTarget;
+  protected void LerpAimingParametersUpdate() {
+    _instancingPlayerCombatCoreScript._AimParameter = Mathf.Lerp(_instancingPlayerCombatCoreScript._AimParameter, _aimParamTarget, Time.deltaTime * _aimSpeed);
+    if (_instancingPlayerCombatCoreScript._AimParameter < 0.02f) _instancingPlayerCombatCoreScript._AimParameter = 0;
+    if (_instancingPlayerCombatCoreScript._AimParameter > 0.98f) _instancingPlayerCombatCoreScript._AimParameter = 1;
+  }
+  protected void LerpAimingParameters(bool aimedIn) { 
+    if (aimedIn) {
+      _aimParamTarget = 1;
+    } else {
+      _aimParamTarget = 0;
+    }
+  }
+  
   // Called on any frame fire is down immediately after a frame where fire is up
   public abstract void FireDown();
   // Called for every frame the mouse is down, excluding the FireDown() frame
