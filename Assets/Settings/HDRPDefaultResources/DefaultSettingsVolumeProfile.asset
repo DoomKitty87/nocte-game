@@ -786,6 +786,79 @@ MonoBehaviour:
   tint:
     m_OverrideState: 1
     m_Value: 0
+--- !u!114 &-2619872377559501255
+MonoBehaviour:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eae3c4cccd664b94382cd8508aba414b, type: 3}
+  m_Name: ScannerEffectPostProcessVolume
+  m_EditorClassIdentifier: 
+  active: 1
+  _intensity:
+    m_OverrideState: 1
+    m_Value: 0
+  _scannerCenterPosition:
+    m_OverrideState: 1
+    m_Value: {x: 0, y: 0, z: 0}
+  _scanDirectionXZ:
+    m_OverrideState: 1
+    m_Value: {x: 0, y: 1}
+  _scanDegrees:
+    m_OverrideState: 1
+    m_Value: 120
+  _scanDistance:
+    m_OverrideState: 1
+    m_Value: 10
+  _scanLineColor:
+    m_OverrideState: 1
+    m_Value: {r: 0, g: 1, b: 1, a: 1}
+  _lastScanLineColor:
+    m_OverrideState: 1
+    m_Value: {r: 0, g: 1, b: 1, a: 1}
+  _scanLineWidth:
+    m_OverrideState: 1
+    m_Value: 0.02
+  _scanLineDistBetween:
+    m_OverrideState: 1
+    m_Value: 1
+  _scanLineDistFromEdgeShown:
+    m_OverrideState: 1
+    m_Value: 50
+  _edgeGlowColor:
+    m_OverrideState: 1
+    m_Value: {r: 0, g: 1, b: 1, a: 1}
+  _edgeGlowAccentColor:
+    m_OverrideState: 1
+    m_Value: {r: 0, g: 0, b: 0, a: 1}
+  _edgeGlowWidth:
+    m_OverrideState: 1
+    m_Value: 2
+  _darkenOpacity:
+    m_OverrideState: 1
+    m_Value: 1
+  _darkenBaseValue:
+    m_OverrideState: 1
+    m_Value: 1
+  _darkenWidth:
+    m_OverrideState: 1
+    m_Value: 0.85
+  _sideFadeMagnitude:
+    m_OverrideState: 1
+    m_Value: 0.1
+  _sobelThreshold:
+    m_OverrideState: 1
+    m_Value: 0.2
+  _sobelColor:
+    m_OverrideState: 1
+    m_Value: {r: 0, g: 1, b: 1, a: 1}
+  _sobelDistFromEdgeShown:
+    m_OverrideState: 1
+    m_Value: 50
 --- !u!114 &-2081447649725117986
 MonoBehaviour:
   m_ObjectHideFlags: 3
@@ -1426,6 +1499,7 @@ MonoBehaviour:
   - {fileID: 8902255496133660851}
   - {fileID: -8349878917596286886}
   - {fileID: 6823841044410925178}
+  - {fileID: -2619872377559501255}
 --- !u!114 &267561892812370678
 MonoBehaviour:
   m_ObjectHideFlags: 3
