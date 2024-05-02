@@ -7,6 +7,7 @@ public class FoodManager : MonoBehaviour
   [SerializeField] private int _chunkDensity;
 
   public void PlaceFoodPoints() {
+    
     // for each chunk pick like 5 points
     // check each point to make sure they are not in the water
     // if they are pick a new one
