@@ -9,6 +9,7 @@ public class WeaponItem : ScriptableObject
   [Header("UI & Info")]
   public string _weaponName;
   public string _weaponDescription;
+  public Sprite _weaponIcon;
   // Should contain weaponScript class reference
   public GameObject _weaponPrefab;
 }

@@ -1,14 +1,20 @@
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.Serialization;
 
 // For now, only MnK support, console could be whenever
 public class RadialMenu : MonoBehaviour
 {
 
+	public UnityEvent<int> _OnSelected = new UnityEvent<int>();
+	private int _currentIndexHovered;
+	
 	[Header("References")] 
 	[FormerlySerializedAs("_menuCenter")]
-	[Tooltip("Will also be the parent of separator and selector GameObjects. MUST BE IN SCREEN CENTER")][SerializeField] private GameObject _menuContainer;
-	[Tooltip("Image Object used to denote selection differences")][SerializeField] private GameObject _separatorGameObject;
+	[Tooltip("Will also be the parent of separator and selector GameObjects. MUST BE IN SCREEN CENTER")]
+	[SerializeField] private GameObject _menuContainer;
+	[Tooltip("Image Object used to denote selection differences")]
+	[SerializeField] private GameObject _separatorGameObject;
 	[SerializeField] private RectTransform _selectorTransform;
 	public enum SeperatorOutwardsDirection {
 		Up,
@@ -123,12 +129,22 @@ public class RadialMenu : MonoBehaviour
 		return uv;
 	}
 	
+	
+	
+	// Lower bound, Upper Bound
 	private (float, float) GetCurrentStepBounds(float currentDegrees) {
 		float parentRotation = _menuContainer.GetComponent<RectTransform>().rotation.eulerAngles.z;
 		float stepDegrees = 360f / _selectionCount;
 		float stepsPassed = (currentDegrees - parentRotation) / stepDegrees;
 		(float, float) nearestStepBounds = (Mathf.Floor(stepsPassed) * stepDegrees + parentRotation, Mathf.Ceil(stepsPassed) * stepDegrees + parentRotation);
 		return nearestStepBounds;
+	}
+	
+	private int GetCurrentStepIndex(float currentDegrees) {
+		float parentRotation = _menuContainer.GetComponent<RectTransform>().rotation.eulerAngles.z;
+		float stepDegrees = 360f / _selectionCount;
+		float stepsPassed = (currentDegrees - parentRotation) / stepDegrees;
+		return Mathf.FloorToInt(stepsPassed);
 	}
 	
 	public void UpdateSelector() {

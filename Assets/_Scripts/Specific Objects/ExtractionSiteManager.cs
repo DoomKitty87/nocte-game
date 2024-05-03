@@ -11,6 +11,7 @@ public class ExtractionSiteManager : MonoBehaviour
   [SerializeField] private TextMeshProUGUI _statusText;
 
   [SerializeField] private TextMeshProUGUI[] _extractorStatus;
+  [SerializeField] private GameObject _activated;
 
   private bool[] extractorsActive = new bool[3] {false, false, false};
   private int extractorsActiveCount = 0;
@@ -32,8 +33,15 @@ public class ExtractionSiteManager : MonoBehaviour
 
   private void GeneratorActivated() {
     _statusText.text = "EXTRACTORS ONLINE\nGENERATOR ONLINE";
-    PlayerMetaProgression.Instance.ObtainBlueprint(3);
+    _activated.SetActive(true);
+    //PlayerMetaProgression.Instance.ObtainBlueprint(3);
     // Animation or whatever
+    //Debug.Log("Generator activated; player obtained Utility Blueprint (Grappling Hook)");
+  }
+
+  public void ActivateTerminal() {
+    _activated.SetActive(false);
+    PlayerMetaProgression.Instance.ObtainBlueprint(3);
     Debug.Log("Generator activated; player obtained Utility Blueprint (Grappling Hook)");
   }
   

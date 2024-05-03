@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 347.3846, g: 136.92851, b: 64.66284, a: 1}
+  m_IndirectSpecularColor: {r: 82.03044, g: 38.939426, b: 21.751078, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -5598,6 +5598,46 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8006249604740443719, guid: 9251f6c58d15c7b428fef40ec34ce952,
+        type: 3}
+      propertyPath: field of view
+      value: 60
+      objectReference: {fileID: 0}
+    - target: {fileID: 8573639786141903827, guid: 9251f6c58d15c7b428fef40ec34ce952,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -7.12
+      objectReference: {fileID: 0}
+    - target: {fileID: 8573639786141903827, guid: 9251f6c58d15c7b428fef40ec34ce952,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.17000008
+      objectReference: {fileID: 0}
+    - target: {fileID: 8573639786141903827, guid: 9251f6c58d15c7b428fef40ec34ce952,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -3.327804
+      objectReference: {fileID: 0}
+    - target: {fileID: 8573639786141903827, guid: 9251f6c58d15c7b428fef40ec34ce952,
+        type: 3}
+      propertyPath: m_LocalRotation.w
+      value: -0.08264018
+      objectReference: {fileID: 0}
+    - target: {fileID: 8573639786141903827, guid: 9251f6c58d15c7b428fef40ec34ce952,
+        type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0.041665625
+      objectReference: {fileID: 0}
+    - target: {fileID: 8573639786141903827, guid: 9251f6c58d15c7b428fef40ec34ce952,
+        type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0.8891468
+      objectReference: {fileID: 0}
+    - target: {fileID: 8573639786141903827, guid: 9251f6c58d15c7b428fef40ec34ce952,
+        type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0.4481658
+      objectReference: {fileID: 0}
     - target: {fileID: 9222094017749289078, guid: 9251f6c58d15c7b428fef40ec34ce952,
         type: 3}
       propertyPath: _rain
@@ -5605,7 +5645,11 @@ PrefabInstance:
       objectReference: {fileID: 1919250534}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
-    m_AddedGameObjects: []
+    m_AddedGameObjects:
+    - targetCorrespondingSourceObject: {fileID: 6499379936886537626, guid: 9251f6c58d15c7b428fef40ec34ce952,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 2081670415}
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 9251f6c58d15c7b428fef40ec34ce952, type: 3}
 --- !u!4 &485706945 stripped
@@ -5617,6 +5661,12 @@ Transform:
 --- !u!4 &485706946 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7579844485692665664, guid: 9251f6c58d15c7b428fef40ec34ce952,
+    type: 3}
+  m_PrefabInstance: {fileID: 485706944}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &663934769 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 6499379936886537626, guid: 9251f6c58d15c7b428fef40ec34ce952,
     type: 3}
   m_PrefabInstance: {fileID: 485706944}
   m_PrefabAsset: {fileID: 0}
@@ -6101,9 +6151,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _scanEffectVolume: {fileID: 1004352488}
   _scanOrigin: {fileID: 485706945}
-  _scanDistance: 2000
-  _scanDuration: 6
-  _scanHangDuration: 2
+  _scanDistance: 200
+  _scanDuration: 4
+  _scanHangDuration: 0
   _scanSpeedCurve:
     serializedVersion: 2
     m_Curve:
@@ -6197,7 +6247,7 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  _scanFadeOutDuration: 0.3
+  _scanFadeOutDuration: 2
   _scanCooldown: 1
   _inverseSpeedCurve:
     serializedVersion: 2
@@ -6784,14 +6834,14 @@ MonoBehaviour:
   _normalRadius: 50
   _roadResolution: 25
   _roadWidth: 25
-  _roadDepth: 5.25
-  _roadInset: 9
-  _roadBevel: 0.8
+  _roadDepth: 2
+  _roadInset: 3
+  _roadBevel: 0.1
   _roadWaterImpact: 25
   _roadNoiseAmplitude: 50
   _roadPathfindingPoints: 2
   _roadMaxAngle: 10
-  _roadMaterial: {fileID: 2100000, guid: 0b575891d2861ca4f964e919cca70067, type: 2}
+  _roadMaterial: {fileID: 2100000, guid: 6e6da05209e3d8841a85bd264fa9e3fd, type: 2}
 --- !u!114 &1849557963
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -12276,6 +12326,74 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 2.4, y: 5.674354, z: 2.4}
   m_Center: {x: 0, y: 0.7128229, z: 0}
+--- !u!1 &2081670414
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2081670415}
+  - component: {fileID: 2081670416}
+  m_Layer: 3
+  m_Name: Local Volumetric Fog
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2081670415
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2081670414}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 663934769}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2081670416
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2081670414}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e1fbb15bf92b84f40a1eb030765b5afe, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  parameters:
+    albedo: {r: 1, g: 1, b: 1, a: 1}
+    meanFreePath: 50
+    blendingMode: 1
+    priority: 0
+    anisotropy: 0
+    volumeMask: {fileID: 0}
+    textureScrollingSpeed: {x: 0, y: 0, z: 0}
+    textureTiling: {x: 1, y: 1, z: 1}
+    positiveFade: {x: 0.001, y: 0.002, z: 0.001}
+    negativeFade: {x: 0.001, y: 0.002, z: 0.001}
+    m_EditorUniformFade: 0.1
+    m_EditorPositiveFade: {x: 0.0009999999, y: 0.0019999999, z: 0.0009999999}
+    m_EditorNegativeFade: {x: 0.0009999999, y: 0.0019999999, z: 0.0009999999}
+    m_EditorAdvancedFade: 0
+    size: {x: 100, y: 50, z: 100}
+    invertFade: 0
+    distanceFadeStart: 10000
+    distanceFadeEnd: 10000
+    textureOffset: {x: 0, y: 0, z: 0}
+    falloffMode: 0
+    maskMode: 0
+    materialMask: {fileID: 0}
+  m_Version: 3
 --- !u!1001 &4258144910533491455
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -12287,12 +12405,12 @@ PrefabInstance:
     - target: {fileID: 301953405021559863, guid: 862d92a67177d4c7b84ab88d6b6e0257,
         type: 3}
       propertyPath: _disable
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 301953405021559863, guid: 862d92a67177d4c7b84ab88d6b6e0257,
         type: 3}
       propertyPath: m_Enabled
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5599089152639715107, guid: 862d92a67177d4c7b84ab88d6b6e0257,
         type: 3}
