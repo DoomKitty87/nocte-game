@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0, g: 0, b: 0, a: 1}
+  m_IndirectSpecularColor: {r: 0.06013731, g: 0.015998172, b: 0.062356003, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -1548,6 +1548,7 @@ GameObject:
   - component: {fileID: 397008894}
   - component: {fileID: 397008898}
   - component: {fileID: 397008899}
+  - component: {fileID: 397008900}
   m_Layer: 5
   m_Name: Canvas
   m_TagString: Untagged
@@ -1660,15 +1661,25 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 397008893}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8f25365f44bbe4c43808c69e723f2b11, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _panels:
-  - {fileID: 1968420370}
-  - {fileID: 1881049783}
-  - {fileID: 0}
+--- !u!114 &397008900
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 397008893}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 11ae95dc3db46544b85396612632ec40, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _upgradeScreenObject: {fileID: 1881049783}
+  _homeScreenObject: {fileID: 1968420370}
 --- !u!1001 &411228818
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -4858,7 +4869,6 @@ MonoBehaviour:
   m_Script: {fileID: 1756058290}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Entries: []
 --- !u!4 &908667281
 Transform:
   m_ObjectHideFlags: 19
@@ -6260,17 +6270,17 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 397008899}
-        m_TargetAssemblyTypeName: MenuPanels, Assembly-CSharp
-        m_MethodName: OpenPanel
-        m_Mode: 3
+      - m_Target: {fileID: 397008900}
+        m_TargetAssemblyTypeName: ShipUpgradeAnimationHandler, Assembly-CSharp
+        m_MethodName: ToggleUpgradeScreen
+        m_Mode: 6
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 1
           m_FloatArgument: 0
           m_StringArgument: 
-          m_BoolArgument: 0
+          m_BoolArgument: 1
         m_CallState: 2
 --- !u!114 &1201433607
 MonoBehaviour:
@@ -6745,7 +6755,7 @@ GameObject:
   - component: {fileID: 1315276868}
   - component: {fileID: 1315276869}
   m_Layer: 0
-  m_Name: GameObject
+  m_Name: BigCamera
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -7779,10 +7789,10 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 397008899}
-        m_TargetAssemblyTypeName: MenuPanels, Assembly-CSharp
-        m_MethodName: OpenPanel
-        m_Mode: 3
+      - m_Target: {fileID: 397008900}
+        m_TargetAssemblyTypeName: ShipUpgradeAnimationHandler, Assembly-CSharp
+        m_MethodName: ToggleUpgradeScreen
+        m_Mode: 6
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -11065,6 +11075,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1881049784}
+  - component: {fileID: 1881049785}
   m_Layer: 5
   m_Name: Upgrades
   m_TagString: Untagged
@@ -11086,6 +11097,7 @@ RectTransform:
   m_Children:
   - {fileID: 49910048}
   - {fileID: 1516949808}
+  - {fileID: 2096950577}
   m_Father: {fileID: 397008897}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
@@ -11093,6 +11105,18 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1881049785
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1881049783}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d028d0cff7841cd40870a3064dfac8b7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1892301563
 GameObject:
   m_ObjectHideFlags: 0
@@ -11731,7 +11755,7 @@ MonoBehaviour:
     DefaultMode: 2
   DefaultBlend:
     Style: 1
-    Time: 2
+    Time: 0.8
     CustomCurve:
       serializedVersion: 2
       m_Curve: []
@@ -12369,6 +12393,99 @@ RectTransform:
   m_AnchoredPosition: {x: -636.0314, y: 459.99997}
   m_SizeDelta: {x: 481.9371, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!1 &2096950574
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2096950577}
+  - component: {fileID: 2096950576}
+  - component: {fileID: 2096950575}
+  m_Layer: 0
+  m_Name: UpgradeCamera
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &2096950575
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2096950574}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 68bb026fafb42b14791938953eaace77, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  NoiseProfile: {fileID: 11400000, guid: e9ce97b7a206dc64d90931ea044e0c72, type: 2}
+  PivotOffset: {x: 0, y: 0, z: 0}
+  AmplitudeGain: 0.5
+  FrequencyGain: 0.05
+  mNoiseOffsets: {x: -84.298706, y: 878.75696, z: -385.57397}
+--- !u!114 &2096950576
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2096950574}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f9dfa5b682dcd46bda6128250e975f58, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Priority:
+    Enabled: 0
+    m_Value: 0
+  OutputChannel: 1
+  StandbyUpdate: 2
+  m_StreamingVersion: 20230301
+  m_LegacyPriority: 0
+  Target:
+    TrackingTarget: {fileID: 0}
+    LookAtTarget: {fileID: 0}
+    CustomLookAtTarget: 0
+  Lens:
+    FieldOfView: 65.4
+    OrthographicSize: 10
+    NearClipPlane: 0.1
+    FarClipPlane: 5000
+    Dutch: 0
+    ModeOverride: 0
+    PhysicalProperties:
+      GateFit: 2
+      SensorSize: {x: 21.946, y: 16.002}
+      LensShift: {x: 0, y: 0}
+      FocusDistance: 10
+      Iso: 200
+      ShutterSpeed: 0.005
+      Aperture: 16
+      BladeCount: 5
+      Curvature: {x: 2, y: 11}
+      BarrelClipping: 0.25
+      Anamorphism: 0
+  BlendHint: 0
+--- !u!4 &2096950577
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2096950574}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0.5, y: 0.5, z: -0.5, w: 0.5}
+  m_LocalPosition: {x: -960, y: -503.55774, z: -0.2939326}
+  m_LocalScale: {x: 2.6966293, y: 2.6966293, z: 2.6966293}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1881049784}
+  m_LocalEulerAnglesHint: {x: 90, y: 0, z: -90}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
