@@ -5,8 +5,9 @@ using UnityEngine;
 using UnityEngine.UI;
 using UpgradeSystem;
 
-public class UpgradeHandler : MonoBehaviour
-{
+public class UpgradeHandler : MonoBehaviour {
+  [SerializeField] private bool _isMainMenu;
+  
   [SerializeField] private UpgradeTree[] _upgradeTrees; 
 
   [SerializeField] private Button _addButton;
@@ -32,6 +33,10 @@ public class UpgradeHandler : MonoBehaviour
 
     SetValue(PlayerMetaProgression.Instance.AvailableCores);
 
+    if (_isMainMenu) {
+      PlayerMetaProgression.Instance.ConvertOwnedBlueprintsToUnlocked();
+    }
+    
     bool[] unlockedBlueprints = PlayerMetaProgression.Instance.GetAvailableBlueprints();
 
     for (int i = 0; i < _upgradeTrees.Length; i++) {

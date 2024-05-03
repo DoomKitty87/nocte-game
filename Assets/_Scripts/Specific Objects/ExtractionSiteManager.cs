@@ -34,7 +34,7 @@ public class ExtractionSiteManager : MonoBehaviour
   private void GeneratorActivated() {
     _statusText.text = "EXTRACTORS ONLINE\nGENERATOR ONLINE";
     _activated.SetActive(true);
-    //PlayerMetaProgression.Instance.ObtainBlueprint(3);
+    // PlayerMetaProgression.Instance.ObtainBlueprint(3);
     // Animation or whatever
     //Debug.Log("Generator activated; player obtained Utility Blueprint (Grappling Hook)");
   }

@@ -127,4 +127,10 @@ public class PlayerMetaProgression : MonoBehaviour
       _progression.blueprints[i].unlocked = true;
     }
   }
+
+  public void ConvertOwnedBlueprintsToUnlocked() {
+    for (int i = 0; i < _progression.blueprints.Length; i++) {
+      if (_progression.blueprints[i].owned) _progression.blueprints[i].unlocked = true;
+    }
+  }
 }
