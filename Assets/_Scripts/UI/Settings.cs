@@ -10,6 +10,7 @@ public class Settings : MonoBehaviour
   public static Settings Instance { get; private set; }
 
   [SerializeField] private AudioMixer _audioMixer;
+  [SerializeField] private VolumeProfile _globalVolumeProfile;
 
   #region Audio
 
@@ -218,6 +219,19 @@ public class Settings : MonoBehaviour
     }
   }
 
+  public static int ColorblindMode
+  {
+    get
+    {
+      return PlayerPrefs.GetInt("ColorblindMode", 0);
+    }
+    set
+    {
+      PlayerPrefs.SetInt("ColorblindMode", value);
+      Instance.UpdateColorblindMode();
+    }
+  }
+
   private void UpdateVsync() {
     QualitySettings.vSyncCount = EnableVsync ? 1 : 0;
   }
@@ -227,7 +241,36 @@ public class Settings : MonoBehaviour
   }
 
   private void UpdateBrightness() {
-    // Update brightness
+    _globalVolumeProfile.TryGet(out LiftGammaGain liftGammaGain);
+    liftGammaGain.gamma.value = new Vector4(Brightness, Brightness, Brightness, 1);
+  }
+
+  private void UpdateColorblindMode() {
+    _globalVolumeProfile.TryGet(out ChannelMixer channelMixer);
+    switch (ColorblindMode) {
+      case 0:
+        channelMixer.redOutRedIn.overrideState = false;
+        channelMixer.greenOutGreenIn.overrideState = false;
+        channelMixer.blueOutBlueIn.overrideState = false;
+        break;
+      case 1:
+        // Red-Green (Protanopia)
+        channelMixer.redOutRedIn.overrideState = true;
+        channelMixer.greenOutGreenIn.overrideState = true;
+        channelMixer.blueOutBlueIn.overrideState = false;
+        channelMixer.redOutRedIn.value = 150;
+        channelMixer.greenOutGreenIn.value = 50;
+        break;
+      case 2:
+        // Blue-Yellow (Tritanopia)
+        channelMixer.redOutRedIn.overrideState = true;
+        channelMixer.greenOutGreenIn.overrideState = true;
+        channelMixer.blueOutBlueIn.overrideState = true;
+        channelMixer.blueOutBlueIn.value = 150;
+        channelMixer.redOutRedIn.value = 75;
+        channelMixer.greenOutGreenIn.value = 75;
+        break;
+    }
   }
 
   #endregion
@@ -251,6 +294,8 @@ public class Settings : MonoBehaviour
     // Video
     UpdateVsync();
     UpdateFullscreen();
+    UpdateBrightness();
+    UpdateColorblindMode();
 
   }
 
