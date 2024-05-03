@@ -24,10 +24,12 @@ public class OptionsHandler : MonoBehaviour
   [SerializeField] private Toggle _vsyncToggle;
   [SerializeField] private Toggle _fullscreenToggle;
   [SerializeField] private Slider _brightnessSlider;
+  [SerializeField] private Dropdown _colorblindDropdown;
 
 
   private void Start() {
     LoadSettingsValues();
+    AddListeners();
   }
 
   private void LoadSettingsValues() {
@@ -46,6 +48,26 @@ public class OptionsHandler : MonoBehaviour
     _vsyncToggle.isOn = Settings.EnableVsync;
     _fullscreenToggle.isOn = Settings.Fullscreen;
     _brightnessSlider.value = Settings.Brightness;
+    _colorblindDropdown.value = Settings.ColorblindMode;
+  }
+
+  private void AddListeners() {
+    _masterVolumeSlider.onValueChanged.AddListener((value) => Settings.MasterVolume = value);
+    _musicVolumeSlider.onValueChanged.AddListener((value) => Settings.MusicVolume = value);
+    _sfxVolumeSlider.onValueChanged.AddListener((value) => Settings.SfxVolume = value);
+
+    _cloudsToggle.onValueChanged.AddListener((value) => Settings.EnableClouds = value);
+    _foliageDropdown.onValueChanged.AddListener((value) => Settings.FoliageQuality = value);
+    _terrainDropdown.onValueChanged.AddListener((value) => Settings.TerrainQuality = value);
+
+    _invertMouseToggle.onValueChanged.AddListener((value) => Settings.InvertMouse = value);
+    _mouseSensitivitySlider.onValueChanged.AddListener((value) => Settings.MouseSensitivity = value);
+    _adsMultiplierSlider.onValueChanged.AddListener((value) => Settings.AdsMultiplier = value);
+
+    _vsyncToggle.onValueChanged.AddListener((value) => Settings.EnableVsync = value);
+    _fullscreenToggle.onValueChanged.AddListener((value) => Settings.Fullscreen = value);
+    _brightnessSlider.onValueChanged.AddListener((value) => Settings.Brightness = value);
+    _colorblindDropdown.onValueChanged.AddListener((value) => Settings.ColorblindMode = value);
   }
 
 }
