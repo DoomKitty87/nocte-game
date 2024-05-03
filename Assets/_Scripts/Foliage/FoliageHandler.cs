@@ -60,7 +60,7 @@ namespace Foliage
 
       // Finds the farthest LOD distance in all FoliageScriptable objects
       var farthestChunkDistance = _scriptables.Select(scriptable => scriptable._maxBillboardDistance).
-        Prepend(0).Max();
+        Prepend(0).Max() - WorldGenInfo._foliageQuality * 750f;
 
       _chunkDistance = Mathf.FloorToInt(farthestChunkDistance / _chunkSize);
     }

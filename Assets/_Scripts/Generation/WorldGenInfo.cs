@@ -11,4 +11,7 @@ static class WorldGenInfo
   public static WorldGenerator _worldGenerator;
   public static SecondaryStructures _secondaryStructures;
 
+  public static int _foliageQuality = 0;
+  public static int _terrainQuality = 0;
+
 }

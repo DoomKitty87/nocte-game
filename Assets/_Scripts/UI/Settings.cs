@@ -1,5 +1,6 @@
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.Audio;
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.HighDefinition;
 
@@ -7,6 +8,8 @@ public class Settings : MonoBehaviour
 {
 
   public static Settings Instance { get; private set; }
+
+  [SerializeField] private AudioMixer _audioMixer;
 
   #region Audio
 
@@ -54,11 +57,11 @@ public class Settings : MonoBehaviour
   }
 
   private void UpdateMusicVolume() {
-    // Update music volume
+    _audioMixer.SetFloat("MusicVolume", Mathf.Log10(MusicVolume) * 20);
   }
 
   private void UpdateSfxVolume() {
-    // Update sfx volume
+    _audioMixer.SetFloat("SFXVolume", Mathf.Log10(SfxVolume) * 20);
   }
 
   #endregion
@@ -81,7 +84,7 @@ public class Settings : MonoBehaviour
   {
     get
     {
-      return PlayerPrefs.GetInt("FoliageQuality", 2);
+      return PlayerPrefs.GetInt("FoliageQuality", 0);
     }
     set
     {
@@ -94,7 +97,7 @@ public class Settings : MonoBehaviour
   {
     get
     {
-      return PlayerPrefs.GetInt("TerrainQuality", 2);
+      return PlayerPrefs.GetInt("TerrainQuality", 0);
     }
     set
     {
@@ -110,11 +113,11 @@ public class Settings : MonoBehaviour
   }
 
   private void UpdateFoliageQuality() {
-    // Update foliage quality
+    WorldGenInfo._foliageQuality = FoliageQuality;
   }
 
   private void UpdateTerrainQuality() {
-    // Update terrain quality
+    WorldGenInfo._terrainQuality = TerrainQuality;
   }
 
   #endregion

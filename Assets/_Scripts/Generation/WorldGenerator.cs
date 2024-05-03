@@ -551,7 +551,7 @@ public class WorldGenerator : MonoBehaviour
       }
     }
 
-    return lod;
+    return lod - WorldGenInfo._terrainQuality;
   }
 
   private void ScatterTile(int index) {
