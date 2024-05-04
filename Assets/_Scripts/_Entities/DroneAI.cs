@@ -20,18 +20,23 @@ public class DroneAI : MonoBehaviour
 
   [SerializeField] private CreatureAttack _attack;
 
+  [SerializeField] private Rigidbody _rigidbody;
+
   private float _attackTimer;
 
   private void Start() {
     _playerTarget = GameObject.FindGameObjectWithTag("Player").transform;
   }
 
-  private void Update() {
+  private void FixedUpdate() {
     Vector3 direction = _playerTarget.position - transform.position + Vector3.up * 0.5f;
     Quaternion rotation = Quaternion.LookRotation(direction);
-    transform.rotation = Quaternion.Slerp(transform.rotation, rotation, Time.deltaTime * _rotationSpeed);
+
+    transform.rotation = Quaternion.Slerp(transform.rotation, rotation, Time.fixedDeltaTime * _rotationSpeed);
+
     float speed = _speedCurve.Evaluate((direction.magnitude - _stopDistance) / _maxSpeedDistance) * _maxSpeed;
-    transform.position += transform.forward * Time.deltaTime * speed;
+
+    _rigidbody.AddForce(transform.forward * Time.fixedDeltaTime * speed);
 
     // Attempt to attack player
     if (direction.magnitude < _attackDistance && _attackTimer > _attack._attackRepeatSeconds) {
@@ -39,7 +44,7 @@ public class DroneAI : MonoBehaviour
       _attackTimer = 0;
     }
 
-    _attackTimer += Time.deltaTime;
+    _attackTimer += Time.fixedDeltaTime;
   }
 
   public void Neutralized() {
