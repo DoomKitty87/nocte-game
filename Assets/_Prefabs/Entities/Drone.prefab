@@ -95,6 +95,9 @@ GameObject:
   m_Component:
   - component: {fileID: 2059644729066216941}
   - component: {fileID: -1139925849729021575}
+  - component: {fileID: 7184804435476355436}
+  - component: {fileID: 5913659270572066127}
+  - component: {fileID: 4301926050457816456}
   m_Layer: 0
   m_Name: Drone
   m_TagString: Untagged
@@ -167,3 +170,87 @@ MonoBehaviour:
     m_RotationOrder: 4
   _rotationSpeed: 2
   _stopDistance: 2
+  _attackDistance: 8
+  _combat: {fileID: 5913659270572066127}
+  _attack:
+    _attackDistance: 25
+    _attackDamage: 20
+    _attackRepeatSeconds: 0.5
+--- !u!114 &7184804435476355436
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1719956536409655127}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 91e9c5a72272c4bf79d6e5a9357dbb36, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _currentHealth: 50
+  _maxHealth: 50
+  _onHealthInitialize:
+    m_PersistentCalls:
+      m_Calls: []
+  _onHealthZero:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: -1139925849729021575}
+        m_TargetAssemblyTypeName: DroneAI, Assembly-CSharp
+        m_MethodName: Neutralized
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  _onHealthChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  _onDamage:
+    m_PersistentCalls:
+      m_Calls: []
+  _onHeal:
+    m_PersistentCalls:
+      m_Calls: []
+--- !u!114 &5913659270572066127
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1719956536409655127}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 949bcac38b3e1f040995e9a9496951ed, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _layerMask:
+    serializedVersion: 2
+    m_Bits: 8
+  _timeOfLastAttack: 0
+--- !u!65 &4301926050457816456
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1719956536409655127}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 6.2, y: 1.1615735, z: 8.2}
+  m_Center: {x: 0, y: -0.3807868, z: -0.18}
