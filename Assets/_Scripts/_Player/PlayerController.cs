@@ -408,7 +408,8 @@ public class PlayerController : MonoBehaviour
 
                 // Fixed movement for slope                
                 Vector3 fixedVector = Vector3.ProjectOnPlane(inputDirection, _normalVector).normalized;
-
+                if (fixedVector.y > 0) fixedVector = inputDirection;
+                
                 _acceleration += fixedVector * _walkSpeed;
 
                 // Friction
@@ -429,7 +430,8 @@ public class PlayerController : MonoBehaviour
 
                 // Fixed movement for slope                
                 Vector3 fixedVector = Vector3.ProjectOnPlane(inputDirection, _normalVector).normalized;
-
+                if (fixedVector.y > 0) fixedVector = inputDirection;
+                
                 _acceleration += fixedVector * _sprintSpeed;
 
                 // Friction
@@ -450,7 +452,8 @@ public class PlayerController : MonoBehaviour
 
                 // Fixed movement for slope                
                 Vector3 fixedVector = Vector3.ProjectOnPlane(inputDirection, _normalVector).normalized;
-
+                if (fixedVector.y > 0) fixedVector = inputDirection;
+                    
                 _acceleration += fixedVector * _crouchSpeed;
 
                 // Friction
@@ -494,23 +497,6 @@ public class PlayerController : MonoBehaviour
                 Vector3 inputDirection =
                     (_inputVector.x * rightDirection + _inputVector.z * forwardDirection).
                     normalized;
-
-                if (_firstFrameOffGround) {
-                    if (!_jumpingActive) {
-                        RaycastHit hit = new RaycastHit();
-                        if (CloseToGroundAndAngle(ref hit)) {
-                            transform.position = hit.point + (Vector3.up * 1.2f);
-                            lockVelocityToNormal = true;
-                            normalVector = hit.normal;
-                        }
-
-                        if (_velocity.y > 0) {
-                            // _acceleration.y = -(_acceleration.y + _velocity.y);
-                        }
-                        // Debug.Log("Air");
-                    }
-                    _firstFrameOffGround = false;
-                }
                 
                 float control = _airControlCurve.Evaluate(Mathf.Clamp01(_timeSinceGrounded));
                 
@@ -552,6 +538,24 @@ public class PlayerController : MonoBehaviour
                 if (_jumpingActive && !_keyJumping) {
                     _acceleration -= Vector3.up * (_currentUpwardJumpingForce * 0.5f);
                     _jumpingActive = false;
+                }
+                
+                if (_firstFrameOffGround) {
+                    if (!_jumpingActive) {
+                        // RaycastHit hit = new RaycastHit();
+                        // if (CloseToGroundAndAngle(ref hit)) {
+                        //     transform.position = hit.point + (Vector3.up * 1.2f);
+                        //     lockVelocityToNormal = true;
+                        //     normalVector = hit.normal;
+                        // }
+
+                        if (_velocity.y > 0) {
+                            _velocity.y = 0;
+                            _acceleration.y = 0;
+                        }
+                        // Debug.Log("Air");
+                    }
+                    _firstFrameOffGround = false;
                 }
 
                 dragCoefficient = _inputVector == Vector3.zero ? 0.2f : 0.1f;
@@ -609,7 +613,7 @@ public class PlayerController : MonoBehaviour
         }
 
         // Apply gravity
-        if (_useGravity)
+        if (_useGravity && !_grounded)
             _acceleration += _gravity * Time.fixedDeltaTime * Vector3.down;
         
         // Apply forces
@@ -625,7 +629,7 @@ public class PlayerController : MonoBehaviour
         }
 
         if (_useVelocity)
-            _rb.velocity =_velocity;
+            _rb.velocity = _velocity;
     }
     
     private void RotateModelOrientation(Vector3 inputVector, float rotationSpeed) {
@@ -672,7 +676,7 @@ public class PlayerController : MonoBehaviour
     }
 
     private bool CloseToGroundAndAngle(ref RaycastHit hitOut) {
-        Ray ray = new Ray(transform.position - (Vector3.up * 1.2f), Vector3.down);
+        Ray ray = new Ray(transform.position - (Vector3.up * 1.5f), Vector3.down);
 
         float rayDistance = 0.4f;
         if (Physics.Raycast(ray, out var hit, rayDistance)) {
