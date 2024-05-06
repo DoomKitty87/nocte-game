@@ -26,6 +26,7 @@ public class BoltgunScript : WeaponScript
   [SerializeField] private float _maxRaycastDistance = 5000f;
   [SerializeField] private LayerMask _raycastLayerMask;
   [SerializeField] private float _roundsPerMinute;
+  [SerializeField] private float _reloadTime;
   [SerializeField] private RecoilProfile _recoilProfile;
   private float RoundsPerMinuteToWaitTime(float roundsPerMinute) {
     return 60f / roundsPerMinute;
@@ -74,8 +75,7 @@ public class BoltgunScript : WeaponScript
   private IEnumerator PlayReloadAnimationCoroutine() {
     _reloading = true;
     _playerAnimator.SetTrigger("Weapon_Reload");
-    float reloadTime = _playerAnimator.GetNextAnimatorStateInfo(_playerAnimator.GetLayerIndex(_animationLayerName)).length;
-    yield return new WaitForSeconds(reloadTime);
+    yield return new WaitForSeconds(_reloadTime);
     _ammoLoaded = true;
     _instancingPlayerCombatCoreScript.Weapon_RaiseAmmoChangedEvent();
     _reloading = false;
