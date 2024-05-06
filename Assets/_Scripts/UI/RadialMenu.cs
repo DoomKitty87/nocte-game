@@ -1,13 +1,15 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.Serialization;
+using UnityEngine.UI;
 
 // For now, only MnK support, console could be whenever
 public class RadialMenu : MonoBehaviour
 {
 	public InputReader _inputReader;
-	
+
 	public UnityEvent<int> _OnSelected = new UnityEvent<int>();
 	private int _currentIndexHovered;
 	
@@ -42,6 +44,7 @@ public class RadialMenu : MonoBehaviour
 
 	
 	private GameObject[] _separators;
+	private GameObject[] _weaponImages;
 	
 	private void ConfigureSeparator(GameObject separator, GameObject center, float distanceOffset) {
 		RectTransform rTransform = separator.GetComponent<RectTransform>();
@@ -64,10 +67,11 @@ public class RadialMenu : MonoBehaviour
 		rTransform.anchoredPosition = new Vector3(0, 0, 0);
 		rTransform.rotation = Quaternion.identity;
 	}
-	public void RemoveOldSeparators() {
+	public void RemoveOldSlots() {
 		// Doesn't remove initial separator
 		for (int i = 1; i < _separators.Length; i++) {
 			DestroyImmediate(_separators[i]);
+			DestroyImmediate(_weaponImages[i]);
 		}
 	}
 
@@ -90,16 +94,23 @@ public class RadialMenu : MonoBehaviour
 		}
 		separator.GetComponent<RectTransform>().Rotate(0, 0, rotation);
 	}
+
+	private void SetImagePosition(int index, GameObject imageContainer) {
+		float stepDegrees = 360f / _selectionCount;
+		
+	}
 	
 	public void GenerateSeparators() {
 		if (_separators != null) {
-			RemoveOldSeparators();
+			RemoveOldSlots();
 		}
 		
 		_separators = new GameObject[_selectionCount];
+		_weaponImages = new GameObject[_selectionCount];
 		
 		for (int i = 0; i < _selectionCount; i++) {
 			GameObject separator;
+			GameObject imageContainer;
 			if (i == 0) {
 				separator = _separatorGameObject;
 				ConfigureSeparator(separator, _menuContainer, _separatorOffsetFromCenter);
@@ -108,6 +119,7 @@ public class RadialMenu : MonoBehaviour
 				separator = Instantiate(_separatorGameObject, _menuContainer.transform);
 				ConfigureSeparator(separator, _menuContainer, _separatorOffsetFromCenter);
 			}
+			_weaponImages[i] = new GameObject();
 			_separators[i] = separator;
 			SetSeparatorRotation(i, separator);
 		}
