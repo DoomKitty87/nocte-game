@@ -31,6 +31,8 @@ public class RadialMenu : MonoBehaviour
 	[SerializeField][Range(1, 16)] private int _selectionCount = 4;
 	[Header("Settings")]
 	[SerializeField] private float _separatorOffsetFromCenter = 150f;
+	[SerializeField] private float _imageOffsetFromCenter;
+	[SerializeField] private float _imageSize;
 	[SerializeField] private SelectionType _selectionType = SelectionType.Step;
 	public enum SelectionType {
 		Instant,
@@ -96,11 +98,15 @@ public class RadialMenu : MonoBehaviour
 	}
 
 	private void ConfigureImage(GameObject image, GameObject center) {
-		// configure it
+		image.transform.SetParent(center.transform);
+		image.transform.localPosition = Vector3.zero;
+		image.AddComponent<RectTransform>();
+		image.AddComponent<Image>();
 	}
 	private void SetImagePosition(int index, GameObject imageContainer) {
 		float stepDegrees = 360f / _selectionCount;
-		
+		Vector2 offsetFromCenter = new Vector2(Mathf.Cos(stepDegrees * index + stepDegrees / 2) * _imageOffsetFromCenter, Mathf.Sin(stepDegrees * index + stepDegrees / 2) * _imageOffsetFromCenter);
+		imageContainer.GetComponent<RectTransform>().anchoredPosition = offsetFromCenter;
 	}
 	
 	public void GenerateSeparators() {
@@ -113,7 +119,8 @@ public class RadialMenu : MonoBehaviour
 		
 		for (int i = 0; i < _selectionCount; i++) {
 			GameObject separator;
-			GameObject imageContainer;
+			GameObject imageContainer = new GameObject();
+			ConfigureImage(imageContainer, _menuContainer);
 			if (i == 0) {
 				separator = _separatorGameObject;
 				ConfigureSeparator(separator, _menuContainer, _separatorOffsetFromCenter);
@@ -122,9 +129,10 @@ public class RadialMenu : MonoBehaviour
 				separator = Instantiate(_separatorGameObject, _menuContainer.transform);
 				ConfigureSeparator(separator, _menuContainer, _separatorOffsetFromCenter);
 			}
-			_weaponImages[i] = new GameObject();
-			_separators[i] = separator;
 			SetSeparatorRotation(i, separator);
+			_separators[i] = separator;
+			SetImagePosition(i, imageContainer);
+			_weaponImages[i] = imageContainer;
 		}
 	}
 	
