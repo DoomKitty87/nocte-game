@@ -8,13 +8,14 @@ using UnityEngine.Rendering;
 using IEnumerator = System.Collections.IEnumerator;
 using static AmalgamNoise;
 using System;
+using TMPro.EditorUtilities;
 
 public class WorldGenerator : MonoBehaviour
 {
 
   #region Structs
 
-  private struct WorldTile
+  public struct WorldTile
   {
     public GameObject obj;
     public Mesh mesh;
@@ -225,6 +226,14 @@ public class WorldGenerator : MonoBehaviour
 
   #region Public Fetch Functions
 
+  public float GetTileSize() {
+    return _size * _resolution;
+  }
+
+  public WorldTile[] GetWorldTiles() {
+    return _tilePool;
+  }
+  
   // Gets the height value at a given world position.
   public float GetHeightValue(Vector2 worldPosition) {
     float heightVal = AmalgamNoise.GetPosition(worldPosition.x + _seed, worldPosition.y + _seed, _noiseParameters.octaves, _noiseParameters.lacunarity, _noiseParameters.persistence, _noiseParameters.sharpnessScale,

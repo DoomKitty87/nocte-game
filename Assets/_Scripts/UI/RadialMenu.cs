@@ -95,6 +95,9 @@ public class RadialMenu : MonoBehaviour
 		separator.GetComponent<RectTransform>().Rotate(0, 0, rotation);
 	}
 
+	private void ConfigureImage(GameObject image, GameObject center) {
+		// configure it
+	}
 	private void SetImagePosition(int index, GameObject imageContainer) {
 		float stepDegrees = 360f / _selectionCount;
 		
