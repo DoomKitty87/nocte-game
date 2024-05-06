@@ -14,4 +14,6 @@ static class WorldGenInfo
   public static int _foliageQuality = 0;
   public static int _terrainQuality = 0;
 
+  public static float _loadingProgress = 0f;
+
 }

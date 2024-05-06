@@ -211,6 +211,8 @@ public class WorldGenerator : MonoBehaviour
   private int _currentlyUpdating = 0;
   private int _currentlyGenerating = 0;
 
+  private int _generated = 0;
+
   public delegate void OnGenerationComplete();
   
   public static event OnGenerationComplete GenerationComplete;
@@ -367,6 +369,9 @@ public class WorldGenerator : MonoBehaviour
     }
     updatesLeft += WorldGenInfo._maxUpdatesPerFrame;
     updatesLeft = Mathf.Min(updatesLeft, Mathf.Max(WorldGenInfo._maxUpdatesPerFrame, 1));
+
+    if (_generated < _tileCount * _tileCount)
+      WorldGenInfo._loadingProgress = (_tileCount * _tileCount - _generated) / (float)(_tileCount * _tileCount);
   }
 
   #endregion
@@ -777,7 +782,9 @@ public class WorldGenerator : MonoBehaviour
     if (_enableColliders && maxDistance <= _colliderRange) UpdateCollider(index);
 
     _currentlyGenerating--;
+    _generated++;
     if (_currentlyGenerating == 0 && _generateQueue.Count == 0) {
+      WorldGenInfo._loadingProgress = 1f;
       _doneGenerating = true;
       StartCoroutine(WaterMeshUpdate());
       GenerationComplete?.Invoke();
