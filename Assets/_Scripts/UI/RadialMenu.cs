@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.Serialization;
@@ -5,7 +6,8 @@ using UnityEngine.Serialization;
 // For now, only MnK support, console could be whenever
 public class RadialMenu : MonoBehaviour
 {
-
+	public InputReader _inputReader;
+	
 	public UnityEvent<int> _OnSelected = new UnityEvent<int>();
 	private int _currentIndexHovered;
 	
@@ -90,7 +92,6 @@ public class RadialMenu : MonoBehaviour
 	}
 	
 	public void GenerateSeparators() {
-		print(_separators == null);
 		if (_separators != null) {
 			RemoveOldSeparators();
 		}
@@ -155,6 +156,7 @@ public class RadialMenu : MonoBehaviour
 		}
 		float rotationDegrees = Mathf.Atan2(mousefromCenter.y, mousefromCenter.x) * Mathf.Rad2Deg;
 		(float lowerBound, float upperBound) = GetCurrentStepBounds(rotationDegrees);
+		_currentIndexHovered = GetCurrentStepIndex(rotationDegrees);
 		switch (_selectionType) {
 			case SelectionType.Instant:
 				_selectorTransform.rotation = Quaternion.Euler(0, 0, (lowerBound + upperBound) / 2 + _selectorRotationOffsetDeg);
@@ -168,6 +170,10 @@ public class RadialMenu : MonoBehaviour
 		}
 		// print($"{mousefromCenter.ToString()} | {rotationDegrees} | {(lowerBound + upperBound) / 2}");
 	}
+
+	private void OnSelect() {
+		_OnSelected.Invoke(_currentIndexHovered);
+	}
 	
 	private void Start() {
 		if (_menuContainer == null || _separatorGameObject == null || _selectorTransform == null) {
@@ -176,9 +182,15 @@ public class RadialMenu : MonoBehaviour
 		}
 		GenerateSeparators();
 		ConfigureSelector(_selectorTransform.gameObject, _menuContainer);
+		_inputReader = InputReader.Instance;
+		_inputReader.PlayerInput.UI.Click.performed += _ => OnSelect();
 	}
-
+	
 	private void Update() {
 		UpdateSelector();
+	}
+
+	private void OnDisable() {
+		_inputReader.PlayerInput.UI.Click.performed -= _ => OnSelect();
 	}
 }

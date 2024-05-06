@@ -273,8 +273,10 @@ public class PlayerCombatCore : MonoBehaviour
 
 	private void Update() {
 		ManageAimParameter();
-		_leftHandGrabTarget.position = _currentInstanceScript._leftHandPosMarker.position;
-		_leftHandGrabTarget.rotation = _currentInstanceScript._leftHandPosMarker.rotation;
+		if (_currentInstanceScript != null) {
+			_leftHandGrabTarget.position = _currentInstanceScript._leftHandPosMarker.position;
+			_leftHandGrabTarget.rotation = _currentInstanceScript._leftHandPosMarker.rotation;
+		}
 		// Yeah its not great but it works :shrug:
 		if (_fire1Down) _currentInstanceScript.FireHold();
 		if (_fire2Down) _currentInstanceScript.Fire2Hold();
