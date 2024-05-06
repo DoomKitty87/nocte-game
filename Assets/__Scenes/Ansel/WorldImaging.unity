@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 636.8923, g: 665.8009, b: 677.8857, a: 1}
+  m_IndirectSpecularColor: {r: 0, g: 0, b: 0, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -619,6 +619,74 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1152999432}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1001 &383957650
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 1719956536409655127, guid: d8dceb13b552d1e4898685b0e511264b,
+        type: 3}
+      propertyPath: m_Name
+      value: Drone
+      objectReference: {fileID: 0}
+    - target: {fileID: 2059644729066216941, guid: d8dceb13b552d1e4898685b0e511264b,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2059644729066216941, guid: d8dceb13b552d1e4898685b0e511264b,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 6.47
+      objectReference: {fileID: 0}
+    - target: {fileID: 2059644729066216941, guid: d8dceb13b552d1e4898685b0e511264b,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2059644729066216941, guid: d8dceb13b552d1e4898685b0e511264b,
+        type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2059644729066216941, guid: d8dceb13b552d1e4898685b0e511264b,
+        type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2059644729066216941, guid: d8dceb13b552d1e4898685b0e511264b,
+        type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2059644729066216941, guid: d8dceb13b552d1e4898685b0e511264b,
+        type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2059644729066216941, guid: d8dceb13b552d1e4898685b0e511264b,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2059644729066216941, guid: d8dceb13b552d1e4898685b0e511264b,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2059644729066216941, guid: d8dceb13b552d1e4898685b0e511264b,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: d8dceb13b552d1e4898685b0e511264b, type: 3}
 --- !u!1 &420110776
 GameObject:
   m_ObjectHideFlags: 0
@@ -811,7 +879,7 @@ Camera:
     width: 1
     height: 1
   near clip plane: 0.3
-  far clip plane: 1000
+  far clip plane: 50000
   field of view: 60.000004
   orthographic: 0
   orthographic size: 5
@@ -1562,7 +1630,7 @@ MonoBehaviour:
     FieldOfView: 60.000004
     OrthographicSize: 5
     NearClipPlane: 0.3
-    FarClipPlane: 1000
+    FarClipPlane: 50000
     Dutch: 0
     ModeOverride: 0
     PhysicalProperties:
@@ -1606,3 +1674,4 @@ SceneRoots:
   - {fileID: 183664475}
   - {fileID: 1231936406}
   - {fileID: 1152999432}
+  - {fileID: 383957650}
