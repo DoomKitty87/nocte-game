@@ -904,15 +904,6 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
-                },
-                {
-                    "name": "OpenEquipMenu",
-                    "type": "Button",
-                    "id": "d10b2884-4ac6-4b5b-91ce-63ee25d267eb",
-                    "expectedControlType": "Button",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -1333,10 +1324,27 @@
                     "action": "TrackedDeviceOrientation",
                     "isComposite": false,
                     "isPartOfComposite": false
-                },
+                }
+            ]
+        },
+        {
+            "name": "AlwaysOn",
+            "id": "325369ae-bf44-4eb8-831d-b4a3839a07dd",
+            "actions": [
+                {
+                    "name": "OpenEquipMenu",
+                    "type": "Button",
+                    "id": "d4a69c0b-3bbc-43d4-8870-8e4ea15a3199",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
                 {
                     "name": "",
-                    "id": "64786d9f-0542-4383-91d4-5eea9e738ead",
+                    "id": "60d619aa-77dd-4d85-8978-cc92ef04af99",
                     "path": "<Keyboard>/tab",
                     "interactions": "",
                     "processors": "",
@@ -1347,7 +1355,7 @@
                 },
                 {
                     "name": "",
-                    "id": "cdc42fe3-72d2-4498-b597-a5e08e45281d",
+                    "id": "7b82c99e-dc93-42d1-be41-51a64fec22c2",
                     "path": "<Gamepad>/dpad/left",
                     "interactions": "",
                     "processors": "",

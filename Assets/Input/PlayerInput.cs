@@ -926,15 +926,6 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
-                },
-                {
-                    ""name"": ""OpenEquipMenu"",
-                    ""type"": ""Button"",
-                    ""id"": ""d10b2884-4ac6-4b5b-91ce-63ee25d267eb"",
-                    ""expectedControlType"": ""Button"",
-                    ""processors"": """",
-                    ""interactions"": """",
-                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -1355,10 +1346,27 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
                     ""action"": ""TrackedDeviceOrientation"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
-                },
+                }
+            ]
+        },
+        {
+            ""name"": ""AlwaysOn"",
+            ""id"": ""325369ae-bf44-4eb8-831d-b4a3839a07dd"",
+            ""actions"": [
+                {
+                    ""name"": ""OpenEquipMenu"",
+                    ""type"": ""Button"",
+                    ""id"": ""d4a69c0b-3bbc-43d4-8870-8e4ea15a3199"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                }
+            ],
+            ""bindings"": [
                 {
                     ""name"": """",
-                    ""id"": ""64786d9f-0542-4383-91d4-5eea9e738ead"",
+                    ""id"": ""60d619aa-77dd-4d85-8978-cc92ef04af99"",
                     ""path"": ""<Keyboard>/tab"",
                     ""interactions"": """",
                     ""processors"": """",
@@ -1369,7 +1377,7 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
                 },
                 {
                     ""name"": """",
-                    ""id"": ""cdc42fe3-72d2-4498-b597-a5e08e45281d"",
+                    ""id"": ""7b82c99e-dc93-42d1-be41-51a64fec22c2"",
                     ""path"": ""<Gamepad>/dpad/left"",
                     ""interactions"": """",
                     ""processors"": """",
@@ -1431,7 +1439,9 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
         m_UI_Cancel = m_UI.FindAction("Cancel", throwIfNotFound: true);
         m_UI_Submit = m_UI.FindAction("Submit", throwIfNotFound: true);
         m_UI_Navigate = m_UI.FindAction("Navigate", throwIfNotFound: true);
-        m_UI_OpenEquipMenu = m_UI.FindAction("OpenEquipMenu", throwIfNotFound: true);
+        // AlwaysOn
+        m_AlwaysOn = asset.FindActionMap("AlwaysOn", throwIfNotFound: true);
+        m_AlwaysOn_OpenEquipMenu = m_AlwaysOn.FindAction("OpenEquipMenu", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -1747,7 +1757,6 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
     private readonly InputAction m_UI_Cancel;
     private readonly InputAction m_UI_Submit;
     private readonly InputAction m_UI_Navigate;
-    private readonly InputAction m_UI_OpenEquipMenu;
     public struct UIActions
     {
         private @PlayerInput m_Wrapper;
@@ -1762,7 +1771,6 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
         public InputAction @Cancel => m_Wrapper.m_UI_Cancel;
         public InputAction @Submit => m_Wrapper.m_UI_Submit;
         public InputAction @Navigate => m_Wrapper.m_UI_Navigate;
-        public InputAction @OpenEquipMenu => m_Wrapper.m_UI_OpenEquipMenu;
         public InputActionMap Get() { return m_Wrapper.m_UI; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -1802,9 +1810,6 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
             @Navigate.started += instance.OnNavigate;
             @Navigate.performed += instance.OnNavigate;
             @Navigate.canceled += instance.OnNavigate;
-            @OpenEquipMenu.started += instance.OnOpenEquipMenu;
-            @OpenEquipMenu.performed += instance.OnOpenEquipMenu;
-            @OpenEquipMenu.canceled += instance.OnOpenEquipMenu;
         }
 
         private void UnregisterCallbacks(IUIActions instance)
@@ -1839,9 +1844,6 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
             @Navigate.started -= instance.OnNavigate;
             @Navigate.performed -= instance.OnNavigate;
             @Navigate.canceled -= instance.OnNavigate;
-            @OpenEquipMenu.started -= instance.OnOpenEquipMenu;
-            @OpenEquipMenu.performed -= instance.OnOpenEquipMenu;
-            @OpenEquipMenu.canceled -= instance.OnOpenEquipMenu;
         }
 
         public void RemoveCallbacks(IUIActions instance)
@@ -1859,6 +1861,52 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
         }
     }
     public UIActions @UI => new UIActions(this);
+
+    // AlwaysOn
+    private readonly InputActionMap m_AlwaysOn;
+    private List<IAlwaysOnActions> m_AlwaysOnActionsCallbackInterfaces = new List<IAlwaysOnActions>();
+    private readonly InputAction m_AlwaysOn_OpenEquipMenu;
+    public struct AlwaysOnActions
+    {
+        private @PlayerInput m_Wrapper;
+        public AlwaysOnActions(@PlayerInput wrapper) { m_Wrapper = wrapper; }
+        public InputAction @OpenEquipMenu => m_Wrapper.m_AlwaysOn_OpenEquipMenu;
+        public InputActionMap Get() { return m_Wrapper.m_AlwaysOn; }
+        public void Enable() { Get().Enable(); }
+        public void Disable() { Get().Disable(); }
+        public bool enabled => Get().enabled;
+        public static implicit operator InputActionMap(AlwaysOnActions set) { return set.Get(); }
+        public void AddCallbacks(IAlwaysOnActions instance)
+        {
+            if (instance == null || m_Wrapper.m_AlwaysOnActionsCallbackInterfaces.Contains(instance)) return;
+            m_Wrapper.m_AlwaysOnActionsCallbackInterfaces.Add(instance);
+            @OpenEquipMenu.started += instance.OnOpenEquipMenu;
+            @OpenEquipMenu.performed += instance.OnOpenEquipMenu;
+            @OpenEquipMenu.canceled += instance.OnOpenEquipMenu;
+        }
+
+        private void UnregisterCallbacks(IAlwaysOnActions instance)
+        {
+            @OpenEquipMenu.started -= instance.OnOpenEquipMenu;
+            @OpenEquipMenu.performed -= instance.OnOpenEquipMenu;
+            @OpenEquipMenu.canceled -= instance.OnOpenEquipMenu;
+        }
+
+        public void RemoveCallbacks(IAlwaysOnActions instance)
+        {
+            if (m_Wrapper.m_AlwaysOnActionsCallbackInterfaces.Remove(instance))
+                UnregisterCallbacks(instance);
+        }
+
+        public void SetCallbacks(IAlwaysOnActions instance)
+        {
+            foreach (var item in m_Wrapper.m_AlwaysOnActionsCallbackInterfaces)
+                UnregisterCallbacks(item);
+            m_Wrapper.m_AlwaysOnActionsCallbackInterfaces.Clear();
+            AddCallbacks(instance);
+        }
+    }
+    public AlwaysOnActions @AlwaysOn => new AlwaysOnActions(this);
     private int m_KeyboardMouseSchemeIndex = -1;
     public InputControlScheme KeyboardMouseScheme
     {
@@ -1916,6 +1964,9 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
         void OnCancel(InputAction.CallbackContext context);
         void OnSubmit(InputAction.CallbackContext context);
         void OnNavigate(InputAction.CallbackContext context);
+    }
+    public interface IAlwaysOnActions
+    {
         void OnOpenEquipMenu(InputAction.CallbackContext context);
     }
 }
