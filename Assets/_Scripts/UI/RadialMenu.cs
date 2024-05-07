@@ -71,6 +71,7 @@ public class RadialMenu : MonoBehaviour
 	}
 	public void RemoveOldSlots() {
 		// Doesn't remove initial separator
+		DestroyImmediate(_weaponImages[0]);
 		for (int i = 1; i < _separators.Length; i++) {
 			DestroyImmediate(_separators[i]);
 			DestroyImmediate(_weaponImages[i]);
