@@ -6,10 +6,8 @@ public class LoadingManager : MonoBehaviour
 {
 
   [SerializeField] private String _loadingScene;
-  [SerializeField] private Camera _disableDuringLoad;
 
-  public void Awake() {
-    _disableDuringLoad.enabled = false;
+  private void Start() {
     SceneManager.LoadSceneAsync(_loadingScene, LoadSceneMode.Additive);
     WorldGenerator.GenerationComplete += FinishLoad;
   }
@@ -19,7 +17,6 @@ public class LoadingManager : MonoBehaviour
   }
 
   public void FinishLoad() {
-    _disableDuringLoad.enabled = true;
     SceneManager.UnloadSceneAsync(_loadingScene);
   }
 

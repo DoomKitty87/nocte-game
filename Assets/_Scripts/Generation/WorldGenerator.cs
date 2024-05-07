@@ -380,7 +380,7 @@ public class WorldGenerator : MonoBehaviour
     updatesLeft = Mathf.Min(updatesLeft, Mathf.Max(WorldGenInfo._maxUpdatesPerFrame, 1));
 
     if (_generated < _tileCount * _tileCount)
-      WorldGenInfo._loadingProgress = (_tileCount * _tileCount - _generated) / (float)(_tileCount * _tileCount);
+      WorldGenInfo._loadingProgress = _generated / (float)(_tileCount * _tileCount);
   }
 
   #endregion
@@ -793,10 +793,10 @@ public class WorldGenerator : MonoBehaviour
     _currentlyGenerating--;
     _generated++;
     if (_currentlyGenerating == 0 && _generateQueue.Count == 0) {
+      GenerationComplete?.Invoke();
       WorldGenInfo._loadingProgress = 1f;
       _doneGenerating = true;
       StartCoroutine(WaterMeshUpdate());
-      GenerationComplete?.Invoke();
     }
   }
 
