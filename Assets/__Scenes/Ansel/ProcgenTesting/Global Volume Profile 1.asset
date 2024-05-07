@@ -58,7 +58,7 @@ MonoBehaviour:
     m_Value: 0
   saturation:
     m_OverrideState: 1
-    m_Value: 10
+    m_Value: 40
 --- !u!114 &-2456328700736638316
 MonoBehaviour:
   m_ObjectHideFlags: 3
@@ -198,7 +198,7 @@ MonoBehaviour:
     m_Value: 0
   spaceRotation:
     m_OverrideState: 1
-    m_Value: {x: 309.31073, y: 120.37098, z: 120.37098}
+    m_Value: {x: 305.43744, y: 121.94295, z: 121.94295}
   colorSaturation:
     m_OverrideState: 0
     m_Value: 1
@@ -243,6 +243,8 @@ MonoBehaviour:
   - {fileID: -924958126123348105}
   - {fileID: 4901719294588945791}
   - {fileID: -5533930892415571491}
+  - {fileID: 1887461265065944153}
+  - {fileID: 3340915352186948260}
 --- !u!114 &756639205190390437
 MonoBehaviour:
   m_ObjectHideFlags: 3
@@ -289,6 +291,50 @@ MonoBehaviour:
   m_HighQualityFiltering:
     m_OverrideState: 1
     m_Value: 1
+--- !u!114 &1887461265065944153
+MonoBehaviour:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7ddcec8a8eb2d684d833ac8f5d26aebd, type: 3}
+  m_Name: HDShadowSettings
+  m_EditorClassIdentifier: 
+  active: 1
+  interCascadeBorders: 1
+  maxShadowDistance:
+    m_OverrideState: 1
+    m_Value: 2500
+  directionalTransmissionMultiplier:
+    m_OverrideState: 1
+    m_Value: 1
+  cascadeShadowSplitCount:
+    m_OverrideState: 1
+    m_Value: 4
+  cascadeShadowSplit0:
+    m_OverrideState: 1
+    m_Value: 0.1
+  cascadeShadowSplit1:
+    m_OverrideState: 1
+    m_Value: 0.23999998
+  cascadeShadowSplit2:
+    m_OverrideState: 1
+    m_Value: 0.44
+  cascadeShadowBorder0:
+    m_OverrideState: 1
+    m_Value: 0.2
+  cascadeShadowBorder1:
+    m_OverrideState: 1
+    m_Value: 0.28571433
+  cascadeShadowBorder2:
+    m_OverrideState: 1
+    m_Value: 0.29999998
+  cascadeShadowBorder3:
+    m_OverrideState: 1
+    m_Value: 0.14285715
 --- !u!114 &2866897175335590759
 MonoBehaviour:
   m_ObjectHideFlags: 3
@@ -301,7 +347,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 953beb541740ddc499d005ee80c9ff29, type: 3}
   m_Name: Fog
   m_EditorClassIdentifier: 
-  active: 1
+  active: 0
   quality:
     m_OverrideState: 1
     m_Value: 1
@@ -377,6 +423,34 @@ MonoBehaviour:
   directionalLightsOnly:
     m_OverrideState: 0
     m_Value: 0
+--- !u!114 &3340915352186948260
+MonoBehaviour:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f034cba68ab55e046ae1445a42f18c0e, type: 3}
+  m_Name: IndirectLightingController
+  m_EditorClassIdentifier: 
+  active: 1
+  indirectDiffuseLightingMultiplier:
+    m_OverrideState: 0
+    m_Value: 1
+  indirectDiffuseLightingLayers:
+    m_OverrideState: 0
+    m_Value: 65535
+  reflectionLightingMultiplier:
+    m_OverrideState: 0
+    m_Value: 1
+  reflectionLightingLayers:
+    m_OverrideState: 0
+    m_Value: 65535
+  reflectionProbeIntensityMultiplier:
+    m_OverrideState: 0
+    m_Value: 1
 --- !u!114 &4901719294588945791
 MonoBehaviour:
   m_ObjectHideFlags: 3
@@ -422,11 +496,11 @@ MonoBehaviour:
     m_OverrideState: 1
     m_Value: 11.430438
   compensation:
-    m_OverrideState: 0
+    m_OverrideState: 1
     m_Value: 0
   limitMin:
     m_OverrideState: 1
-    m_Value: 8
+    m_Value: 10
   limitMax:
     m_OverrideState: 1
     m_Value: 13.5
@@ -565,7 +639,7 @@ MonoBehaviour:
     m_Value: 1
   localClouds:
     m_OverrideState: 1
-    m_Value: 0
+    m_Value: 1
   earthCurvature:
     m_OverrideState: 0
     m_Value: 0
@@ -793,10 +867,10 @@ MonoBehaviour:
     m_Value: 0.5
   densityMultiplier:
     m_OverrideState: 1
-    m_Value: 0.2082579
+    m_Value: 0.21006784
   shapeFactor:
     m_OverrideState: 1
-    m_Value: 0.8857607
+    m_Value: 0.8841855
   shapeScale:
     m_OverrideState: 1
     m_Value: 5
