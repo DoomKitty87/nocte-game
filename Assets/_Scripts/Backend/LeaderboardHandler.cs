@@ -39,6 +39,9 @@ public static class LeaderboardHandler
       Debug.Log(www.error);
     }
 
+    // Debug.Log(www.responseCode);
+    // Debug.Log(www.downloadHandler.text);
+
     www.Dispose();
   }
 
