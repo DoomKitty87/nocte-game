@@ -1,5 +1,7 @@
 using UnityEngine;
 using UnityEngine.Networking;
+using System.Collections.Generic;
+using UnityEngine.SocialPlatforms.Impl;
 
 public static class LeaderboardHandler
 {
@@ -17,10 +19,13 @@ public static class LeaderboardHandler
     }
   
   }
-  
-  private static const string LEADERBOARD_URL = "https://nocteserver.000webhostapp.com/leaderboard.php";
 
-  public static void AddScore(string username, int score) {
+  public static LeaderboardEntry[] _lastScores;
+  public static bool _scoresDirty = true;
+  
+  private const string LEADERBOARD_URL = "https://nocteserver.000webhostapp.com/leaderboard.php";
+
+  public static async void AddScore(string username, int score) {
     WWWForm form = new WWWForm();
     form.AddField("submit_score", "true");
     form.AddField("username", username);
@@ -28,16 +33,17 @@ public static class LeaderboardHandler
 
     UnityWebRequest www = UnityWebRequest.Post(LEADERBOARD_URL, form);
 
-    yield return www.SendWebRequest();
+    await www.SendWebRequest();
 
-    if (www.isNetworkError || www.isHttpError) {
+    if (www.result == UnityWebRequest.Result.ConnectionError) {
       Debug.Log(www.error);
     }
 
     www.Dispose();
   }
 
-  public static async LeaderboardEntry[] RetrieveScores(int start, int count) {
+  public static async void RetrieveScores(int start, int count) {
+    _scoresDirty = true;
     List<LeaderboardEntry> scores = new List<LeaderboardEntry>();
 
     WWWForm form = new WWWForm();
@@ -47,11 +53,10 @@ public static class LeaderboardHandler
 
     UnityWebRequest www = UnityWebRequest.Post(LEADERBOARD_URL, form);
 
-    yield return www.SendWebRequest();
+    await www.SendWebRequest();
 
-    if (www.isNetworkError || www.isHttpError) {
+    if (www.result == UnityWebRequest.Result.ConnectionError) {
       Debug.Log(www.error);
-      return null;
     }
     else {
       string response = www.downloadHandler.text;
@@ -64,7 +69,8 @@ public static class LeaderboardHandler
 
     www.Dispose();
 
-    return scores;
+    _lastScores = scores.ToArray();
+    _scoresDirty = false;
   }
 
 }
