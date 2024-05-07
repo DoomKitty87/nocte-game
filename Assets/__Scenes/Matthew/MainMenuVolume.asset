@@ -195,10 +195,10 @@ MonoBehaviour:
     m_Value: {fileID: 8900000, guid: 6a0b0c10aff8ac344b60e6a2f4f23f7c, type: 3}
   spaceEmissionMultiplier:
     m_OverrideState: 1
-    m_Value: 49.252323
+    m_Value: 414.832
   spaceRotation:
     m_OverrideState: 1
-    m_Value: {x: 10.737726, y: 76.37257, z: 76.37257}
+    m_Value: {x: 326.4245, y: 337.29294, z: 337.29294}
   colorSaturation:
     m_OverrideState: 0
     m_Value: 1
@@ -243,6 +243,7 @@ MonoBehaviour:
   - {fileID: -924958126123348105}
   - {fileID: 4901719294588945791}
   - {fileID: -5533930892415571491}
+  - {fileID: 7570378699293485534}
 --- !u!114 &756639205190390437
 MonoBehaviour:
   m_ObjectHideFlags: 3
@@ -334,10 +335,10 @@ MonoBehaviour:
     m_Value: 0
   maximumHeight:
     m_OverrideState: 1
-    m_Value: 50000
+    m_Value: 100
   meanFreePath:
     m_OverrideState: 1
-    m_Value: 3000
+    m_Value: 500
   enableVolumetricFog:
     m_OverrideState: 1
     m_Value: 1
@@ -426,7 +427,7 @@ MonoBehaviour:
     m_Value: 0
   limitMin:
     m_OverrideState: 1
-    m_Value: 4
+    m_Value: 10
   limitMax:
     m_OverrideState: 1
     m_Value: 14
@@ -547,6 +548,79 @@ MonoBehaviour:
   proceduralSoftness:
     m_OverrideState: 1
     m_Value: 0.5
+--- !u!114 &7570378699293485534
+MonoBehaviour:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 15cc4c5fcb677014ebdc0d8be227b40c, type: 3}
+  m_Name: ScreenSpaceLensFlare
+  m_EditorClassIdentifier: 
+  active: 0
+  intensity:
+    m_OverrideState: 0
+    m_Value: 0
+  tintColor:
+    m_OverrideState: 0
+    m_Value: {r: 1, g: 1, b: 1, a: 1}
+  bloomMip:
+    m_OverrideState: 0
+    m_Value: 1
+  firstFlareIntensity:
+    m_OverrideState: 0
+    m_Value: 1
+  secondaryFlareIntensity:
+    m_OverrideState: 0
+    m_Value: 1
+  warpedFlareIntensity:
+    m_OverrideState: 0
+    m_Value: 1
+  warpedFlareScale:
+    m_OverrideState: 0
+    m_Value: {x: 1, y: 1}
+  samples:
+    m_OverrideState: 0
+    m_Value: 1
+  sampleDimmer:
+    m_OverrideState: 0
+    m_Value: 0.5
+  vignetteEffect:
+    m_OverrideState: 0
+    m_Value: 1
+  startingPosition:
+    m_OverrideState: 0
+    m_Value: 1.25
+  scale:
+    m_OverrideState: 0
+    m_Value: 1.5
+  streaksIntensity:
+    m_OverrideState: 0
+    m_Value: 1
+  streaksLength:
+    m_OverrideState: 0
+    m_Value: 0.5
+  streaksOrientation:
+    m_OverrideState: 0
+    m_Value: 0
+  streaksThreshold:
+    m_OverrideState: 0
+    m_Value: 0.25
+  resolution:
+    m_OverrideState: 0
+    m_Value: 4
+  spectralLut:
+    m_OverrideState: 0
+    m_Value: {fileID: 0}
+  chromaticAbberationIntensity:
+    m_OverrideState: 0
+    m_Value: 0.5
+  chromaticAbberationSampleCount:
+    m_OverrideState: 0
+    m_Value: 3
 --- !u!114 &9043663583824782264
 MonoBehaviour:
   m_ObjectHideFlags: 3
@@ -793,10 +867,10 @@ MonoBehaviour:
     m_Value: 0.5
   densityMultiplier:
     m_OverrideState: 1
-    m_Value: 0.20004256
+    m_Value: 0.20000207
   shapeFactor:
     m_OverrideState: 1
-    m_Value: 0.89846486
+    m_Value: 0.89966255
   shapeScale:
     m_OverrideState: 1
     m_Value: 5
