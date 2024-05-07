@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 341.87903, g: 136.21825, b: 61.2861, a: 1}
+  m_IndirectSpecularColor: {r: 1013.2964, g: 856.8274, b: 820.92474, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -5573,6 +5573,16 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4877814757690721842, guid: 9251f6c58d15c7b428fef40ec34ce952,
+        type: 3}
+      propertyPath: m_RenderingLayerMask
+      value: 384
+      objectReference: {fileID: 0}
+    - target: {fileID: 5879111806501843271, guid: 9251f6c58d15c7b428fef40ec34ce952,
+        type: 3}
+      propertyPath: m_RenderingLayerMask
+      value: 384
+      objectReference: {fileID: 0}
     - target: {fileID: 6057207074736297204, guid: 9251f6c58d15c7b428fef40ec34ce952,
         type: 3}
       propertyPath: m_Name
@@ -5597,6 +5607,16 @@ PrefabInstance:
         type: 3}
       propertyPath: m_AnchoredPosition.y
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6923548513036646051, guid: 9251f6c58d15c7b428fef40ec34ce952,
+        type: 3}
+      propertyPath: m_RenderingLayerMask
+      value: 384
+      objectReference: {fileID: 0}
+    - target: {fileID: 7091342699416319198, guid: 9251f6c58d15c7b428fef40ec34ce952,
+        type: 3}
+      propertyPath: m_RenderingLayerMask
+      value: 384
       objectReference: {fileID: 0}
     - target: {fileID: 8006249604740443719, guid: 9251f6c58d15c7b428fef40ec34ce952,
         type: 3}
@@ -5637,6 +5657,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalRotation.z
       value: 0.4481658
+      objectReference: {fileID: 0}
+    - target: {fileID: 8710025038187251095, guid: 9251f6c58d15c7b428fef40ec34ce952,
+        type: 3}
+      propertyPath: m_RenderingLayerMask
+      value: 384
       objectReference: {fileID: 0}
     - target: {fileID: 9222094017749289078, guid: 9251f6c58d15c7b428fef40ec34ce952,
         type: 3}
@@ -5687,7 +5712,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &686105580
 Transform:
   m_ObjectHideFlags: 0
@@ -5779,7 +5804,7 @@ MonoBehaviour:
   m_EvsmLightLeakBias: 0
   m_EvsmVarianceBias: 0.00001
   m_EvsmBlurPasses: 0
-  m_LightlayersMask: 1
+  m_LightlayersMask: 128
   m_LinkShadowLayers: 1
   m_ShadowNearPlane: 0.1
   m_BlockerSampleCount: 24
@@ -5893,7 +5918,7 @@ Light:
   m_CullingMask:
     serializedVersion: 2
     m_Bits: 256
-  m_RenderingLayerMask: 1
+  m_RenderingLayerMask: 128
   m_Lightmapping: 4
   m_LightShadowCasterMode: 2
   m_AreaSize: {x: 0.5, y: 0.5}
