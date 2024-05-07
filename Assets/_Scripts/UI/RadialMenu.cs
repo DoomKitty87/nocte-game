@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.Serialization;
@@ -158,8 +159,6 @@ public class RadialMenu : MonoBehaviour
 		return uv;
 	}
 	
-	
-	
 	// Lower bound, Upper Bound
 	private (float, float) GetCurrentStepBounds(float currentDegrees) {
 		float parentRotation = _menuContainer.GetComponent<RectTransform>().rotation.eulerAngles.z;
@@ -173,6 +172,7 @@ public class RadialMenu : MonoBehaviour
 		float parentRotation = _menuContainer.GetComponent<RectTransform>().rotation.eulerAngles.z;
 		float stepDegrees = 360f / _selectionCount;
 		float stepsPassed = (currentDegrees - parentRotation) / stepDegrees;
+		print($"stepsPassed: {stepsPassed} | currentDegrees: {currentDegrees} - parentRotation: {parentRotation} / stepDegrees: {stepDegrees}");
 		return Mathf.FloorToInt(stepsPassed);
 	}
 	
@@ -184,7 +184,7 @@ public class RadialMenu : MonoBehaviour
 		}
 		float rotationDegrees = Mathf.Atan2(mousefromCenter.y, mousefromCenter.x) * Mathf.Rad2Deg;
 		(float lowerBound, float upperBound) = GetCurrentStepBounds(rotationDegrees);
-		_currentIndexHovered = GetCurrentStepIndex(rotationDegrees);
+		_currentIndexHovered = GetCurrentStepIndex(rotationDegrees + 180);
 		switch (_selectionType) {
 			case SelectionType.Instant:
 				_selectorTransform.rotation = Quaternion.Euler(0, 0, (lowerBound + upperBound) / 2 + _selectorRotationOffsetDeg);
@@ -201,6 +201,12 @@ public class RadialMenu : MonoBehaviour
 
 	private void OnSelect() {
 		_OnSelected.Invoke(_currentIndexHovered);
+	}
+
+	public void SetImageOfIndex(int index, Sprite sprite) {
+		Image image = _weaponImages[index].GetComponent<Image>();
+		image.sprite = sprite;
+		image.preserveAspect = true;
 	}
 	
 	private void Start() {
