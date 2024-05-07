@@ -101,12 +101,16 @@ public class RadialMenu : MonoBehaviour
 	private void ConfigureImage(GameObject image, GameObject center) {
 		image.transform.SetParent(center.transform);
 		image.transform.localPosition = Vector3.zero;
+		image.name = "Icon";
 		image.AddComponent<RectTransform>();
+		image.GetComponent<RectTransform>().sizeDelta = new Vector2(_imageSize, _imageSize);
 		image.AddComponent<Image>();
 	}
 	private void SetImagePosition(int index, GameObject imageContainer) {
 		float stepDegrees = 360f / _selectionCount;
-		Vector2 offsetFromCenter = new Vector2(Mathf.Cos(stepDegrees * index + stepDegrees / 2) * _imageOffsetFromCenter, Mathf.Sin(stepDegrees * index + stepDegrees / 2) * _imageOffsetFromCenter);
+		float stepRadians = stepDegrees * Mathf.Deg2Rad;
+		Vector2 offsetFromCenter = new Vector2(Mathf.Cos(stepRadians * index + stepRadians / 2), Mathf.Sin(stepRadians * index + stepRadians / 2));
+		offsetFromCenter *= _imageOffsetFromCenter;
 		imageContainer.GetComponent<RectTransform>().anchoredPosition = offsetFromCenter;
 	}
 	
