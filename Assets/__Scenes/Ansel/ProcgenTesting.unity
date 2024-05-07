@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 321.8431, g: 124.85219, b: 55.023132, a: 1}
+  m_IndirectSpecularColor: {r: 341.87903, g: 136.21825, b: 61.2861, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -5573,26 +5573,6 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 4877814757690721842, guid: 9251f6c58d15c7b428fef40ec34ce952,
-        type: 3}
-      propertyPath: m_RenderingLayerMask
-      value: 384
-      objectReference: {fileID: 0}
-    - target: {fileID: 5879111806501843271, guid: 9251f6c58d15c7b428fef40ec34ce952,
-        type: 3}
-      propertyPath: m_RenderingLayerMask
-      value: 384
-      objectReference: {fileID: 0}
-    - target: {fileID: 6053209903713622549, guid: 9251f6c58d15c7b428fef40ec34ce952,
-        type: 3}
-      propertyPath: _worldGenerator
-      value: 
-      objectReference: {fileID: 4258144910533491457}
-    - target: {fileID: 6053209903713622549, guid: 9251f6c58d15c7b428fef40ec34ce952,
-        type: 3}
-      propertyPath: _distanceMultiplier
-      value: 4
-      objectReference: {fileID: 0}
     - target: {fileID: 6057207074736297204, guid: 9251f6c58d15c7b428fef40ec34ce952,
         type: 3}
       propertyPath: m_Name
@@ -5617,16 +5597,6 @@ PrefabInstance:
         type: 3}
       propertyPath: m_AnchoredPosition.y
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6923548513036646051, guid: 9251f6c58d15c7b428fef40ec34ce952,
-        type: 3}
-      propertyPath: m_RenderingLayerMask
-      value: 384
-      objectReference: {fileID: 0}
-    - target: {fileID: 7091342699416319198, guid: 9251f6c58d15c7b428fef40ec34ce952,
-        type: 3}
-      propertyPath: m_RenderingLayerMask
-      value: 384
       objectReference: {fileID: 0}
     - target: {fileID: 8006249604740443719, guid: 9251f6c58d15c7b428fef40ec34ce952,
         type: 3}
@@ -5667,11 +5637,6 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalRotation.z
       value: 0.4481658
-      objectReference: {fileID: 0}
-    - target: {fileID: 8710025038187251095, guid: 9251f6c58d15c7b428fef40ec34ce952,
-        type: 3}
-      propertyPath: m_RenderingLayerMask
-      value: 384
       objectReference: {fileID: 0}
     - target: {fileID: 9222094017749289078, guid: 9251f6c58d15c7b428fef40ec34ce952,
         type: 3}
@@ -5722,7 +5687,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &686105580
 Transform:
   m_ObjectHideFlags: 0
@@ -5753,7 +5718,7 @@ MonoBehaviour:
   m_PointlightHDType: 0
   m_SpotLightShape: 0
   m_AreaLightShape: 0
-  m_Intensity: 8000
+  m_Intensity: 50000
   m_EnableSpotReflector: 1
   m_LuxAtDistance: 1
   m_InnerSpotPercent: 0
@@ -5814,7 +5779,7 @@ MonoBehaviour:
   m_EvsmLightLeakBias: 0
   m_EvsmVarianceBias: 0.00001
   m_EvsmBlurPasses: 0
-  m_LightlayersMask: 128
+  m_LightlayersMask: 1
   m_LinkShadowLayers: 1
   m_ShadowNearPlane: 0.1
   m_BlockerSampleCount: 24
@@ -5890,7 +5855,7 @@ Light:
   serializedVersion: 11
   m_Type: 1
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_Intensity: 8000
+  m_Intensity: 50000
   m_Range: 1796.2
   m_SpotAngle: 30
   m_InnerSpotAngle: 21.80208
@@ -5928,7 +5893,7 @@ Light:
   m_CullingMask:
     serializedVersion: 2
     m_Bits: 256
-  m_RenderingLayerMask: 128
+  m_RenderingLayerMask: 1
   m_Lightmapping: 4
   m_LightShadowCasterMode: 2
   m_AreaSize: {x: 0.5, y: 0.5}
