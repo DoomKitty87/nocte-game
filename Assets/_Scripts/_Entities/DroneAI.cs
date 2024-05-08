@@ -35,6 +35,8 @@ public class DroneAI : MonoBehaviour
 
   private bool _attacking;
 
+  private float _lastSpeed;
+
   private void Start() {
     _playerTarget = GameObject.FindGameObjectWithTag("Player").transform;
   }
@@ -57,6 +59,7 @@ public class DroneAI : MonoBehaviour
     transform.rotation = finalRotationSlerped;
 
     float speed = _speedCurve.Evaluate((direction.magnitude - _stopDistance) / _maxSpeedDistance) * _maxSpeed;
+    _lastSpeed = speed;
 
     _rigidbody.AddForce(direction.normalized * Time.fixedDeltaTime * speed);
 
@@ -96,6 +99,12 @@ public class DroneAI : MonoBehaviour
     GetComponent<Collider>().enabled = false;
     yield return new WaitForSeconds(2);
     Destroy(gameObject);
+  }
+
+  private void OnCollisionEnter(Collision other) {
+    if (other.gameObject.TryGetComponent(out Rigidbody rb)) {
+      if (Mathf.Abs(rb.velocity.magnitude) + Mathf.Abs(_rigidbody.velocity.magnitude) > (_maxSpeed * 0.25f)) Neutralized();
+    } else if (_lastSpeed / _maxSpeed > 0.25f) Neutralized();
   }
 
 }
