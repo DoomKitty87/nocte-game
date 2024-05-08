@@ -3,49 +3,51 @@ using UnityEngine.Serialization;
 
 public abstract class WeaponScript : MonoBehaviour
 {
-  [FormerlySerializedAs("_instancingCombatCoreScript")] [HideInInspector] public PlayerCombatCore _instancingPlayerCombatCoreScript;
-
-  [Header("WeaponScript Dependencies")]
-  public Transform _leftHandPosMarker;
+  // Weapon Script should contain the bare minimum needed to work with the PlayerCombatCore, aim in, aim out
+  // Bare minimum weapon function
+  // Grab InputManager
+  // Animate Equip, Unequip, Fire
+  // IK for aiming two handed weapons
+  
+  // Sound handled by TOPLEVEL classes
+  
+  // Control logic handled by SECONDLEVEL classes
+  // Ammo, Fire Rate, Reload Time, Recoil, Damage, Raycast, Bullet Interact
+  
+  // Inheritance Structure
+  //
+  //                        WeaponScript
+  // TOPLEVEL: MeleeWeapon, RangedWeapon, ThrowableWeapon
+  // 
+  // SECONDLEVEL: RangedWeapon --> ChargeShot, MagazineWeapon, CustomProjectileWeapon
+  
+  [Header("Weapon Input & Core | CC means autoassigned")]
+  public PlayerCombatCore _instancingPlayerCombatCoreScript;
+  public PlayerInput _playerInput;
+  [Header("Weapon Animation")]
+  [SerializeField] protected Animator _playerAnimatorCC;
+  [SerializeField] protected AnimationClip _equipAnimation;
+  [SerializeField] protected AnimationClip _unequipAnimation;
+  [Header("Weapon IK")]
+  [SerializeField] protected Transform _leftHandPosMarker;
+  [SerializeField] protected Transform _leftHandHintMarker;
+  public (Transform, Transform) GetLeftHandIKTargets() {
+    return (_leftHandPosMarker, _leftHandHintMarker);
+  }
+  [Header("Weapon Aiming")]
   [SerializeField] protected float _aimSpeed = 6f;
   
-  private float _aimParamTarget;
-  protected void LerpAimingParametersUpdate() {
-    _instancingPlayerCombatCoreScript._AimParameter = Mathf.Lerp(_instancingPlayerCombatCoreScript._AimParameter, _aimParamTarget, Time.deltaTime * _aimSpeed);
-    if (_instancingPlayerCombatCoreScript._AimParameter < 0.02f) _instancingPlayerCombatCoreScript._AimParameter = 0;
-    if (_instancingPlayerCombatCoreScript._AimParameter > 0.98f) _instancingPlayerCombatCoreScript._AimParameter = 1;
+  // float = time to wait for animations
+  public virtual float OnEquip() {
+    _playerAnimatorCC = _instancingPlayerCombatCoreScript._playerAnimator;
+    _playerAnimatorCC.SetTrigger("Weapon_Equip");
+    return _equipAnimation.length;
   }
-  protected void LerpAimingParameters(bool aimedIn) { 
-    if (aimedIn) {
-      _aimParamTarget = 1;
-    } else {
-      _aimParamTarget = 0;
-    }
+
+  public virtual float OnUnequip() {
+    _playerAnimatorCC.SetTrigger("Weapon_Unequip");
+    return _unequipAnimation.length;
   }
   
-  // Called on any frame fire is down immediately after a frame where fire is up
-  public abstract void FireDown();
-  // Called for every frame the mouse is down, excluding the FireDown() frame
-  public abstract void FireHold();
-  // vice versa of FireDown()
-  public abstract void FireUp();
-  // Called on any frame fire is down immediately after a frame where fire is up
-  public abstract void Fire2Down();
-  // Called for every frame the mouse is down, excluding the FireDown() frame
-  public abstract void Fire2Hold();
-  // vice versa of FireDown()
-  public abstract void Fire2Up();
-  public abstract void ReloadDown();
-  // Called for every frame the mouse is down, excluding the ReloadDown() frame
-  public abstract void ReloadHold();
-  // vice versa of ReloadDown()
-  public abstract void ReloadUp();
-  // float = time to wait for animations
-  public abstract float OnEquip();
-  public abstract float OnUnequip();
-  public virtual (int, int) GetAmmo {
-    get {
-      return (-1, -1);
-    }
-  }
+  public abstract (bool, int, int) GetUsesAmmoCurrentAmmoAndMaxAmmo();
 }

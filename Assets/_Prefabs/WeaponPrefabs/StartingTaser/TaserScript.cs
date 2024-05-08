@@ -7,7 +7,7 @@ using UnityEngine;
 using UnityEngine.VFX;
 
 
-public class BoltgunScript : WeaponScript
+public class TaserScript : WeaponScript
 {
   [Header("CombatCore Dependencies")]
   [SerializeField] private CinemachineThirdPersonAim _cinemachineThirdPersonAim;
@@ -19,7 +19,6 @@ public class BoltgunScript : WeaponScript
   [Header("Prefab Dependencies")]
   [SerializeField] private GameObject _barrelPositionMarker;
   [SerializeField] private AudioClip _fireSound;
-  [SerializeField] private LineRenderer _boltEffect;
   
   [Header("Settings")]
   [SerializeField] private float _damage;
@@ -107,15 +106,6 @@ public class BoltgunScript : WeaponScript
     _ammoLoaded = true;
     _reloading = false;
     _firing = false;
-    
-    _playerInput.Player.Shoot.performed += _ => FireDown();
-    _playerInput.Player.Shoot.canceled += _ => FireUp();
-    _playerInput.Player.ADS.performed += _ => Fire2Down();
-    _playerInput.Player.ADS.canceled += _ => Fire2Up();
-  }
-
-  private void OnDisable() {
-    
   }
 
   // Update is called once per frame
@@ -123,7 +113,7 @@ public class BoltgunScript : WeaponScript
     LerpAimingParametersUpdate();
   }
 
-  public void FireDown() {
+  public override void FireDown() {
     if (!_ammoLoaded || _reloading) return;
     RaycastBullet();
     _instancingPlayerCombatCoreScript._recoilCameraScript.AddRecoil();
@@ -133,39 +123,48 @@ public class BoltgunScript : WeaponScript
     _ammoLoaded = false;
   }
 
-  public void FireUp() {
+  public override void FireUp() {
+    
+  }
+
+  public override void FireHold() {
     
   }
   
-  public void Fire2Down() {
+  public override void Fire2Down() {
     LerpAimingParameters(true);
   }
 
-  public void Fire2Up() {
+  public override void Fire2Up() {
     LerpAimingParameters(false);
   }
   
-  public void ReloadDown() {
+  public override void Fire2Hold() {
+    
+  }
+  
+  public override void ReloadDown() {
     if (_ammoLoaded || _reloading) return;
     PlayReloadAnimation();
   }
   
-  public void ReloadUp() {
+  public override void ReloadUp() {
     
   }
   
-  public void ReloadHold() {
+  public override void ReloadHold() {
     
   }
 
   public override float OnEquip() {
-    base.OnEquip();
+    _playerAnimator = _instancingPlayerCombatCoreScript._playerAnimator;
+    _playerAnimator.SetTrigger("Weapon_Equip");
     _instancingPlayerCombatCoreScript._recoilCameraScript.SetRecoilProfile(_recoilProfile);
     return _playerAnimator.GetNextAnimatorStateInfo(_playerAnimator.GetLayerIndex(_animationLayerName)).length;
   }
   
   public override float OnUnequip() {
-    base.OnUnequip();
+    _playerAnimator.SetTrigger("Weapon_Unequip");
     _instancingPlayerCombatCoreScript._recoilCameraScript.SetRecoilProfile(null);
     return _playerAnimator.GetNextAnimatorStateInfo(_playerAnimator.GetLayerIndex(_animationLayerName)).length;
   }
