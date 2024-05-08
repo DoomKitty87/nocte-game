@@ -10,8 +10,6 @@ using UnityEngine.VFX;
 public class BoltgunScript : WeaponScript
 {
   [Header("CombatCore Dependencies")]
-  [SerializeField] private AudioSource _audioSource;
-  [SerializeField] private Animator _playerAnimator;
   [SerializeField] private string _animationLayerName;
 
   [Header("Prefab Dependencies")]
@@ -60,7 +58,7 @@ public class BoltgunScript : WeaponScript
   private IEnumerator PlayFireAnimationCoroutine() {
     _firing = true;
     _ammoLoaded = false;
-    _playerAnimator.SetTrigger("Weapon_Fire");
+    _playerAnimatorCC.SetTrigger("Weapon_Fire");
     yield return new WaitForSeconds(RoundsPerMinuteToWaitTime(_roundsPerMinute));
     _firing = false;
   }
@@ -71,7 +69,7 @@ public class BoltgunScript : WeaponScript
 
   private IEnumerator PlayReloadAnimationCoroutine() {
     _reloading = true;
-    _playerAnimator.SetTrigger("Weapon_Reload");
+    _playerAnimatorCC.SetTrigger("Weapon_Reload");
     yield return new WaitForSeconds(_reloadTime);
     _ammoLoaded = true;
     _instancingPlayerCombatCoreScript.Weapon_RaiseAmmoChangedEvent();
@@ -123,7 +121,7 @@ public class BoltgunScript : WeaponScript
     _instancingPlayerCombatCoreScript._recoilCameraScript.AddRecoil();
     PlayFireAnimation();
     _instancingPlayerCombatCoreScript.Weapon_RaiseAmmoChangedEvent();
-    _audioSource.PlayOneShot(_fireSound, 1f);
+    _audioSourceCC.PlayOneShot(_fireSound, 1f);
     _ammoLoaded = false;
   }
 
@@ -155,13 +153,13 @@ public class BoltgunScript : WeaponScript
   public override float OnEquip() {
     base.OnEquip();
     _instancingPlayerCombatCoreScript._recoilCameraScript.SetRecoilProfile(_recoilProfile);
-    return _playerAnimator.GetNextAnimatorStateInfo(_playerAnimator.GetLayerIndex(_animationLayerName)).length;
+    return _playerAnimatorCC.GetNextAnimatorStateInfo(_playerAnimatorCC.GetLayerIndex(_animationLayerName)).length;
   }
   
   public override float OnUnequip() {
     base.OnUnequip();
     _instancingPlayerCombatCoreScript._recoilCameraScript.SetRecoilProfile(null);
-    return _playerAnimator.GetNextAnimatorStateInfo(_playerAnimator.GetLayerIndex(_animationLayerName)).length;
+    return _playerAnimatorCC.GetNextAnimatorStateInfo(_playerAnimatorCC.GetLayerIndex(_animationLayerName)).length;
   }
 
   public override (bool, int, int) GetUsesAmmoCurrentAmmoAndMaxAmmo() {
