@@ -125,7 +125,7 @@ public class WeatherManager : MonoBehaviour
       _updateCounter2++;
     } else {
       _updateCounter2 = 0;
-      _sunTransform.localRotation = Quaternion.AngleAxis(_weatherState.x * 360, _sunAxis) * _sunInitRot;
+      _sunTransform.localRotation = Quaternion.AngleAxis(_weatherState.x * 360, _sunAxis);
       _physicalSky.spaceRotation.value = Quaternion.AngleAxis(_spacePhase * 360, _spaceRotationAxis).eulerAngles;
     }
     if (_updateCounter < _frameUpdateDelay) {

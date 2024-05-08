@@ -579,6 +579,7 @@ public class WorldGenerator : MonoBehaviour
     MeshFilter mf = go.AddComponent<MeshFilter>();
     MeshRenderer mr = go.AddComponent<MeshRenderer>();
     mr.material = _material;
+    mr.shadowCastingMode = ShadowCastingMode.Off;
     mf.mesh = new Mesh();
     Mesh msh = mf.mesh;
     WorldTile tile = new WorldTile();

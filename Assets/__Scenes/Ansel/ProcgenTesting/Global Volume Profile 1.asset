@@ -279,7 +279,7 @@ MonoBehaviour:
     m_Value: 0
   spaceRotation:
     m_OverrideState: 1
-    m_Value: {x: 317.70383, y: 116.7818, z: 116.7818}
+    m_Value: {x: 343.80875, y: 102.92728, z: 102.92728}
   colorSaturation:
     m_OverrideState: 0
     m_Value: 1
@@ -328,6 +328,7 @@ MonoBehaviour:
   - {fileID: -5903316766223331294}
   - {fileID: 3272861330828935388}
   - {fileID: 8005317577121799459}
+  - {fileID: 4988104355098571479}
 --- !u!114 &756639205190390437
 MonoBehaviour:
   m_ObjectHideFlags: 3
@@ -549,6 +550,50 @@ MonoBehaviour:
   tint:
     m_OverrideState: 0
     m_Value: 0
+--- !u!114 &4988104355098571479
+MonoBehaviour:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7ddcec8a8eb2d684d833ac8f5d26aebd, type: 3}
+  m_Name: HDShadowSettings
+  m_EditorClassIdentifier: 
+  active: 1
+  interCascadeBorders: 1
+  maxShadowDistance:
+    m_OverrideState: 1
+    m_Value: 2500
+  directionalTransmissionMultiplier:
+    m_OverrideState: 0
+    m_Value: 1
+  cascadeShadowSplitCount:
+    m_OverrideState: 1
+    m_Value: 4
+  cascadeShadowSplit0:
+    m_OverrideState: 1
+    m_Value: 0.1
+  cascadeShadowSplit1:
+    m_OverrideState: 1
+    m_Value: 0.25
+  cascadeShadowSplit2:
+    m_OverrideState: 1
+    m_Value: 0.45
+  cascadeShadowBorder0:
+    m_OverrideState: 1
+    m_Value: 0.2
+  cascadeShadowBorder1:
+    m_OverrideState: 1
+    m_Value: 0.2
+  cascadeShadowBorder2:
+    m_OverrideState: 1
+    m_Value: 0.2
+  cascadeShadowBorder3:
+    m_OverrideState: 1
+    m_Value: 0.2
 --- !u!114 &7180102010930720875
 MonoBehaviour:
   m_ObjectHideFlags: 3
@@ -992,10 +1037,10 @@ MonoBehaviour:
     m_Value: 0.5
   densityMultiplier:
     m_OverrideState: 1
-    m_Value: 0.20438688
+    m_Value: 0.20025453
   shapeFactor:
     m_OverrideState: 1
-    m_Value: 0.8897716
+    m_Value: 0.8976024
   shapeScale:
     m_OverrideState: 1
     m_Value: 5
