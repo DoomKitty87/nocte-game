@@ -21,9 +21,9 @@ public abstract class WeaponScript : MonoBehaviour
   // 
   // SECONDLEVEL: RangedWeapon --> ChargeShot, MagazineWeapon, CustomProjectileWeapon
   
-  [Header("Weapon Input & Core | CC means autoassigned")]
+  [Header("Weapon Input & Core | CC means CombatCore's instance of object")]
   public PlayerCombatCore _instancingPlayerCombatCoreScript;
-  public PlayerInput _playerInput;
+  public PlayerInput _playerInputCC;
   [Header("Weapon Animation")]
   [SerializeField] protected Animator _playerAnimatorCC;
   [SerializeField] protected AnimationClip _equipAnimation;
@@ -36,10 +36,18 @@ public abstract class WeaponScript : MonoBehaviour
   }
   [Header("Weapon Aiming")]
   [SerializeField] protected float _aimSpeed = 6f;
+  [Header("Weapon Audio")]
+  [SerializeField] protected AudioSource _audioSourceCC;
+  
+  
+  protected virtual void Start() {
+    _playerInputCC = InputReader.Instance.PlayerInput;
+    _playerAnimatorCC = _instancingPlayerCombatCoreScript._playerAnimator;
+    _audioSourceCC = _instancingPlayerCombatCoreScript._weaponFXAudioSource;
+  }
   
   // float = time to wait for animations
   public virtual float OnEquip() {
-    _playerAnimatorCC = _instancingPlayerCombatCoreScript._playerAnimator;
     _playerAnimatorCC.SetTrigger("Weapon_Equip");
     return _equipAnimation.length;
   }

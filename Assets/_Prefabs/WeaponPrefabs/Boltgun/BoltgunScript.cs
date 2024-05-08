@@ -10,8 +10,6 @@ using UnityEngine.VFX;
 public class BoltgunScript : WeaponScript
 {
   [Header("CombatCore Dependencies")]
-  [SerializeField] private CinemachineThirdPersonAim _cinemachineThirdPersonAim;
-  [SerializeField] private CinemachineThirdPersonFollow _cinemachineThirdPersonFollow;
   [SerializeField] private AudioSource _audioSource;
   [SerializeField] private Animator _playerAnimator;
   [SerializeField] private string _animationLayerName;
@@ -19,7 +17,6 @@ public class BoltgunScript : WeaponScript
   [Header("Prefab Dependencies")]
   [SerializeField] private GameObject _barrelPositionMarker;
   [SerializeField] private AudioClip _fireSound;
-  [SerializeField] private LineRenderer _boltEffect;
   
   [Header("Settings")]
   [SerializeField] private float _damage;
@@ -99,19 +96,16 @@ public class BoltgunScript : WeaponScript
   
   // Start is called before the first frame update
   private void Start() {
-    _playerAnimator = _instancingPlayerCombatCoreScript._playerAnimator;
-    _cinemachineThirdPersonAim = _instancingPlayerCombatCoreScript._cinemachineThirdPersonAim;
-    _cinemachineThirdPersonFollow = _instancingPlayerCombatCoreScript._cinemachineThirdPersonFollow;
-    _audioSource = _instancingPlayerCombatCoreScript._weaponFXAudioSource;
+    base.Start();
     
     _ammoLoaded = true;
     _reloading = false;
     _firing = false;
     
-    _playerInput.Player.Shoot.performed += _ => FireDown();
-    _playerInput.Player.Shoot.canceled += _ => FireUp();
-    _playerInput.Player.ADS.performed += _ => Fire2Down();
-    _playerInput.Player.ADS.canceled += _ => Fire2Up();
+    _playerInputCC.Player.Shoot.performed += _ => FireDown();
+    _playerInputCC.Player.Shoot.canceled += _ => FireUp();
+    _playerInputCC.Player.ADS.performed += _ => Fire2Down();
+    _playerInputCC.Player.ADS.canceled += _ => Fire2Up();
   }
 
   private void OnDisable() {
@@ -120,7 +114,7 @@ public class BoltgunScript : WeaponScript
 
   // Update is called once per frame
   private void Update() {
-    LerpAimingParametersUpdate();
+    
   }
 
   public void FireDown() {
@@ -138,11 +132,11 @@ public class BoltgunScript : WeaponScript
   }
   
   public void Fire2Down() {
-    LerpAimingParameters(true);
+   
   }
 
   public void Fire2Up() {
-    LerpAimingParameters(false);
+    
   }
   
   public void ReloadDown() {
@@ -170,9 +164,7 @@ public class BoltgunScript : WeaponScript
     return _playerAnimator.GetNextAnimatorStateInfo(_playerAnimator.GetLayerIndex(_animationLayerName)).length;
   }
 
-  public override (int, int) GetAmmo {
-    get {
-      return (_ammoLoaded ? 1 : 0, 1);
-    }
+  public override (bool, int, int) GetUsesAmmoCurrentAmmoAndMaxAmmo() {
+    return (true, _ammoLoaded ? 1 : 0, 1);
   }
 }

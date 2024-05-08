@@ -41,7 +41,7 @@ public class PlayerCombatCore : MonoBehaviour
 			throw new Exception();
 		}
 		_currentInstanceScript._instancingPlayerCombatCoreScript = this;
-		_currentInstanceScript._playerInput = InputReader.Instance.PlayerInput;
+		_currentInstanceScript._playerInputCC = InputReader.Instance.PlayerInput;
 		return instance;
 	}
 	
@@ -215,7 +215,7 @@ public class PlayerCombatCore : MonoBehaviour
 	// See line 48
 	// [SerializeField] private WeaponUI _weaponUI;
 
-	private void ManageAimParameter() {
+	private void LerpAimCameraAndAnim() {
 		_cinemachineThirdPersonFollow.CameraDistance = Mathf.Lerp(_normalCameraDistance, _aimedInCameraDistance, _AimParameter);
 		_playerAnimationRiggingRig.weight = _AimParameter;
 		_playerAnimator.SetFloat("Weapon_AimedIn", _AimParameter);
@@ -229,7 +229,7 @@ public class PlayerCombatCore : MonoBehaviour
 	}
 
 	private void Update() {
-		ManageAimParameter();
+		LerpAimCameraAndAnim();
 		if (_currentInstanceScript != null) {
 			(Transform, Transform) output = _currentInstanceScript.GetLeftHandIKTargets();
 			_leftHandGrabTarget.position = output.Item1.position;
