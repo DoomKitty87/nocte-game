@@ -7,8 +7,11 @@ public class LoadingManager : MonoBehaviour
 
   [SerializeField] private String _loadingScene;
 
+  private void Awake() {
+    SceneManager.LoadScene(_loadingScene, LoadSceneMode.Additive);
+  }
+
   private void Start() {
-    SceneManager.LoadSceneAsync(_loadingScene, LoadSceneMode.Additive);
     WorldGenerator.GenerationComplete += FinishLoad;
   }
 
