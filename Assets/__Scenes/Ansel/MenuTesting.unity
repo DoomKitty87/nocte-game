@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.06013731, g: 0.015998172, b: 0.062356003, a: 1}
+  m_IndirectSpecularColor: {r: 0, g: 0, b: 0, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -8640,7 +8640,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _VFX: {fileID: 1929708236}
   _rotationSpeed: 30
-  _rotation: {x: 0, y: 30, z: 0}
+  _rotation: {x: 30, y: 0, z: 12}
   _hologramEffectMaterial: {fileID: 2100000, guid: 981bc77c15b65344fad012d9f90e44f0,
     type: 2}
   table: {fileID: 1845646935}
@@ -11601,11 +11601,14 @@ VisualEffect:
       - m_Value: {x: 1, y: 1, z: 1}
         m_Name: Object Transform_scale
         m_Overridden: 1
-      - m_Value: {x: 1.5, y: 2, z: 1.5}
+      - m_Value: {x: 0.3, y: 0.3, z: 0.3}
         m_Name: Scale
         m_Overridden: 1
-      - m_Value: {x: 30, y: 0, z: 0}
+      - m_Value: {x: 0, y: 0, z: 0}
         m_Name: Rotation
+        m_Overridden: 1
+      - m_Value: {x: 0, y: 0, z: 0}
+        m_Name: Position
         m_Overridden: 1
     m_Vector4f:
       m_Array: []
@@ -11621,7 +11624,8 @@ VisualEffect:
       m_Array: []
     m_NamedObject:
       m_Array:
-      - m_Value: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
+      - m_Value: {fileID: 4493585093827132993, guid: 8b6f80b013ed60d4e82420a8ae381ba8,
+          type: 3}
         m_Name: Object Mesh
         m_Overridden: 1
     m_Bool:
