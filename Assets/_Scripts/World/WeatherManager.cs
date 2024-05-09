@@ -95,7 +95,7 @@ public class WeatherManager : MonoBehaviour
   }
 
   private void Update() {
-    _sunTransform.localRotation = Quaternion.Slerp(_sunTransform.localRotation, _sunDesiredRotation, Time.deltaTime);
+    //_sunTransform.localRotation = Quaternion.Slerp(_sunTransform.localRotation, _sunDesiredRotation, Time.deltaTime);
     // Texture2D windTex = new Texture2D(512, 512, TextureFormat.RFloat, false, true, true);
     // windTex.wrapMode = TextureWrapMode.Repeat;
     // windTex.filterMode = FilterMode.Bilinear;
@@ -128,7 +128,7 @@ public class WeatherManager : MonoBehaviour
       _updateCounter2++;
     } else {
       _updateCounter2 = 0;
-      _sunDesiredRotation = Quaternion.AngleAxis(_weatherState.x * 360, _sunAxis);
+      _sunTransform.localRotation = Quaternion.AngleAxis(_weatherState.x * 360, _sunAxis);
       _physicalSky.spaceRotation.value = Quaternion.AngleAxis(_spacePhase * 360, _spaceRotationAxis).eulerAngles;
     }
     if (_updateCounter < _frameUpdateDelay) {
