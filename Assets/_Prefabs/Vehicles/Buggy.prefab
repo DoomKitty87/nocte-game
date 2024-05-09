@@ -890,13 +890,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 63c39819adb560347ab37a5ed655db4e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  motorTorque: 10000
-  brakeTorque: 8000
+  motorTorque: 25000
+  brakeTorque: 50000
   maxSpeed: 120
   steeringRange: 30
   steeringRangeAtMaxSpeed: 10
   centreOfGravityOffset: -2
-  boyantForce: 35
+  buoyantForce: 18
   carHeight: 2
   _playerSeat: {fileID: 8534072694919893816}
   _engineSound: {fileID: -8277677161950200056}
@@ -936,8 +936,8 @@ Rigidbody:
   m_GameObject: {fileID: 7301654918860019335}
   serializedVersion: 4
   m_Mass: 1000
-  m_Drag: 0
-  m_AngularDrag: 0.05
+  m_Drag: 1
+  m_AngularDrag: 1
   m_CenterOfMass: {x: 0, y: 0, z: 0}
   m_InertiaTensor: {x: 1, y: 1, z: 1}
   m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}

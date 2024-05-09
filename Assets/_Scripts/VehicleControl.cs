@@ -12,7 +12,7 @@ public class VehicleControl : MonoBehaviour
   public float steeringRange = 30;
   public float steeringRangeAtMaxSpeed = 10;
   public float centreOfGravityOffset = -1f;
-  public float boyantForce = 18f;
+  public float buoyantForce = 18f;
   public float carHeight;
 
   WheelControl[] wheels;
@@ -118,7 +118,7 @@ public class VehicleControl : MonoBehaviour
     // Update the engine sound pitch
     _engineSound.pitch = _enginePitchCurve.Evaluate(speedFactor);
 
-    ApplybuoyantForce();
+    ApplyBuoyantForce();
 
     // If the car is not moving for 1 sec, disable the rigidbody to save performance
     if (Vector3.Distance(rigidBody.velocity, Vector3.zero) < 0.3f && !_inUse) {
@@ -126,9 +126,9 @@ public class VehicleControl : MonoBehaviour
     }
   }
 
-  private void ApplybuoyantForce() {
+  private void ApplyBuoyantForce() {
     if (rigidBody.isKinematic) return;
-    float waterLevel = _worldGenerator.GetWater(new Vector2(transform.position.x, transform.position.z));
+    float waterLevel = 0;
     if (waterLevel == -1) return;
     float waterOffset = waterLevel - transform.position.y; // Technically negative value because reasons
     if (waterOffset < 0) return;
@@ -138,7 +138,7 @@ public class VehicleControl : MonoBehaviour
     if (waterOffset > carHeight) forceFactor = 1;
     else forceFactor = (waterOffset - carHeight) / carHeight;
 
-    rigidBody.AddForce(Vector3.up * boyantForce * forceFactor, ForceMode.Acceleration);
+    rigidBody.AddForce(Vector3.up * buoyantForce * forceFactor, ForceMode.Acceleration);
   }
 
   private void CheckDisableRigidbody() {
