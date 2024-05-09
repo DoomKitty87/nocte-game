@@ -4,57 +4,61 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using UnityEngine;
 
-public class ShipUpgradeTableAnimationHandler : MonoBehaviour
-{
-    [SerializeField] private Material _hologramEffect;
-    [SerializeField] private Transform _hologramTransform;
+public class ShipUpgradeTableAnimationHandler : MonoBehaviour {
+	[SerializeField] private GameObject table;
 
-    public GameObject testTransform;
+	private Material _mat;
 
-    private Camera mainCamera;
+	private Camera _mainCamera;
 
-    private Vector3 _offset;
-    
-    private static readonly int Scale = Shader.PropertyToID("_Scale");
-    private static readonly int Offset = Shader.PropertyToID("_Offset");
-    private static readonly int Center = Shader.PropertyToID("_Center");
+	private Vector3 _startingPosition;
+	private Vector3 _targetPosition;
+	private Vector3 _cachedPosition;
 
-    private void OnEnable() {
-        mainCamera = Camera.main;
-    }
+	private static readonly int Scale = Shader.PropertyToID("_Scale");
+	private static readonly int Offset = Shader.PropertyToID("_Offset");
+	private static readonly int Center = Shader.PropertyToID("_Center");
 
-    private void Update() {
-        if (Input.GetMouseButtonDown(0)) {
-            Ray ray = mainCamera.ScreenPointToRay(Input.mousePosition);
-            RaycastHit hit;
-            Vector3 hitPoint = Vector3.zero;
-            if (Physics.Raycast(ray, out hit)) {
-                _offset = hit.point;
-            }
-        }
+	private void OnEnable() {
+		_mainCamera = Camera.main;
+	}
 
-        if (Input.GetMouseButton(0)) {
-            UpdateTableVariables();
-        }
+	private void Start() {
+		_mat = table.GetComponent<MeshRenderer>().materials[1];
+	}
 
-        if (Input.GetMouseButtonUp(0)) {
-            _offset = _hologramEffect.GetVector(Center);
-        }
-    }
+	private void Update() {
+		if (Input.GetMouseButtonDown(0)) {
+			_startingPosition = GetMouseWorldPosition();
+		}
 
-    private void UpdateTableVariables() {
-        Ray ray = mainCamera.ScreenPointToRay(Input.mousePosition);
-        RaycastHit hit;
-        Vector3 hitPoint = Vector3.zero;
-        if (Physics.Raycast(ray, out hit)) {
-            hitPoint = hit.point;
-        }
+		if (Input.GetMouseButton(0)) {
+			_targetPosition = GetMouseWorldPosition() - _startingPosition;
+		}
+		else {
+			_targetPosition = _cachedPosition - _startingPosition;
+		}
 
-        Vector3 position = hitPoint - _offset;
-        
-        // _hologramEffect.SetFloat(Scale, 5 * ((Mathf.Sin(Time.time) + 2) / 3));
-        _hologramEffect.SetVector(
-            Center, 
-            Vector3.Lerp((Vector3)_hologramEffect.GetVector(Center), position, 4f * Time.deltaTime));
-    }
+		if (Input.GetMouseButtonUp(0)) {
+			_cachedPosition = GetMouseWorldPosition();
+		}
+
+		LerpTowardsPoint();
+	}
+
+	private void LerpTowardsPoint() {
+		Vector3 center = _mat.GetVector(Center);
+		Vector3 newPosition = Vector3.Lerp(center, center + _targetPosition, 4f * Time.deltaTime);
+		_mat.SetVector(Center, newPosition);
+		_startingPosition += (newPosition - center);
+	}
+
+	private Vector3 GetMouseWorldPosition() {
+		Ray ray = _mainCamera.ScreenPointToRay(Input.mousePosition);
+		if (Physics.Raycast(ray, out var hit)) {
+			return hit.point;
+		}
+		Debug.Log("No hit");
+		return Vector3.zero;
+	}
 }
