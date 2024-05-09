@@ -4,10 +4,6 @@ using UnityEngine;
 using UnityEngine.VFX;
 
 public class ShipHologramController : MonoBehaviour {
-	[Header("Projector")]
-	[SerializeField] private VisualEffect _VFX;
-	[SerializeField] private float _rotationSpeed;
-	[SerializeField] private Vector3 _rotation;
 
 	[Header("Table")]
 	[SerializeField] private Material _hologramEffectMaterial;
@@ -19,14 +15,5 @@ public class ShipHologramController : MonoBehaviour {
 		Material[] materials = table.GetComponent<MeshRenderer>().materials;
 		materials[1] = materialToApply;
 		table.GetComponent<MeshRenderer>().materials = materials;
-	}
-
-	private void Update() {
-		_rotation += Vector3.up * (_rotationSpeed * Time.deltaTime);
-		_rotation.x %= 360;
-		_rotation.y %= 360;
-		_rotation.z %= 360;
-
-		_VFX.SetVector3("Rotation", _rotation);
 	}
 }
