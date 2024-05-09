@@ -70,7 +70,6 @@ public class ShipUpgradeTableAnimationHandler : MonoBehaviour {
 		if (Physics.Raycast(ray, out var hit)) {
 			return hit.point;
 		}
-		Debug.Log("No hit");
 		return Vector3.zero;
 	}
 }
