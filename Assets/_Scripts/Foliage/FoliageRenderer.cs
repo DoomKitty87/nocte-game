@@ -1,8 +1,10 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using Unity.Mathematics;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.Rendering;
 
 namespace Foliage
 {
@@ -204,14 +206,18 @@ namespace Foliage
       _cullingCompute.GetKernelThreadGroupSizes(kernelIndexCompact, out threadX, out _, out _);
       _cullingCompute.Dispatch(kernelIndexCompact, Mathf.CeilToInt(_chunkDensity[lod] * _chunkDensity[lod] / (float)threadX), 1, 1);
 
-      var culledCount = new uint[1];
-      culledCountBuffer.GetData(culledCount);
-      _currentInstanceCount = culledCount[0];
+      _currentInstanceCount = (uint) (_chunkDensity[lod] * _chunkDensity[lod]);
+
+      AsyncGPUReadback.Request(culledCountBuffer, (request) => {
+        var culledCount = new uint[1];
+        culledCountBuffer.GetData(culledCount);
+        _currentInstanceCount = culledCount[0];
+        culledCountBuffer.Release();
+      });
       //Debug.Log(_currentInstanceCount + "eewfseioj");
 
       voteBuffer.Release();
       sumBuffer.Release();
-      culledCountBuffer.Release();
     }
     
     private void Initialize(int lod) {
@@ -300,33 +306,36 @@ namespace Foliage
     private void UpdateColliders(int lod) {
       if (!_useColliders) return;
       if (lod == 0) {
-        //Debug.Log("Trying to fetch " + _currentInstanceCount + " out of max " + _chunkDensity[lod] * _chunkDensity[lod]);
         float4[] data = new float4[_currentInstanceCount];
-        _positionsBuffer.GetData(data);
-        //Debug.Log(data[0]);
-        foreach (float4 v in data) {
-          if (FoliagePool._pool[_scriptable].Count == 0) {
-            var collider = GameObject.Instantiate(_scriptable.ColliderPrefab, new Vector3(v.x, v.y, v.z), Quaternion.identity);
-            if (_rotateColliders) {
-              float angle = Mathf.Rad2Deg * -v.w;
-              collider.transform.rotation = Quaternion.Euler(0, angle, 0);
+        Debug.Log("Requesting data");
+        AsyncGPUReadback.Request(_positionsBuffer, (request) => {
+          Debug.Log("Data received");
+          _positionsBuffer.GetData(data);
+          //Debug.Log(data[0]);
+          foreach (float4 v in data) {
+            if (FoliagePool._pool[_scriptable].Count == 0) {
+              var collider = GameObject.Instantiate(_scriptable.ColliderPrefab, new Vector3(v.x, v.y, v.z), Quaternion.identity);
+              if (_rotateColliders) {
+                float angle = Mathf.Rad2Deg * -v.w;
+                collider.transform.rotation = Quaternion.Euler(0, angle, 0);
+              }
+              // Debug.Log("Instantiating collider");
+              collider.transform.parent = FoliageHandler.Instance;
+              _activeColliders.Add(collider);
             }
-            // Debug.Log("Instantiating collider");
-            collider.transform.parent = FoliageHandler.Instance;
-            _activeColliders.Add(collider);
-          }
-          else {
-            var collider = FoliagePool._pool[_scriptable][0];
-            FoliagePool._pool[_scriptable].RemoveAt(0);
-            if (_rotateColliders) {
-              float angle = Mathf.Rad2Deg * -v.w;
-              collider.transform.rotation = Quaternion.Euler(0, angle, 0);
+            else {
+              var collider = FoliagePool._pool[_scriptable][0];
+              FoliagePool._pool[_scriptable].RemoveAt(0);
+              if (_rotateColliders) {
+                float angle = Mathf.Rad2Deg * -v.w;
+                collider.transform.rotation = Quaternion.Euler(0, angle, 0);
+              }
+              // Debug.Log("Reusing collider");
+              collider.transform.position = new Vector3(v.x, v.y, v.z);
+              _activeColliders.Add(collider);
             }
-            // Debug.Log("Reusing collider");
-            collider.transform.position = new Vector3(v.x, v.y, v.z);
-            _activeColliders.Add(collider);
           }
-        }
+        });
       }
       else {
         foreach (GameObject g in _activeColliders) {
