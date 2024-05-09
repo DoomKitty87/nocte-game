@@ -8,7 +8,7 @@ public class PickupWeapon : MonoBehaviour
   public void Pickup() {
     GameObject go = GameObject.FindGameObjectWithTag("Player");
     PlayerCombatCore combatCore = go.GetComponent<PlayerCombatCore>();
-    combatCore.AddWeapon(_weapon);
+		combatCore.AddWeapon(_weapon);
     combatCore.EquipWeaponByWeaponItem(_weapon);
     Destroy(_deleteParent);
   }

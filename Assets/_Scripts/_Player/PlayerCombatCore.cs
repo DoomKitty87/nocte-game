@@ -70,6 +70,7 @@ public class PlayerCombatCore : MonoBehaviour
 		while (_unequipping) {
 			yield return null;
 		}
+		_currentWeaponItem = slot._weaponItem;
 		_currentInstanceScript = slot._weaponInstance.GetComponent<WeaponScript>();
 		_playerAnimator.SetLayerWeight(_playerAnimator.GetLayerIndex("WeaponLayer"), 1);
 		slot._weaponInstance.SetActive(true);
@@ -111,16 +112,18 @@ public class PlayerCombatCore : MonoBehaviour
 		if (_equippedSlotIndex < 0 || _equippedSlotIndex > _weaponInventory.Count) return null;
 		return _weaponInventory[_equippedSlotIndex];
 	}
+
 	
 	private bool _unequipping;
 	private IEnumerator UnequipCurrentWeaponCoroutine(WeaponInventorySlot slot) {
 		_unequipping = true;
 		float waitTime = slot._weaponInstance.GetComponent<WeaponScript>().OnUnequip();
 		yield return new WaitForSeconds(waitTime);
+		_currentWeaponItem = null;
 		_currentInstanceScript = null;
+		_equippedSlotIndex = -1;
 		slot._equipped = false;
 		slot._weaponInstance.SetActive(false);
-		_equippedSlotIndex = -1;
 		_unequipping = false;
 	}
 	public void UnequipCurrentWeapon(bool disableImmediately = false) {
@@ -129,6 +132,7 @@ public class PlayerCombatCore : MonoBehaviour
 		_playerAnimator.SetLayerWeight(_playerAnimator.GetLayerIndex("WeaponLayer"), 0);
 		if (disableImmediately) {
 			slot._equipped = false;
+			_currentWeaponItem = null;
 			slot._weaponInstance.SetActive(false);
 			_equippedSlotIndex = -1;
 			return;
@@ -202,7 +206,9 @@ public class PlayerCombatCore : MonoBehaviour
 	public CinemachineThirdPersonAim _cinemachineThirdPersonAim;
 	[SerializeField] private float _normalCameraDistance;
 	[SerializeField] private float _aimedInCameraDistance = 2;
+	[SerializeField] private float _aimSpeed;
 	[Range(0, 1)] public float _AimParameter = 0;
+	private bool _aimIn;
 	[Header("Audio")]
 	public AudioSource _weaponFXAudioSource;
 	[Header("Recoil")]
@@ -216,9 +222,25 @@ public class PlayerCombatCore : MonoBehaviour
 	// [SerializeField] private WeaponUI _weaponUI;
 
 	private void LerpAimCameraAndAnim() {
+		_AimParameter = Mathf.Lerp(_AimParameter, _aimIn ? 1 : 0, Time.deltaTime * _aimSpeed);
 		_cinemachineThirdPersonFollow.CameraDistance = Mathf.Lerp(_normalCameraDistance, _aimedInCameraDistance, _AimParameter);
-		_playerAnimationRiggingRig.weight = _AimParameter;
-		_playerAnimator.SetFloat("Weapon_AimedIn", _AimParameter);
+		if (_currentWeaponItem != null) {
+			_playerAnimationRiggingRig.weight = _AimParameter;
+			_playerAnimator.SetFloat("Weapon_AimedIn", _AimParameter);
+		}
+		else {
+			print("weapon item is null");
+			_playerAnimationRiggingRig.weight = 0;
+			_playerAnimator.SetFloat("Weapon_AimedIn", 0);
+		}
+	}
+	
+	private void OnADSDown() {
+		_aimIn = true;
+	}
+
+	private void OnADSUp() {
+		_aimIn = false;
 	}
 	
 	// Start is called before the first frame update
@@ -226,6 +248,14 @@ public class PlayerCombatCore : MonoBehaviour
 		_input = InputReader.Instance.PlayerInput;
 		InstantiateInventory();
 		_normalCameraDistance = _cinemachineThirdPersonFollow.CameraDistance;
+		
+		_input.Player.ADS.performed += _ => OnADSDown();
+		_input.Player.ADS.canceled += _ => OnADSUp();
+	}
+
+	private void OnDisable() {
+		_input.Player.ADS.performed -= _ => OnADSDown();
+		_input.Player.ADS.canceled -= _ => OnADSUp();
 	}
 
 	private void Update() {

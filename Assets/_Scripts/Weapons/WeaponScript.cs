@@ -34,13 +34,15 @@ public abstract class WeaponScript : MonoBehaviour
   public (Transform, Transform) GetLeftHandIKTargets() {
     return (_leftHandPosMarker, _leftHandHintMarker);
   }
-  [Header("Weapon Aiming")]
-  [SerializeField] protected float _aimSpeed = 6f;
   [Header("Weapon Audio")]
   [SerializeField] protected AudioSource _audioSourceCC;
   
   
   protected virtual void Start() {
+    InitalizeReferences();
+  }
+
+  private void InitalizeReferences() {
     _playerInputCC = InputReader.Instance.PlayerInput;
     _playerAnimatorCC = _instancingPlayerCombatCoreScript._playerAnimator;
     _audioSourceCC = _instancingPlayerCombatCoreScript._weaponFXAudioSource;
@@ -48,6 +50,7 @@ public abstract class WeaponScript : MonoBehaviour
   
   // float = time to wait for animations
   public virtual float OnEquip() {
+    InitalizeReferences();
     _playerAnimatorCC.SetTrigger("Weapon_Equip");
     return _equipAnimation.length;
   }
