@@ -213,6 +213,8 @@ namespace Foliage
         culledCountBuffer.GetData(culledCount);
         _currentInstanceCount = culledCount[0];
         culledCountBuffer.Release();
+        _args[1] = _currentInstanceCount;
+        _argsBuffer.SetData(_args);
       });
       //Debug.Log(_currentInstanceCount + "eewfseioj");
 
