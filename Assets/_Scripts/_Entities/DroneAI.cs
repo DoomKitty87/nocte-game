@@ -30,6 +30,11 @@ public class DroneAI : MonoBehaviour
 
   [SerializeField] private Renderer[] _meshRenderers;
 
+  [SerializeField] private GameObject _activeCollider;
+  [SerializeField] private GameObject _inactiveCollider;
+
+  [SerializeField] private Rigidbody[] _rigidbodies;
+
   private float _attackTimer;
   private bool _dead;
 
@@ -89,7 +94,14 @@ public class DroneAI : MonoBehaviour
 
   public void Neutralized() {
     _deathParticles.Play();
-    _rigidbody.useGravity = true;
+    _rigidbody.isKinematic = true;
+    GetComponent<Collider>().enabled = false;
+
+    _activeCollider.SetActive(false);
+    _inactiveCollider.SetActive(true);
+    foreach (Rigidbody rb in _rigidbodies) {
+      rb.AddExplosionForce(500, transform.position, 5);
+    }
     _dead = true;
     StartCoroutine(DestroyDrone());
   }
