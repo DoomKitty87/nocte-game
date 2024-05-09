@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 1069.8949, g: 909.53326, b: 838.6339, a: 1}
+  m_IndirectSpecularColor: {r: 1069.3688, g: 909.28754, b: 838.5624, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -12612,12 +12612,32 @@ PrefabInstance:
     - target: {fileID: 301953405021559863, guid: 862d92a67177d4c7b84ab88d6b6e0257,
         type: 3}
       propertyPath: _chunkSize
-      value: 960
+      value: 240
       objectReference: {fileID: 0}
     - target: {fileID: 5599089152639715107, guid: 862d92a67177d4c7b84ab88d6b6e0257,
         type: 3}
       propertyPath: m_Enabled
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5599089152639715107, guid: 862d92a67177d4c7b84ab88d6b6e0257,
+        type: 3}
+      propertyPath: _chunkCount
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 5599089152639715107, guid: 862d92a67177d4c7b84ab88d6b6e0257,
+        type: 3}
+      propertyPath: _lodValues.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5599089152639715107, guid: 862d92a67177d4c7b84ab88d6b6e0257,
+        type: 3}
+      propertyPath: _grassMeshes.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 5599089152639715107, guid: 862d92a67177d4c7b84ab88d6b6e0257,
+        type: 3}
+      propertyPath: _grassDensity.Array.size
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 7336471431426695701, guid: 862d92a67177d4c7b84ab88d6b6e0257,
         type: 3}
