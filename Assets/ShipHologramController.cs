@@ -12,7 +12,6 @@ public class ShipHologramController : MonoBehaviour {
 	[Header("Table")]
 	[SerializeField] private Material _hologramEffectMaterial;
 	[SerializeField] private GameObject table;
-	private Material _mat;
 
 	private void OnEnable() {
 		// Annoying process to apply the second material to the table
@@ -24,6 +23,10 @@ public class ShipHologramController : MonoBehaviour {
 
 	private void Update() {
 		_rotation += Vector3.up * (_rotationSpeed * Time.deltaTime);
+		_rotation.x %= 360;
+		_rotation.y %= 360;
+		_rotation.z %= 360;
+
 		_VFX.SetVector3("Rotation", _rotation);
 	}
 }
