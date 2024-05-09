@@ -41,7 +41,6 @@ public class PlayerCombatCore : MonoBehaviour
 			throw new Exception();
 		}
 		_currentInstanceScript._instancingPlayerCombatCoreScript = this;
-		_currentInstanceScript._playerInputCC = InputReader.Instance.PlayerInput;
 		return instance;
 	}
 	
@@ -160,6 +159,13 @@ public class PlayerCombatCore : MonoBehaviour
 		_weaponInventory.RemoveAt(index);
 	}
 
+	public void RemoveWeaponBySlot(WeaponInventorySlot slot) {
+		if (slot._equipped) {
+			UnequipCurrentWeapon(true);
+		}
+		_weaponInventory.Remove(slot);
+	}
+	
 	public void RemoveAllWeapons() {
 		if (_equippedSlotIndex != -1) {
 			UnequipCurrentWeapon(true);

@@ -3,10 +3,10 @@ using System;
 using Unity.VisualScripting;
 using UnityEngine;
 
-[AddComponentMenu("Weapons/Melee Weapon")]
-public class MeleeWeapon : WeaponScript
+[AddComponentMenu("Weapons/Ranged Weapon")]
+public abstract class HitscanWeapon : WeaponScript
 {
-	[Header("Melee Base")]
+	[Header("Hitscan Base")]
 	[SerializeField] private float _damage;
 	[SerializeField] private float _attackCooldown;
 	[SerializeField] private AnimationClip _attackAnimation;

@@ -23,7 +23,7 @@ public abstract class WeaponScript : MonoBehaviour
   
   [Header("Weapon Input & Core | CC means auto created or assigned instance")]
   public PlayerCombatCore _instancingPlayerCombatCoreScript;
-  public PlayerInput _playerInputCC;
+  [SerializeField] protected PlayerInput _playerInputCC;
   [Header("Weapon Animation")]
   [SerializeField] protected Animator _playerAnimatorCC;
   [SerializeField] protected AnimatorOverrideController _playerAnimatorOverride;
