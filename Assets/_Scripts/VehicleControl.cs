@@ -47,6 +47,7 @@ public class VehicleControl : MonoBehaviour
     _inUse = true;
     _engineSound.enabled = true;
     _engineSound.Play();
+    CancelInvoke("DisableRigidBody");
     WorldGenInfo._secondaryStructures.RemoveStructure(gameObject);
   }
 

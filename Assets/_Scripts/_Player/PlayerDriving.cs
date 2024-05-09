@@ -16,6 +16,7 @@ public class PlayerDriving : MonoBehaviour
   private List<GameObject> _availableVehicles = new List<GameObject>();
   private bool _inVehicle;
   private GameObject _currentVehicle;
+  private bool _isFlying;
 
   private void Awake() {
     // _playerCameraController = GetComponent<PlayerCameraController>();
@@ -27,6 +28,7 @@ public class PlayerDriving : MonoBehaviour
 
     _input.Player.Interact.performed += TryEnterVehicle;
     _input.Driving.Leave.performed += TryExitVehicle;
+    _input.Flying.Leave.performed += TryExitVehicle;
 
   }
 
@@ -37,11 +39,19 @@ public class PlayerDriving : MonoBehaviour
   }
 
   private void TryEnterVehicle(InputAction.CallbackContext context) {
-    Debug.Log("Try to enter");
+    // Debug.Log("Try to enter");
     if (_hasVehicle && !_inVehicle) {
       Debug.Log("Enter Vehicle");
-      InputReader.Instance.EnableDriving();
-      EnterVehicle(_availableVehicles[0]);
+      if (_availableVehicles[0].TryGetComponent<PlaneController>(out var planeController)) {
+        InputReader.Instance.EnableFlying();
+        _isFlying = true;
+        EnterVehicle(_availableVehicles[0]);
+      }
+      else if (_availableVehicles[0].TryGetComponent<VehicleControl>(out var vehicleControl)) {
+        InputReader.Instance.EnableDriving();
+        _isFlying = false;
+        EnterVehicle(_availableVehicles[0]);
+      }
     }
   }
 
@@ -80,11 +90,17 @@ public class PlayerDriving : MonoBehaviour
     
     _inVehicle = true;
     _currentVehicle = toEnter;
-    PlayerController.Instance.SetParent(toEnter.GetComponent<VehicleControl>()._playerSeat.transform);
+    if (_isFlying) {
+      PlayerController.Instance.SetParent(toEnter.GetComponent<PlaneController>()._playerSeat.transform);
+      toEnter.GetComponent<PlaneController>().EnterVehicle();
+    }
+    else {
+      PlayerController.Instance.SetParent(toEnter.GetComponent<VehicleControl>()._playerSeat.transform);
+      toEnter.GetComponent<VehicleControl>().EnterVehicle();
+    }
     // _playerCameraController.SetParent(toEnter.GetComponent<VehicleControl>()._playerSeat.transform);
     // _playerCameraController.ResetRotation();
     // _playerCameraController.UseClamp(90);
-    toEnter.GetComponent<VehicleControl>().EnterVehicle();
   }
 
   private void ExitVehicle() {
@@ -93,7 +109,13 @@ public class PlayerDriving : MonoBehaviour
     }
     
     _inVehicle = false;
-    _currentVehicle.GetComponent<VehicleControl>().ExitVehicle();
+
+    if (_isFlying) {
+      _currentVehicle.GetComponent<PlaneController>().ExitVehicle();
+    }
+    else {
+      _currentVehicle.GetComponent<VehicleControl>().ExitVehicle();
+    }
     // _playerCameraController.ResetParent();
     // _playerCameraController.ResetRotation();
     // _playerCameraController.ResetClamp();
