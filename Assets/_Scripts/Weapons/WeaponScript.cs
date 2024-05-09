@@ -21,11 +21,12 @@ public abstract class WeaponScript : MonoBehaviour
   // 
   // SECONDLEVEL: RangedWeapon --> ChargeShot, MagazineWeapon, CustomProjectileWeapon
   
-  [Header("Weapon Input & Core | CC means CombatCore's instance of object")]
+  [Header("Weapon Input & Core | CC means auto created or assigned instance")]
   public PlayerCombatCore _instancingPlayerCombatCoreScript;
   public PlayerInput _playerInputCC;
   [Header("Weapon Animation")]
   [SerializeField] protected Animator _playerAnimatorCC;
+  [SerializeField] protected AnimatorOverrideController _playerAnimatorOverride;
   [SerializeField] protected AnimationClip _equipAnimation;
   [SerializeField] protected AnimationClip _unequipAnimation;
   [Header("Weapon IK")]
@@ -46,6 +47,7 @@ public abstract class WeaponScript : MonoBehaviour
     _playerInputCC = InputReader.Instance.PlayerInput;
     _playerAnimatorCC = _instancingPlayerCombatCoreScript._playerAnimator;
     _audioSourceCC = _instancingPlayerCombatCoreScript._weaponFXAudioSource;
+    _playerAnimatorCC.runtimeAnimatorController = _playerAnimatorOverride;
   }
   
   // float = time to wait for animations
