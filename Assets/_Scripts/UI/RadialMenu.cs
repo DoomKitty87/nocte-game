@@ -172,7 +172,6 @@ public class RadialMenu : MonoBehaviour
 		float parentRotation = _menuContainer.GetComponent<RectTransform>().rotation.eulerAngles.z;
 		float stepDegrees = 360f / _selectionCount;
 		float stepsPassed = (currentDegrees - parentRotation) / stepDegrees;
-		print($"stepsPassed: {stepsPassed} | currentDegrees: {currentDegrees} - parentRotation: {parentRotation} / stepDegrees: {stepDegrees}");
 		return Mathf.FloorToInt(stepsPassed);
 	}
 	
