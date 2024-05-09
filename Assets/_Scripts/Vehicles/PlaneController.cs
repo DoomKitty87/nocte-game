@@ -1,11 +1,12 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Cinemachine;
 using Unity.VisualScripting;
 using UnityEngine;
 
 public class PlaneController : MonoBehaviour
 {
-
+  [SerializeField] private CinemachineCamera _jetCamera;
   [SerializeField] private float _throttleIncrement = 0.1f;
   [SerializeField] private float _maxThrust = 200f;
   [SerializeField] private float _responsiveness = 10f;
@@ -35,6 +36,7 @@ public class PlaneController : MonoBehaviour
 
   void Start() {
     _input = InputReader.Instance.PlayerInput;
+    _jetCamera.enabled = false;
   }
 
   public void EnterVehicle() {
@@ -43,12 +45,14 @@ public class PlaneController : MonoBehaviour
     _inUse = true;
     _exhaust.SetActive(true);
     CancelInvoke("DisableRigidBody");
+    _jetCamera.enabled = true;
   }
 
   public void ExitVehicle() {
     _inUse = false;
     _exhaust.SetActive(false);
     Invoke("DisableRigidBody", 10f);
+    _jetCamera.enabled = false;
   }
 
   private void DisableRigidBody() {
@@ -65,10 +69,10 @@ public class PlaneController : MonoBehaviour
   }
 
   private void HandlePhysics() {
-    _rigidbody.AddRelativeForce(-Vector3.right * _throttle * _maxThrust);
-    _rigidbody.AddRelativeTorque(Vector3.forward * _pitch * _responseModifier);
+    _rigidbody.AddRelativeForce(Vector3.forward * _throttle * _maxThrust);
+    _rigidbody.AddRelativeTorque(Vector3.right * _pitch * _responseModifier);
     _rigidbody.AddRelativeTorque(Vector3.up * _yaw * _responseModifier);
-    _rigidbody.AddRelativeTorque(Vector3.right * _roll * _responseModifier * _rollModifier);
+    _rigidbody.AddRelativeTorque(-Vector3.forward * _roll * _responseModifier * _rollModifier);
 
     _rigidbody.AddForce(_rigidbody.velocity.normalized * _rigidbody.velocity.sqrMagnitude * -0.01f);
 
