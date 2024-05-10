@@ -151,7 +151,12 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    void Start() {
+    private void OnDisable() {
+        _input.Player.Jump.performed -= _ => TryJump();
+        
+    }
+
+    private void Start() {
         _input = InputReader.Instance.PlayerInput;
 
         _input.Player.Jump.performed += _ => TryJump();

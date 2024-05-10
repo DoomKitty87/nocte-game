@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 1070.3728, g: 909.80597, b: 838.6786, a: 1}
+  m_IndirectSpecularColor: {r: 696.5299, g: 558.48724, b: 440.18002, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -6114,6 +6114,26 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4798468513531427306, guid: 9251f6c58d15c7b428fef40ec34ce952,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0.4499998
+      objectReference: {fileID: 0}
+    - target: {fileID: 4798468513531427306, guid: 9251f6c58d15c7b428fef40ec34ce952,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 1.1899767
+      objectReference: {fileID: 0}
+    - target: {fileID: 4798468513531427306, guid: 9251f6c58d15c7b428fef40ec34ce952,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -2.4
+      objectReference: {fileID: 0}
+    - target: {fileID: 4798468513531427306, guid: 9251f6c58d15c7b428fef40ec34ce952,
+        type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
     - target: {fileID: 4877814757690721842, guid: 9251f6c58d15c7b428fef40ec34ce952,
         type: 3}
       propertyPath: m_RenderingLayerMask
@@ -6299,7 +6319,7 @@ PrefabInstance:
     - target: {fileID: 8573639786141903827, guid: 9251f6c58d15c7b428fef40ec34ce952,
         type: 3}
       propertyPath: m_LocalRotation.w
-      value: -0.08264018
+      value: -0.08264017
       objectReference: {fileID: 0}
     - target: {fileID: 8573639786141903827, guid: 9251f6c58d15c7b428fef40ec34ce952,
         type: 3}
@@ -6309,7 +6329,7 @@ PrefabInstance:
     - target: {fileID: 8573639786141903827, guid: 9251f6c58d15c7b428fef40ec34ce952,
         type: 3}
       propertyPath: m_LocalRotation.y
-      value: -0.8891468
+      value: -0.88914675
       objectReference: {fileID: 0}
     - target: {fileID: 8573639786141903827, guid: 9251f6c58d15c7b428fef40ec34ce952,
         type: 3}
@@ -7878,9 +7898,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f5a514b363d3e3d44bb0b637f60f74c0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _rotationSpeedMultiplier: 0.001
   _moons:
   - moon: {fileID: 1868210514}
-    orbitSpeed: 0.01
+    orbitSpeed: 1
     orbitRoamSpeed: 0.2
     spinSpeed: 1
     moonOrbit: 0
@@ -7888,27 +7909,27 @@ MonoBehaviour:
     moonRotation: 0
   - moon: {fileID: 350749952}
     orbitSpeed: 0.005
-    orbitRoamSpeed: 0.1
+    orbitRoamSpeed: 10
     spinSpeed: 1.2
     moonOrbit: 0
     moonPhase: 0
     moonRotation: 0
   - moon: {fileID: 492472322}
-    orbitSpeed: 0.008
+    orbitSpeed: 0.8
     orbitRoamSpeed: 0.15
     spinSpeed: 0.7
     moonOrbit: 0
     moonPhase: 0
     moonRotation: 0
   - moon: {fileID: 1994060348}
-    orbitSpeed: 0.002
+    orbitSpeed: 0.2
     orbitRoamSpeed: 0.25
     spinSpeed: 1.4
     moonOrbit: 0
     moonPhase: 0
     moonRotation: 0
   - moon: {fileID: 134190798}
-    orbitSpeed: 0.007
+    orbitSpeed: 0.7
     orbitRoamSpeed: 0.17
     spinSpeed: 0.4
     moonOrbit: 0
@@ -14039,7 +14060,7 @@ PrefabInstance:
     - target: {fileID: 301953405021559863, guid: 862d92a67177d4c7b84ab88d6b6e0257,
         type: 3}
       propertyPath: _disable
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 301953405021559863, guid: 862d92a67177d4c7b84ab88d6b6e0257,
         type: 3}

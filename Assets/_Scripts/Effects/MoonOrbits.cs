@@ -5,6 +5,8 @@ using Random = UnityEngine.Random;
 public class MoonOrbits : MonoBehaviour
 {
 
+  [SerializeField] private float _rotationSpeedMultiplier = 1;
+  
   [Serializable]
   private struct Moon
   {
@@ -30,7 +32,7 @@ public class MoonOrbits : MonoBehaviour
 
   private void Update() {
     for (int i = 0; i < _moons.Length; i++) {
-      _moons[i].moonPhase += Time.deltaTime * _moons[i].orbitSpeed;
+      _moons[i].moonPhase += Time.deltaTime * _moons[i].orbitSpeed * _rotationSpeedMultiplier;
       _moons[i].moonPhase %= 1;
       _moons[i].moonOrbit += Time.deltaTime * _moons[i].orbitRoamSpeed;
       _moons[i].moonOrbit %= 360;
