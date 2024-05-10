@@ -43,8 +43,8 @@ public class RecoilCamera : MonoBehaviour
         _currentProfile = profile;
     }
     
-    public void AddRecoil() {
-        RecoilProfile r = _currentProfile;
+    public void AddRecoil(RecoilProfile profile) {
+        RecoilProfile r = profile;
         _targetRotation += new Vector3 (
             r._verticalRecoilDegPerAttack,
             Random.Range(-r._horizontalRecoilDegPerAttack, r._horizontalRecoilDegPerAttack), 

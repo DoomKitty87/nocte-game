@@ -200,7 +200,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6994369203731953378}
   - component: {fileID: 9188551873684152495}
-  - component: {fileID: 1813375974404090614}
+  - component: {fileID: 7503365155183207821}
   m_Layer: 0
   m_Name: BoltgunPrefab
   m_TagString: Untagged
@@ -248,7 +248,7 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
---- !u!114 &1813375974404090614
+--- !u!114 &7503365155183207821
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -257,36 +257,45 @@ MonoBehaviour:
   m_GameObject: {fileID: 3381988310916813232}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d14ae8ea5567e437eb705ab59f6f917a, type: 3}
+  m_Script: {fileID: 11500000, guid: 5cb3e20f1a5240b9b606d6bacfbc2ff6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   _instancingPlayerCombatCoreScript: {fileID: 0}
+  _playerAnimatorCC: {fileID: 0}
+  _playerAnimatorOverride: {fileID: 22100000, guid: 31d5a80acdc623b4e84e6326c2bb43dd,
+    type: 2}
+  _equipAnimation: {fileID: -3464522749995974024, guid: 910d3ee29baccc54ab33c2f8d5b9db45,
+    type: 3}
+  _unequipAnimation: {fileID: -5874074680085883292, guid: 910d3ee29baccc54ab33c2f8d5b9db45,
+    type: 3}
   _leftHandPosMarker: {fileID: 6451640145031936836}
-  _aimSpeed: 6
-  _cinemachineThirdPersonAim: {fileID: 0}
-  _cinemachineThirdPersonFollow: {fileID: 0}
-  _audioSource: {fileID: 0}
-  _playerAnimator: {fileID: 0}
-  _animationLayerName: WeaponLayer
-  _barrelPositionMarker: {fileID: 2017843549463295565}
-  _fireSound: {fileID: 8300000, guid: ed3a1ffdb688b554ba39e9e0bfeb6829, type: 3}
-  _boltEffect: {fileID: 0}
-  _damage: 200
-  _maxRaycastDistance: 5000
-  _raycastLayerMask:
-    serializedVersion: 2
-    m_Bits: 1
-  _roundsPerMinute: 200
-  _reloadTime: 2
+  _leftHandHintMarker: {fileID: 0}
+  _audioSourceCC: {fileID: 0}
+  _fireType: 0
+  _recoilCameraCC: {fileID: 0}
   _recoilProfile:
-    _verticalRecoilDegPerAttack: 2
+    _verticalRecoilDegPerAttack: 10
     _horizontalRecoilDegPerAttack: 1
     _rotationEffectDegPerAttack: 2
     _recoilRecoveryDegPerSecond: 0.2
-    _recoilSnappiness: 1
-  _firing: 0
-  _ammoLoaded: 0
-  _reloading: 0
+    _recoilSnappiness: 5
+  _magazineSize: 1
+  _ammoCount: 1
+  _reloadAnimation: {fileID: -1411408172219323521, guid: 910d3ee29baccc54ab33c2f8d5b9db45,
+    type: 3}
+  _reloadTime: 0
+  _shootSound: {fileID: 8300000, guid: ed3a1ffdb688b554ba39e9e0bfeb6829, type: 3}
+  _semiAutoMinShotCooldown: 0
+  _burstCount: 0
+  _burstBtwnShotDelay: 0
+  _burstCooldown: 0
+  _autoPerShotDelay: 0
+  _playerCameraCC: {fileID: 0}
+  _damage: 50
+  _maxDistance: 10000
+  _layerMask:
+    serializedVersion: 2
+    m_Bits: 1
 --- !u!1 &3786218933524423113
 GameObject:
   m_ObjectHideFlags: 0

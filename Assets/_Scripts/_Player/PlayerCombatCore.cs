@@ -69,14 +69,12 @@ public class PlayerCombatCore : MonoBehaviour
 		while (_unequipping) {
 			yield return null;
 		}
+		_currentWeaponItem = slot._weaponItem;
 		_currentInstanceScript = slot._weaponInstance.GetComponent<WeaponScript>();
 		_playerAnimator.SetLayerWeight(_playerAnimator.GetLayerIndex("WeaponLayer"), 1);
 		slot._weaponInstance.SetActive(true);
-		_leftHandGrabTarget.position = _currentInstanceScript._leftHandPosMarker.position;
-		_leftHandGrabTarget.rotation = _currentInstanceScript._leftHandPosMarker.rotation;
 		float waitTime = slot._weaponInstance.GetComponent<WeaponScript>().OnEquip();
 		yield return new WaitForSeconds(waitTime);
-		AssignInputEventsToCurrentInstanceScript();
 		slot._equipped = true;
 		_equippedSlotIndex = _weaponInventory.IndexOf(slot);
 		_equipping = false;
@@ -113,17 +111,18 @@ public class PlayerCombatCore : MonoBehaviour
 		if (_equippedSlotIndex < 0 || _equippedSlotIndex > _weaponInventory.Count) return null;
 		return _weaponInventory[_equippedSlotIndex];
 	}
+
 	
 	private bool _unequipping;
 	private IEnumerator UnequipCurrentWeaponCoroutine(WeaponInventorySlot slot) {
 		_unequipping = true;
 		float waitTime = slot._weaponInstance.GetComponent<WeaponScript>().OnUnequip();
 		yield return new WaitForSeconds(waitTime);
-		UnassignInputEventsFromCurrentInstanceScript();
+		_currentWeaponItem = null;
 		_currentInstanceScript = null;
+		_equippedSlotIndex = -1;
 		slot._equipped = false;
 		slot._weaponInstance.SetActive(false);
-		_equippedSlotIndex = -1;
 		_unequipping = false;
 	}
 	public void UnequipCurrentWeapon(bool disableImmediately = false) {
@@ -132,6 +131,7 @@ public class PlayerCombatCore : MonoBehaviour
 		_playerAnimator.SetLayerWeight(_playerAnimator.GetLayerIndex("WeaponLayer"), 0);
 		if (disableImmediately) {
 			slot._equipped = false;
+			_currentWeaponItem = null;
 			slot._weaponInstance.SetActive(false);
 			_equippedSlotIndex = -1;
 			return;
@@ -159,6 +159,13 @@ public class PlayerCombatCore : MonoBehaviour
 		_weaponInventory.RemoveAt(index);
 	}
 
+	public void RemoveWeaponBySlot(WeaponInventorySlot slot) {
+		if (slot._equipped) {
+			UnequipCurrentWeapon(true);
+		}
+		_weaponInventory.Remove(slot);
+	}
+	
 	public void RemoveAllWeapons() {
 		if (_equippedSlotIndex != -1) {
 			UnequipCurrentWeapon(true);
@@ -174,7 +181,11 @@ public class PlayerCombatCore : MonoBehaviour
 	}
 	public (int, int) GetAmmo() {
 		if (_equippedSlotIndex == -1) return (-1, -1);
-		return _weaponInventory[_equippedSlotIndex]._weaponInstance.GetComponent<WeaponScript>().GetAmmo;
+		(bool, int, int) output = _weaponInventory[_equippedSlotIndex]._weaponInstance.GetComponent<WeaponScript>().GetUsesAmmoCurrentAmmoAndMaxAmmo();
+		if (!output.Item1) return (-1, -1);
+		else {
+			return (output.Item2, output.Item3);
+		}
 	}
 	public void Weapon_RaiseAmmoChangedEvent() {
 		(int, int) _ = GetAmmo();
@@ -188,22 +199,26 @@ public class PlayerCombatCore : MonoBehaviour
 	
 	private PlayerInput _input;
 
-	[Header("Dependencies")]
+	[Header("Raycasting")]
 	public Camera _mainCamera;
+	[Header("Animation")]
 	public Animator _playerAnimator;
+	[SerializeField] private GameObject _weaponContainer;
+	[Header("IK")]
 	public Rig _playerAnimationRiggingRig;
+	public Transform _leftHandGrabTarget;
+	[Header("Aiming")]
 	public CinemachineThirdPersonFollow _cinemachineThirdPersonFollow;
 	public CinemachineThirdPersonAim _cinemachineThirdPersonAim;
-	public AudioSource _weaponFXAudioSource;
-	public RecoilCamera _recoilCameraScript;
-	public Transform _leftHandGrabTarget;
-	[SerializeField] private GameObject _weaponContainer;
-
-	[Header("Settings")]
-	[Range(0, 1)] public float _AimParameter = 0;
 	[SerializeField] private float _normalCameraDistance;
 	[SerializeField] private float _aimedInCameraDistance = 2;
-    
+	[SerializeField] private float _aimSpeed;
+	[Range(0, 1)] public float _AimParameter = 0;
+	private bool _aimIn;
+	[Header("Audio")]
+	public AudioSource _weaponFXAudioSource;
+	[Header("Recoil")]
+	public RecoilCamera _recoilCameraScript;
 	[Header("Info - Dont change in editor")]
 	[SerializeField] private WeaponItem _currentWeaponItem;
 	[SerializeField] private GameObject _currentWeaponInstance;
@@ -212,74 +227,48 @@ public class PlayerCombatCore : MonoBehaviour
 	// See line 48
 	// [SerializeField] private WeaponUI _weaponUI;
 
-	private void ManageAimParameter() {
+	private void LerpAimCameraAndAnim() {
+		_AimParameter = Mathf.Lerp(_AimParameter, _aimIn ? 1 : 0, Time.deltaTime * _aimSpeed);
 		_cinemachineThirdPersonFollow.CameraDistance = Mathf.Lerp(_normalCameraDistance, _aimedInCameraDistance, _AimParameter);
-		_playerAnimationRiggingRig.weight = _AimParameter;
-		_playerAnimator.SetFloat("Weapon_AimedIn", _AimParameter);
+		if (_currentWeaponItem != null) {
+			_playerAnimationRiggingRig.weight = _AimParameter;
+			_playerAnimator.SetFloat("Weapon_AimedIn", _AimParameter);
+		}
+		else {
+			_playerAnimationRiggingRig.weight = 0;
+			_playerAnimator.SetFloat("Weapon_AimedIn", 0);
+		}
+	}
+	
+	private void OnADSDown() {
+		_aimIn = true;
 	}
 
-	private void AssignInputEventsToCurrentInstanceScript() {
-		_input.Player.Shoot.performed += _ => _currentInstanceScript.FireDown();
-		_input.Player.Shoot.performed += _ => _fire1Down = true;
-		_input.Player.Shoot.canceled += _ => _currentInstanceScript.FireUp();
-		_input.Player.Shoot.canceled += _ => _fire1Down = false;
-
-		_input.Player.ADS.performed += _ => _currentInstanceScript.Fire2Down();
-		_input.Player.ADS.performed += _ => _fire2Down = true;
-		_input.Player.ADS.canceled += _ => _currentInstanceScript.Fire2Up();
-		_input.Player.ADS.canceled += _ => _fire2Down = false;
-
-		_input.Player.Reload.performed += _ => _currentInstanceScript.ReloadDown();
-		_input.Player.Reload.performed += _ => _reloadDown = true;
-		_input.Player.Reload.canceled += _ => _currentInstanceScript.ReloadUp();
-		_input.Player.Reload.canceled += _ => _reloadDown = false;
-	}
-
-	private void UnassignInputEventsFromCurrentInstanceScript() {
-		_input.Player.Shoot.performed -= _ => _currentInstanceScript.FireDown();
-		_input.Player.Shoot.performed -= _ => _fire1Down = true;
-		_input.Player.Shoot.canceled -= _ => _currentInstanceScript.FireUp();
-		_input.Player.Shoot.canceled -= _ => _fire1Down = false;
-
-		_input.Player.ADS.performed -= _ => _currentInstanceScript.Fire2Down();
-		_input.Player.ADS.performed -= _ => _fire2Down = true;
-		_input.Player.ADS.canceled -= _ => _currentInstanceScript.Fire2Up();
-		_input.Player.ADS.canceled -= _ => _fire2Down = false;
-
-		_input.Player.Reload.performed -= _ => _currentInstanceScript.ReloadDown();
-		_input.Player.Reload.performed -= _ => _reloadDown = true;
-		_input.Player.Reload.canceled -= _ => _currentInstanceScript.ReloadUp();
-		_input.Player.Reload.canceled -= _ => _reloadDown = false;
+	private void OnADSUp() {
+		_aimIn = false;
 	}
 	
 	// Start is called before the first frame update
 	private void Start() {
 		_input = InputReader.Instance.PlayerInput;
 		InstantiateInventory();
-
-		
 		_normalCameraDistance = _cinemachineThirdPersonFollow.CameraDistance;
+		
+		_input.Player.ADS.performed += _ => OnADSDown();
+		_input.Player.ADS.canceled += _ => OnADSUp();
 	}
 
 	private void OnDisable() {
-		if (_currentInstanceScript != null) {
-			UnassignInputEventsFromCurrentInstanceScript();
-		}
+		_input.Player.ADS.performed -= _ => OnADSDown();
+		_input.Player.ADS.canceled -= _ => OnADSUp();
 	}
 
-	private bool _fire1Down;
-	private bool _fire2Down;
-	private bool _reloadDown;
-
 	private void Update() {
-		ManageAimParameter();
+		LerpAimCameraAndAnim();
 		if (_currentInstanceScript != null) {
-			_leftHandGrabTarget.position = _currentInstanceScript._leftHandPosMarker.position;
-			_leftHandGrabTarget.rotation = _currentInstanceScript._leftHandPosMarker.rotation;
+			(Transform, Transform) output = _currentInstanceScript.GetLeftHandIKTargets();
+			_leftHandGrabTarget.position = output.Item1.position;
+			_leftHandGrabTarget.rotation = output.Item1.rotation;
 		}
-		// Yeah its not great but it works :shrug:
-		if (_fire1Down) _currentInstanceScript.FireHold();
-		if (_fire2Down) _currentInstanceScript.Fire2Hold();
-		if (_reloadDown) _currentInstanceScript.ReloadHold();
 	}
 }
