@@ -39,6 +39,7 @@ public abstract class MagazineWeapon : WeaponScript
 		_playerAnimatorCC.SetTrigger("Weapon_Reload");
 		yield return new WaitForSeconds(GetReloadTime());
 		_ammoCount = _magazineSize;
+		_instancingPlayerCombatCoreScript.Weapon_RaiseAmmoChangedEvent();
 		_reloading = false;
 	}
 	protected void Reload() {

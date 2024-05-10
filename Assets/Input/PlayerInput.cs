@@ -1775,7 +1775,7 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
                 {
                     ""name"": """",
                     ""id"": ""60d619aa-77dd-4d85-8978-cc92ef04af99"",
-                    ""path"": ""<Keyboard>/tab"",
+                    ""path"": ""<Mouse>/middleButton"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": ""KeyboardMouse"",

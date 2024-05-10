@@ -15,10 +15,9 @@ public class EquipMenuSlot
 public class EquipMenuHandler : MonoBehaviour
 {
 
-    [SerializeField] private CanvasGroup _canvasGroup;
     [SerializeField] private TextMeshProUGUI _centerNameText;
     [SerializeField] private TextMeshProUGUI _centerDescText;
-    
-    
+
+    [SerializeField] private CanvasGroup _canvasGroup;
 
 }
