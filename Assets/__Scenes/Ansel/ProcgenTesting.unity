@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 1044.9474, g: 863.5763, b: 727.6675, a: 1}
+  m_IndirectSpecularColor: {r: 1069.8451, g: 909.5134, b: 838.634, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -6062,6 +6062,18 @@ PrefabInstance:
       propertyPath: m_sharedMaterial
       value: 
       objectReference: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+    - target: {fileID: 4215732099380700499, guid: 9251f6c58d15c7b428fef40ec34ce952,
+        type: 3}
+      propertyPath: OutputAudioMixerGroup
+      value: 
+      objectReference: {fileID: -5858315755115644387, guid: 3985b537a21ab28488a774afc702b336,
+        type: 2}
+    - target: {fileID: 4316650476617302026, guid: 9251f6c58d15c7b428fef40ec34ce952,
+        type: 3}
+      propertyPath: OutputAudioMixerGroup
+      value: 
+      objectReference: {fileID: -5858315755115644387, guid: 3985b537a21ab28488a774afc702b336,
+        type: 2}
     - target: {fileID: 4405197145562226085, guid: 9251f6c58d15c7b428fef40ec34ce952,
         type: 3}
       propertyPath: m_LocalScale.x
@@ -7689,23 +7701,21 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: -8099925424339084712, guid: c3c92e21110174b00ae36d165b0388d0,
+    - target: {fileID: 1769964535999474959, guid: c3c92e21110174b00ae36d165b0388d0,
         type: 3}
-      propertyPath: _audioMixer
-      value: 
-      objectReference: {fileID: 24100000, guid: 3985b537a21ab28488a774afc702b336,
-        type: 2}
-    - target: {fileID: -8099925424339084712, guid: c3c92e21110174b00ae36d165b0388d0,
+      propertyPath: m_PlayOnAwake
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2811694707386797022, guid: c3c92e21110174b00ae36d165b0388d0,
         type: 3}
-      propertyPath: _globalVolumeProfile
-      value: 
-      objectReference: {fileID: 11400000, guid: 1f806942d4e42c64f93817d819ae3804,
-        type: 2}
-    - target: {fileID: 2822337293231490071, guid: c3c92e21110174b00ae36d165b0388d0,
+      propertyPath: _baseMusic.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2811694707386797022, guid: c3c92e21110174b00ae36d165b0388d0,
         type: 3}
-      propertyPath: _rainAudioSource
+      propertyPath: '_baseMusic.Array.data[0]'
       value: 
-      objectReference: {fileID: 4258144910533491460}
+      objectReference: {fileID: 8300000, guid: 8c4443dc20d7a314fbe74dee58e808ce, type: 3}
     - target: {fileID: 6637136524576167759, guid: c3c92e21110174b00ae36d165b0388d0,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -7756,15 +7766,15 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 7508801614763296515, guid: c3c92e21110174b00ae36d165b0388d0,
+        type: 3}
+      propertyPath: m_PlayOnAwake
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8348581581803096828, guid: c3c92e21110174b00ae36d165b0388d0,
         type: 3}
       propertyPath: m_Name
       value: GameHandler
-      objectReference: {fileID: 0}
-    - target: {fileID: 8348581581803096828, guid: c3c92e21110174b00ae36d165b0388d0,
-        type: 3}
-      propertyPath: m_IsActive
-      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -14041,6 +14051,12 @@ PrefabInstance:
       propertyPath: _chunkSize
       value: 240
       objectReference: {fileID: 0}
+    - target: {fileID: 4573217790872793150, guid: 862d92a67177d4c7b84ab88d6b6e0257,
+        type: 3}
+      propertyPath: OutputAudioMixerGroup
+      value: 
+      objectReference: {fileID: -5858315755115644387, guid: 3985b537a21ab28488a774afc702b336,
+        type: 2}
     - target: {fileID: 5599089152639715107, guid: 862d92a67177d4c7b84ab88d6b6e0257,
         type: 3}
       propertyPath: m_Enabled
@@ -14281,15 +14297,25 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 7828621975473438852, guid: 862d92a67177d4c7b84ab88d6b6e0257,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 4258144910533491461}
   m_SourcePrefab: {fileID: 100100000, guid: 862d92a67177d4c7b84ab88d6b6e0257, type: 3}
+--- !u!1 &4258144910533491456 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7828621975473438852, guid: 862d92a67177d4c7b84ab88d6b6e0257,
+    type: 3}
+  m_PrefabInstance: {fileID: 4258144910533491455}
+  m_PrefabAsset: {fileID: 0}
 --- !u!114 &4258144910533491457 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 8819276947174590073, guid: 862d92a67177d4c7b84ab88d6b6e0257,
     type: 3}
   m_PrefabInstance: {fileID: 4258144910533491455}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
+  m_GameObject: {fileID: 4258144910533491456}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 67c43eb278576c646b814952f91643c8, type: 3}
@@ -14301,6 +14327,23 @@ AudioSource:
     type: 3}
   m_PrefabInstance: {fileID: 4258144910533491455}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &4258144910533491461
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4258144910533491456}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b56ef79c077ff74489db05fc151d4b3d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _rainWeatherLevels:
+  - clip: {fileID: 8300000, guid: 2f227dd51da9cd14e8296fd5b36156fd, type: 3}
+    volume: 1
+    threshold: 0.5
+  _rainAudioSource: {fileID: 4258144910533491460}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
