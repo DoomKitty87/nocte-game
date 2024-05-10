@@ -235,7 +235,6 @@ public class PlayerCombatCore : MonoBehaviour
 			_playerAnimator.SetFloat("Weapon_AimedIn", _AimParameter);
 		}
 		else {
-			print("weapon item is null");
 			_playerAnimationRiggingRig.weight = 0;
 			_playerAnimator.SetFloat("Weapon_AimedIn", 0);
 		}

@@ -7,7 +7,7 @@ using UnityEngine;
 [AddComponentMenu("Weapons/Throwable Weapon")]
 public class ThrowableWeapon : WeaponScript
 {
-	[Header("Throwable Base")]
+	[Header("Throwable Base ============================================================================")]
 	[SerializeField] private MeshRenderer _holdingRenderer;
 	[SerializeField] private GameObject _prefabToThrow;
 	private float _throwForce = 1000f;
@@ -66,7 +66,8 @@ public class ThrowableWeapon : WeaponScript
 		_throwCooldownTimer -= Time.deltaTime;
 	}
 
-	private void OnDisable() {
+	protected override void OnDisable() {
+		base.OnDisable();
 		_playerInputCC.Player.Shoot.performed -= _ => Attack();
 	}
 }

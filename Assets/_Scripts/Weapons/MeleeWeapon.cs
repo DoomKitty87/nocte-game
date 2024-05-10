@@ -6,7 +6,7 @@ using UnityEngine;
 [AddComponentMenu("Weapons/Melee Weapon")]
 public class MeleeWeapon : WeaponScript
 {
-	[Header("Melee Base")]
+	[Header("Melee Base ============================================================================")]
 	[SerializeField] private float _damage;
 	[SerializeField] private float _attackCooldown;
 	[SerializeField] private AnimationClip _attackAnimation;
@@ -32,7 +32,8 @@ public class MeleeWeapon : WeaponScript
 		_attackCooldownTimer -= Time.deltaTime;
 	}
 
-	private void OnDisable() {
+	protected override void OnDisable() {
+		base.OnDisable();
 		_playerInputCC.Player.Shoot.performed -= _ => Attack();
 	}
 }

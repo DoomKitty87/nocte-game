@@ -1,38 +1,36 @@
 ﻿
 using System;
+using System.Collections;
 using Unity.VisualScripting;
 using UnityEngine;
 
-[AddComponentMenu("Weapons/Ranged Weapon")]
-public abstract class HitscanWeapon : WeaponScript
+[AddComponentMenu("Weapons/Hitscan Weapon")]
+public class HitscanWeapon : MagazineWeapon
 {
-	[Header("Hitscan Base")]
+	[Header("Hitscan Base ============================================================================")]
+	[SerializeField] private Camera _playerCameraCC;
 	[SerializeField] private float _damage;
-	[SerializeField] private float _attackCooldown;
-	[SerializeField] private AnimationClip _attackAnimation;
-	private float _attackCooldownTimer;
-	
-	public override (bool, int, int) GetUsesAmmoCurrentAmmoAndMaxAmmo() {
-		return (false, -1, -1);
-	}
+	[SerializeField] private float _maxDistance;
+	[SerializeField] private LayerMask _layerMask;
 
-	private void Attack() {
-		if (_attackCooldownTimer > 0) return;	
-		_attackCooldownTimer = _attackCooldown;
-		_playerAnimatorCC.SetTrigger("Weapon_Fire");
-	}
-	
 	protected override void Start() {
 		base.Start();
-		_playerInputCC.Player.Shoot.performed += _ => Attack();
-		_attackCooldownTimer = 0;
+		_playerCameraCC = _instancingPlayerCombatCoreScript._mainCamera;
 	}
 
-	private void Update() {
-		_attackCooldownTimer -= Time.deltaTime;
+	protected override void Shoot() {
+		bool hitSomething = Physics.Raycast(_playerCameraCC.transform.position, _playerCameraCC.transform.forward, out RaycastHit hit, _maxDistance, _layerMask);
+		if (hitSomething) {
+			if (hit.collider.GetComponent<HealthInterface>() != null) {
+				hit.collider.GetComponent<HealthInterface>().Damage(_damage, hit.point);
+			}
+			if (hit.collider.GetComponent<BulletInteract>() != null) {
+				hit.collider.GetComponent<BulletInteract>().Interact(_damage, hit.point);
+			}
+		}
 	}
-
-	private void OnDisable() {
-		_playerInputCC.Player.Shoot.performed -= _ => Attack();
+	
+	protected override void Update() {
+		base.Update();
 	}
 }

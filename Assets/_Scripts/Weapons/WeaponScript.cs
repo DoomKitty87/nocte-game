@@ -63,4 +63,10 @@ public abstract class WeaponScript : MonoBehaviour
   }
   
   public abstract (bool, int, int) GetUsesAmmoCurrentAmmoAndMaxAmmo();
+
+  protected virtual void OnDisable() {
+    if (_playerInputCC == null) {
+      InitalizeReferences();
+    }
+  }
 }

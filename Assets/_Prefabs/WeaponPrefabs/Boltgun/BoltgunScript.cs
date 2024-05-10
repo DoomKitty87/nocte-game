@@ -118,7 +118,7 @@ public class BoltgunScript : WeaponScript
   public void FireDown() {
     if (!_ammoLoaded || _reloading) return;
     RaycastBullet();
-    _instancingPlayerCombatCoreScript._recoilCameraScript.AddRecoil();
+    _instancingPlayerCombatCoreScript._recoilCameraScript.AddRecoil(_recoilProfile);
     PlayFireAnimation();
     _instancingPlayerCombatCoreScript.Weapon_RaiseAmmoChangedEvent();
     _audioSourceCC.PlayOneShot(_fireSound, 1f);
