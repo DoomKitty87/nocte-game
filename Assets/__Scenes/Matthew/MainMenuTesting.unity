@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 342.73538, g: 136.76747, b: 61.327923, a: 1}
+  m_IndirectSpecularColor: {r: 320.67532, g: 117.01404, b: 48.47936, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -17120,37 +17120,38 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f5a514b363d3e3d44bb0b637f60f74c0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _rotationSpeedMultiplier: 0.01
   _moons:
   - moon: {fileID: 199772582}
-    orbitSpeed: 0.01
+    orbitSpeed: 1
     orbitRoamSpeed: 0.2
     spinSpeed: 1
     moonOrbit: 0
     moonPhase: 0
     moonRotation: 0
   - moon: {fileID: 761161502}
-    orbitSpeed: 0.005
+    orbitSpeed: 0.5
     orbitRoamSpeed: 0.1
     spinSpeed: 1.2
     moonOrbit: 0
     moonPhase: 0
     moonRotation: 0
   - moon: {fileID: 578034576}
-    orbitSpeed: 0.008
+    orbitSpeed: 0.8
     orbitRoamSpeed: 0.15
     spinSpeed: 0.7
     moonOrbit: 0
     moonPhase: 0
     moonRotation: 0
   - moon: {fileID: 1693865292}
-    orbitSpeed: 0.002
+    orbitSpeed: 0.2
     orbitRoamSpeed: 0.25
     spinSpeed: 1.4
     moonOrbit: 0
     moonPhase: 0
     moonRotation: 0
   - moon: {fileID: 1305308089}
-    orbitSpeed: 0.007
+    orbitSpeed: 0.7
     orbitRoamSpeed: 0.17
     spinSpeed: 0.4
     moonOrbit: 0
@@ -17839,7 +17840,7 @@ MonoBehaviour:
   _asteroidEffect: {fileID: 578433278}
   _frameUpdateDelay: 1
   _frameUpdateDelay2: 1
-  _sunAxis: {x: 1, y: 0, z: 0}
+  _sunAxis: {x: 1, y: 0.56, z: 0}
   _spaceFactorInitial: 0.25
   _windScrollSpeed: 6
 --- !u!1 &1748944991
