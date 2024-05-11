@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.057363458, g: 0.015433331, b: 0.059471987, a: 1}
+  m_IndirectSpecularColor: {r: 0.057470866, g: 0.015458794, b: 0.059586607, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -1011,7 +1011,7 @@ GameObject:
   - component: {fileID: 196505565}
   - component: {fileID: 196505566}
   m_Layer: 5
-  m_Name: Container
+  m_Name: Pannable Container
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -11570,6 +11570,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   table: {fileID: 919132148778945151}
+  _pannableTransform: {fileID: 196505565}
 --- !u!1 &1892301563
 GameObject:
   m_ObjectHideFlags: 0
@@ -11665,7 +11666,7 @@ Transform:
   m_GameObject: {fileID: 1929708233}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0.048, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 1
   m_Children: []

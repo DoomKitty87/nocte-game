@@ -1,11 +1,9 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Collections.Specialized;
 using UnityEngine;
 
 public class ShipUpgradeTableAnimationHandler : MonoBehaviour {
 	[SerializeField] private GameObject table;
+
+	[SerializeField] private RectTransform _pannableTransform;
 
 	private Material _mat;
 
@@ -17,7 +15,6 @@ public class ShipUpgradeTableAnimationHandler : MonoBehaviour {
 
 	private Vector3 _mainPosition;
 
-	private static readonly int Scale = Shader.PropertyToID("_Scale");
 	private static readonly int Offset = Shader.PropertyToID("_Offset");
 	private static readonly int Center = Shader.PropertyToID("_Center");
 
@@ -37,6 +34,10 @@ public class ShipUpgradeTableAnimationHandler : MonoBehaviour {
 			_targetPosition = Vector3.zero;
 		}
 
+		if (Input.GetMouseButtonUp(0)) {
+			_cachedPosition = mousePosition;
+		}
+
 		if (Input.GetMouseButton(0)) {
 			_targetPosition = mousePosition - _startingPosition;
 		}
@@ -44,18 +45,11 @@ public class ShipUpgradeTableAnimationHandler : MonoBehaviour {
 			_targetPosition = _cachedPosition - _startingPosition;
 		}
 
-		if (Input.GetMouseButtonUp(0)) {
-			_cachedPosition = mousePosition;
-		}
-
-		if (Input.mouseScrollDelta.y != 0) {
-			_mat.SetFloat(Scale, Mathf.Clamp(_mat.GetFloat(Scale) + -Input.mouseScrollDelta.y * 0.1f, 0.1f, 3f));
-		}
-
 		LerpTowardsPoint();
 
-		_mat.SetVector(Center, mousePosition);
-		_mat.SetVector(Offset, mousePosition - _mainPosition);
+		_mat.SetVector(Center, _mainPosition);
+		_pannableTransform.anchoredPosition = new Vector2((_mainPosition.z * (1 / .003f)) * -1, _mainPosition.x * (1 / 0.0032f)); // Weird numbers are due to scaling of parent canvas and orientation of table
+		// _mat.SetVector(Offset, mousePosition - _mainPosition);
 	}
 
 	private void LerpTowardsPoint() {

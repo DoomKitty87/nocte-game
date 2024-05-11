@@ -20,8 +20,16 @@ public class WeatherSounds : MonoBehaviour
   public static WeatherSounds Instance { get; private set; }
 
   private void Awake() {
-    Instance = this;
-  }
+		// Should this be a singleton?
+		// Idk, uncomment if it should be i guess -Elliot
+
+		// if (Instance == null) {
+		Instance = this;
+		// } else {
+		// 	Destroy(this);
+		// }
+
+	}
 
   public void UpdateWeather(float rainLevel) {
     for (int i = 0; i < _rainWeatherLevels.Length; i++) {
