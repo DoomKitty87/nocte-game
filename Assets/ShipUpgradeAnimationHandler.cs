@@ -4,7 +4,10 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.VFX;
 
-public class ShipUpgradeAnimationHandler : MonoBehaviour {
+public class ShipUpgradeAnimationHandler : MonoBehaviour
+{
+	public int _override = -1;
+
 	[SerializeField] private GameObject _upgradeScreenObject;
 	[SerializeField] private GameObject _upgradeScreenCamera;
 	[SerializeField] private GameObject _homeScreenObject;
@@ -22,6 +25,7 @@ public class ShipUpgradeAnimationHandler : MonoBehaviour {
 		public Vector3 rotation;
 		public Vector3 scale;
 		public float rotationSpeed;
+		public float particleCount;
 	}
 	private HolographMeshSettings _currentMeshSettings;
 
@@ -50,11 +54,17 @@ public class ShipUpgradeAnimationHandler : MonoBehaviour {
 		_holoTableVFX.SetBool("ZoomedIn", enable);
 
 		if (!enable) {
-			_currentMeshSettings = _holographMeshes[Random.Range(0, _holographMeshes.Length)];
+			int randomElement;
+			randomElement = Random.Range(0, _holographMeshes.Length);
+
+			if (_override != -1) randomElement = _override;
+
+			_currentMeshSettings = _holographMeshes[randomElement];
 			_holoTableVFX.SetMesh("Object Mesh", _currentMeshSettings.mesh);
 			_holoTableVFX.SetVector3("Position", _currentMeshSettings.position);
 			_rotation = _currentMeshSettings.rotation;
 			_holoTableVFX.SetVector3("Scale", _currentMeshSettings.scale);
+			_holoTableVFX.SetFloat("ParticleCount", _currentMeshSettings.particleCount);
 
 			if (_initialized) _tableAnimationHandler.ResetPosition(); // Have to do this
 			_initialized = true;

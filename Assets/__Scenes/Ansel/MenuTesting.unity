@@ -1882,6 +1882,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 11ae95dc3db46544b85396612632ec40, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _override: -1
   _upgradeScreenObject: {fileID: 1881049783}
   _upgradeScreenCamera: {fileID: 2096950574}
   _homeScreenObject: {fileID: 1968420370}
@@ -1891,8 +1892,39 @@ MonoBehaviour:
   - mesh: {fileID: 4493585093827132993, guid: 8b6f80b013ed60d4e82420a8ae381ba8, type: 3}
     position: {x: 0, y: 0, z: 0}
     rotation: {x: 30, y: 0, z: 12}
-    scale: {x: 0.4, y: 0.4, z: 0.4}
+    scale: {x: 0.3, y: 0.3, z: 0.3}
     rotationSpeed: 20
+    particleCount: 32768
+  - mesh: {fileID: -462981019419857548, guid: 716baeaaa19e6244fa3a49bc57f049ac, type: 3}
+    position: {x: -0.5, y: 0, z: 0}
+    rotation: {x: -11.38, y: 0, z: 11.25}
+    scale: {x: 0.3, y: 0.3, z: 0.3}
+    rotationSpeed: 15
+    particleCount: 262144
+  - mesh: {fileID: -5495902117074765545, guid: a822d3eba96a43240939c1fcdf498909, type: 3}
+    position: {x: 0, y: 0, z: 0}
+    rotation: {x: 5, y: 0, z: 5}
+    scale: {x: 0.35, y: 0.35, z: 0.35}
+    rotationSpeed: 20
+    particleCount: 16384
+  - mesh: {fileID: -4167721708808019192, guid: d92e653e2fde37d448e6282ae4a4e140, type: 3}
+    position: {x: 0, y: -0.37, z: -0.12}
+    rotation: {x: -90, y: 0, z: 0}
+    scale: {x: 0.4, y: 0.4, z: 0.4}
+    rotationSpeed: 10
+    particleCount: 65536
+  - mesh: {fileID: -4167721708808019192, guid: 967e7690a001eed468a561caf1b827fb, type: 3}
+    position: {x: 0, y: -0.7, z: 0}
+    rotation: {x: -90, y: 0, z: 0}
+    scale: {x: 1, y: 1, z: 1}
+    rotationSpeed: 10
+    particleCount: 65536
+  - mesh: {fileID: -4167721708808019192, guid: 0629bba2cb809584680372cbd1ec056e, type: 3}
+    position: {x: -0.12, y: 0, z: 0}
+    rotation: {x: 9.25, y: 0, z: 86.04}
+    scale: {x: 0.3, y: 0.3, z: 0.07}
+    rotationSpeed: 20
+    particleCount: 65536
   _hologramEffectMaterial: {fileID: 2100000, guid: 981bc77c15b65344fad012d9f90e44f0,
     type: 2}
   table: {fileID: 919132148778945151}
@@ -11732,7 +11764,10 @@ VisualEffect:
   m_ResourceVersion: 1
   m_PropertySheet:
     m_Float:
-      m_Array: []
+      m_Array:
+      - m_Value: 0
+        m_Name: ParticleCount
+        m_Overridden: 1
     m_Vector2f:
       m_Array: []
     m_Vector3f:
@@ -11743,13 +11778,13 @@ VisualEffect:
       - m_Value: {x: 1, y: 1, z: 1}
         m_Name: Object Transform_scale
         m_Overridden: 1
-      - m_Value: {x: 0.4, y: 0.4, z: 0.4}
+      - m_Value: {x: 0, y: 0, z: 0}
         m_Name: Scale
         m_Overridden: 1
       - m_Value: {x: 0, y: 0, z: 0}
         m_Name: Rotation
         m_Overridden: 1
-      - m_Value: {x: 0.1, y: 0, z: 0}
+      - m_Value: {x: 0, y: 0, z: 0}
         m_Name: Position
         m_Overridden: 1
     m_Vector4f:
@@ -11766,8 +11801,7 @@ VisualEffect:
       m_Array: []
     m_NamedObject:
       m_Array:
-      - m_Value: {fileID: 4493585093827132993, guid: 8b6f80b013ed60d4e82420a8ae381ba8,
-          type: 3}
+      - m_Value: {fileID: 0}
         m_Name: Object Mesh
         m_Overridden: 1
     m_Bool:
