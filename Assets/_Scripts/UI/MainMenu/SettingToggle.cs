@@ -7,24 +7,21 @@ using UnityEngine.UI;
 
 public class SettingToggle : MonoBehaviour
 {
-	[SerializeField] private bool _settingState;
-	[SerializeField] private Button _toggleButton;
+	[SerializeField] private Toggle _toggle;
 	[SerializeField] private string _textWhenOn, _textWhenOff;
 	[SerializeField] private TextMeshProUGUI _toggleText;
 
 	private void Start() {
-		_toggleButton.onClick.AddListener(ToggleSetting);
-		UpdateText();
+		_toggle.onValueChanged.AddListener(ToggleSetting);
+		UpdateText(_toggle.isOn);
 	}
-	public void ToggleSetting() {
-		print("toggled");
-		_settingState = !_settingState;
-		UpdateText();
+	public void ToggleSetting(bool value) {
+		UpdateText(value);
 	}
-	private void UpdateText() {
-		_toggleText.text = _settingState ? _textWhenOn : _textWhenOff;
+	private void UpdateText(bool isToggleOn) {
+		_toggleText.text =  isToggleOn ? _textWhenOn : _textWhenOff;
 	}
 	private void OnDisable() {
-		_toggleButton.onClick.RemoveListener(ToggleSetting);
+		_toggle.onValueChanged.RemoveListener(ToggleSetting);
 	}
 }
