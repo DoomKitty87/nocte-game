@@ -38,8 +38,8 @@ public class OptionsHandler : MonoBehaviour
     _sfxVolumeSlider.value = Settings.SfxVolume;
 
     _cloudsToggle.isOn = Settings.EnableClouds;
-    _foliageDropdown.value = Settings.FoliageQuality;
-    _terrainDropdown.value = Settings.TerrainQuality;
+    //_foliageDropdown.value = Settings.FoliageQuality;
+    //_terrainDropdown.value = Settings.TerrainQuality;
 
     _invertMouseToggle.isOn = Settings.InvertMouse;
     _mouseSensitivitySlider.value = Settings.MouseSensitivity;
@@ -48,7 +48,7 @@ public class OptionsHandler : MonoBehaviour
     _vsyncToggle.isOn = Settings.EnableVsync;
     _fullscreenToggle.isOn = Settings.Fullscreen;
     _brightnessSlider.value = Settings.Brightness;
-    _colorblindDropdown.value = Settings.ColorblindMode;
+    //_colorblindDropdown.value = Settings.ColorblindMode;
   }
 
   private void AddListeners() {
@@ -57,8 +57,8 @@ public class OptionsHandler : MonoBehaviour
     _sfxVolumeSlider.onValueChanged.AddListener((value) => Settings.SfxVolume = value);
 
     _cloudsToggle.onValueChanged.AddListener((value) => Settings.EnableClouds = value);
-    _foliageDropdown.onValueChanged.AddListener((value) => Settings.FoliageQuality = value);
-    _terrainDropdown.onValueChanged.AddListener((value) => Settings.TerrainQuality = value);
+    //_foliageDropdown.onValueChanged.AddListener((value) => Settings.FoliageQuality = value);
+    //_terrainDropdown.onValueChanged.AddListener((value) => Settings.TerrainQuality = value);
 
     _invertMouseToggle.onValueChanged.AddListener((value) => Settings.InvertMouse = value);
     _mouseSensitivitySlider.onValueChanged.AddListener((value) => Settings.MouseSensitivity = value);
@@ -67,7 +67,7 @@ public class OptionsHandler : MonoBehaviour
     _vsyncToggle.onValueChanged.AddListener((value) => Settings.EnableVsync = value);
     _fullscreenToggle.onValueChanged.AddListener((value) => Settings.Fullscreen = value);
     _brightnessSlider.onValueChanged.AddListener((value) => Settings.Brightness = value);
-    _colorblindDropdown.onValueChanged.AddListener((value) => Settings.ColorblindMode = value);
+    //_colorblindDropdown.onValueChanged.AddListener((value) => Settings.ColorblindMode = value);
   }
 
 }
