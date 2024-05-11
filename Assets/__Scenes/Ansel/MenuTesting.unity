@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.057363458, g: 0.015433331, b: 0.059471987, a: 1}
+  m_IndirectSpecularColor: {r: 0.057470866, g: 0.015458794, b: 0.059586607, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -1011,7 +1011,7 @@ GameObject:
   - component: {fileID: 196505565}
   - component: {fileID: 196505566}
   m_Layer: 5
-  m_Name: Container
+  m_Name: Pannable Container
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1882,16 +1882,49 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 11ae95dc3db46544b85396612632ec40, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _override: -1
   _upgradeScreenObject: {fileID: 1881049783}
   _upgradeScreenCamera: {fileID: 2096950574}
   _homeScreenObject: {fileID: 1968420370}
+  _tableAnimationHandler: {fileID: 1881049785}
   _holoTableVFX: {fileID: 1929708236}
   _holographMeshes:
   - mesh: {fileID: 4493585093827132993, guid: 8b6f80b013ed60d4e82420a8ae381ba8, type: 3}
     position: {x: 0, y: 0, z: 0}
     rotation: {x: 30, y: 0, z: 12}
-    scale: {x: 0.4, y: 0.4, z: 0.4}
+    scale: {x: 0.3, y: 0.3, z: 0.3}
     rotationSpeed: 20
+    particleCount: 32768
+  - mesh: {fileID: -462981019419857548, guid: 716baeaaa19e6244fa3a49bc57f049ac, type: 3}
+    position: {x: -0.5, y: 0, z: 0}
+    rotation: {x: -11.38, y: 0, z: 11.25}
+    scale: {x: 0.3, y: 0.3, z: 0.3}
+    rotationSpeed: 15
+    particleCount: 262144
+  - mesh: {fileID: -5495902117074765545, guid: a822d3eba96a43240939c1fcdf498909, type: 3}
+    position: {x: 0, y: 0, z: 0}
+    rotation: {x: 5, y: 0, z: 5}
+    scale: {x: 0.35, y: 0.35, z: 0.35}
+    rotationSpeed: 20
+    particleCount: 16384
+  - mesh: {fileID: -4167721708808019192, guid: d92e653e2fde37d448e6282ae4a4e140, type: 3}
+    position: {x: 0, y: -0.37, z: -0.12}
+    rotation: {x: -90, y: 0, z: 0}
+    scale: {x: 0.4, y: 0.4, z: 0.4}
+    rotationSpeed: 10
+    particleCount: 65536
+  - mesh: {fileID: -4167721708808019192, guid: 967e7690a001eed468a561caf1b827fb, type: 3}
+    position: {x: 0, y: -0.7, z: 0}
+    rotation: {x: -90, y: 0, z: 0}
+    scale: {x: 1, y: 1, z: 1}
+    rotationSpeed: 10
+    particleCount: 65536
+  - mesh: {fileID: -4167721708808019192, guid: 0629bba2cb809584680372cbd1ec056e, type: 3}
+    position: {x: -0.12, y: 0, z: 0}
+    rotation: {x: 9.25, y: 0, z: 86.04}
+    scale: {x: 0.3, y: 0.3, z: 0.07}
+    rotationSpeed: 20
+    particleCount: 65536
   _hologramEffectMaterial: {fileID: 2100000, guid: 981bc77c15b65344fad012d9f90e44f0,
     type: 2}
   table: {fileID: 919132148778945151}
@@ -9273,7 +9306,7 @@ Transform:
   m_GameObject: {fileID: 1584704176}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 2.451, z: 0}
+  m_LocalPosition: {x: -0.072000004, y: 2.4510002, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 1
   m_Children:
@@ -11088,15 +11121,15 @@ RectTransform:
   m_GameObject: {fileID: 1841920011}
   m_LocalRotation: {x: 0.5, y: 0.5, z: -0.5, w: 0.5}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.003, y: 0.0032, z: 1}
+  m_LocalScale: {x: 0.0024, y: 0.00256, z: 0.8}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1881049784}
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 543450653036122309}
   m_LocalEulerAnglesHint: {x: 90, y: 90, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 8.78}
+  m_AnchoredPosition: {x: 0, y: 1.2240005}
   m_SizeDelta: {x: 1979.7, y: 1120}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &1842712456
@@ -11570,6 +11603,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   table: {fileID: 919132148778945151}
+  _pannableTransform: {fileID: 196505565}
 --- !u!1 &1892301563
 GameObject:
   m_ObjectHideFlags: 0
@@ -11665,7 +11699,7 @@ Transform:
   m_GameObject: {fileID: 1929708233}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0.048, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 1
   m_Children: []
@@ -11730,7 +11764,10 @@ VisualEffect:
   m_ResourceVersion: 1
   m_PropertySheet:
     m_Float:
-      m_Array: []
+      m_Array:
+      - m_Value: 0
+        m_Name: ParticleCount
+        m_Overridden: 1
     m_Vector2f:
       m_Array: []
     m_Vector3f:
@@ -11741,13 +11778,13 @@ VisualEffect:
       - m_Value: {x: 1, y: 1, z: 1}
         m_Name: Object Transform_scale
         m_Overridden: 1
-      - m_Value: {x: 0.4, y: 0.4, z: 0.4}
+      - m_Value: {x: 0, y: 0, z: 0}
         m_Name: Scale
         m_Overridden: 1
       - m_Value: {x: 0, y: 0, z: 0}
         m_Name: Rotation
         m_Overridden: 1
-      - m_Value: {x: 0.1, y: 0, z: 0}
+      - m_Value: {x: 0, y: 0, z: 0}
         m_Name: Position
         m_Overridden: 1
     m_Vector4f:
@@ -11764,8 +11801,7 @@ VisualEffect:
       m_Array: []
     m_NamedObject:
       m_Array:
-      - m_Value: {fileID: 4493585093827132993, guid: 8b6f80b013ed60d4e82420a8ae381ba8,
-          type: 3}
+      - m_Value: {fileID: 0}
         m_Name: Object Mesh
         m_Overridden: 1
     m_Bool:
@@ -13089,10 +13125,11 @@ Transform:
   m_GameObject: {fileID: 919132148778945151}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0, y: 7.25, z: 0}
+  m_LocalPosition: {x: 0, y: 7.25, z: 0}
   m_LocalScale: {x: 1.25, y: 1.25, z: 1.25}
   m_ConstrainProportionsScale: 1
   m_Children:
+  - {fileID: 1841920015}
   - {fileID: 1584704179}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -13185,7 +13222,6 @@ SceneRoots:
   - {fileID: 1967576189}
   - {fileID: 520219073}
   - {fileID: 397008897}
-  - {fileID: 1841920015}
   - {fileID: 543450653036122309}
   - {fileID: 908667281}
   - {fileID: 1481586891}

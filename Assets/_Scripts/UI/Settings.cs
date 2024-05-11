@@ -242,7 +242,7 @@ public class Settings : MonoBehaviour
 
   private void UpdateBrightness() {
     _globalVolumeProfile.TryGet(out LiftGammaGain liftGammaGain);
-    liftGammaGain.gamma.value = new Vector4(Brightness, Brightness, Brightness, 1);
+    liftGammaGain.gamma.value = new Vector4(0, 0, 0, Brightness);
   }
 
   private void UpdateColorblindMode() {
