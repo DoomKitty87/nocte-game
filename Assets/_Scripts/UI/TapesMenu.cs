@@ -12,6 +12,10 @@ public class TapesMenu : MonoBehaviour
 
   private InventoryManager.AudioTape[] _tapes;
 
+  private void OnEnable() {
+    UpdateTapes();
+  }
+
   public void UpdateTapes() {
     _tapeAudioSource.Stop();
     _tapes = _inventory.GetOwnedTapes();

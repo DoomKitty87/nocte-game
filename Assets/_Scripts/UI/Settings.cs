@@ -210,7 +210,7 @@ public class Settings : MonoBehaviour
   {
     get
     {
-      return PlayerPrefs.GetFloat("Brightness", 1f);
+      return PlayerPrefs.GetFloat("Brightness", 0f);
     }
     set
     {
