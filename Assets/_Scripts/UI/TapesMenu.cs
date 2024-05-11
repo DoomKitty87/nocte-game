@@ -10,6 +10,10 @@ public class TapesMenu : MonoBehaviour
   [SerializeField] private GameObject _tapePrefab;
   [SerializeField] private AudioSource _tapeAudioSource;
 
+  [SerializeField] private Image _currentTapeImage;
+  [SerializeField] private TextMeshProUGUI _currentTapeName;
+  [SerializeField] private TextMeshProUGUI _currentTapeText;
+
   private InventoryManager.AudioTape[] _tapes;
 
   private void OnEnable() {
@@ -27,12 +31,16 @@ public class TapesMenu : MonoBehaviour
       tape.transform.parent = _tapeHolder;
       tape.transform.GetChild(0).gameObject.GetComponent<Image>().sprite = _tapes[i].icon;
       tape.transform.GetChild(1).gameObject.GetComponent<TextMeshProUGUI>().text = _tapes[i].name;
+      tape.gameObject.GetComponent<TapeInstance>().tapesMenu = this;
     }
   }
 
   public void SelectTape(int index) {
     _tapeAudioSource.clip = _tapes[index].clip;
     _tapeAudioSource.Play();
+    _currentTapeImage.sprite = _tapes[index].icon;
+    _currentTapeName.text = _tapes[index].name;
+    _currentTapeText.text = _tapes[index].dialogue;
   }
 
 }

@@ -12,6 +12,7 @@ public class InventoryManager : MonoBehaviour
     public string name;
     public AudioClip clip;
     public Sprite icon;
+    public string dialogue;
 
   }
 
@@ -35,11 +36,12 @@ public class InventoryManager : MonoBehaviour
     return _audioTapes.ToArray();
   }
 
-  public void PickupAudioTape(string name, AudioClip clip, Sprite icon) {
+  public void PickupAudioTape(string name, AudioClip clip, Sprite icon, string dialogue) {
     AudioTape tape = new AudioTape();
     tape.name = name;
     tape.clip = clip;
     tape.icon = icon;
+    tape.dialogue = dialogue;
     _audioTapes.Add(tape);
     PlayTape(tape);
   }
