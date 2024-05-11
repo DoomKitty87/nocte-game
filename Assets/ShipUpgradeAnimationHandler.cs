@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.VFX;
 
@@ -7,6 +8,8 @@ public class ShipUpgradeAnimationHandler : MonoBehaviour {
 	[SerializeField] private GameObject _upgradeScreenObject;
 	[SerializeField] private GameObject _upgradeScreenCamera;
 	[SerializeField] private GameObject _homeScreenObject;
+
+	[SerializeField] private ShipUpgradeTableAnimationHandler _tableAnimationHandler;
 
 	[SerializeField] private VisualEffect _holoTableVFX;
 
@@ -28,13 +31,14 @@ public class ShipUpgradeAnimationHandler : MonoBehaviour {
 
 	private Vector3 _rotation;
 
+	private bool _initialized;
+
 	private void OnEnable() {
 		// Annoying process to apply the second material to the table
 		Material materialToApply = new Material(_hologramEffectMaterial);
 		Material[] materials = table.GetComponent<MeshRenderer>().materials;
 		materials[1] = materialToApply;
 		table.GetComponent<MeshRenderer>().materials = materials;
-
 		ToggleUpgradeScreen(false);
 	}
 
@@ -52,6 +56,8 @@ public class ShipUpgradeAnimationHandler : MonoBehaviour {
 			_rotation = _currentMeshSettings.rotation;
 			_holoTableVFX.SetVector3("Scale", _currentMeshSettings.scale);
 
+			if (_initialized) _tableAnimationHandler.ResetPosition(); // Have to do this
+			_initialized = true;
 		}
 	}
 

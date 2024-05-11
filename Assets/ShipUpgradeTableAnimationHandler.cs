@@ -66,4 +66,14 @@ public class ShipUpgradeTableAnimationHandler : MonoBehaviour {
 		}
 		return Vector3.zero;
 	}
+
+	public void ResetPosition() {
+		_targetPosition = Vector3.zero;
+		_mat.SetVector(Center, Vector3.zero);
+		_pannableTransform.anchoredPosition = Vector2.zero;
+		_startingPosition = Vector3.zero;
+		_mainPosition = Vector3.zero;
+		_cachedPosition = Vector3.zero;
+		Debug.Log("Reset");
+	}
 }
