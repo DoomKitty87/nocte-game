@@ -151,6 +151,6 @@ public class WeatherManager : MonoBehaviour
     _physicalSky.spaceEmissionMultiplier.value = nightFactor * _maxSpaceIntensity * _spaceCycleCurve.Evaluate(_spacePhaseMajor);
     _asteroidEffect.SetFloat("SpawnRate", nightFactor * _maxAsteroidRate);
 
-    WeatherSounds.Instance.UpdateWeather(_weatherState.z);
+    WeatherSounds.Instance?.UpdateWeather(_weatherState.z);
   }
 }
