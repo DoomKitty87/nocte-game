@@ -12,6 +12,7 @@ public class RadialMenu : MonoBehaviour
 	public InputReader _inputReader;
 
 	public UnityEvent<int> _OnSelected = new UnityEvent<int>();
+	public UnityEvent<int> _OnHovered = new UnityEvent<int>();
 	private int _currentIndexHovered;
 	
 	[Header("References")] 
@@ -175,6 +176,7 @@ public class RadialMenu : MonoBehaviour
 		return Mathf.FloorToInt(stepsPassed);
 	}
 	
+	private int _lastIndexHovered = -1;
 	public void UpdateSelector() {
 		Vector2 mouseUV = GetMouseUV();
 		Vector2 mousefromCenter = mouseUV.normalized;
@@ -184,6 +186,10 @@ public class RadialMenu : MonoBehaviour
 		float rotationDegrees = Mathf.Atan2(mousefromCenter.y, mousefromCenter.x) * Mathf.Rad2Deg;
 		(float lowerBound, float upperBound) = GetCurrentStepBounds(rotationDegrees);
 		_currentIndexHovered = GetCurrentStepIndex(rotationDegrees + 180);
+		if (_currentIndexHovered != _lastIndexHovered) {
+			OnHover();
+			_lastIndexHovered = _currentIndexHovered;
+		}
 		switch (_selectionType) {
 			case SelectionType.Instant:
 				_selectorTransform.rotation = Quaternion.Euler(0, 0, (lowerBound + upperBound) / 2 + _selectorRotationOffsetDeg);
@@ -202,10 +208,18 @@ public class RadialMenu : MonoBehaviour
 		_OnSelected.Invoke(_currentIndexHovered);
 	}
 
+	private void OnHover() {
+		_OnHovered.Invoke(_currentIndexHovered);
+	}
+	
 	public void SetImageOfIndex(int index, Sprite sprite) {
 		Image image = _weaponImages[index].GetComponent<Image>();
 		image.sprite = sprite;
 		image.preserveAspect = true;
+	}
+
+	public int GetSelectionCount() {
+		return _selectionCount;
 	}
 	
 	private void Start() {
