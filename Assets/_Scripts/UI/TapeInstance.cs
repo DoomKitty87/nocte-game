@@ -5,7 +5,7 @@ public class TapeInstance : MonoBehaviour
 
   public TapesMenu tapesMenu;
 
-  private void OnMouseDown() {
+  public void Select() {
     tapesMenu.SelectTape(transform.GetSiblingIndex());
   }
   

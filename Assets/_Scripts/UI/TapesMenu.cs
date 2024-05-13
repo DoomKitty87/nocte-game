@@ -33,9 +33,13 @@ public class TapesMenu : MonoBehaviour
       tape.transform.GetChild(1).gameObject.GetComponent<TextMeshProUGUI>().text = _tapes[i].name;
       tape.gameObject.GetComponent<TapeInstance>().tapesMenu = this;
     }
+    _currentTapeImage.sprite = null;
+    _currentTapeName.text = "";
+    _currentTapeText.text = "";
   }
 
   public void SelectTape(int index) {
+    Debug.Log("Selected tape: " + index);
     _tapeAudioSource.clip = _tapes[index].clip;
     _tapeAudioSource.Play();
     _currentTapeImage.sprite = _tapes[index].icon;
