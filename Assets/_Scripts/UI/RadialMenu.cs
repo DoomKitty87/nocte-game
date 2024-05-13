@@ -72,14 +72,14 @@ public class RadialMenu : MonoBehaviour
 		rTransform.anchoredPosition = new Vector3(0, 0, 0);
 		rTransform.rotation = Quaternion.identity;
 	}
-	public void RemoveOldSlots() {
-		// Doesn't remove initial separator
-		DestroyImmediate(_weaponImages[0]);
-		for (int i = 1; i < _separators.Length; i++) {
-			DestroyImmediate(_separators[i]);
-			DestroyImmediate(_weaponImages[i]);
-		}
-	}
+	// public void RemoveOldSlots() {
+	// 	// Doesn't remove initial separator
+	// 	DestroyImmediate(_weaponImages[0]);
+	// 	for (int i = 1; i < _separators.Length; i++) {
+	// 		DestroyImmediate(_separators[i]);
+	// 		DestroyImmediate(_weaponImages[i]);
+	// 	}
+	// }
 
 	private void SetSeparatorRotation(int index, GameObject separator) {
 		float stepDegrees = 360f / _selectionCount;
@@ -118,10 +118,10 @@ public class RadialMenu : MonoBehaviour
 	}
 	
 	public void GenerateSeparators() {
-		if (_separators != null) {
-			RemoveOldSlots();
-		}
-		
+		// if (_separators != null) {
+		// 	RemoveOldSlots();
+		// }
+		//
 		_separators = new GameObject[_selectionCount];
 		_weaponImages = new GameObject[_selectionCount];
 		
@@ -206,9 +206,6 @@ public class RadialMenu : MonoBehaviour
 	}
 
 	private void OnEquipClosed() {
-		if (_currentIndexHovered == _lastIndexHovered) {
-			return;
-		}
 		_OnSelected.Invoke(_currentIndexHovered);
 	}
 
@@ -221,6 +218,7 @@ public class RadialMenu : MonoBehaviour
 		if (sprite == null) {
 			image.sprite = null;
 			image.color = new Color(1, 1, 1, 0);
+			return;
 		}
 		image.sprite = sprite;
 		image.color = new Color(1, 1, 1, 1);

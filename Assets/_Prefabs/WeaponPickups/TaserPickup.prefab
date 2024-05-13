@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &3073921924459670715
+--- !u!1 &1416917187213713602
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,46 +8,47 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 2441816419651057153}
-  - component: {fileID: 1606879678906988964}
-  - component: {fileID: 3578180014993804654}
+  - component: {fileID: 5831572847381026187}
+  - component: {fileID: 8014310550293266787}
+  - component: {fileID: 1857588006261846835}
+  - component: {fileID: 5223106515148247366}
   m_Layer: 0
-  m_Name: Taser
+  m_Name: Model
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &2441816419651057153
+--- !u!4 &5831572847381026187
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3073921924459670715}
+  m_GameObject: {fileID: 1416917187213713602}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0.7071068, w: 0.7071068}
-  m_LocalPosition: {x: -0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 866590772910921606}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 90}
---- !u!33 &1606879678906988964
+--- !u!33 &8014310550293266787
 MeshFilter:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3073921924459670715}
+  m_GameObject: {fileID: 1416917187213713602}
   m_Mesh: {fileID: 8108563764783910780, guid: 3be99349845aa0640900df5a3816e6b1, type: 3}
---- !u!23 &3578180014993804654
+--- !u!23 &1857588006261846835
 MeshRenderer:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3073921924459670715}
+  m_GameObject: {fileID: 1416917187213713602}
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
@@ -85,6 +86,18 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!114 &5223106515148247366
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1416917187213713602}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 49b96aa4b863b8349a0e39c17857e55d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &4305607442026776400
 GameObject:
   m_ObjectHideFlags: 0
@@ -98,6 +111,7 @@ GameObject:
   - component: {fileID: 8241204299246717550}
   - component: {fileID: 7564526663434796477}
   - component: {fileID: 1493104540215820233}
+  - component: {fileID: 1408595321882964265}
   m_Layer: 0
   m_Name: TaserPickup
   m_TagString: Untagged
@@ -118,7 +132,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 2441816419651057153}
+  - {fileID: 5831572847381026187}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &6447342664492307719
@@ -153,10 +167,34 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+      - m_Target: {fileID: 5223106515148247366}
+        m_TargetAssemblyTypeName: ChangeLayerInterface, Assembly-CSharp
+        m_MethodName: ChangeLayerTo
+        m_Mode: 3
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 9
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   _OnHoverEnd:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 7564526663434796477}
+        m_TargetAssemblyTypeName: ChangeLayerInterface, Assembly-CSharp
+        m_MethodName: ChangeLayerTo
+        m_Mode: 3
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 5223106515148247366}
         m_TargetAssemblyTypeName: ChangeLayerInterface, Assembly-CSharp
         m_MethodName: ChangeLayerTo
         m_Mode: 3
@@ -214,5 +252,32 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 0.25490323, y: 0.06792198, z: 0.42758885}
-  m_Center: {x: -0.04237194, y: 0, z: -0.15156786}
+  m_Size: {x: 0.24315134, y: 0.06040021, z: 0.48154804}
+  m_Center: {x: -0.046798736, y: 0.0030689165, z: -0.15429439}
+--- !u!54 &1408595321882964265
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4305607442026776400}
+  serializedVersion: 4
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 1
+  m_Constraints: 0
+  m_CollisionDetection: 0

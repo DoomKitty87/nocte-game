@@ -24,10 +24,14 @@ public class MeleeWeapon : WeaponScript
 	
 	protected override void Start() {
 		base.Start();
-		_playerInputCC.Player.Shoot.performed += _ => Attack();
 		_attackCooldownTimer = 0;
 	}
 
+	public override float OnEquip() {
+		_playerInputCC.Player.Shoot.performed += _ => Attack();
+		return base.OnEquip();
+	}
+	
 	private void Update() {
 		_attackCooldownTimer -= Time.deltaTime;
 	}

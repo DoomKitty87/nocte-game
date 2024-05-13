@@ -1,3 +1,4 @@
+using System.ComponentModel;
 using UnityEngine;
 using UnityEngine.Serialization;
 
@@ -45,14 +46,15 @@ public abstract class WeaponScript : MonoBehaviour
 
   private void InitalizeReferences() {
     _playerInputCC = InputReader.Instance.PlayerInput;
-    _playerAnimatorCC = _instancingPlayerCombatCoreScript._playerAnimator;
     _audioSourceCC = _instancingPlayerCombatCoreScript._weaponFXAudioSource;
-    _playerAnimatorCC.runtimeAnimatorController = _playerAnimatorOverride;
+    _playerAnimatorCC = _instancingPlayerCombatCoreScript._playerAnimator;
   }
   
   // float = time to wait for animations
   public virtual float OnEquip() {
     InitalizeReferences();
+    _instancingPlayerCombatCoreScript._useAimedAnimations = true;
+    _playerAnimatorCC.runtimeAnimatorController = _playerAnimatorOverride;
     _playerAnimatorCC.SetTrigger("Weapon_Equip");
     return _equipAnimation.length;
   }

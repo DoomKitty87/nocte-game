@@ -23,11 +23,6 @@ public class ThrowableWeapon : WeaponScript
 		return (true, _throwsLeft, -1);
 	}
 
-	protected override void Start() {
-		base.Start();
-		_playerInputCC.Player.Shoot.performed += _ => Attack();
-	}
-
 	private void ThrowPrefab(GameObject prefab, Vector3 position, Vector3 direction, float force) {
 		Instantiate(prefab, position, Quaternion.LookRotation(direction)).GetComponent<Rigidbody>().AddForce(direction * force);
 	}
@@ -57,6 +52,7 @@ public class ThrowableWeapon : WeaponScript
 
 	public override float OnEquip() {
 		float baseOutput = base.OnEquip();
+		_playerInputCC.Player.Shoot.performed += _ => Attack();
 		_holdingRenderer.enabled = true;
 		_throwCooldownTimer = _throwCooldown;
 		return baseOutput;

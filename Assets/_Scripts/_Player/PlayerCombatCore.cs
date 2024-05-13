@@ -58,7 +58,7 @@ public class PlayerCombatCore : MonoBehaviour
     
 	public bool AddWeapon(WeaponItem weaponItem) {
 		if (_weaponInventory.Count >= _maxWeapons) return false;
-		print($"AddWeapon: {weaponItem._weaponName}");
+		// Debug.Log($"AddWeapon: {weaponItem._weaponName}");
 		GameObject instance = InstanceWeaponItem(weaponItem);
 		instance.SetActive(false);
 		WeaponInventorySlot newSlot = new(weaponItem, instance);
@@ -68,10 +68,8 @@ public class PlayerCombatCore : MonoBehaviour
 
 	private bool _equipping;
 	private IEnumerator EquipWeaponCoroutine(WeaponInventorySlot slot) {
-		print($"EquipWeaponCoroutine: {slot._weaponItem}");
 		_equipping = true;
 		if (_equippedSlotIndex != -1) {
-			print($"UnequipCurrentWeapon at slot {_equippedSlotIndex} in EquipWeaponCoroutine");
 			UnequipCurrentWeapon(true);
 		}
 		while (_unequipping) {
@@ -82,16 +80,16 @@ public class PlayerCombatCore : MonoBehaviour
 		_playerAnimator.SetLayerWeight(_playerAnimator.GetLayerIndex("WeaponLayer"), 1);
 		slot._weaponInstance.SetActive(true);
 		_OnInventoryChanged?.Invoke();
+		_equippedSlotIndex = _weaponInventory.IndexOf(slot);
 		float waitTime = slot._weaponInstance.GetComponent<WeaponScript>().OnEquip();
 		yield return new WaitForSeconds(waitTime);
 		slot._equipped = true;
-		_equippedSlotIndex = _weaponInventory.IndexOf(slot);
 		_equipping = false;
 	}
 
 	private bool EquipWeapon(WeaponInventorySlot slot) {
 		if (_equipping || _unequipping) return false;
-		print($"EquipWeapon: {slot._weaponItem}");
+		// Debug.Log($"EquippingWeapon: {slot._weaponItem.name}");
 		StartCoroutine(EquipWeaponCoroutine(slot));
 		return true;
 	}
@@ -131,7 +129,6 @@ public class PlayerCombatCore : MonoBehaviour
 	
 	private bool _unequipping;
 	private IEnumerator UnequipCurrentWeaponCoroutine(WeaponInventorySlot slot) {
-		print($"UnequipCurrentWeaponCorountine: {slot._weaponItem}");
 		_unequipping = true;
 		float waitTime = slot._weaponInstance.GetComponent<WeaponScript>().OnUnequip();
 		yield return new WaitForSeconds(waitTime);
@@ -148,7 +145,6 @@ public class PlayerCombatCore : MonoBehaviour
 		WeaponInventorySlot slot = _weaponInventory[_equippedSlotIndex];
 		_playerAnimator.SetLayerWeight(_playerAnimator.GetLayerIndex("WeaponLayer"), 0);
 		if (disableImmediately) {
-			print($"UnequipCurrentWeapon DisableImm: {slot._weaponItem}");
 			_currentWeaponItem = null;
 			_currentInstanceScript = null;
 			_equippedSlotIndex = -1;

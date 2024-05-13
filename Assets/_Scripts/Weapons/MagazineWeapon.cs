@@ -40,10 +40,12 @@ public abstract class MagazineWeapon : WeaponScript
 		yield return new WaitForSeconds(GetReloadTime());
 		_ammoCount = _magazineSize;
 		_instancingPlayerCombatCoreScript.Weapon_RaiseAmmoChangedEvent();
+		_instancingPlayerCombatCoreScript._useAimedAnimations = true;
 		_reloading = false;
 	}
 	protected void Reload() {
 		if (_reloading || _ammoCount == _magazineSize) return;
+		_instancingPlayerCombatCoreScript._useAimedAnimations = false;
 		StartCoroutine(ReloadCoroutine());
 	}
 	
@@ -126,9 +128,21 @@ public abstract class MagazineWeapon : WeaponScript
 	protected override void Start() {
 		base.Start();
 		_recoilCameraCC = _instancingPlayerCombatCoreScript._recoilCameraScript;
+	}
+	
+	public override float OnEquip() {
 		_playerInputCC.Player.Shoot.performed += _ => AttackPerformed();
 		_playerInputCC.Player.Shoot.canceled += _ => AttackCanceled();
 		_playerInputCC.Player.Reload.performed += _ => Reload();
+		_instancingPlayerCombatCoreScript.Weapon_RaiseAmmoChangedEvent();
+		return base.OnEquip();
+	}
+
+	public override float OnUnequip() {
+		_playerInputCC.Player.Shoot.performed -= _ => AttackPerformed();
+		_playerInputCC.Player.Shoot.canceled -= _ => AttackCanceled();
+		_playerInputCC.Player.Reload.performed -= _ => Reload();
+		return base.OnUnequip();
 	}
 	
 	protected virtual void Update() {

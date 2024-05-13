@@ -31,7 +31,6 @@ public class Interactable : MonoBehaviour
   }
   
   public void Interact() {
-    print("Interacted with interactable!");
     _InteractedWith?.Invoke();
   }
 }
