@@ -124,7 +124,9 @@ MonoBehaviour:
   beforePostProcessCustomPostProcesses:
   - ScannerEffectPostProcessVolume, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
     PublicKeyToken=null
-  afterPostProcessBlursCustomPostProcesses: []
+  afterPostProcessBlursCustomPostProcesses:
+  - FullscreenBlurCustomVolume, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
+    PublicKeyToken=null
   afterPostProcessCustomPostProcesses: []
   beforeTAACustomPostProcesses: []
   defaultRenderingLayerMask: 257

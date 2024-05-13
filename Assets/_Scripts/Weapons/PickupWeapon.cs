@@ -25,8 +25,8 @@ public class PickupWeapon : MonoBehaviour
   }
   
   public void Pickup() {
+    print($"Pickup: {_weapon}");
     if (_playerCombatCore.AddWeapon(_weapon)) {
-      _playerCombatCore.UnequipCurrentWeapon();
       _playerCombatCore.EquipWeaponByWeaponItem(_weapon);
       Destroy(_deleteParent);
     }

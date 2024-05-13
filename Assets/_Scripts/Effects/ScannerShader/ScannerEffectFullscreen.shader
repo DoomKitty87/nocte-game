@@ -120,7 +120,7 @@ Shader "FullScreen/ScannerEffectFullscreen"
             float scanLineWithoutFurthest = scanLineMask * (1 - furthestLineMask);
             float scanLineFurthest = step(Eps_float(), furthestLineMask) * scanLineMask;
             
-            rgb = (scanLineFurthest * _lastScanLineColor + scanLineWithoutFurthest * _scanLineColor) * scanLineDarkenMask + edgeGlowMask * _edgeGlowColor + (sobelMask * _sobelColor) * sobelDarkenMask;
+            rgb = (scanLineFurthest * _lastScanLineColor.xyz + scanLineWithoutFurthest * _scanLineColor.xyz) * scanLineDarkenMask + edgeGlowMask * _edgeGlowColor.xyz + (sobelMask * _sobelColor.xyz) * sobelDarkenMask;
             a = (scanLineMask * sideFadeMask * scanLineDarkenMask + edgeGlowMask * sideFadeMask + saturate(darkenMask + _darkenBaseValue) * sideFadeMask * _darkenOpacity + sobelMask * sideFadeMask * sobelDarkenMask) * _intensity;
 
             rgb = lerp(color.rgb, rgb, a);

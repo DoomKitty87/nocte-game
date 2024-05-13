@@ -5,13 +5,6 @@ using System;
 using TMPro;
 using UnityEngine.UI;
 
-[Serializable]
-public class EquipMenuSlot
-{
-    public WeaponItem _weaponItem;
-    public Image _iconImage;
-
-}
 public class EquipMenuHandler : MonoBehaviour
 {
     [SerializeField] private PlayerCombatCore _playerCombatCore;
@@ -22,7 +15,7 @@ public class EquipMenuHandler : MonoBehaviour
     private void Start() {
         _playerCombatCore._OnInventoryChanged.AddListener(UpdateEquipMenu);
         _radialMenu._OnHovered.AddListener((value) => OnHovered(value));
-        _radialMenu._OnSelected.AddListener((value) => _playerCombatCore.EquipWeaponByIndex(value));
+        // _radialMenu._OnSelected.AddListener((value) => _playerCombatCore.EquipWeaponByIndex(value));
     }
     
     private void UpdateEquipMenu() {
@@ -47,7 +40,7 @@ public class EquipMenuHandler : MonoBehaviour
 
     private void OnDisable() {
         _radialMenu._OnHovered.RemoveListener((value) => OnHovered(value));
-        _radialMenu._OnSelected.RemoveListener((value) => _playerCombatCore.EquipWeaponByIndex(value));
+        // _radialMenu._OnSelected.RemoveListener((value) => _playerCombatCore.EquipWeaponByIndex(value));
     }
 }
 

@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro.EditorUtilities;
 using Unity.Cinemachine;
+using UnityEditor.Build;
 using UnityEngine;
 using UnityEngine.Animations.Rigging;
 using UnityEngine.Events;
@@ -31,7 +32,7 @@ public class PlayerCombatCore : MonoBehaviour
 	// Inventory ================================================================
 
 	[SerializeField] private List<WeaponInventorySlot> _weaponInventory = new();
-	[SerializeField] private int _equippedSlotIndex;
+	[SerializeField] private int _equippedSlotIndex = -1;
 	[SerializeField] private int _maxWeapons = 6;
 	
 	private GameObject InstanceWeaponItem(WeaponItem weaponItem) {
@@ -57,6 +58,7 @@ public class PlayerCombatCore : MonoBehaviour
     
 	public bool AddWeapon(WeaponItem weaponItem) {
 		if (_weaponInventory.Count >= _maxWeapons) return false;
+		print($"AddWeapon: {weaponItem._weaponName}");
 		GameObject instance = InstanceWeaponItem(weaponItem);
 		instance.SetActive(false);
 		WeaponInventorySlot newSlot = new(weaponItem, instance);
@@ -66,8 +68,10 @@ public class PlayerCombatCore : MonoBehaviour
 
 	private bool _equipping;
 	private IEnumerator EquipWeaponCoroutine(WeaponInventorySlot slot) {
+		print($"EquipWeaponCoroutine: {slot._weaponItem}");
 		_equipping = true;
 		if (_equippedSlotIndex != -1) {
+			print($"UnequipCurrentWeapon at slot {_equippedSlotIndex} in EquipWeaponCoroutine");
 			UnequipCurrentWeapon(true);
 		}
 		while (_unequipping) {
@@ -84,24 +88,27 @@ public class PlayerCombatCore : MonoBehaviour
 		_equippedSlotIndex = _weaponInventory.IndexOf(slot);
 		_equipping = false;
 	}
-	private void EquipWeapon(WeaponInventorySlot slot) {
-		if (_equipping) return;
+
+	private bool EquipWeapon(WeaponInventorySlot slot) {
+		if (_equipping || _unequipping) return false;
+		print($"EquipWeapon: {slot._weaponItem}");
 		StartCoroutine(EquipWeaponCoroutine(slot));
+		return true;
 	}
 	
-	public void EquipWeaponByWeaponItem(WeaponItem weaponItem) {
+	public bool EquipWeaponByWeaponItem(WeaponItem weaponItem) {
 		for (int i = 0; i < _weaponInventory.Count; i++) {
 			WeaponInventorySlot slot = _weaponInventory[i];
 			if (slot._weaponItem == weaponItem) {
-				EquipWeapon(slot);
-				return;
+				return EquipWeapon(slot);
 			}
 		}
+		return false;
 	}
 
-	public void EquipWeaponByIndex(int index) {
-		if (index < 0 || index >= _weaponInventory.Count) return;
-		EquipWeapon(_weaponInventory[index]);
+	public bool EquipWeaponByIndex(int index) {
+		if (index < 0 || index >= _weaponInventory.Count) return false;
+		return EquipWeapon(_weaponInventory[index]);
 	}
 
 	public List<WeaponInventorySlot> GetWeaponInventory() {
@@ -124,6 +131,7 @@ public class PlayerCombatCore : MonoBehaviour
 	
 	private bool _unequipping;
 	private IEnumerator UnequipCurrentWeaponCoroutine(WeaponInventorySlot slot) {
+		print($"UnequipCurrentWeaponCorountine: {slot._weaponItem}");
 		_unequipping = true;
 		float waitTime = slot._weaponInstance.GetComponent<WeaponScript>().OnUnequip();
 		yield return new WaitForSeconds(waitTime);
@@ -136,17 +144,19 @@ public class PlayerCombatCore : MonoBehaviour
 		_unequipping = false;
 	}
 	public void UnequipCurrentWeapon(bool disableImmediately = false) {
-		if (_equipping || _unequipping) return;
+		if (_unequipping) return;
 		WeaponInventorySlot slot = _weaponInventory[_equippedSlotIndex];
 		_playerAnimator.SetLayerWeight(_playerAnimator.GetLayerIndex("WeaponLayer"), 0);
 		if (disableImmediately) {
-			slot._equipped = false;
+			print($"UnequipCurrentWeapon DisableImm: {slot._weaponItem}");
 			_currentWeaponItem = null;
-			slot._weaponInstance.SetActive(false);
+			_currentInstanceScript = null;
 			_equippedSlotIndex = -1;
-			_OnInventoryChanged?.Invoke();
+			slot._equipped = false;
+			slot._weaponInstance.SetActive(false);
 			return;
 		}
+		if (_equipping) return;
 		StartCoroutine(UnequipCurrentWeaponCoroutine(slot));
 	}
 
@@ -228,6 +238,7 @@ public class PlayerCombatCore : MonoBehaviour
 	[SerializeField] private float _aimSpeed;
 	[Range(0, 1)] public float _AimParameter = 0;
 	private bool _aimIn;
+	public bool _useAimedAnimations = true;
 	[Header("Audio")]
 	public AudioSource _weaponFXAudioSource;
 	[Header("Recoil")]
@@ -243,7 +254,7 @@ public class PlayerCombatCore : MonoBehaviour
 	private void LerpAimCameraAndAnim() {
 		_AimParameter = Mathf.Lerp(_AimParameter, _aimIn ? 1 : 0, Time.deltaTime * _aimSpeed);
 		_cinemachineThirdPersonFollow.CameraDistance = Mathf.Lerp(_normalCameraDistance, _aimedInCameraDistance, _AimParameter);
-		if (_currentWeaponItem != null) {
+		if (_currentWeaponItem != null && _useAimedAnimations) {
 			_playerAnimationRiggingRig.weight = _AimParameter;
 			_playerAnimator.SetFloat("Weapon_AimedIn", _AimParameter);
 		}
