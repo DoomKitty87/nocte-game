@@ -5,6 +5,7 @@ using TMPro.EditorUtilities;
 using Unity.Cinemachine;
 using UnityEngine;
 using UnityEngine.Animations.Rigging;
+using UnityEngine.Events;
 using Object = UnityEngine.Object;
 
 
@@ -31,6 +32,7 @@ public class PlayerCombatCore : MonoBehaviour
 
 	[SerializeField] private List<WeaponInventorySlot> _weaponInventory = new();
 	[SerializeField] private int _equippedSlotIndex;
+	[SerializeField] private int _maxWeapons = 6;
 	
 	private GameObject InstanceWeaponItem(WeaponItem weaponItem) {
 		GameObject instance = Instantiate(weaponItem._weaponPrefab, _weaponContainer.transform);
@@ -53,11 +55,13 @@ public class PlayerCombatCore : MonoBehaviour
 		}
 	}
     
-	public void AddWeapon(WeaponItem weaponItem) {
+	public bool AddWeapon(WeaponItem weaponItem) {
+		if (_weaponInventory.Count >= _maxWeapons) return false;
 		GameObject instance = InstanceWeaponItem(weaponItem);
 		instance.SetActive(false);
 		WeaponInventorySlot newSlot = new(weaponItem, instance);
 		_weaponInventory.Add(newSlot);
+		return true;
 	}
 
 	private bool _equipping;
@@ -73,6 +77,7 @@ public class PlayerCombatCore : MonoBehaviour
 		_currentInstanceScript = slot._weaponInstance.GetComponent<WeaponScript>();
 		_playerAnimator.SetLayerWeight(_playerAnimator.GetLayerIndex("WeaponLayer"), 1);
 		slot._weaponInstance.SetActive(true);
+		_OnInventoryChanged?.Invoke();
 		float waitTime = slot._weaponInstance.GetComponent<WeaponScript>().OnEquip();
 		yield return new WaitForSeconds(waitTime);
 		slot._equipped = true;
@@ -107,6 +112,10 @@ public class PlayerCombatCore : MonoBehaviour
 		return _weaponInventory.Count;
 	}
 
+	public int GetMaxWeaponCount() {
+		return _maxWeapons;
+	}
+	
 	public WeaponInventorySlot GetCurrentlyEquippedWeaponSlot() {
 		if (_equippedSlotIndex < 0 || _equippedSlotIndex > _weaponInventory.Count) return null;
 		return _weaponInventory[_equippedSlotIndex];
@@ -123,6 +132,7 @@ public class PlayerCombatCore : MonoBehaviour
 		_equippedSlotIndex = -1;
 		slot._equipped = false;
 		slot._weaponInstance.SetActive(false);
+		_OnInventoryChanged?.Invoke();
 		_unequipping = false;
 	}
 	public void UnequipCurrentWeapon(bool disableImmediately = false) {
@@ -134,6 +144,7 @@ public class PlayerCombatCore : MonoBehaviour
 			_currentWeaponItem = null;
 			slot._weaponInstance.SetActive(false);
 			_equippedSlotIndex = -1;
+			_OnInventoryChanged?.Invoke();
 			return;
 		}
 		StartCoroutine(UnequipCurrentWeaponCoroutine(slot));
@@ -194,6 +205,8 @@ public class PlayerCombatCore : MonoBehaviour
 	
 	public delegate void OnAmmoChanged(int currentAmmo, int maxAmmo);
 	public event OnAmmoChanged AmmoChanged;
+	
+	public UnityEvent _OnInventoryChanged;
 	
 	// Controlling =============================================================
 	
