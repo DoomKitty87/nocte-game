@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using JetBrains.Annotations;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Events;
@@ -204,7 +205,10 @@ public class RadialMenu : MonoBehaviour
 		// print($"{mousefromCenter.ToString()} | {rotationDegrees} | {(lowerBound + upperBound) / 2}");
 	}
 
-	private void OnSelect() {
+	private void OnEquipClosed() {
+		if (_currentIndexHovered == _lastIndexHovered) {
+			return;
+		}
 		_OnSelected.Invoke(_currentIndexHovered);
 	}
 
@@ -214,10 +218,22 @@ public class RadialMenu : MonoBehaviour
 	
 	public void SetImageOfIndex(int index, Sprite sprite) {
 		Image image = _weaponImages[index].GetComponent<Image>();
+		if (sprite == null) {
+			image.sprite = null;
+			image.color = new Color(1, 1, 1, 0);
+		}
 		image.sprite = sprite;
+		image.color = new Color(1, 1, 1, 1);
 		image.preserveAspect = true;
 	}
 
+	private void SetAllImageAlphasTo(float alpha) {
+		foreach (GameObject imgGameObj in _weaponImages) {
+			Image image = imgGameObj.GetComponent<Image>();
+			image.color = new Color(1, 1, 1, alpha);
+		}
+	}
+	
 	public int GetSelectionCount() {
 		return _selectionCount;
 	}
@@ -230,7 +246,8 @@ public class RadialMenu : MonoBehaviour
 		GenerateSeparators();
 		ConfigureSelector(_selectorTransform.gameObject, _menuContainer);
 		_inputReader = InputReader.Instance;
-		_inputReader.PlayerInput.UI.Click.performed += _ => OnSelect();
+		_inputReader.PlayerInput.AlwaysOn.OpenEquipMenu.canceled += _ => OnEquipClosed();
+		SetAllImageAlphasTo(0f);
 	}
 	
 	private void Update() {
@@ -238,6 +255,6 @@ public class RadialMenu : MonoBehaviour
 	}
 
 	private void OnDisable() {
-		_inputReader.PlayerInput.UI.Click.performed -= _ => OnSelect();
+		_inputReader.PlayerInput.UI.Click.performed -= _ => OnEquipClosed();
 	}
 }

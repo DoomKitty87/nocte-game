@@ -1,13 +1,15 @@
 using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.Serialization;
+
 public class Interactable : MonoBehaviour
 {
   public string PromptText = "Interact";
   [SerializeField] private Collider _interactTrigger;
-  public UnityEvent InteractedWith;
-  public UnityEvent OnHoverStart;
-  public UnityEvent OnHoverEnd;
+  [FormerlySerializedAs("InteractedWith")] public UnityEvent _InteractedWith;
+  [FormerlySerializedAs("OnHoverStart")] public UnityEvent _OnHoverStart;
+  [FormerlySerializedAs("OnHoverEnd")] public UnityEvent _OnHoverEnd;
   
   // Note: Errors in OnValidate are catastrophic or something maybe
   private void OnValidate() {
@@ -19,16 +21,16 @@ public class Interactable : MonoBehaviour
   }
 
   public void HoverStart() {
-    OnHoverStart?.Invoke();
+    _OnHoverStart?.Invoke();
     gameObject.layer = LayerMask.NameToLayer("Outlined");
   }
   
   public void HoverEnd() {
-    OnHoverEnd?.Invoke();
+    _OnHoverEnd?.Invoke();
     gameObject.layer = LayerMask.NameToLayer("Default");
   }
   
   public void Interact() {
-    InteractedWith?.Invoke();
+    _InteractedWith?.Invoke();
   }
 }
