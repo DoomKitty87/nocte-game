@@ -5,6 +5,9 @@ public class ShipUpgradeTableAnimationHandler : MonoBehaviour {
 
 	[SerializeField] private RectTransform _pannableTransform;
 
+	[SerializeField] private float _parallaxFloat = 0.8f;
+	[SerializeField] private float _gain = 0.8f;
+    
 	private Material _mat;
 
 	private Camera _mainCamera;
@@ -48,7 +51,7 @@ public class ShipUpgradeTableAnimationHandler : MonoBehaviour {
 		LerpTowardsPoint();
 
 		_mat.SetVector(Center, _mainPosition);
-		_pannableTransform.anchoredPosition = new Vector2((_mainPosition.z * (1 / .003f)) * -1, _mainPosition.x * (1 / 0.0032f)); // Weird numbers are due to scaling of parent canvas and orientation of table
+		_pannableTransform.anchoredPosition = new Vector2((_mainPosition.z * (1 / .0025f / _parallaxFloat)) * -1, _mainPosition.x * (1 / 0.0025f / _parallaxFloat)) * _gain; // Weird numbers are due to scaling of parent canvas and orientation of table
 		// _mat.SetVector(Offset, mousePosition - _mainPosition);
 	}
 
