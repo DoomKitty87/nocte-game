@@ -269,7 +269,7 @@ public class PlayerController : MonoBehaviour
             if (_keyJumping && TryMantle()) SetState(PlayerStates.Mantling);
             else SetState(PlayerStates.Air);
         }
-        else if (Vector3.Distance(_horizontalVelocity, Vector3.zero) < 0.1f && _inputVector == Vector3.zero)
+        else if (Vector3.Distance(_horizontalVelocity, Vector3.zero) < 1f && _inputVector == Vector3.zero)
             SetState(PlayerStates.Idle);
         else if (_crouching) {
             if (_horizontalVelocityMagnitude < _slideThreshold)
@@ -320,7 +320,7 @@ public class PlayerController : MonoBehaviour
         }
         
         // Invoke ground/wall cancel, since we can't check normals with CollisionExit
-        const float delay = 3f;
+        const float delay = 10f;
         if (!_cancellingGrounded) {
             _cancellingGrounded = true;
             Invoke(nameof(StopGrounded), Time.deltaTime * delay);
@@ -396,10 +396,6 @@ public class PlayerController : MonoBehaviour
         Vector3 forwardDirection = new Vector3(forward.x, 0, forward.z).normalized;
         var right = _movementOrientation.right;
         Vector3 rightDirection = new Vector3(right.x, 0, right.z).normalized;
-        
-        
-        
-        
 
         float dragCoefficient = 1f;
         bool lockVelocityToNormal = false;
@@ -618,7 +614,7 @@ public class PlayerController : MonoBehaviour
         }
 
         // Apply gravity
-        if (_useGravity && !_grounded)
+        if (_useGravity)
             _acceleration += _gravity * Time.fixedDeltaTime * Vector3.down;
         
         // Apply forces
