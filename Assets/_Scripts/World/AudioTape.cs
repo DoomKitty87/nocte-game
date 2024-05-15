@@ -13,7 +13,11 @@ public class AudioTape : MonoBehaviour
   [SerializeField] private GameObject deleteParent;
 
   public void Pickup() {
-    InventoryManager._instance.PickupAudioTape(name, audio, icon, dialogue);
+    if (audio == null) {
+      InventoryManager._instance.PickupAudioTape(name, null, icon, dialogue);
+    } else {
+      InventoryManager._instance.PickupAudioTape(name, audio, icon, dialogue);
+    }
     Destroy(deleteParent);
   }
   
