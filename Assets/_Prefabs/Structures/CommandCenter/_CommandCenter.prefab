@@ -42,6 +42,7 @@ GameObject:
   - component: {fileID: 8734217917179194720}
   - component: {fileID: 3937910185299302879}
   - component: {fileID: 4821901664530698443}
+  - component: {fileID: 8628509573733913029}
   m_Layer: 0
   m_Name: _CommandCenter
   m_TagString: Untagged
@@ -93,6 +94,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 175684d5fca40c440b70f3c95522df4b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &8628509573733913029
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1059486729885557029}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 71b251480d8f1a841a43e37472af5ad6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _lowPowerScreen: {fileID: 0}
+  _fullPowerScreen: {fileID: 0}
+  _mainInterface: {fileID: 0}
 --- !u!1 &1159820602485423520
 GameObject:
   m_ObjectHideFlags: 0
@@ -743,6 +759,14 @@ PrefabInstance:
         type: 3}
       insertIndex: -1
       addedObject: {fileID: 3822459937956652136}
+    - targetCorrespondingSourceObject: {fileID: -7836649918813499610, guid: 5f4a7b80be29c4f4f9534ffb7a74bfa7,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 4856106226263952182}
+    - targetCorrespondingSourceObject: {fileID: -7836649918813499610, guid: 5f4a7b80be29c4f4f9534ffb7a74bfa7,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 5450745185422058992}
   m_SourcePrefab: {fileID: 100100000, guid: 5f4a7b80be29c4f4f9534ffb7a74bfa7, type: 3}
 --- !u!4 &59424502638176746 stripped
 Transform:
@@ -777,6 +801,80 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 6.6304183, y: 1.9880935, z: 2.3692687}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!1 &1470151856893821223 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: -7836649918813499610, guid: 5f4a7b80be29c4f4f9534ffb7a74bfa7,
+    type: 3}
+  m_PrefabInstance: {fileID: 529638291428773377}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &4856106226263952182
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1470151856893821223}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8f8c0fe7f96f66046a5d3108466fa2dd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  PromptText: Turn On
+  _interactTrigger: {fileID: 5450745185422058992}
+  _InteractedWith:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 4856106226263952182}
+        m_TargetAssemblyTypeName: UnityEngine.Behaviour, UnityEngine
+        m_MethodName: set_enabled
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 8628509573733913029}
+        m_TargetAssemblyTypeName: CommandCenter, Assembly-CSharp
+        m_MethodName: EnableMainInterface
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  _OnHoverStart:
+    m_PersistentCalls:
+      m_Calls: []
+  _OnHoverEnd:
+    m_PersistentCalls:
+      m_Calls: []
+--- !u!65 &5450745185422058992
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1470151856893821223}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.084083885, y: 1.5009288, z: 0.9137149}
+  m_Center: {x: -0.18271542, y: 1.3413057, z: 1.34239e-40}
 --- !u!4 &1613688289914530954 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1242254399831450251, guid: 5f4a7b80be29c4f4f9534ffb7a74bfa7,
@@ -878,6 +976,18 @@ MonoBehaviour:
         m_TargetAssemblyTypeName: UnityEngine.Behaviour, UnityEngine
         m_MethodName: set_enabled
         m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: Pull
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 8628509573733913029}
+        m_TargetAssemblyTypeName: CommandCenter, Assembly-CSharp
+        m_MethodName: EnableBackupPower
+        m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
