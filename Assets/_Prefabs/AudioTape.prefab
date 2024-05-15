@@ -190,7 +190,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   PromptText: Pick Up Tape
   _interactTrigger: {fileID: 8253216480216094636}
-  InteractedWith:
+  _InteractedWith:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 4074969678731927486}
@@ -205,10 +205,10 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-  OnHoverStart:
+  _OnHoverStart:
     m_PersistentCalls:
       m_Calls: []
-  OnHoverEnd:
+  _OnHoverEnd:
     m_PersistentCalls:
       m_Calls: []
 --- !u!114 &4074969678731927486
@@ -226,6 +226,7 @@ MonoBehaviour:
   name: Test
   audio: {fileID: 8300000, guid: 38e6d252c7aa8af42a5676feb8da0f7d, type: 3}
   icon: {fileID: 21300000, guid: b21134bb9fd7fe04e8e14ed27f83e024, type: 3}
+  dialogue: 
   deleteParent: {fileID: 2760578622909995961}
 --- !u!65 &8253216480216094636
 BoxCollider:
@@ -308,8 +309,8 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
+  m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
+  m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 3243817744007037187}
   m_Father: {fileID: 0}
