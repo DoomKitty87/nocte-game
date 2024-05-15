@@ -55,7 +55,7 @@ public class InventoryManager : MonoBehaviour
     _tapeSprite.sprite = tape.icon;
     _audioSource.clip = tape.clip;
     _audioSource.Play();
-    Invoke("EndTape", tape.clip.length);
+    if (tape.clip != null) Invoke("EndTape", tape.clip.length);
   }
   
 }
