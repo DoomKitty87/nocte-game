@@ -177,34 +177,34 @@ public class PlaceStructures : MonoBehaviour
         s++;
       }
 
-      Vector2 mainPosition2 = new Vector2(mainPosition.x, mainPosition.z);
-      Vector2 outPosition2 = new Vector2(outPosition.x, outPosition.z);
-      int roadPoints = Mathf.FloorToInt(Vector2.Distance(mainPosition2, outPosition2) / _roadResolution);
-      Vector2 val0 = mainPosition2 + (outPosition2 - mainPosition2).normalized * 25;
-      Vector2 val1 = outPosition2 + (mainPosition2 - outPosition2).normalized * 25;
+      // Vector2 mainPosition2 = new Vector2(mainPosition.x, mainPosition.z);
+      // Vector2 outPosition2 = new Vector2(outPosition.x, outPosition.z);
+      // int roadPoints = Mathf.FloorToInt(Vector2.Distance(mainPosition2, outPosition2) / _roadResolution);
+      // Vector2 val0 = mainPosition2 + (outPosition2 - mainPosition2).normalized * 25;
+      // Vector2 val1 = outPosition2 + (mainPosition2 - outPosition2).normalized * 25;
 
-      Vector2[] roadPath = RoadGenerator.GenerateRoadPath(val0, val1, roadPoints, _roadPathfindingPoints, _roadMaxAngle);
+      // Vector2[] roadPath = RoadGenerator.GenerateRoadPath(val0, val1, roadPoints, _roadPathfindingPoints, _roadMaxAngle);
 
-      Vector2[] roadPlane =
-        RoadGenerator.PlanePointsFromLine(roadPath, _roadWidth, _roadNoiseAmplitude);
-      Vector3[] roadPlane3 = new Vector3[roadPlane.Length];
-      Color[] roadVertexColors = new Color[roadPlane.Length * 2];
-      for (int j = 0; j < roadPlane.Length; j++) {
-        roadPlane3[j] = new Vector3(roadPlane[j].x, _worldGen.GetHeightValue(roadPlane[j]), roadPlane[j].y) + Vector3.up * _roadWaterImpact * _worldGen.GetRiverValue(roadPlane[j]);
-        if (roadPlane3[j].y < WorldGenInfo._lakePlaneHeight) roadPlane3[j].y = WorldGenInfo._lakePlaneHeight;
-        roadVertexColors[j] = new Color(roadPlane3[j].y == WorldGenInfo._lakePlaneHeight ? 1 : _worldGen.GetRiverValue(roadPlane[j]), 0, 0, 0);
-        roadVertexColors[j + roadPlane.Length] = new Color(roadPlane3[j].y == WorldGenInfo._lakePlaneHeight ? 1 : _worldGen.GetRiverValue(roadPlane[j]), 0, 0, 0);
-      }
+      // Vector2[] roadPlane =
+      //   RoadGenerator.PlanePointsFromLine(roadPath, _roadWidth, _roadNoiseAmplitude);
+      // Vector3[] roadPlane3 = new Vector3[roadPlane.Length];
+      // Color[] roadVertexColors = new Color[roadPlane.Length * 2];
+      // for (int j = 0; j < roadPlane.Length; j++) {
+      //   roadPlane3[j] = new Vector3(roadPlane[j].x, _worldGen.GetHeightValue(roadPlane[j]), roadPlane[j].y) + Vector3.up * _roadWaterImpact * _worldGen.GetRiverValue(roadPlane[j]);
+      //   if (roadPlane3[j].y < WorldGenInfo._lakePlaneHeight) roadPlane3[j].y = WorldGenInfo._lakePlaneHeight;
+      //   roadVertexColors[j] = new Color(roadPlane3[j].y == WorldGenInfo._lakePlaneHeight ? 1 : _worldGen.GetRiverValue(roadPlane[j]), 0, 0, 0);
+      //   roadVertexColors[j + roadPlane.Length] = new Color(roadPlane3[j].y == WorldGenInfo._lakePlaneHeight ? 1 : _worldGen.GetRiverValue(roadPlane[j]), 0, 0, 0);
+      // }
 
-      Mesh road = RoadGenerator.MeshFromPlane(roadPlane3, _roadDepth, _roadInset, _roadBevel);
-      road.colors = roadVertexColors;
-      GameObject obj = new GameObject();
-      obj.layer = 6;
-      obj.AddComponent<MeshFilter>().mesh = road;
-      obj.AddComponent<MeshRenderer>().material = _roadMaterial;
-      obj.AddComponent<MeshCollider>();
-      obj.name = "RoadSegment";
-      obj.transform.parent = transform;
+      // Mesh road = RoadGenerator.MeshFromPlane(roadPlane3, _roadDepth, _roadInset, _roadBevel);
+      // road.colors = roadVertexColors;
+      // GameObject obj = new GameObject();
+      // obj.layer = 6;
+      // obj.AddComponent<MeshFilter>().mesh = road;
+      // obj.AddComponent<MeshRenderer>().material = _roadMaterial;
+      // obj.AddComponent<MeshCollider>();
+      // obj.name = "RoadSegment";
+      // obj.transform.parent = transform;
       // go = Instantiate(_outerStructures[nodeChoice], outPosition, Quaternion.FromToRotation(Vector3.up, normal));
       go = Instantiate(_outerStructures[i], outPosition, Quaternion.identity);
       _structurePositions[i + 1] = outPosition;
