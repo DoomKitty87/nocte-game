@@ -58,7 +58,7 @@ public sealed class ScannerEffectPostProcessVolume : CustomPostProcessVolumeComp
     public bool IsActive() => m_Material != null && _intensity.value > 0f;
 
     // Do not forget to add this post process in the Custom Post Process Orders list (Project Settings > Graphics > HDRP Global Settings).
-    public override CustomPostProcessInjectionPoint injectionPoint => CustomPostProcessInjectionPoint.BeforePostProcess;
+    public override CustomPostProcessInjectionPoint injectionPoint => CustomPostProcessInjectionPoint.AfterPostProcessBlurs;
 
     const string kShaderName = "FullScreen/ScannerEffectFullscreen";
 

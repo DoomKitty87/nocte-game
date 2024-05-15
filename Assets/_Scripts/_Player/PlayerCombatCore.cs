@@ -231,6 +231,8 @@ public class PlayerCombatCore : MonoBehaviour
 	public CinemachineThirdPersonAim _cinemachineThirdPersonAim;
 	[SerializeField] private float _normalCameraDistance;
 	[SerializeField] private float _aimedInCameraDistance = 2;
+	[SerializeField] private float _normalCameraSide = 0.5f;
+	[SerializeField] private float _aimedInCameraSide = 0.65f;
 	[SerializeField] private float _aimSpeed;
 	[Range(0, 1)] public float _AimParameter = 0;
 	private bool _aimIn;
@@ -250,6 +252,7 @@ public class PlayerCombatCore : MonoBehaviour
 	private void LerpAimCameraAndAnim() {
 		_AimParameter = Mathf.Lerp(_AimParameter, _aimIn ? 1 : 0, Time.deltaTime * _aimSpeed);
 		_cinemachineThirdPersonFollow.CameraDistance = Mathf.Lerp(_normalCameraDistance, _aimedInCameraDistance, _AimParameter);
+		_cinemachineThirdPersonFollow.CameraSide = Mathf.Lerp(_normalCameraSide, _aimedInCameraSide, _AimParameter);
 		if (_currentWeaponItem != null && _useAimedAnimations) {
 			_playerAnimationRiggingRig.weight = _AimParameter;
 			_playerAnimator.SetFloat("Weapon_AimedIn", _AimParameter);
