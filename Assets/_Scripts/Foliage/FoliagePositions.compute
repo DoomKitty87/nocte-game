@@ -73,9 +73,9 @@ void foliageNoise(float2 position, out float val)
 
   for (uint i = 0; i < _noiseOctaves; i++)
   {
-    float2 p = (position + _noiseOffset) * _noiseScale * pow(_noiseLacunarity, i);
-    v += unity_valueNoise(p) * pow(_noisePersistence, i);
-    compensation += pow(_noisePersistence, i);
+    float2 p = (position + _noiseOffset) * _noiseScale * pow(abs(_noiseLacunarity), i);
+    v += unity_valueNoise(p) * pow(abs(_noisePersistence), i);
+    compensation += pow(abs(_noisePersistence), i);
   }
 
   val = v / compensation;

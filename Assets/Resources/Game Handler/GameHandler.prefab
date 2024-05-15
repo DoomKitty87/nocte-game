@@ -9,7 +9,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6637136524576167759}
-  - component: {fileID: 3584479393340225555}
   - component: {fileID: 3289401921681535588}
   - component: {fileID: 7900035901117525388}
   - component: {fileID: 4430769355980498370}
@@ -20,6 +19,7 @@ GameObject:
   - component: {fileID: 7508801614763296515}
   - component: {fileID: 1769964535999474959}
   - component: {fileID: 2811694707386797022}
+  - component: {fileID: 8208134170936265664}
   m_Layer: 0
   m_Name: GameHandler
   m_TagString: GameHandler
@@ -42,20 +42,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &3584479393340225555
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8348581581803096828}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1d6270840a314664baffe1667ce5cf9d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _menuScene: MenuTesting
-  _gameScene: ProcgenTesting
 --- !u!114 &3289401921681535588
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -384,3 +370,17 @@ MonoBehaviour:
   _baseAudioSource: {fileID: 7508801614763296515}
   _sectorAudioSource: {fileID: 1769964535999474959}
   _songCrossfadeDuration: 2
+--- !u!114 &8208134170936265664
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8348581581803096828}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7eac1be8a40a3844ba770681357f1651, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _menuScene: MenuTesting
+  _gameScene: ProcgenTesting

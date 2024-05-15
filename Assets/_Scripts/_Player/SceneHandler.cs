@@ -5,7 +5,7 @@ using UnityEngine.SceneManagement;
 
 public class SceneHandler : MonoBehaviour
 {
-
+  // Ideally this should not handle scene loading - loadSceneSmoothly should.
   public static bool _inGame { get; private set; } = false;
 
   [SerializeField] private string _menuScene;
