@@ -46,6 +46,27 @@ public class PlaceStructures : MonoBehaviour
     2, 6, 0, 6, 4, 0 // Left Face
   };
 
+  public static PlaceStructures Instance { get; private set; }
+
+  private void Awake() {
+    if (Instance == null) Instance = this;
+  }
+
+  private void OnDisable() {
+    if (Instance == this) Instance = null;
+  }
+
+  public float GetNearestSite(Vector3 position) {
+    float minDistance = float.MaxValue;
+    for (int i = 0; i < _structurePositions.Length; i++) {
+      float distance = Vector3.Distance(position, _structurePositions[i]);
+      if (distance < minDistance) {
+        minDistance = distance;
+      }
+    }
+    return minDistance;
+  }
+
   private void Start() {
     Random.InitState(_worldGen.Seed);
     float offsetAngle = Random.value * Mathf.PI * 2;
