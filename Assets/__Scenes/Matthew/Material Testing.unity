@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0, g: 0, b: 0, a: 1}
+  m_IndirectSpecularColor: {r: 4427.433, g: 2876.389, b: 2119.3362, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -2921,6 +2921,11 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 175487269634012909, guid: 50e2c84c9ce784f4e9090670d29ac089,
+        type: 3}
+      propertyPath: m_SortingLayerID
+      value: 2040664339
+      objectReference: {fileID: 0}
     - target: {fileID: 835645233818743632, guid: 50e2c84c9ce784f4e9090670d29ac089,
         type: 3}
       propertyPath: m_IsActive
@@ -2934,12 +2939,32 @@ PrefabInstance:
     - target: {fileID: 1159820602485423520, guid: 50e2c84c9ce784f4e9090670d29ac089,
         type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2823091484186279944, guid: 50e2c84c9ce784f4e9090670d29ac089,
         type: 3}
       propertyPath: m_IsActive
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3533551533112584656, guid: 50e2c84c9ce784f4e9090670d29ac089,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 1.42
+      objectReference: {fileID: 0}
+    - target: {fileID: 3533551533112584656, guid: 50e2c84c9ce784f4e9090670d29ac089,
+        type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 1.96
+      objectReference: {fileID: 0}
+    - target: {fileID: 3533551533112584656, guid: 50e2c84c9ce784f4e9090670d29ac089,
+        type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 11.08
+      objectReference: {fileID: 0}
+    - target: {fileID: 3835844025892986341, guid: 50e2c84c9ce784f4e9090670d29ac089,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 38.74
       objectReference: {fileID: 0}
     - target: {fileID: 4132451107398330340, guid: 50e2c84c9ce784f4e9090670d29ac089,
         type: 3}
@@ -3457,7 +3482,10 @@ VisualEffect:
     m_Uint:
       m_Array: []
     m_Int:
-      m_Array: []
+      m_Array:
+      - m_Value: 256
+        m_Name: Spawn Rate
+        m_Overridden: 1
     m_Matrix4x4f:
       m_Array: []
     m_AnimationCurve:
