@@ -12,6 +12,8 @@ public class PlayerWorldGeneratorCompatibility : MonoBehaviour
     private ParticleSystem.ShapeModule _rainShape;
 
     public static bool _entryAnimationFinished = false;
+
+    [SerializeField] private TutorialHandler _tutorial;
     
     [SerializeField] private bool _ignoreLackOfWorldGenerator;
 
@@ -48,6 +50,7 @@ public class PlayerWorldGeneratorCompatibility : MonoBehaviour
       _entryAnimationFinished = false;
       
       InputReader.Instance.EnablePlayer();
+      _tutorial.InitialDialogue();
     }
 
 }

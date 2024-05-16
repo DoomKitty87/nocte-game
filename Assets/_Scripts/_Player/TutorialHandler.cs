@@ -9,31 +9,35 @@ public class TutorialHandler : MonoBehaviour
 {
 
   [Serializable]
-  public struct TutorialStep {
-    public string text;
-    public InputActionReference action;
+  public struct TutorialStep
+  {
+    public Dialogue text;
+    public KeyCode action;
   }
 
   [SerializeField] private TutorialStep[] _tutorialSteps;
 
-  [SerializeField] private TextMeshProUGUI _tutorialText;
-
   private int _currentStep = 0;
+  private bool _active = false;
 
-  private void Start() {
-    _tutorialText.text = _tutorialSteps[_currentStep].text;
-    _tutorialSteps[_currentStep].action.action.performed += NextStep;
+  public void InitialDialogue() {
+    DialogueHandler.Instance.PlayDialogue(_tutorialSteps[0].text, true);
+    _active = true;
   }
 
-  private void NextStep(InputAction.CallbackContext context) {
-    _tutorialSteps[_currentStep].action.action.performed -= NextStep;
+  private void Update() {
+    if (Input.GetKey(_tutorialSteps[_currentStep].action)) NextStep();
+  }
+
+  private void NextStep() {
+    if (!_active) return;
     _currentStep++;
     if (_currentStep < _tutorialSteps.Length) {
-      _tutorialText.text = _tutorialSteps[_currentStep].text;
-      _tutorialSteps[_currentStep].action.action.performed += NextStep;
+      DialogueHandler.Instance.PlayDialogue(_tutorialSteps[_currentStep].text, true);
     }
     else {
-      _tutorialText.gameObject.SetActive(false);
+      _currentStep--;
+      this.enabled = false;
     }
   }
 
