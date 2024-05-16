@@ -42,6 +42,11 @@ public class DroneAI : MonoBehaviour
 
   private float _lastSpeed;
 
+  [SerializeField] private int _burstCount;
+
+  private int _burstCounter;
+  private float _burstTimer;
+
   private void Start() {
     _playerTarget = GameObject.FindGameObjectWithTag("Player").transform;
   }
@@ -76,9 +81,11 @@ public class DroneAI : MonoBehaviour
           renderer.material = _attackingMaterial;
         }
       }
-      if (_attackTimer > _attack._attackRepeatSeconds) {
+      if (_attackTimer > _attack._attackRepeatSeconds && (_burstCounter < _burstCount || _burstTimer > _attack._attackRepeatSeconds * 2 * _burstCount)) {
         _combat.Attack(_attack);
+        _burstCounter++;
         _attackTimer = 0;
+        _burstTimer = 0;
       }
     } else {
       if (_attacking) {
@@ -88,8 +95,10 @@ public class DroneAI : MonoBehaviour
         }
       }
     }
-    
+
     _attackTimer += Time.fixedDeltaTime;
+    _burstTimer += Time.fixedDeltaTime;
+    if (_burstTimer > _attack._attackRepeatSeconds * 2 * _burstCount) _burstCounter = 0;
   }
 
   public void Neutralized() {

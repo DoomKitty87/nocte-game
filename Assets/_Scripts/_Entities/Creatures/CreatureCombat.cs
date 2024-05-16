@@ -17,11 +17,13 @@ namespace _Scripts._Entities.Creatures
 	{
 		[SerializeField] private LayerMask _layerMask;
     [SerializeField] private UnityEvent OnSuccessDamage;
+    [SerializeField] private UnityEvent OnAttack;
   
 		public float _timeOfLastAttack;
 		
 		public bool Attack(CreatureAttack attack) {
 			Physics.Raycast(transform.position, transform.forward, out RaycastHit hit, attack._attackDistance, _layerMask);
+      OnAttack?.Invoke();
 			if (hit.collider != null) {
 				GameObject hitObject = hit.collider.gameObject;
 				_timeOfLastAttack = Time.time;
