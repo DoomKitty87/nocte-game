@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 4303.818, g: 2786.964, b: 2065.5803, a: 1}
+  m_IndirectSpecularColor: {r: 4419.6167, g: 2867.2183, b: 2109.0457, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -1565,6 +1565,7 @@ MonoBehaviour:
   _spawnDistance: 500
   _playerTransform: {fileID: 281930234}
   _dronePackSpread: 10
+  _timer: 30
 --- !u!1 &565788225
 GameObject:
   m_ObjectHideFlags: 0
@@ -3350,6 +3351,60 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 1526378911}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1606344281
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1606344283}
+  - component: {fileID: 1606344282}
+  m_Layer: 0
+  m_Name: GameObject
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1606344282
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1606344281}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 353caa7a7b4fb466e87d9f9cf0e01872, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _dronePrefab: {fileID: 1719956536409655127, guid: d8dceb13b552d1e4898685b0e511264b,
+    type: 3}
+  _droneCountMin: 2
+  _droneCountMax: 5
+  _spawnDelayMean: 5
+  _spawnDelayRange: 5
+  _spawnDistance: 50
+  _playerTransform: {fileID: 281930234}
+  _dronePackSpread: 5
+  _timer: 2
+--- !u!4 &1606344283
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1606344281}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 7.29, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1650719129
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -4311,3 +4366,4 @@ SceneRoots:
   - {fileID: 792358410}
   - {fileID: 1524334654}
   - {fileID: 424193795}
+  - {fileID: 1606344283}

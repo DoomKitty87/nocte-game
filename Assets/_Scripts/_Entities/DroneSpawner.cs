@@ -16,7 +16,7 @@ public class DroneSpawner : MonoBehaviour
     [SerializeField] private Transform _playerTransform;
     [SerializeField] private float _dronePackSpread;
 
-    private float _timer = 30f;
+    [SerializeField] private float _timer = 30f;
     
     private void Start() {
         
@@ -42,7 +42,7 @@ public class DroneSpawner : MonoBehaviour
             rads = Random.value * Mathf.PI * 2;
             Vector2 dronePosition = centerPosition + new Vector2(Mathf.Cos(rads), Mathf.Sin(rads)) * _dronePackSpread * Random.value;
             Vector3 placePosition = new Vector3(dronePosition.x, 25, dronePosition.y);
-            GameObject drone = Instantiate(_dronePrefab, placePosition, Quaternion.identity, transform);
+            Instantiate(_dronePrefab, placePosition, Quaternion.identity, transform);
         }
     }
     
