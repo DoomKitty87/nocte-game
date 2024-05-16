@@ -47,6 +47,8 @@ public class DroneAI : MonoBehaviour
   private int _burstCounter;
   private float _burstTimer;
 
+  private float _spawnGraceTimer = 0;
+
   private void Start() {
     _playerTarget = GameObject.FindGameObjectWithTag("Player").transform;
   }
@@ -99,6 +101,7 @@ public class DroneAI : MonoBehaviour
     _attackTimer += Time.fixedDeltaTime;
     _burstTimer += Time.fixedDeltaTime;
     if (_burstTimer > _attack._attackRepeatSeconds * 2 * _burstCount) _burstCounter = 0;
+    _spawnGraceTimer += Time.fixedDeltaTime;
   }
 
   public void Neutralized() {
@@ -123,9 +126,10 @@ public class DroneAI : MonoBehaviour
   }
 
   private void OnCollisionEnter(Collision other) {
+    if (_spawnGraceTimer < 2) return;
     if (other.gameObject.TryGetComponent(out Rigidbody rb)) {
-      if (Mathf.Abs(rb.velocity.magnitude) + Mathf.Abs(_rigidbody.velocity.magnitude) > (_maxSpeed * 0.25f)) Neutralized();
-    } else if (_lastSpeed / _maxSpeed > 0.25f) Neutralized();
+      if (Mathf.Abs(rb.velocity.magnitude) + Mathf.Abs(_rigidbody.velocity.magnitude) > (_maxSpeed * 0.5f)) Neutralized();
+    } else if (_lastSpeed / _maxSpeed > 0.5f) Neutralized();
   }
 
 }
