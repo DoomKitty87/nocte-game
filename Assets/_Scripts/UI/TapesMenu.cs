@@ -39,12 +39,13 @@ public class TapesMenu : MonoBehaviour
   }
 
   public void SelectTape(int index) {
-    Debug.Log("Selected tape: " + index);
-    _tapeAudioSource.clip = _tapes[index].clip;
-    _tapeAudioSource.Play();
-    _currentTapeImage.sprite = _tapes[index].icon;
-    _currentTapeName.text = _tapes[index].name;
-    _currentTapeText.text = _tapes[index].dialogue;
+    //Debug.Log("Selected tape: " + index);
+    DialogueHandler.Instance.PlayDialogue(_tapes[index].dialogueScriptable, true);
+    // _tapeAudioSource.clip = _tapes[index].clip;
+    // _tapeAudioSource.Play();
+    // _currentTapeImage.sprite = _tapes[index].icon;
+    // _currentTapeName.text = _tapes[index].name;
+    // _currentTapeText.text = _tapes[index].dialogue;
   }
 
 }
