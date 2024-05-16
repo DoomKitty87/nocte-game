@@ -1,5 +1,7 @@
 using System;
+using UnityEngine.Events;
 using UnityEngine;
+
 
 namespace _Scripts._Entities.Creatures
 {
@@ -14,6 +16,8 @@ namespace _Scripts._Entities.Creatures
 	public class CreatureCombat : MonoBehaviour
 	{
 		[SerializeField] private LayerMask _layerMask;
+    [SerializeField] private UnityEvent OnSuccessDamage;
+  
 		public float _timeOfLastAttack;
 		
 		public bool Attack(CreatureAttack attack) {
@@ -23,6 +27,7 @@ namespace _Scripts._Entities.Creatures
 				_timeOfLastAttack = Time.time;
 				if (hitObject.TryGetComponent<HealthInterface>(out HealthInterface healthInterface)) {
 					healthInterface.Damage(attack._attackDamage, hit.point);
+          OnSuccessDamage?.Invoke();
 					return true;
 				}
 			}
