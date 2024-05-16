@@ -41,7 +41,7 @@ public class CommandCenter : MonoBehaviour
     _holoCanvas.enabled = false;
     _hologramEffect.SetInt("Spawn Rate", 0);
     int nearestSite = (int) PlaceStructures.Instance.GetNearestSite(transform.position);
-    _distanceText.text = $"DIST TO NEAREST: <color='green'>{nearestSite}m</color>";
+    _distanceText.text = $"DIST TO NEAREST: <color=\"green\">{nearestSite}M</color>";
   }
   public void EnableBackupPower() {
     _emergencyPowerScreen.SetActive(false);
