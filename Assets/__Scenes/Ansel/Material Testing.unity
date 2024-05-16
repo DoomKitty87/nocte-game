@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 4427.0337, g: 2872.8699, b: 2112.1802, a: 1}
+  m_IndirectSpecularColor: {r: 0, g: 0, b: 0, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -289,6 +289,31 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e5c179602561594468d7d3a12fe4229f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!1 &164602093 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4154542228903255938, guid: 9251f6c58d15c7b428fef40ec34ce952,
+    type: 3}
+  m_PrefabInstance: {fileID: 281930233}
+  m_PrefabAsset: {fileID: 0}
+--- !u!108 &164602096 stripped
+Light:
+  m_CorrespondingSourceObject: {fileID: 3243460479203967858, guid: 9251f6c58d15c7b428fef40ec34ce952,
+    type: 3}
+  m_PrefabInstance: {fileID: 281930233}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &164602097
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 164602093}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0bdb4db68a080c54483d4bb8f3ad9427, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  flashlight: {fileID: 164602096}
 --- !u!1001 &188044234
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -564,6 +589,26 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3023527381410962907, guid: 9251f6c58d15c7b428fef40ec34ce952,
+        type: 3}
+      propertyPath: _pdaCanvas
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 3243460479203967858, guid: 9251f6c58d15c7b428fef40ec34ce952,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3243460479203967858, guid: 9251f6c58d15c7b428fef40ec34ce952,
+        type: 3}
+      propertyPath: m_Intensity
+      value: 4194304
+      objectReference: {fileID: 0}
+    - target: {fileID: 3243460479203967858, guid: 9251f6c58d15c7b428fef40ec34ce952,
+        type: 3}
+      propertyPath: m_SpotAngle
+      value: 120
+      objectReference: {fileID: 0}
     - target: {fileID: 3351189565817621733, guid: 9251f6c58d15c7b428fef40ec34ce952,
         type: 3}
       propertyPath: m_fontAsset
@@ -640,6 +685,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalPosition.x
       value: -3.5994237e-32
+      objectReference: {fileID: 0}
+    - target: {fileID: 4798468513531427306, guid: 9251f6c58d15c7b428fef40ec34ce952,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 1.1899772
       objectReference: {fileID: 0}
     - target: {fileID: 4798468513531427306, guid: 9251f6c58d15c7b428fef40ec34ce952,
         type: 3}
@@ -885,6 +935,26 @@ PrefabInstance:
       propertyPath: m_Color.a
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8898730653646888819, guid: 9251f6c58d15c7b428fef40ec34ce952,
+        type: 3}
+      propertyPath: m_Intensity
+      value: 25
+      objectReference: {fileID: 0}
+    - target: {fileID: 8898730653646888819, guid: 9251f6c58d15c7b428fef40ec34ce952,
+        type: 3}
+      propertyPath: m_LightUnit
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 8898730653646888819, guid: 9251f6c58d15c7b428fef40ec34ce952,
+        type: 3}
+      propertyPath: m_InnerSpotPercent
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8898730653646888819, guid: 9251f6c58d15c7b428fef40ec34ce952,
+        type: 3}
+      propertyPath: m_VolumetricDimmer
+      value: 16
+      objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 1180654788861571415, guid: 9251f6c58d15c7b428fef40ec34ce952, type: 3}
     - {fileID: 6841940912683404337, guid: 9251f6c58d15c7b428fef40ec34ce952, type: 3}
@@ -912,6 +982,10 @@ PrefabInstance:
         type: 3}
       insertIndex: -1
       addedObject: {fileID: 281930236}
+    - targetCorrespondingSourceObject: {fileID: 4154542228903255938, guid: 9251f6c58d15c7b428fef40ec34ce952,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 164602097}
   m_SourcePrefab: {fileID: 100100000, guid: 9251f6c58d15c7b428fef40ec34ce952, type: 3}
 --- !u!4 &281930234 stripped
 Transform:
@@ -1264,7 +1338,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!108 &382653255
 Light:
   m_ObjectHideFlags: 0
