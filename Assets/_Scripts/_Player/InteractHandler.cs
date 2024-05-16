@@ -27,7 +27,8 @@ public class InteractHandler : MonoBehaviour
   private List<GameObject> ReturnInteractablesInRange(float range) {
     List<GameObject> _objects = new List<GameObject>();
     foreach (Collider collider in Physics.OverlapSphere(transform.position, range, _interactLayerMask).ToList()) {
-      if (collider.gameObject.TryGetComponent<Interactable>(out _)) {
+      if (collider.gameObject.TryGetComponent<Interactable>(out Interactable inter)) {
+        if (!inter.enabled) continue;
         _objects.Add(collider.gameObject);
       }
     }

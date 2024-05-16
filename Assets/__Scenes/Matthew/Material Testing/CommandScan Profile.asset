@@ -1,0 +1,89 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d7fd9488000d3734a9e00ee676215985, type: 3}
+  m_Name: CommandScan Profile
+  m_EditorClassIdentifier: 
+  components:
+  - {fileID: 2396044224477379345}
+--- !u!114 &2396044224477379345
+MonoBehaviour:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eae3c4cccd664b94382cd8508aba414b, type: 3}
+  m_Name: ScannerEffectPostProcessVolume
+  m_EditorClassIdentifier: 
+  active: 1
+  _intensity:
+    m_OverrideState: 1
+    m_Value: 0
+  _scannerCenterPosition:
+    m_OverrideState: 1
+    m_Value: {x: 0, y: 0, z: 0}
+  _scanDirectionXZ:
+    m_OverrideState: 1
+    m_Value: {x: 1, y: 0}
+  _scanDegrees:
+    m_OverrideState: 1
+    m_Value: 120
+  _scanDistance:
+    m_OverrideState: 1
+    m_Value: 20.19
+  _scanLineColor:
+    m_OverrideState: 1
+    m_Value: {r: 0.7490196, g: 0.3764706, b: 0.387882, a: 1}
+  _lastScanLineColor:
+    m_OverrideState: 1
+    m_Value: {r: 3.5308297, g: 2.2922664, b: 2.2922664, a: 1}
+  _scanLineWidth:
+    m_OverrideState: 1
+    m_Value: 0.5
+  _scanLineDistBetween:
+    m_OverrideState: 1
+    m_Value: 10
+  _scanLineDistFromEdgeShown:
+    m_OverrideState: 1
+    m_Value: 80
+  _edgeGlowColor:
+    m_OverrideState: 1
+    m_Value: {r: 0.83137256, g: 0.23763447, b: 0.23137257, a: 1}
+  _edgeGlowAccentColor:
+    m_OverrideState: 0
+    m_Value: {r: 0.6011926, g: 0.6603774, b: 0.6603774, a: 1}
+  _edgeGlowWidth:
+    m_OverrideState: 1
+    m_Value: 3.27
+  _darkenOpacity:
+    m_OverrideState: 1
+    m_Value: 0.6
+  _darkenBaseValue:
+    m_OverrideState: 1
+    m_Value: 0
+  _darkenWidth:
+    m_OverrideState: 1
+    m_Value: 0.9
+  _sideFadeMagnitude:
+    m_OverrideState: 1
+    m_Value: 0.088
+  _sobelThreshold:
+    m_OverrideState: 1
+    m_Value: 0.01
+  _sobelColor:
+    m_OverrideState: 1
+    m_Value: {r: 31.219961, g: 13.622517, b: 12.912967, a: 1}
+  _sobelDistFromEdgeShown:
+    m_OverrideState: 1
+    m_Value: 200
