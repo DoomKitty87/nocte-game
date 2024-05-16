@@ -30,7 +30,9 @@ public class EquipMenuHandler : MonoBehaviour
     }
 
     private void OnSelected(int index) {
-        if (index >= _playerCombatCore.GetWeaponCount()) return;
+        if (index >= _playerCombatCore.GetWeaponCount()) {
+            _playerCombatCore.UnequipCurrentWeapon();
+        }
         _playerCombatCore.EquipWeaponByIndex(index);
     }
     
