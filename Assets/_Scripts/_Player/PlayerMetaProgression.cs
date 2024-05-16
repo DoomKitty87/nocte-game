@@ -7,32 +7,45 @@ public class PlayerMetaProgression : MonoBehaviour
   private static PlayerMetaProgression _instance;
   public static PlayerMetaProgression Instance { get { return _instance; } }
 
-
-  // Blueprints: 0 = Dexterity, 1 = Lethality, 2 = Perception (Scanner), 3 = Utility (Grappling Hook), 4 = Vitality
-
-  [System.Serializable]
-  public struct Blueprint {
-    public bool owned;
-    public bool unlocked;
-    public int[] upgradeLevels;
-  }
+  // 0 = Locked, 1 = Unlocked but not purchased, 2 = Purchased
+  public int[] DefaultUpgrades = new int[12] {
+    // Movement
+    1, // Jump height
+    1, // Sprint speed
+    1, // 
+    1, //
+    // Combat
+    1, // Damage
+    1, // Reload speed
+    1, // Bullet capacity
+    1, // 
+    // Utility
+    0, // Scan range
+    0, // Grapple range
+    0,
+    0
+    };
 
   [System.Serializable]
   public struct ProgressionData
   {
     public int cores;
     public int usedcores;
-    public Blueprint[] blueprints;
+    public int[] upgrades;
   }
 
   public int AvailableCores { get { return _progression.cores - _progression.usedcores; } }
 
   public ProgressionData _progression = new ProgressionData();
 
-  private void OnEnable() {
-    if (_instance == null) {
+  private void OnEnable()
+  {
+    if (_instance == null)
+    {
       _instance = this;
-    } else {
+    }
+    else
+    {
       Destroy(this);
     }
 
@@ -42,16 +55,11 @@ public class PlayerMetaProgression : MonoBehaviour
 
   public void LoadProgressionData()
   {
-    if (StorageInterface.LoadData("progression.dat") == null) {
+    if (StorageInterface.LoadData("progression.dat") == null)
+    {
       _progression.cores = 0;
       _progression.usedcores = 0;
-      _progression.blueprints = new Blueprint[5] {
-        new Blueprint { owned = true, unlocked = true, upgradeLevels = new int[5] {0, 0, 0, 0, 0} },
-        new Blueprint { owned = true, unlocked = true, upgradeLevels = new int[1] {0} },
-        new Blueprint { owned = false, unlocked = false, upgradeLevels = new int[3] {0, 0, 0} },
-        new Blueprint { owned = false, unlocked = false, upgradeLevels = new int[3] {0, 0, 0} },
-        new Blueprint { owned = true, unlocked = true, upgradeLevels = new int[2] {0, 0} }
-      };
+      _progression.upgrades = DefaultUpgrades;
 
       return;
     }
@@ -59,78 +67,67 @@ public class PlayerMetaProgression : MonoBehaviour
     _progression = data;
   }
 
-  public void SaveData() {
+  public void SaveData()
+  {
     SaveProgressionData();
   }
 
-    public void SaveProgressionData()
+  public void SaveProgressionData()
   {
     StorageInterface.SaveData("progression.dat", _progression);
   }
 
-  public void AddCore() {
+  public void AddCore()
+  {
     _progression.cores++;
   }
 
-  public void AddCore(int cores) {
+  public void AddCore(int cores)
+  {
     _progression.cores += cores;
   }
 
-  public void UseCore() {
+  public void UseCore()
+  {
     _progression.usedcores++;
   }
 
-  public void UseCore(int cores) {
+  public void UseCore(int cores)
+  {
     _progression.usedcores += cores;
   }
 
-  public void FreeCore() {
+  public void FreeCore()
+  {
     _progression.usedcores--;
   }
 
-  public void FreeCore(int cores) {
+  public void FreeCore(int cores)
+  {
     _progression.usedcores -= cores;
   }
 
-  public bool CheckBlueprintOwned(int index) {
-    return _progression.blueprints[index].owned;
+  public void Unlock(int index)
+  {
+    if (_progression.upgrades[index] != 0)
+      Debug.LogWarning($"Upgrade index {index} is in the wrong state {_progression.upgrades[index]}. Fix this.");
+    _progression.upgrades[index] = 1;
   }
 
-  public bool CheckBlueprintUnlocked(int index) {
-    return _progression.blueprints[index].unlocked;
+  public void Buy(int index)
+  {
+    if (_progression.upgrades[index] != 1)
+      Debug.LogWarning($"Upgrade index {index} is in the wrong state {_progression.upgrades[index]}. Fix this.");
+    _progression.upgrades[index] = 2;
   }
 
-  public void ObtainBlueprint(int index) {
-    _progression.blueprints[index].owned = true;
-    SaveData();
+  public void Lock(int index)
+  {
+    _progression.upgrades[index] = 0;
   }
 
-  public bool[] GetAvailableBlueprints() {
-    bool[] unlockedBlueprints = new bool[5];
-    for (int i = 0; i < _progression.blueprints.Length; i++) {
-      unlockedBlueprints[i] = _progression.blueprints[i].unlocked;
-    }
-    return unlockedBlueprints;
-  }
-
-  public int GetUpgradeLevel(int blueprintIndex, int upgradeIndex) {
-    return _progression.blueprints[blueprintIndex].upgradeLevels[upgradeIndex];
-  }
-
-  public void SetUpgradeLevel(int blueprintIndex, int upgradeIndex, int level) {
-    _progression.blueprints[blueprintIndex].upgradeLevels[upgradeIndex] = level;
-  }
-
-  public void UnlockBlueprints() {
-    for (int i = 0; i < _progression.blueprints.Length; i++) {
-      if (!_progression.blueprints[i].unlocked) return;
-      _progression.blueprints[i].unlocked = true;
-    }
-  }
-
-  public void ConvertOwnedBlueprintsToUnlocked() {
-    for (int i = 0; i < _progression.blueprints.Length; i++) {
-      if (_progression.blueprints[i].owned) _progression.blueprints[i].unlocked = true;
-    }
+  public int CheckUpgrade(int index)
+  {
+    return _progression.upgrades[index];
   }
 }
