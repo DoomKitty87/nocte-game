@@ -6,10 +6,12 @@ using UnityEngine;
 [Serializable]
 public class DialogueTurn
 {
-	public string _text;
+
+	[TextArea(3, 20)] public string _text;
 	public float _duration;
 	public AudioClip _audioClip;
 	public bool _durationIsAudioLength;
+  
 }
 
 [Serializable]
@@ -22,5 +24,5 @@ public class Dialogue : ScriptableObject
 	[Tooltip("Color of the character's name in the subtitle box.")]
 	[ColorUsage(false, false)] public Color _nameColor;
 	[Tooltip("List of text turns in the dialogue. Each turn will be displayed in the subtitle box.")]
-	[TextArea(3, 20)] public List<DialogueTurn> _textTurns;
+	public List<DialogueTurn> _textTurns;
 }
