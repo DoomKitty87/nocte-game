@@ -20,6 +20,7 @@ GameObject:
   - component: {fileID: 1769964535999474959}
   - component: {fileID: 2811694707386797022}
   - component: {fileID: 8208134170936265664}
+  - component: {fileID: 8748454068859679532}
   m_Layer: 0
   m_Name: GameHandler
   m_TagString: GameHandler
@@ -54,10 +55,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 28cbc3f61ae7c6740b95ac220f04c081, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  DefaultUpgrades: 010000000100000001000000010000000100000001000000010000000100000000000000000000000000000000000000
   _progression:
     cores: 0
     usedcores: 0
-    blueprints: []
+    upgrades: 
 --- !u!114 &7900035901117525388
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -384,3 +386,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _menuScene: MenuTesting
   _gameScene: ProcgenTesting
+--- !u!114 &8748454068859679532
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8348581581803096828}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 24dd80f14a7149ac90440e276ec87664, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  OnGainExperience:
+    m_PersistentCalls:
+      m_Calls: []
