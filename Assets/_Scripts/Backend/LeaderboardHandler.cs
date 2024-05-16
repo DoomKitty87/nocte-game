@@ -64,6 +64,9 @@ public static class LeaderboardHandler
     else {
       string response = www.downloadHandler.text;
       string[] entries = response.Split('\n');
+      // Debug.Log(response);
+      // Debug.Log(entries[0]);
+      // Debug.Log(entries[1]);
 
       for (int i = 0; i < entries.Length / 2; i++) {
         scores.Add(new LeaderboardEntry(entries[i * 2], int.Parse(entries[i * 2 + 1])));
