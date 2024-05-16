@@ -6,6 +6,22 @@ using UnityEngine;
 
 public class DialogueHandler : MonoBehaviour
 {
+    public static DialogueHandler Instance;
+    private void Awake() {
+        if (Instance == null) {
+            Instance = this;
+        }
+        else {
+            Debug.LogError("There are multiple DialogueHandler instances in the scene!");
+        }
+    }
+
+    private void OnDisable() {
+        if (Instance == this) {
+            Instance = null;
+        }
+    }
+
     [Header("References")]
     [SerializeField] private DialogueUI _dialogueUI;
     [SerializeField] private AudioSource _audioSource;

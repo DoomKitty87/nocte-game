@@ -17,7 +17,7 @@ public class DialogueTrigger : MonoBehaviour
     void Start()
     {
         if (_dialogueHandler == null) {
-            _dialogueHandler = GameObject.FindWithTag("Player").GetComponent<DialogueHandler>();
+            _dialogueHandler = DialogueHandler.Instance;
         }
         if (_useTrigger) {
             _collider.isTrigger = true;
