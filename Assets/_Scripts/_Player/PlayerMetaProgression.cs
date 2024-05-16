@@ -10,20 +10,20 @@ public class PlayerMetaProgression : MonoBehaviour
   // 0 = Locked, 1 = Unlocked but not purchased, 2 = Purchased
   public int[] DefaultUpgrades = new int[12] {
     // Movement
-    1, // Jump height
-    1, // Sprint speed
-    1, // 
-    1, //
-    // Combat
-    1, // Damage
-    1, // Reload speed
-    1, // Bullet capacity
-    1, // 
+    1, // Jump height     * 0
+    1, // Sprint speed    * 1
+    1, //                 * 2
+    1, //                 * 3
+    // Combat             
+    1, // Damage          * 4
+    1, // Reload speed    * 5
+    1, // Bullet capacity * 6
+    1, //                 * 7
     // Utility
-    0, // Scan range
-    0, // Grapple range
-    0,
-    0
+    0, // Scan range      * 8
+    0, // Grapple range   * 9
+    0, //                 * 10
+    0  //                 * 11
     };
 
   [System.Serializable]

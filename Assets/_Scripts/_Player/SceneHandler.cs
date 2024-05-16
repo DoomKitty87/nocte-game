@@ -35,7 +35,6 @@ public class SceneHandler : MonoBehaviour
 
   public void ExitToMenu() {
     Debug.Log("Exiting to menu");
-    PlayerMetaProgression.Instance.UnlockBlueprints();
     PlayerMetaProgression.Instance.SaveData();
     StartCoroutine(ToMenu());
   }
