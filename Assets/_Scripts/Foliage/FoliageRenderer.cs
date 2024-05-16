@@ -57,6 +57,8 @@ namespace Foliage
     private float _noiseOffset;
     private float _noiseCutoff;
 
+    private bool _active = true;
+
     public FoliageRenderer(FoliageScriptable scriptable, Vector2Int chunkPos, float chunkSize, Vector2 cameraPosition) {
       _position = new Vector3(chunkPos.x * chunkSize, 0, chunkPos.y * chunkSize);
       _chunkSize = chunkSize;
@@ -209,6 +211,7 @@ namespace Foliage
       _currentInstanceCount = (uint) (_chunkDensity[lod] * _chunkDensity[lod]);
 
       AsyncGPUReadback.Request(culledCountBuffer, (request) => {
+        if (!_active) return;
         var culledCount = new uint[1];
         culledCountBuffer.GetData(culledCount);
         _currentInstanceCount = culledCount[0];
@@ -311,6 +314,7 @@ namespace Foliage
         float4[] data = new float4[_currentInstanceCount];
         Debug.Log("Requesting data");
         AsyncGPUReadback.Request(_positionsBuffer, (request) => {
+          if (!_active) return;
           Debug.Log("Data received");
           _positionsBuffer.GetData(data);
           //Debug.Log(data[0]);
@@ -349,6 +353,7 @@ namespace Foliage
     }
 
     public void CleanUp() {
+      _active = false;
 
       _positionsBuffer?.Release();
       _positionsBuffer = null;
