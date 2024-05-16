@@ -45,16 +45,21 @@ public class DialogueHandler : MonoBehaviour
             yield return new WaitForSeconds(_dialogueUI.GetDialogueBoxShowTime());
             if (dialogue._textTurns[i]._audioClip != null) {
                 _audioSource.PlayOneShot(dialogue._textTurns[i]._audioClip);
-            }
-            if (dialogue._textTurns[i]._durationIsAudioLength) {
-                yield return new WaitForSeconds(_audioSource.clip.length);
+                if (dialogue._textTurns[i]._durationIsAudioLength) {
+                    yield return new WaitForSeconds(dialogue._textTurns[i]._audioClip.length);
+                }
+                else {
+                    yield return new WaitForSeconds(dialogue._textTurns[i]._duration);
+                }
             }
             else {
                 yield return new WaitForSeconds(dialogue._textTurns[i]._duration);
             }
             _dialogueUI.HideDialogueBox();
+            print("called hide dialogue box");
             yield return new WaitForSeconds(_dialogueUI.GetDialogueBoxHideTime());
         }
+        _dialoguesQueue.RemoveAt(0);
         _isPlayingDialogue = false;
     }
     public void PlayDialogue(Dialogue dialogue, bool forcePlay = false) {
@@ -70,7 +75,6 @@ public class DialogueHandler : MonoBehaviour
     private void Update() {
         if (_dialoguesQueue.Count > 0 && !_isPlayingDialogue) {
             StartCoroutine(PlayDialogueCoroutine(_dialoguesQueue[0]));
-            _dialoguesQueue.RemoveAt(0);
         }
     }
 

@@ -10,7 +10,7 @@ public class DialogueUI : MonoBehaviour
     [SerializeField] private TMPro.TextMeshProUGUI _dialogueText;
 
     public void SetDialogue(Dialogue dialogue, int turnIndex) {
-        _dialogueText.text = $"<color={ColorUtility.ToHtmlStringRGB(dialogue._nameColor)}>{dialogue._character.name}:</color> {dialogue._textTurns[turnIndex]._text}";
+        _dialogueText.text = $"<color=#{ColorUtility.ToHtmlStringRGB(dialogue._nameColor)}>{dialogue._character.name}:</color> {dialogue._textTurns[turnIndex]._text}";
     }
     
     public void ShowDialogueBox() {
