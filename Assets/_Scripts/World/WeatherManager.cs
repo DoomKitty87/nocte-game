@@ -94,6 +94,10 @@ public class WeatherManager : MonoBehaviour
     return _clouds;
   }
 
+  public float GetDayNightCycle() {
+    return _weatherState.x;
+  }
+
   private void Update() {
     //_sunTransform.localRotation = Quaternion.Slerp(_sunTransform.localRotation, _sunDesiredRotation, Time.deltaTime);
     // Texture2D windTex = new Texture2D(512, 512, TextureFormat.RFloat, false, true, true);
