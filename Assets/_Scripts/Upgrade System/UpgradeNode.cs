@@ -38,15 +38,18 @@ namespace UpgradeSystem
     [SerializeField] private Color _boughtTextNameColor;
     [SerializeField] private Color _boughtTextDiscriptionColor;
 
-    private void Start()
+    private void Awake()
     {
       instance = PlayerMetaProgression.Instance;
-    }
 
-    private void OnEnable()
+      image = GetComponent<Image>();
+		}
+
+		private void OnEnable()
     {
-      int upgradeLevel = instance.CheckUpgrade(_index);
-      switch (upgradeLevel)
+      var upgradeLevel = instance.CheckUpgrade(_index);
+
+			switch (upgradeLevel)
       {
         case 0:
           LockNodeVisual();
@@ -63,35 +66,34 @@ namespace UpgradeSystem
     private void LockNode()
     {
       instance.Lock(_index);
-      _animator.SetInteger("UpgradeLevel", 0);
+      instance.SaveData();
       LockNodeVisual();
     }
 
-    private void UnlockNode()
-    {
+    private void UnlockNode()  {
       instance.Unlock(_index);
-      _animator.SetInteger("UpgradeLevel", 1);
-      UnlockNodeVisual();
-    }
+      instance.SaveData();
+			UnlockNodeVisual();
+		}
 
     private void BuyNode()
     {
       instance.Buy(_index);
-      _animator.SetInteger("UpgradeLevel", 2);
-      BuyNodeVisual();
-    }
+      instance.SaveData();
+			BuyNodeVisual();
+		}
 
     public void LockNodeVisual()
     {
-      image = GetComponent<Image>();
-
       image.color = _lockedColor;
       _upgradeName.text = "Locked";
       _upgradeName.color = _lockedTextNameColor;
       _upgradeDiscription.text = "This upgrade is currently locked.";
       _upgradeDiscription.color = _lockedTextDiscriptionColor;
 
-      PlayerMetaProgression.Instance.Lock(_index);
+      _animator.SetBool("Locked", true);
+      _animator.SetBool("Unlocked", false);
+      _animator.SetBool("Bought", false);
     }
 
     public void UnlockNodeVisual()
@@ -101,7 +103,11 @@ namespace UpgradeSystem
       _upgradeName.color = _unlockedTextNameColor;
       _upgradeDiscription.text = _data._upgradeDescription;
       _upgradeDiscription.color = _unlockedTextDiscriptionColor;
-    }
+
+      _animator.SetBool("Locked", false);
+      _animator.SetBool("Unlocked", true);
+      _animator.SetBool("Bought", false);
+		}
 
     public void BuyNodeVisual()
     {
@@ -110,6 +116,10 @@ namespace UpgradeSystem
       _upgradeName.color = _boughtTextNameColor;
       _upgradeDiscription.text = _data._upgradeDescription;
       _upgradeDiscription.color = _boughtTextDiscriptionColor;
-    }
+
+      _animator.SetBool("Locked", false);
+      _animator.SetBool("Unlocked", false);
+      _animator.SetBool("Bought", true);
+		}
   }
 }

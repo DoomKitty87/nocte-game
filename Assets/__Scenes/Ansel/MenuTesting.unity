@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.05736257, g: 0.015433337, b: 0.059471756, a: 1}
+  m_IndirectSpecularColor: {r: 0.057470866, g: 0.015458794, b: 0.059586607, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -784,15 +784,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7d1f0850ece104ed9998ab654b51d07f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _enabled: 1
-  _upgradeTreeIndex: 0
-  _upgradeHandler: {fileID: 1992375574}
-  Roots:
-  - {fileID: 841335652}
-  - {fileID: 622424031}
-  - {fileID: 1932645486}
-  _resetButton: {fileID: 1352436370}
-  currentLevelText: {fileID: 1009010469}
 --- !u!224 &116382067
 RectTransform:
   m_ObjectHideFlags: 0
@@ -964,6 +955,11 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 196505565}
     m_Modifications:
+    - target: {fileID: 3072090469621210167, guid: 5e0bc68f53aba2a4780e5b05f23b5156,
+        type: 3}
+      propertyPath: _index
+      value: 6
+      objectReference: {fileID: 0}
     - target: {fileID: 7227821184793618684, guid: 5e0bc68f53aba2a4780e5b05f23b5156,
         type: 3}
       propertyPath: m_Name
@@ -1356,6 +1352,11 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 196505565}
     m_Modifications:
+    - target: {fileID: 3072090469621210167, guid: 5e0bc68f53aba2a4780e5b05f23b5156,
+        type: 3}
+      propertyPath: _index
+      value: 10
+      objectReference: {fileID: 0}
     - target: {fileID: 7227821184793618684, guid: 5e0bc68f53aba2a4780e5b05f23b5156,
         type: 3}
       propertyPath: m_Name
@@ -1615,6 +1616,11 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 196505565}
     m_Modifications:
+    - target: {fileID: 3072090469621210167, guid: 5e0bc68f53aba2a4780e5b05f23b5156,
+        type: 3}
+      propertyPath: _index
+      value: 9
+      objectReference: {fileID: 0}
     - target: {fileID: 7227821184793618684, guid: 5e0bc68f53aba2a4780e5b05f23b5156,
         type: 3}
       propertyPath: m_Name
@@ -2071,14 +2077,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 76656a773ce7d40139cba13a5f04a1f1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _index: 0
   _data: {fileID: 11400000, guid: 57cd0834390ba42e6ac91d85cea9acd0, type: 2}
-  _children: []
   _upgradeName: {fileID: 938005100}
   _upgradeDiscription: {fileID: 900963176}
-  _levelText: {fileID: 1686124124}
-  _enabledColor: {r: 0.6603774, g: 0.6603774, b: 0.6603774, a: 1}
-  _disableColor: {r: 0.32156864, g: 0.32156864, b: 0.32156864, a: 1}
-  _enabled: 0
+  _animator: {fileID: 0}
+  _lockedColor: {r: 0, g: 0, b: 0, a: 0}
+  _unlockedColor: {r: 0, g: 0, b: 0, a: 0}
+  _boughtColor: {r: 0, g: 0, b: 0, a: 0}
+  _lockedTextNameColor: {r: 0, g: 0, b: 0, a: 0}
+  _lockedTextDiscriptionColor: {r: 0, g: 0, b: 0, a: 0}
+  _unlockedTextNameColor: {r: 0, g: 0, b: 0, a: 0}
+  _unlockedTextDiscriptionColor: {r: 0, g: 0, b: 0, a: 0}
+  _boughtTextNameColor: {r: 0, g: 0, b: 0, a: 0}
+  _boughtTextDiscriptionColor: {r: 0, g: 0, b: 0, a: 0}
 --- !u!224 &242502063
 RectTransform:
   m_ObjectHideFlags: 0
@@ -3644,13 +3656,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7d1f0850ece104ed9998ab654b51d07f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _enabled: 1
-  _upgradeTreeIndex: 1
-  _upgradeHandler: {fileID: 1992375574}
-  Roots:
-  - {fileID: 1751648887}
-  _resetButton: {fileID: 1462076120}
-  currentLevelText: {fileID: 0}
 --- !u!224 &441270146
 RectTransform:
   m_ObjectHideFlags: 0
@@ -3831,6 +3836,11 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 196505565}
     m_Modifications:
+    - target: {fileID: 3072090469621210167, guid: 5e0bc68f53aba2a4780e5b05f23b5156,
+        type: 3}
+      propertyPath: _index
+      value: 5
+      objectReference: {fileID: 0}
     - target: {fileID: 7227821184793618684, guid: 5e0bc68f53aba2a4780e5b05f23b5156,
         type: 3}
       propertyPath: m_Name
@@ -4087,14 +4097,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 76656a773ce7d40139cba13a5f04a1f1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _index: 0
   _data: {fileID: 11400000, guid: 5360e493587c147cab91a580dc76e1d4, type: 2}
-  _children: []
   _upgradeName: {fileID: 249778569}
   _upgradeDiscription: {fileID: 1373170939}
-  _levelText: {fileID: 1315295596}
-  _enabledColor: {r: 0.6603774, g: 0.6603774, b: 0.6603774, a: 1}
-  _disableColor: {r: 0.32156864, g: 0.32156864, b: 0.32156864, a: 1}
-  _enabled: 0
+  _animator: {fileID: 0}
+  _lockedColor: {r: 0, g: 0, b: 0, a: 0}
+  _unlockedColor: {r: 0, g: 0, b: 0, a: 0}
+  _boughtColor: {r: 0, g: 0, b: 0, a: 0}
+  _lockedTextNameColor: {r: 0, g: 0, b: 0, a: 0}
+  _lockedTextDiscriptionColor: {r: 0, g: 0, b: 0, a: 0}
+  _unlockedTextNameColor: {r: 0, g: 0, b: 0, a: 0}
+  _unlockedTextDiscriptionColor: {r: 0, g: 0, b: 0, a: 0}
+  _boughtTextNameColor: {r: 0, g: 0, b: 0, a: 0}
+  _boughtTextDiscriptionColor: {r: 0, g: 0, b: 0, a: 0}
 --- !u!224 &530445157
 RectTransform:
   m_ObjectHideFlags: 0
@@ -5122,14 +5138,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 76656a773ce7d40139cba13a5f04a1f1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _index: 0
   _data: {fileID: 11400000, guid: 0d9833e13322441c0ac10e8d3a29e7a5, type: 2}
-  _children: []
   _upgradeName: {fileID: 329266180}
   _upgradeDiscription: {fileID: 717913818}
-  _levelText: {fileID: 28443977}
-  _enabledColor: {r: 0.6603774, g: 0.6603774, b: 0.6603774, a: 1}
-  _disableColor: {r: 0.32156864, g: 0.32156864, b: 0.32156864, a: 1}
-  _enabled: 1
+  _animator: {fileID: 0}
+  _lockedColor: {r: 0, g: 0, b: 0, a: 0}
+  _unlockedColor: {r: 0, g: 0, b: 0, a: 0}
+  _boughtColor: {r: 0, g: 0, b: 0, a: 0}
+  _lockedTextNameColor: {r: 0, g: 0, b: 0, a: 0}
+  _lockedTextDiscriptionColor: {r: 0, g: 0, b: 0, a: 0}
+  _unlockedTextNameColor: {r: 0, g: 0, b: 0, a: 0}
+  _unlockedTextDiscriptionColor: {r: 0, g: 0, b: 0, a: 0}
+  _boughtTextNameColor: {r: 0, g: 0, b: 0, a: 0}
+  _boughtTextDiscriptionColor: {r: 0, g: 0, b: 0, a: 0}
 --- !u!224 &598477341
 RectTransform:
   m_ObjectHideFlags: 0
@@ -5482,14 +5504,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 76656a773ce7d40139cba13a5f04a1f1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _index: 0
   _data: {fileID: 11400000, guid: 365b6102ee2b54056a3932180ffcbaee, type: 2}
-  _children: []
   _upgradeName: {fileID: 1492535828}
   _upgradeDiscription: {fileID: 1423731180}
-  _levelText: {fileID: 1710118507}
-  _enabledColor: {r: 0.6603774, g: 0.6603774, b: 0.6603774, a: 1}
-  _disableColor: {r: 0.32156864, g: 0.32156864, b: 0.32156864, a: 1}
-  _enabled: 1
+  _animator: {fileID: 0}
+  _lockedColor: {r: 0, g: 0, b: 0, a: 0}
+  _unlockedColor: {r: 0, g: 0, b: 0, a: 0}
+  _boughtColor: {r: 0, g: 0, b: 0, a: 0}
+  _lockedTextNameColor: {r: 0, g: 0, b: 0, a: 0}
+  _lockedTextDiscriptionColor: {r: 0, g: 0, b: 0, a: 0}
+  _unlockedTextNameColor: {r: 0, g: 0, b: 0, a: 0}
+  _unlockedTextDiscriptionColor: {r: 0, g: 0, b: 0, a: 0}
+  _boughtTextNameColor: {r: 0, g: 0, b: 0, a: 0}
+  _boughtTextDiscriptionColor: {r: 0, g: 0, b: 0, a: 0}
 --- !u!224 &622424032
 RectTransform:
   m_ObjectHideFlags: 0
@@ -5636,6 +5664,11 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 196505565}
     m_Modifications:
+    - target: {fileID: 3072090469621210167, guid: 5e0bc68f53aba2a4780e5b05f23b5156,
+        type: 3}
+      propertyPath: _index
+      value: 8
+      objectReference: {fileID: 0}
     - target: {fileID: 7227821184793618684, guid: 5e0bc68f53aba2a4780e5b05f23b5156,
         type: 3}
       propertyPath: m_Name
@@ -5923,6 +5956,11 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 196505565}
     m_Modifications:
+    - target: {fileID: 3072090469621210167, guid: 5e0bc68f53aba2a4780e5b05f23b5156,
+        type: 3}
+      propertyPath: _index
+      value: 7
+      objectReference: {fileID: 0}
     - target: {fileID: 7227821184793618684, guid: 5e0bc68f53aba2a4780e5b05f23b5156,
         type: 3}
       propertyPath: m_Name
@@ -7824,15 +7862,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 76656a773ce7d40139cba13a5f04a1f1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _index: 0
   _data: {fileID: 11400000, guid: 0d9833e13322441c0ac10e8d3a29e7a5, type: 2}
-  _children:
-  - {fileID: 598477340}
   _upgradeName: {fileID: 1866199281}
   _upgradeDiscription: {fileID: 91718806}
-  _levelText: {fileID: 844312594}
-  _enabledColor: {r: 0.6603774, g: 0.6603774, b: 0.6603774, a: 1}
-  _disableColor: {r: 0.32156864, g: 0.32156864, b: 0.32156864, a: 1}
-  _enabled: 1
+  _animator: {fileID: 0}
+  _lockedColor: {r: 0, g: 0, b: 0, a: 0}
+  _unlockedColor: {r: 0, g: 0, b: 0, a: 0}
+  _boughtColor: {r: 0, g: 0, b: 0, a: 0}
+  _lockedTextNameColor: {r: 0, g: 0, b: 0, a: 0}
+  _lockedTextDiscriptionColor: {r: 0, g: 0, b: 0, a: 0}
+  _unlockedTextNameColor: {r: 0, g: 0, b: 0, a: 0}
+  _unlockedTextDiscriptionColor: {r: 0, g: 0, b: 0, a: 0}
+  _boughtTextNameColor: {r: 0, g: 0, b: 0, a: 0}
+  _boughtTextDiscriptionColor: {r: 0, g: 0, b: 0, a: 0}
 --- !u!224 &841335653
 RectTransform:
   m_ObjectHideFlags: 0
@@ -8650,14 +8693,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 76656a773ce7d40139cba13a5f04a1f1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _index: 0
   _data: {fileID: 11400000, guid: 8b8ad769606c049d28e24660dccc33a7, type: 2}
-  _children: []
   _upgradeName: {fileID: 815910152}
   _upgradeDiscription: {fileID: 1486439665}
-  _levelText: {fileID: 601906962}
-  _enabledColor: {r: 0.6603774, g: 0.6603774, b: 0.6603774, a: 1}
-  _disableColor: {r: 0.32156864, g: 0.32156864, b: 0.32156864, a: 1}
-  _enabled: 0
+  _animator: {fileID: 0}
+  _lockedColor: {r: 0, g: 0, b: 0, a: 0}
+  _unlockedColor: {r: 0, g: 0, b: 0, a: 0}
+  _boughtColor: {r: 0, g: 0, b: 0, a: 0}
+  _lockedTextNameColor: {r: 0, g: 0, b: 0, a: 0}
+  _lockedTextDiscriptionColor: {r: 0, g: 0, b: 0, a: 0}
+  _unlockedTextNameColor: {r: 0, g: 0, b: 0, a: 0}
+  _unlockedTextDiscriptionColor: {r: 0, g: 0, b: 0, a: 0}
+  _boughtTextNameColor: {r: 0, g: 0, b: 0, a: 0}
+  _boughtTextDiscriptionColor: {r: 0, g: 0, b: 0, a: 0}
 --- !u!224 &884388856
 RectTransform:
   m_ObjectHideFlags: 0
@@ -9236,13 +9285,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7d1f0850ece104ed9998ab654b51d07f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _enabled: 1
-  _upgradeTreeIndex: 4
-  _upgradeHandler: {fileID: 1992375574}
-  Roots:
-  - {fileID: 1805882583}
-  _resetButton: {fileID: 596558547}
-  currentLevelText: {fileID: 0}
 --- !u!224 &907634226
 RectTransform:
   m_ObjectHideFlags: 0
@@ -11566,14 +11608,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7d1f0850ece104ed9998ab654b51d07f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _enabled: 1
-  _upgradeTreeIndex: 3
-  _upgradeHandler: {fileID: 1992375574}
-  Roots:
-  - {fileID: 884388855}
-  - {fileID: 1548426013}
-  _resetButton: {fileID: 1122128501}
-  currentLevelText: {fileID: 0}
 --- !u!224 &1264594744
 RectTransform:
   m_ObjectHideFlags: 0
@@ -11743,6 +11777,11 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 196505565}
     m_Modifications:
+    - target: {fileID: 3072090469621210167, guid: 5e0bc68f53aba2a4780e5b05f23b5156,
+        type: 3}
+      propertyPath: _index
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 7227821184793618684, guid: 5e0bc68f53aba2a4780e5b05f23b5156,
         type: 3}
       propertyPath: m_Name
@@ -12232,6 +12271,11 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 196505565}
     m_Modifications:
+    - target: {fileID: 3072090469621210167, guid: 5e0bc68f53aba2a4780e5b05f23b5156,
+        type: 3}
+      propertyPath: _index
+      value: 11
+      objectReference: {fileID: 0}
     - target: {fileID: 7227821184793618684, guid: 5e0bc68f53aba2a4780e5b05f23b5156,
         type: 3}
       propertyPath: m_Name
@@ -13623,14 +13667,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7d1f0850ece104ed9998ab654b51d07f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _enabled: 0
-  _upgradeTreeIndex: 2
-  _upgradeHandler: {fileID: 1992375574}
-  Roots:
-  - {fileID: 1862063208}
-  - {fileID: 2131986291}
-  _resetButton: {fileID: 361724583}
-  currentLevelText: {fileID: 0}
 --- !u!224 &1500645993
 RectTransform:
   m_ObjectHideFlags: 0
@@ -13800,6 +13836,11 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 196505565}
     m_Modifications:
+    - target: {fileID: 3072090469621210167, guid: 5e0bc68f53aba2a4780e5b05f23b5156,
+        type: 3}
+      propertyPath: _index
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 7227821184793618684, guid: 5e0bc68f53aba2a4780e5b05f23b5156,
         type: 3}
       propertyPath: m_Name
@@ -14032,6 +14073,11 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 196505565}
     m_Modifications:
+    - target: {fileID: 3072090469621210167, guid: 5e0bc68f53aba2a4780e5b05f23b5156,
+        type: 3}
+      propertyPath: _index
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 7227821184793618684, guid: 5e0bc68f53aba2a4780e5b05f23b5156,
         type: 3}
       propertyPath: m_Name
@@ -14180,15 +14226,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 76656a773ce7d40139cba13a5f04a1f1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _index: 0
   _data: {fileID: 11400000, guid: 811fab412a0b9466f92e68e5bb1b6828, type: 2}
-  _children:
-  - {fileID: 1623265851}
   _upgradeName: {fileID: 950929843}
   _upgradeDiscription: {fileID: 1745848122}
-  _levelText: {fileID: 536720699}
-  _enabledColor: {r: 0.6603774, g: 0.6603774, b: 0.6603774, a: 1}
-  _disableColor: {r: 0.32156864, g: 0.32156864, b: 0.32156864, a: 1}
-  _enabled: 0
+  _animator: {fileID: 0}
+  _lockedColor: {r: 0, g: 0, b: 0, a: 0}
+  _unlockedColor: {r: 0, g: 0, b: 0, a: 0}
+  _boughtColor: {r: 0, g: 0, b: 0, a: 0}
+  _lockedTextNameColor: {r: 0, g: 0, b: 0, a: 0}
+  _lockedTextDiscriptionColor: {r: 0, g: 0, b: 0, a: 0}
+  _unlockedTextNameColor: {r: 0, g: 0, b: 0, a: 0}
+  _unlockedTextDiscriptionColor: {r: 0, g: 0, b: 0, a: 0}
+  _boughtTextNameColor: {r: 0, g: 0, b: 0, a: 0}
+  _boughtTextDiscriptionColor: {r: 0, g: 0, b: 0, a: 0}
 --- !u!224 &1548426014
 RectTransform:
   m_ObjectHideFlags: 0
@@ -14812,6 +14863,11 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 196505565}
     m_Modifications:
+    - target: {fileID: 3072090469621210167, guid: 5e0bc68f53aba2a4780e5b05f23b5156,
+        type: 3}
+      propertyPath: _index
+      value: 4
+      objectReference: {fileID: 0}
     - target: {fileID: 7227821184793618684, guid: 5e0bc68f53aba2a4780e5b05f23b5156,
         type: 3}
       propertyPath: m_Name
@@ -14960,14 +15016,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 76656a773ce7d40139cba13a5f04a1f1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _index: 0
   _data: {fileID: 11400000, guid: 9da9d0387235c496cb43db825d6a1c61, type: 2}
-  _children: []
   _upgradeName: {fileID: 686452001}
   _upgradeDiscription: {fileID: 1019769746}
-  _levelText: {fileID: 1324243726}
-  _enabledColor: {r: 0.6603774, g: 0.6603774, b: 0.6603774, a: 1}
-  _disableColor: {r: 0.32156864, g: 0.32156864, b: 0.32156864, a: 1}
-  _enabled: 0
+  _animator: {fileID: 0}
+  _lockedColor: {r: 0, g: 0, b: 0, a: 0}
+  _unlockedColor: {r: 0, g: 0, b: 0, a: 0}
+  _boughtColor: {r: 0, g: 0, b: 0, a: 0}
+  _lockedTextNameColor: {r: 0, g: 0, b: 0, a: 0}
+  _lockedTextDiscriptionColor: {r: 0, g: 0, b: 0, a: 0}
+  _unlockedTextNameColor: {r: 0, g: 0, b: 0, a: 0}
+  _unlockedTextDiscriptionColor: {r: 0, g: 0, b: 0, a: 0}
+  _boughtTextNameColor: {r: 0, g: 0, b: 0, a: 0}
+  _boughtTextDiscriptionColor: {r: 0, g: 0, b: 0, a: 0}
 --- !u!224 &1623265852
 RectTransform:
   m_ObjectHideFlags: 0
@@ -16215,14 +16277,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 76656a773ce7d40139cba13a5f04a1f1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _index: 0
   _data: {fileID: 11400000, guid: a5a58c037771e4da69ed07b347169533, type: 2}
-  _children: []
   _upgradeName: {fileID: 721633297}
   _upgradeDiscription: {fileID: 904164791}
-  _levelText: {fileID: 532772662}
-  _enabledColor: {r: 0.6603774, g: 0.6603774, b: 0.6603774, a: 1}
-  _disableColor: {r: 0.32156864, g: 0.32156864, b: 0.32156864, a: 1}
-  _enabled: 0
+  _animator: {fileID: 0}
+  _lockedColor: {r: 0, g: 0, b: 0, a: 0}
+  _unlockedColor: {r: 0, g: 0, b: 0, a: 0}
+  _boughtColor: {r: 0, g: 0, b: 0, a: 0}
+  _lockedTextNameColor: {r: 0, g: 0, b: 0, a: 0}
+  _lockedTextDiscriptionColor: {r: 0, g: 0, b: 0, a: 0}
+  _unlockedTextNameColor: {r: 0, g: 0, b: 0, a: 0}
+  _unlockedTextDiscriptionColor: {r: 0, g: 0, b: 0, a: 0}
+  _boughtTextNameColor: {r: 0, g: 0, b: 0, a: 0}
+  _boughtTextDiscriptionColor: {r: 0, g: 0, b: 0, a: 0}
 --- !u!224 &1734176622
 RectTransform:
   m_ObjectHideFlags: 0
@@ -16616,14 +16684,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 76656a773ce7d40139cba13a5f04a1f1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _index: 0
   _data: {fileID: 11400000, guid: 0c429d227c0a04f0e8baeec82504fafe, type: 2}
-  _children: []
   _upgradeName: {fileID: 1662693978}
   _upgradeDiscription: {fileID: 408070323}
-  _levelText: {fileID: 268765500}
-  _enabledColor: {r: 0.6603774, g: 0.6603774, b: 0.6603774, a: 1}
-  _disableColor: {r: 0.32156864, g: 0.32156864, b: 0.32156864, a: 1}
-  _enabled: 0
+  _animator: {fileID: 0}
+  _lockedColor: {r: 0, g: 0, b: 0, a: 0}
+  _unlockedColor: {r: 0, g: 0, b: 0, a: 0}
+  _boughtColor: {r: 0, g: 0, b: 0, a: 0}
+  _lockedTextNameColor: {r: 0, g: 0, b: 0, a: 0}
+  _lockedTextDiscriptionColor: {r: 0, g: 0, b: 0, a: 0}
+  _unlockedTextNameColor: {r: 0, g: 0, b: 0, a: 0}
+  _unlockedTextDiscriptionColor: {r: 0, g: 0, b: 0, a: 0}
+  _boughtTextNameColor: {r: 0, g: 0, b: 0, a: 0}
+  _boughtTextDiscriptionColor: {r: 0, g: 0, b: 0, a: 0}
 --- !u!224 &1751648888
 RectTransform:
   m_ObjectHideFlags: 0
@@ -17153,15 +17227,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 76656a773ce7d40139cba13a5f04a1f1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _index: 0
   _data: {fileID: 11400000, guid: 48cd592fb4a9847969645545104b1b21, type: 2}
-  _children:
-  - {fileID: 242502062}
   _upgradeName: {fileID: 807477396}
   _upgradeDiscription: {fileID: 1701635775}
-  _levelText: {fileID: 414792574}
-  _enabledColor: {r: 0.6603774, g: 0.6603774, b: 0.6603774, a: 1}
-  _disableColor: {r: 0.32156864, g: 0.32156864, b: 0.32156864, a: 1}
-  _enabled: 0
+  _animator: {fileID: 0}
+  _lockedColor: {r: 0, g: 0, b: 0, a: 0}
+  _unlockedColor: {r: 0, g: 0, b: 0, a: 0}
+  _boughtColor: {r: 0, g: 0, b: 0, a: 0}
+  _lockedTextNameColor: {r: 0, g: 0, b: 0, a: 0}
+  _lockedTextDiscriptionColor: {r: 0, g: 0, b: 0, a: 0}
+  _unlockedTextNameColor: {r: 0, g: 0, b: 0, a: 0}
+  _unlockedTextDiscriptionColor: {r: 0, g: 0, b: 0, a: 0}
+  _boughtTextNameColor: {r: 0, g: 0, b: 0, a: 0}
+  _boughtTextDiscriptionColor: {r: 0, g: 0, b: 0, a: 0}
 --- !u!224 &1805882584
 RectTransform:
   m_ObjectHideFlags: 0
@@ -17786,9 +17865,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: ENHANCE
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: e3dc1d1c99b14494990a900d9826f4bc, type: 2}
-  m_sharedMaterial: {fileID: -7408913747505836122, guid: e3dc1d1c99b14494990a900d9826f4bc,
-    type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -17896,14 +17974,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 76656a773ce7d40139cba13a5f04a1f1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _index: 0
   _data: {fileID: 11400000, guid: 136584e710900475d8b0c1b056e32884, type: 2}
-  _children: []
   _upgradeName: {fileID: 230161079}
   _upgradeDiscription: {fileID: 2109802631}
-  _levelText: {fileID: 1765411653}
-  _enabledColor: {r: 0.6603774, g: 0.6603774, b: 0.6603774, a: 1}
-  _disableColor: {r: 0.32156864, g: 0.32156864, b: 0.32156864, a: 1}
-  _enabled: 0
+  _animator: {fileID: 0}
+  _lockedColor: {r: 0, g: 0, b: 0, a: 0}
+  _unlockedColor: {r: 0, g: 0, b: 0, a: 0}
+  _boughtColor: {r: 0, g: 0, b: 0, a: 0}
+  _lockedTextNameColor: {r: 0, g: 0, b: 0, a: 0}
+  _lockedTextDiscriptionColor: {r: 0, g: 0, b: 0, a: 0}
+  _unlockedTextNameColor: {r: 0, g: 0, b: 0, a: 0}
+  _unlockedTextDiscriptionColor: {r: 0, g: 0, b: 0, a: 0}
+  _boughtTextNameColor: {r: 0, g: 0, b: 0, a: 0}
+  _boughtTextDiscriptionColor: {r: 0, g: 0, b: 0, a: 0}
 --- !u!224 &1862063209
 RectTransform:
   m_ObjectHideFlags: 0
@@ -18812,15 +18896,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 76656a773ce7d40139cba13a5f04a1f1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _index: 0
   _data: {fileID: 11400000, guid: 28e7d9e0ec1b64bc1b77dfb6cb6288fa, type: 2}
-  _children:
-  - {fileID: 1734176621}
   _upgradeName: {fileID: 2010605757}
   _upgradeDiscription: {fileID: 1135327839}
-  _levelText: {fileID: 1798846200}
-  _enabledColor: {r: 0.6603774, g: 0.6603774, b: 0.6603774, a: 1}
-  _disableColor: {r: 0.32156864, g: 0.32156864, b: 0.32156864, a: 1}
-  _enabled: 1
+  _animator: {fileID: 0}
+  _lockedColor: {r: 0, g: 0, b: 0, a: 0}
+  _unlockedColor: {r: 0, g: 0, b: 0, a: 0}
+  _boughtColor: {r: 0, g: 0, b: 0, a: 0}
+  _lockedTextNameColor: {r: 0, g: 0, b: 0, a: 0}
+  _lockedTextDiscriptionColor: {r: 0, g: 0, b: 0, a: 0}
+  _unlockedTextNameColor: {r: 0, g: 0, b: 0, a: 0}
+  _unlockedTextDiscriptionColor: {r: 0, g: 0, b: 0, a: 0}
+  _boughtTextNameColor: {r: 0, g: 0, b: 0, a: 0}
+  _boughtTextDiscriptionColor: {r: 0, g: 0, b: 0, a: 0}
 --- !u!224 &1932645487
 RectTransform:
   m_ObjectHideFlags: 0
@@ -18984,9 +19073,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: DEPLOY
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: e3dc1d1c99b14494990a900d9826f4bc, type: 2}
-  m_sharedMaterial: {fileID: -7408913747505836122, guid: e3dc1d1c99b14494990a900d9826f4bc,
-    type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -19571,17 +19659,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 77475b3c9855a468283916f67423e895, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _isMainMenu: 1
-  _upgradeTrees:
-  - {fileID: 116382066}
-  - {fileID: 441270145}
-  - {fileID: 1500645992}
-  - {fileID: 1264594743}
-  - {fileID: 907634225}
-  _addButton: {fileID: 1965537342}
-  _removeButton: {fileID: 1655448417}
-  currentLevelText: {fileID: 1009010469}
-  _currentLevelTextPretext: 'Current Level: '
 --- !u!4 &2001351787 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 04cdee8dedd40894cacf066112caa493,
@@ -20121,15 +20198,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 76656a773ce7d40139cba13a5f04a1f1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _index: 0
   _data: {fileID: 11400000, guid: edc4adcd86e4347bcbd3d2529b361e84, type: 2}
-  _children:
-  - {fileID: 530445156}
   _upgradeName: {fileID: 1456010472}
   _upgradeDiscription: {fileID: 956097305}
-  _levelText: {fileID: 961863370}
-  _enabledColor: {r: 0.6603774, g: 0.6603774, b: 0.6603774, a: 1}
-  _disableColor: {r: 0.32156864, g: 0.32156864, b: 0.32156864, a: 1}
-  _enabled: 0
+  _animator: {fileID: 0}
+  _lockedColor: {r: 0, g: 0, b: 0, a: 0}
+  _unlockedColor: {r: 0, g: 0, b: 0, a: 0}
+  _boughtColor: {r: 0, g: 0, b: 0, a: 0}
+  _lockedTextNameColor: {r: 0, g: 0, b: 0, a: 0}
+  _lockedTextDiscriptionColor: {r: 0, g: 0, b: 0, a: 0}
+  _unlockedTextNameColor: {r: 0, g: 0, b: 0, a: 0}
+  _unlockedTextDiscriptionColor: {r: 0, g: 0, b: 0, a: 0}
+  _boughtTextNameColor: {r: 0, g: 0, b: 0, a: 0}
+  _boughtTextDiscriptionColor: {r: 0, g: 0, b: 0, a: 0}
 --- !u!224 &2131986292
 RectTransform:
   m_ObjectHideFlags: 0
@@ -20331,6 +20413,12 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 196505565}
     m_Modifications:
+    - target: {fileID: 3072090469621210167, guid: 5e0bc68f53aba2a4780e5b05f23b5156,
+        type: 3}
+      propertyPath: _data
+      value: 
+      objectReference: {fileID: 11400000, guid: 572b6808b7ba40945bf14fc583c4ae72,
+        type: 2}
     - target: {fileID: 7227821184793618684, guid: 5e0bc68f53aba2a4780e5b05f23b5156,
         type: 3}
       propertyPath: m_Name

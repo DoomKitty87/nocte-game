@@ -61,10 +61,14 @@ public class PlayerMetaProgression : MonoBehaviour
       _progression.usedcores = 0;
       _progression.upgrades = DefaultUpgrades;
 
+      Debug.Log("Created file 'progression.dat'.");
+      SaveData();
       return;
     }
     ProgressionData data = (ProgressionData)StorageInterface.LoadData("progression.dat");
     _progression = data;
+    SaveData();
+    Debug.Log("Loaded file 'progression.dat'.");
   }
 
   public void SaveData()
@@ -72,10 +76,12 @@ public class PlayerMetaProgression : MonoBehaviour
     SaveProgressionData();
   }
 
-  public void SaveProgressionData()
+  private void SaveProgressionData()
   {
     StorageInterface.SaveData("progression.dat", _progression);
-  }
+
+    Debug.Log("Saved file 'progression.dat'.");
+	}
 
   public void AddCore()
   {
