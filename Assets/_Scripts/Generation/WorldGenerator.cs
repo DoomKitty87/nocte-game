@@ -696,7 +696,8 @@ public class WorldGenerator : MonoBehaviour
     growTex.wrapMode = TextureWrapMode.Clamp;
     growTex.filterMode = FilterMode.Point;
     for (int i = 0, n = 0; i < heightMods.Length; i++) {
-      heightMods[i] = _riverParameters.noiseCurve.Evaluate(heightMods[i]) * _riverParameters.heightCurve.Evaluate(vertices[i].y / _maxPossibleHeight) * _riverParameters.normalCurve.Evaluate(Mathf.Abs(normals[i].y));
+      if (_enableRivers) heightMods[i] = _riverParameters.noiseCurve.Evaluate(heightMods[i]) * _riverParameters.heightCurve.Evaluate(vertices[i].y / _maxPossibleHeight) * _riverParameters.normalCurve.Evaluate(Mathf.Abs(normals[i].y));
+      else heightMods[i] = 0;
       if (i % tmpSize > 0 && i % tmpSize < tmpSize - 3 && i / tmpSize > 0 && i / tmpSize < tmpSize - 3) {
         if (heightMods[i] > 0.2f || vertices[i].y < _lakePlaneHeight - _riverParameters.waterLevel + 1 || normals[i].normalized.y < _grassNormalCutoff)
           data[n] = 0;
@@ -913,7 +914,8 @@ public class WorldGenerator : MonoBehaviour
     tempTex.wrapMode = TextureWrapMode.Clamp;
     tempTex.filterMode = FilterMode.Point;
     for (int i = 0, n = 0; i < heightMods.Length; i++) {
-      heightMods[i] = _riverParameters.noiseCurve.Evaluate(heightMods[i]) * _riverParameters.heightCurve.Evaluate(vertices[i].y / _maxPossibleHeight) * _riverParameters.normalCurve.Evaluate(Mathf.Abs(normals[i].y));
+      if (_enableRivers) heightMods[i] = _riverParameters.noiseCurve.Evaluate(heightMods[i]) * _riverParameters.heightCurve.Evaluate(vertices[i].y / _maxPossibleHeight) * _riverParameters.normalCurve.Evaluate(Mathf.Abs(normals[i].y));
+      else heightMods[i] = 0;
       if (i % tmpSize > 0 && i % tmpSize < tmpSize - 3 && i / tmpSize > 0 && i / tmpSize < tmpSize - 3) {
         if (heightMods[i] > 0.2f || vertices[i].y < _lakePlaneHeight - _riverParameters.waterLevel + 1 || normals[i].y < _grassNormalCutoff)
           data[n] = 0;

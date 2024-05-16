@@ -68,6 +68,7 @@ public abstract class MagazineWeapon : WeaponScript
 	protected abstract void Shoot();
 	private void ShootWrapper() {
 		_recoilCameraCC.AddRecoil(_recoilProfile);
+    OnAttack.Invoke();
 		_audioSourceCC.PlayOneShot(_shootSound);
 		_ammoCount--;
 		_instancingPlayerCombatCoreScript.Weapon_RaiseAmmoChangedEvent();

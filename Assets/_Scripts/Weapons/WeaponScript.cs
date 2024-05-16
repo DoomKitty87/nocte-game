@@ -1,5 +1,6 @@
 using System.ComponentModel;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.Serialization;
 
 public abstract class WeaponScript : MonoBehaviour
@@ -30,6 +31,7 @@ public abstract class WeaponScript : MonoBehaviour
   [SerializeField] protected AnimatorOverrideController _playerAnimatorOverride;
   [SerializeField] protected AnimationClip _equipAnimation;
   [SerializeField] protected AnimationClip _unequipAnimation;
+  [SerializeField] protected UnityEvent OnAttack;
   [Header("Weapon IK")]
   [SerializeField] protected Transform _leftHandPosMarker;
   [SerializeField] protected Transform _leftHandHintMarker;
