@@ -65,6 +65,8 @@ public class DialogueHandler : MonoBehaviour
     public void PlayDialogue(Dialogue dialogue, bool forcePlay = false) {
         if (forcePlay) {
             _dialoguesQueue.Clear();
+            StopAllCoroutines();
+            _isPlayingDialogue = false;
             AddDialogueToQueue(dialogue);
         }
         else {

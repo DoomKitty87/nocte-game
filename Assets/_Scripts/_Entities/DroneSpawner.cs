@@ -41,7 +41,7 @@ public class DroneSpawner : MonoBehaviour
         for (int i = 0; i < spawnCount; i++) {
             rads = Random.value * Mathf.PI * 2;
             Vector2 dronePosition = centerPosition + new Vector2(Mathf.Cos(rads), Mathf.Sin(rads)) * _dronePackSpread * Random.value;
-            Vector3 placePosition = new Vector3(dronePosition.x, 25, dronePosition.y);
+            Vector3 placePosition = new Vector3(dronePosition.x, WorldGenInfo._worldGenerator.GetHeightValue(dronePosition) + 5, dronePosition.y);
             Instantiate(_dronePrefab, placePosition, Quaternion.identity, transform);
         }
     }

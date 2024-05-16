@@ -58,7 +58,7 @@ public class PlaceStructures : MonoBehaviour
 
   public float GetNearestSite(Vector3 position) {
     float minDistance = float.MaxValue;
-    for (int i = 0; i < _structurePositions.Length; i++) {
+    for (int i = 1; i < _structurePositions.Length; i++) {
       float distance = Vector3.Distance(position, _structurePositions[i]);
       if (distance < minDistance) {
         minDistance = distance;
