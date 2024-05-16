@@ -36,6 +36,9 @@ public class SceneHandler : MonoBehaviour
   public void ExitToMenu() {
     Debug.Log("Exiting to menu");
     PlayerMetaProgression.Instance.SaveData();
+    int playerScore = (int)(PlayerExperience.Instance.CheckExperience());
+    string username = PlayerPrefs.GetInt("UID").ToString();
+    LeaderboardHandler.AddScore(username, playerScore);
     StartCoroutine(ToMenu());
   }
 
