@@ -20,7 +20,7 @@ public class PlayerInterface : MonoBehaviour
       PlayerPrefs.SetInt("UID", Random.Range(0, 1000000));
     }
     string userId = PlayerPrefs.GetInt("UID").ToString();
-    int score = (int)PlayerExperience.Instance.CheckScore();
+    int score = (int)PlayerExperience.Instance.CheckExperience();
 
     LeaderboardHandler.AddScore(userId, score);
   }
