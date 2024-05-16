@@ -12,10 +12,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 601a1979c48616e4d969bd7fd73733c9, type: 3}
   m_Name: TestDialogue
   m_EditorClassIdentifier: 
-  _character: {fileID: 11400000, guid: 4d0ec268a06cd4f4986b956af620e0b2, type: 2}
-  _nameColor: {r: 1, g: 1, b: 1, a: 1}
   _textTurns:
-  - _text: Test
+  - _character: {fileID: 11400000, guid: 18eaf3c29d6074443909115e5ec3c721, type: 2}
+    _text: Test
     _duration: 1
     _audioClip: {fileID: 8300000, guid: ed3a1ffdb688b554ba39e9e0bfeb6829, type: 3}
     _durationIsAudioLength: 1
+  - _character: {fileID: 11400000, guid: 97208f286e0aaab48ad3069f3b1f8533, type: 2}
+    _text: Test 2
+    _duration: 1
+    _audioClip: {fileID: 8300000, guid: ed3a1ffdb688b554ba39e9e0bfeb6829, type: 3}
+    _durationIsAudioLength: 0
+  - _character: {fileID: 11400000, guid: d266f532a7adb9645a2741fdd61779ce, type: 2}
+    _text: Test 3
+    _duration: 1
+    _audioClip: {fileID: 8300000, guid: ed3a1ffdb688b554ba39e9e0bfeb6829, type: 3}
+    _durationIsAudioLength: 0
+  - _character: {fileID: 11400000, guid: 00be2e12137b81248b0401c2388afc3c, type: 2}
+    _text: End Dialogue
+    _duration: 1
+    _audioClip: {fileID: 8300000, guid: ed3a1ffdb688b554ba39e9e0bfeb6829, type: 3}
+    _durationIsAudioLength: 0
