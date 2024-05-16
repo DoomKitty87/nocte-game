@@ -14,4 +14,8 @@ public class GameHandler : MonoBehaviour
     }
   }
 
+  public void EnableGodMode() {
+    
+  }
+
 }
