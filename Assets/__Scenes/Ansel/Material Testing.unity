@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 4418.627, g: 2870.2317, b: 2117.4595, a: 1}
+  m_IndirectSpecularColor: {r: 4288.4644, g: 2789.4749, b: 2092.1394, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -6019,6 +6019,17 @@ PrefabInstance:
       propertyPath: m_Name
       value: Extraction Site
       objectReference: {fileID: 0}
+    - target: {fileID: 8415971658870747729, guid: 26a84eda139585f4986d86d14a1201a6,
+        type: 3}
+      propertyPath: m_fontAsset
+      value: 
+      objectReference: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee,
+        type: 2}
+    - target: {fileID: 8415971658870747729, guid: 26a84eda139585f4986d86d14a1201a6,
+        type: 3}
+      propertyPath: m_sharedMaterial
+      value: 
+      objectReference: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -7424,74 +7435,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: e66d8ec576fd4a944ab638eb9e7b0099, type: 3}
---- !u!1001 &1750736285
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: 7263991816394214454, guid: 2eb268da11b556d4d8cb7d8507b96dbd,
-        type: 3}
-      propertyPath: m_Name
-      value: Drone Dispenser_3
-      objectReference: {fileID: 0}
-    - target: {fileID: 8185306602822860540, guid: 2eb268da11b556d4d8cb7d8507b96dbd,
-        type: 3}
-      propertyPath: m_LocalPosition.x
-      value: -12.279724
-      objectReference: {fileID: 0}
-    - target: {fileID: 8185306602822860540, guid: 2eb268da11b556d4d8cb7d8507b96dbd,
-        type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 6.000004
-      objectReference: {fileID: 0}
-    - target: {fileID: 8185306602822860540, guid: 2eb268da11b556d4d8cb7d8507b96dbd,
-        type: 3}
-      propertyPath: m_LocalPosition.z
-      value: -125.71714
-      objectReference: {fileID: 0}
-    - target: {fileID: 8185306602822860540, guid: 2eb268da11b556d4d8cb7d8507b96dbd,
-        type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 8185306602822860540, guid: 2eb268da11b556d4d8cb7d8507b96dbd,
-        type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8185306602822860540, guid: 2eb268da11b556d4d8cb7d8507b96dbd,
-        type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8185306602822860540, guid: 2eb268da11b556d4d8cb7d8507b96dbd,
-        type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8185306602822860540, guid: 2eb268da11b556d4d8cb7d8507b96dbd,
-        type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8185306602822860540, guid: 2eb268da11b556d4d8cb7d8507b96dbd,
-        type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8185306602822860540, guid: 2eb268da11b556d4d8cb7d8507b96dbd,
-        type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: 2eb268da11b556d4d8cb7d8507b96dbd, type: 3}
 --- !u!1 &1764062138 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 3110216077596273451, guid: de7c533b38bfbea48b27e54366f12fd9,
@@ -8531,4 +8474,3 @@ SceneRoots:
   - {fileID: 282415053}
   - {fileID: 501692023}
   - {fileID: 2130340985}
-  - {fileID: 1750736285}
