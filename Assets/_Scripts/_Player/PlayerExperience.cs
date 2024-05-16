@@ -12,11 +12,11 @@ public class PlayerExperience : MonoBehaviour
   private float _experience = 0;
 
   private void Start() {
-    Instance = this;
+    if (Instance == null) Instance = this;
   }
 
   private void OnDisable() {
-    Instance = null;
+    if (Instance == this) Instance = null;
   }
 
   public float CheckExperience() {
