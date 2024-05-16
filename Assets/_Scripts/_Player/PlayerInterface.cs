@@ -8,10 +8,21 @@ public class PlayerInterface : MonoBehaviour
 {
   private IEnumerator PlayerDeathCoroutine() {
     yield return new WaitForSeconds(5f);
+    SubmitRunScore();
     SceneHandler.Instance.ExitToMenu();
   }
   public void PlayerDeath() {
     StartCoroutine(PlayerDeathCoroutine());
+  }
+
+  private void SubmitRunScore() {
+    if (!PlayerPrefs.HasKey("UID")) {
+      PlayerPrefs.SetInt("UID", Random.Range(0, 1000000));
+    }
+    string userId = PlayerPrefs.GetInt("UID").ToString();
+    int score = 0;
+
+    LeaderboardHandler.AddScore(userId, score);
   }
 
 }

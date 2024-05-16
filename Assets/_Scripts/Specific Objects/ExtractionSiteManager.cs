@@ -41,7 +41,7 @@ public class ExtractionSiteManager : MonoBehaviour
 
   public void ActivateTerminal() {
     _activated.SetActive(false);
-    PlayerMetaProgression.Instance.ObtainBlueprint(3);
+    PlayerMetaProgression.Instance.Unlock(9);
     Debug.Log("Generator activated; player obtained Utility Blueprint (Grappling Hook)");
   }
   
