@@ -109,6 +109,15 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
                     ""initialStateCheck"": false
                 },
                 {
+                    ""name"": ""Flashlight"",
+                    ""type"": ""Button"",
+                    ""id"": ""0e7b5343-5f81-46e9-8f93-274a9a5a573f"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
                     ""name"": ""Console"",
                     ""type"": ""Button"",
                     ""id"": ""d1baa8ba-653b-4135-a85f-813db65c274c"",
@@ -577,6 +586,17 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""groups"": ""KeyboardMouse"",
                     ""action"": ""Pause"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""662177f5-aa0d-4f13-b318-d138318547a6"",
+                    ""path"": ""<Keyboard>/t"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""KeyboardMouse"",
+                    ""action"": ""Flashlight"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -1841,6 +1861,7 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
         m_Player_ADS = m_Player.FindAction("ADS", throwIfNotFound: true);
         m_Player_Grapple = m_Player.FindAction("Grapple", throwIfNotFound: true);
         m_Player_Scan = m_Player.FindAction("Scan", throwIfNotFound: true);
+        m_Player_Flashlight = m_Player.FindAction("Flashlight", throwIfNotFound: true);
         m_Player_Console = m_Player.FindAction("Console", throwIfNotFound: true);
         m_Player_Noclip = m_Player.FindAction("Noclip", throwIfNotFound: true);
         m_Player_Interact = m_Player.FindAction("Interact", throwIfNotFound: true);
@@ -1952,6 +1973,7 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_ADS;
     private readonly InputAction m_Player_Grapple;
     private readonly InputAction m_Player_Scan;
+    private readonly InputAction m_Player_Flashlight;
     private readonly InputAction m_Player_Console;
     private readonly InputAction m_Player_Noclip;
     private readonly InputAction m_Player_Interact;
@@ -1972,6 +1994,7 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
         public InputAction @ADS => m_Wrapper.m_Player_ADS;
         public InputAction @Grapple => m_Wrapper.m_Player_Grapple;
         public InputAction @Scan => m_Wrapper.m_Player_Scan;
+        public InputAction @Flashlight => m_Wrapper.m_Player_Flashlight;
         public InputAction @Console => m_Wrapper.m_Player_Console;
         public InputAction @Noclip => m_Wrapper.m_Player_Noclip;
         public InputAction @Interact => m_Wrapper.m_Player_Interact;
@@ -2015,6 +2038,9 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
             @Scan.started += instance.OnScan;
             @Scan.performed += instance.OnScan;
             @Scan.canceled += instance.OnScan;
+            @Flashlight.started += instance.OnFlashlight;
+            @Flashlight.performed += instance.OnFlashlight;
+            @Flashlight.canceled += instance.OnFlashlight;
             @Console.started += instance.OnConsole;
             @Console.performed += instance.OnConsole;
             @Console.canceled += instance.OnConsole;
@@ -2067,6 +2093,9 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
             @Scan.started -= instance.OnScan;
             @Scan.performed -= instance.OnScan;
             @Scan.canceled -= instance.OnScan;
+            @Flashlight.started -= instance.OnFlashlight;
+            @Flashlight.performed -= instance.OnFlashlight;
+            @Flashlight.canceled -= instance.OnFlashlight;
             @Console.started -= instance.OnConsole;
             @Console.performed -= instance.OnConsole;
             @Console.canceled -= instance.OnConsole;
@@ -2494,6 +2523,7 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
         void OnADS(InputAction.CallbackContext context);
         void OnGrapple(InputAction.CallbackContext context);
         void OnScan(InputAction.CallbackContext context);
+        void OnFlashlight(InputAction.CallbackContext context);
         void OnConsole(InputAction.CallbackContext context);
         void OnNoclip(InputAction.CallbackContext context);
         void OnInteract(InputAction.CallbackContext context);
