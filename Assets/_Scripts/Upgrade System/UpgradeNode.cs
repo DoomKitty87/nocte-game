@@ -30,13 +30,13 @@ namespace UpgradeSystem
     [SerializeField] private Color _boughtColor;
 
     [SerializeField] private Color _lockedTextNameColor;
-    [SerializeField] private Color _lockedTextDiscriptionColor;
+    [SerializeField] private Color _lockedTextDescriptionColor;
 
     [SerializeField] private Color _unlockedTextNameColor;
-    [SerializeField] private Color _unlockedTextDiscriptionColor;
+    [SerializeField] private Color _unlockedTextDescriptionColor;
 
     [SerializeField] private Color _boughtTextNameColor;
-    [SerializeField] private Color _boughtTextDiscriptionColor;
+    [SerializeField] private Color _boughtTextDescriptionColor;
 
     private void Awake()
     {
@@ -86,10 +86,10 @@ namespace UpgradeSystem
     public void LockNodeVisual()
     {
       image.color = _lockedColor;
-      _upgradeName.text = "Locked";
+      _upgradeName.text = _data._upgradeName;
       _upgradeName.color = _lockedTextNameColor;
-      _upgradeDiscription.text = "This upgrade is currently locked.";
-      _upgradeDiscription.color = _lockedTextDiscriptionColor;
+      _upgradeDiscription.text = "This upgrade is\ncurrently locked.";
+      _upgradeDiscription.color = _lockedTextDescriptionColor;
 
       _animator.SetBool("Locked", true);
       _animator.SetBool("Unlocked", false);
@@ -102,7 +102,7 @@ namespace UpgradeSystem
       _upgradeName.text = _data._upgradeName;
       _upgradeName.color = _unlockedTextNameColor;
       _upgradeDiscription.text = _data._upgradeDescription;
-      _upgradeDiscription.color = _unlockedTextDiscriptionColor;
+      _upgradeDiscription.color = _unlockedTextDescriptionColor;
 
       _animator.SetBool("Locked", false);
       _animator.SetBool("Unlocked", true);
@@ -115,7 +115,7 @@ namespace UpgradeSystem
       _upgradeName.text = _data._upgradeName;
       _upgradeName.color = _boughtTextNameColor;
       _upgradeDiscription.text = _data._upgradeDescription;
-      _upgradeDiscription.color = _boughtTextDiscriptionColor;
+      _upgradeDiscription.color = _boughtTextDescriptionColor;
 
       _animator.SetBool("Locked", false);
       _animator.SetBool("Unlocked", false);

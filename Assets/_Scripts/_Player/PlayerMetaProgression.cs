@@ -80,7 +80,7 @@ public class PlayerMetaProgression : MonoBehaviour
   {
     StorageInterface.SaveData("progression.dat", _progression);
 
-    Debug.Log("Saved file 'progression.dat'.");
+    Debug.Log($"Saved file 'progression.dat' at {Application.persistentDataPath}.");
 	}
 
   public void AddCore()
