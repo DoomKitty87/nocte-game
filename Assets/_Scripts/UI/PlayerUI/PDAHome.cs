@@ -1,12 +1,14 @@
 using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
+using Unity.VisualScripting;
 
 public class PDAHome : MonoBehaviour
 {
 
   [SerializeField] private TextMeshProUGUI _location;
   [SerializeField] private TextMeshProUGUI _elevation;
+  [SerializeField] private TextMeshProUGUI _days;
   [SerializeField] private TextMeshProUGUI _time;
   [SerializeField] private TextMeshProUGUI _timeToSunset;
   [SerializeField] private Image _clockFill;
@@ -35,6 +37,8 @@ public class PDAHome : MonoBehaviour
     string longtext = "E" + (position.y).ToString("F4") + "°";
     _location.text = "LOCATION - " + lattext + " " + longtext;
     _elevation.text = "ALTITUDE - " + (_player.position.y + _altitudeOffset).ToString("F2") + "M ASL";
+
+    _days.text = "DAYS - " + WeatherManager.Instance.GetDayCount().ToString("000");
 
     float time = WeatherManager.Instance.GetDayNightCycle();
     _time.text = "TIME - " + Mathf.Floor(time * 24).ToString("00") + ":" + Mathf.Floor((time * 24 % 1) * 60).ToString("00");
