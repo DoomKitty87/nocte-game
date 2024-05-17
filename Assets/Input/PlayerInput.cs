@@ -504,7 +504,7 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
                 {
                     ""name"": """",
                     ""id"": ""50579f5f-25bd-442b-b353-a58a214874fc"",
-                    ""path"": ""<Keyboard>/o"",
+                    ""path"": ""<Keyboard>/tab"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": ""KeyboardMouse"",

@@ -18,7 +18,7 @@ public class FadeElementInOut : MonoBehaviour
     if (_canvasGroup == null) _canvasGroup = GetComponent<CanvasGroup>();
   }
 
-  public void FadeIn(bool resetAlpha) {
+  public void FadeIn(bool resetAlpha = false) {
     _canvasGroup.interactable = true;
     _canvasGroup.blocksRaycasts = true;
     if (resetAlpha) {
@@ -27,7 +27,7 @@ public class FadeElementInOut : MonoBehaviour
       StartCoroutine(FadeElementInOutCoroutine(_canvasGroup.alpha, 1, _inDuration));
     }
   }
-  public void FadeOut(bool resetAlpha) {
+  public void FadeOut(bool resetAlpha = false) {
     _canvasGroup.interactable = false;
     _canvasGroup.blocksRaycasts = false;
     if (resetAlpha) {
