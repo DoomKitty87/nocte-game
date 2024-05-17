@@ -33,7 +33,7 @@ public class DroneDispenser : MonoBehaviour
   }
 
   private IEnumerator LowerDoor() {
-    while (_door.localPosition.y > -1.5f) {
+    while (_door.localPosition.y > 0f) {
       _door.localPosition -= Vector3.up * Time.deltaTime;
       yield return null;
     }

@@ -14,6 +14,9 @@ public class PDAHome : MonoBehaviour
   [SerializeField] private Image _clockFill;
   [SerializeField] private Transform _compass;
 
+  [SerializeField] private Color _dayColor;
+  [SerializeField] private Color _nightColor;
+
   [SerializeField] private Transform _player;
   
   [SerializeField] private float _gpsScale = 10000;
@@ -46,6 +49,7 @@ public class PDAHome : MonoBehaviour
     bool isDay = time < 0.5f;
     _timeToSunset.text = "TIME TO " + (isDay ? "SUNSET" : "SUNRISE") + " - " + Mathf.Floor(timeToSunset * 24).ToString("00") + ":" + Mathf.Floor((timeToSunset * 24 % 1) * 60).ToString("00");
     _clockFill.fillAmount = time;
+    _clockFill.color = Color.Lerp(_dayColor, _nightColor, time * 2);
 
     _compass.localRotation = Quaternion.Euler(0, 0, -_player.rotation.eulerAngles.y);
   }
