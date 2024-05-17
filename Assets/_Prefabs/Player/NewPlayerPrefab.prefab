@@ -3479,7 +3479,7 @@ Canvas:
   serializedVersion: 3
   m_RenderMode: 1
   m_Camera: {fileID: 8006249604740443719}
-  m_PlaneDistance: 0.25
+  m_PlaneDistance: 1
   m_PixelPerfect: 0
   m_ReceivesEvents: 1
   m_OverrideSorting: 0
@@ -13100,6 +13100,7 @@ GameObject:
   - component: {fileID: 3023527381410962907}
   - component: {fileID: 2238562991987736133}
   - component: {fileID: 6316765219881060108}
+  - component: {fileID: 5534185510289091652}
   m_Layer: 3
   m_Name: Player
   m_TagString: Player
@@ -13848,7 +13849,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: badea405f11f3427ba288e306d8e8dfd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _pdaCanvas: {fileID: 864546446017451387}
+  _pdaCanvas: {fileID: 1634493356783118947}
 --- !u!114 &2238562991987736133
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -13894,6 +13895,19 @@ MonoBehaviour:
   _dialogueUI: {fileID: 5405486231589260941}
   _audioSource: {fileID: 4215732099380700499}
   _dialoguesQueue: []
+--- !u!114 &5534185510289091652
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8882617855007737160}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: badea405f11f3427ba288e306d8e8dfd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _pdaCanvas: {fileID: 0}
 --- !u!1 &8925452881639838748
 GameObject:
   m_ObjectHideFlags: 0
@@ -17971,12 +17985,6 @@ PrefabInstance:
 --- !u!224 &601643552110943576 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 1085595250916792087, guid: de7c533b38bfbea48b27e54366f12fd9,
-    type: 3}
-  m_PrefabInstance: {fileID: 525153959766461007}
-  m_PrefabAsset: {fileID: 0}
---- !u!1 &864546446017451387 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 916136002030362420, guid: de7c533b38bfbea48b27e54366f12fd9,
     type: 3}
   m_PrefabInstance: {fileID: 525153959766461007}
   m_PrefabAsset: {fileID: 0}
