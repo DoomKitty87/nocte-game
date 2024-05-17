@@ -15,7 +15,7 @@ public class PositionWSPlayerUI : MonoBehaviour
     private Vector3 _targetPosition;
     private Quaternion _targetRotation;
 
-
+    public static bool _isPlayerDriving = false;
 
     private void CalculateTargetPosition() {
         _targetPosition = _followTarget.position + transform.right.normalized * _horizontalArm + Vector3.up * _verticalArm + new Vector3(_followTarget.transform.forward.x, 0, _followTarget.transform.forward.z).normalized * _depthOffset;
@@ -25,6 +25,12 @@ public class PositionWSPlayerUI : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (_isPlayerDriving && _canvasTransform.gameObject.activeSelf) {
+            _canvasTransform.gameObject.SetActive(false);
+            return;
+        } else if (!_isPlayerDriving && !_canvasTransform.gameObject.activeSelf) {
+            _canvasTransform.gameObject.SetActive(true);
+        }
         CalculateTargetPosition();
         _canvasTransform.position = Vector3.Lerp(_canvasTransform.position, _targetPosition, Time.deltaTime * _movementSpeed);
         _canvasTransform.rotation = Quaternion.RotateTowards(_canvasTransform.rotation, _targetRotation, _rotationSpeed);

@@ -262,6 +262,15 @@ public class PlayerController : MonoBehaviour
                 _disableWorldGen = true;
         }
 
+        if (State is PlayerStates.Driving) {
+          if (_rb.interpolation != RigidbodyInterpolation.None)
+            RotateModelOrientation(Vector3.up * 90, 360);
+            _rb.interpolation = RigidbodyInterpolation.None;
+        } else {
+          if (_rb.interpolation != RigidbodyInterpolation.Interpolate)
+            _rb.interpolation = RigidbodyInterpolation.Interpolate;
+        }
+
         if (State is PlayerStates.Frozen or PlayerStates.Noclip or PlayerStates.Grappling or PlayerStates.Driving)
             return;
 
@@ -582,7 +591,8 @@ public class PlayerController : MonoBehaviour
             }
 
             case PlayerStates.Driving: {
-                transform.position = _parent.position;
+                transform.localPosition = Vector3.zero;
+                transform.localRotation = Quaternion.identity;
 
                 break;
             }

@@ -81,6 +81,7 @@ public class PlayerDriving : MonoBehaviour
   }
 
   private void EnterVehicle(GameObject toEnter) {
+    PositionWSPlayerUI._isPlayerDriving = true;
     for (int i = 0; i < _toDisable.Length; i++) {
       Debug.Log(_toDisable.Length); //
       _toDisable[i].enabled = false;
@@ -91,11 +92,11 @@ public class PlayerDriving : MonoBehaviour
     _inVehicle = true;
     _currentVehicle = toEnter;
     if (_isFlying) {
-      PlayerController.Instance.SetParent(toEnter.GetComponent<PlaneController>()._playerSeat.transform);
+      PlayerController.Instance.transform.parent = toEnter.GetComponent<PlaneController>()._playerSeat.transform;
       toEnter.GetComponent<PlaneController>().EnterVehicle();
     }
     else {
-      PlayerController.Instance.SetParent(toEnter.GetComponent<VehicleControl>()._playerSeat.transform);
+      PlayerController.Instance.transform.parent = toEnter.GetComponent<VehicleControl>()._playerSeat.transform;
       toEnter.GetComponent<VehicleControl>().EnterVehicle();
     }
     // _playerCameraController.SetParent(toEnter.GetComponent<VehicleControl>()._playerSeat.transform);
@@ -104,6 +105,7 @@ public class PlayerDriving : MonoBehaviour
   }
 
   private void ExitVehicle() {
+    PositionWSPlayerUI._isPlayerDriving = false;
     for (int i = 0; i < _toDisable.Length; i++) {
       _toDisable[i].enabled = true;
     }
@@ -119,7 +121,7 @@ public class PlayerDriving : MonoBehaviour
     // _playerCameraController.ResetParent();
     // _playerCameraController.ResetRotation();
     // _playerCameraController.ResetClamp();
-
+    PlayerController.Instance.transform.parent = null;
     PlayerController.Instance.State = PlayerController.PlayerStates.Idle;
   }
 }

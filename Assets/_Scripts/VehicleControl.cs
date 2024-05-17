@@ -1,3 +1,4 @@
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class VehicleControl : MonoBehaviour
@@ -23,6 +24,8 @@ public class VehicleControl : MonoBehaviour
 
   public AnimationCurve _enginePitchCurve;
 
+  [SerializeField] private GameObject _camera;
+
   private bool _inUse = false;
 
   // Start is called before the first frame update
@@ -43,6 +46,7 @@ public class VehicleControl : MonoBehaviour
   }
 
   public void EnterVehicle() {
+    _camera.SetActive(true);
     rigidBody.isKinematic = false;
     _inUse = true;
     _engineSound.enabled = true;
@@ -52,6 +56,7 @@ public class VehicleControl : MonoBehaviour
   }
 
   public void ExitVehicle() {
+    _camera.SetActive(false);
     rigidBody.velocity = Vector3.zero;
     _inUse = false;
     _engineSound.enabled = false;
