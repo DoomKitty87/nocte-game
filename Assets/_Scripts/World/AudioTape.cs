@@ -10,11 +10,12 @@ public class AudioTape : MonoBehaviour
   [SerializeField] private Sprite icon;
   [SerializeField] private string dialogue;
   [SerializeField] private Dialogue dialogueScriptable;
+  [SerializeField] private string timestamp;
 
   [SerializeField] private GameObject deleteParent;
 
   public void Pickup() {
-    InventoryManager._instance.PickupAudioTape(name, audio, icon, dialogue, dialogueScriptable);
+    InventoryManager._instance.PickupAudioTape(name, audio, icon, dialogue, dialogueScriptable, timestamp);
     Destroy(deleteParent);
   }
   
