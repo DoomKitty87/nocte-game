@@ -54,4 +54,14 @@ public class PDAHome : MonoBehaviour
     _compass.localRotation = Quaternion.Euler(0, 0, -_player.rotation.eulerAngles.y);
   }
 
+  public string GetCoordinates(Vector2 position) {
+    position /= _gpsScale;
+    position += _positionOffset;
+    position.x = position.x % 360 - 180;
+    position.y = position.y % 360 - 180;
+    string lattext = "N" + (position.x).ToString("F4") + "°";
+    string longtext = "E" + (position.y).ToString("F4") + "°";
+    return lattext + " " + longtext;
+  }
+
 }
