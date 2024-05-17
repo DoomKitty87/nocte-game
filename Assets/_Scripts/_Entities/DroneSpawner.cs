@@ -17,12 +17,15 @@ public class DroneSpawner : MonoBehaviour
     [SerializeField] private float _dronePackSpread;
 
     [SerializeField] private float _timer = 30f;
+
+    public static bool _isSpawning = false;
     
     private void Start() {
         
     }
 
     private void Update() {
+        if (!_isSpawning) return;
         _timer -= Time.deltaTime;
 
         if (_timer <= 0) {
