@@ -39,7 +39,11 @@ public class ScanEffect : MonoBehaviour
         float durationLeft = _scanDuration;
         while (durationLeft > 0) {
             float t = 1 - durationLeft / _scanDuration;
-            _effect._scanDistance.value = _scanDistance * _scanSpeedCurve.Evaluate(t);
+            float scanDistanceMultiplier = 1;
+            if (UpgradeInfo._scanRange != -1) {
+                scanDistanceMultiplier = UpgradeInfo._scanRange;
+            }
+            _effect._scanDistance.value = _scanDistance * _scanSpeedCurve.Evaluate(t) * scanDistanceMultiplier;
             durationLeft -= Time.deltaTime;
             yield return null;
         }
@@ -96,7 +100,11 @@ public class ScanEffect : MonoBehaviour
     }
 
     private void TriggerScan() {
-        if (!_scanning && _timeSinceLastScan > _scanCooldown) {
+        float scanCooldownMultiplier = 1; 
+        if (UpgradeInfo._scanCooldown != -1) {
+            scanCooldownMultiplier = 1f / UpgradeInfo._scanCooldown;
+        }
+        if (!_scanning && _timeSinceLastScan > _scanCooldown * scanCooldownMultiplier) {
             _timeSinceLastScan = 0;
             OnScan?.Invoke();
             StartCoroutine(Scan());

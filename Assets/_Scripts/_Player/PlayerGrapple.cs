@@ -86,7 +86,11 @@ public class PlayerGrapple : MonoBehaviour
         if (_grapplingCoolDownTimer > 0) return;
         
         RaycastHit hit;
-        if(Physics.Raycast(_camera.position, _camera.forward, out hit, _maxGrappleDistance, _grapplable))
+        float grappleDistanceMultiplier = 1;
+        if (UpgradeInfo._grappleRange != -1) {
+            grappleDistanceMultiplier = UpgradeInfo._grappleRange;
+        }
+        if(Physics.Raycast(_camera.position, _camera.forward, out hit, _maxGrappleDistance * grappleDistanceMultiplier, _grapplable))
         {
             _grapplePoint = hit.point;
             _grappleVectorNormal = (transform.position - _grapplePoint).normalized;
@@ -113,7 +117,11 @@ public class PlayerGrapple : MonoBehaviour
         _time += Time.deltaTime / _timeToReachMaxForce;
 
         float animationForce = _grapplingForceCurve.Evaluate(_time);
-        return _grappleForce * animationForce * direction;
+        float grappleForceMultiplier = 1;
+        if (UpgradeInfo._grappleStrength != -1) {
+            grappleForceMultiplier = UpgradeInfo._grappleStrength;
+        }
+        return _grappleForce * animationForce * direction * grappleForceMultiplier;
     }
 
     private Vector3 _grappleVectorNormal;

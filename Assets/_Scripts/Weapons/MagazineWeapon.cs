@@ -24,27 +24,40 @@ public abstract class MagazineWeapon : WeaponScript
 	[SerializeField] private float _reloadTime;
 
 	#region MagazineFunctions
+
+  private float MagazineMultiplier() {
+    float magazineMultiplier = 1;
+    if (UpgradeInfo._magSize != -1) {
+      magazineMultiplier = UpgradeInfo._magSize;
+    }
+    return magazineMultiplier;
+  }
+
 	public override (bool, int, int) GetUsesAmmoCurrentAmmoAndMaxAmmo() {
-		return (true, _ammoCount, _magazineSize);
+		return (true, _ammoCount, (int)(_magazineSize * MagazineMultiplier()));
 	}
 	private float GetReloadTime() {
+    float reloadTimeMultiplier = 1;
+    if (UpgradeInfo._reloadSpeed != -1) {
+      reloadTimeMultiplier =  1f / UpgradeInfo._reloadSpeed;
+    }
 		if (_reloadAnimation != null) {
-			return _reloadAnimation.length;
+			return _reloadAnimation.length * reloadTimeMultiplier;
 		}
-		return _reloadTime;
+		return _reloadTime * reloadTimeMultiplier;
 	}
 	private bool _reloading;
 	private IEnumerator ReloadCoroutine() {
 		_reloading = true;
 		_playerAnimatorCC.SetTrigger("Weapon_Reload");
 		yield return new WaitForSeconds(GetReloadTime());
-		_ammoCount = _magazineSize;
+		_ammoCount = (int)(_magazineSize * MagazineMultiplier());
 		_instancingPlayerCombatCoreScript.Weapon_RaiseAmmoChangedEvent();
 		_instancingPlayerCombatCoreScript._useAimedAnimations = true;
 		_reloading = false;
 	}
 	protected void Reload() {
-		if (_reloading || _ammoCount == _magazineSize) return;
+		if (_reloading || _ammoCount == (int)(_magazineSize * MagazineMultiplier())) return;
 		_instancingPlayerCombatCoreScript._useAimedAnimations = false;
 		StartCoroutine(ReloadCoroutine());
 	}
