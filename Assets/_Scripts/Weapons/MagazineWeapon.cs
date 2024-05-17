@@ -3,6 +3,7 @@ using System;
 using System.Collections;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.VFX;
 
 public abstract class MagazineWeapon : WeaponScript
 {
@@ -55,7 +56,10 @@ public abstract class MagazineWeapon : WeaponScript
 	[SerializeField] private AudioClip _shootSound;
 	[Header("Firetype Dependent ----------------\n\nSemi-Auto")]
 	[SerializeField] private float _semiAutoMinShotCooldown;
-	
+
+	[Header("Effects")]
+	[SerializeField] private VisualEffect _effect;
+
 	[Header("Burst")]
 	[SerializeField] private int _burstCount;
 	[SerializeField] private float _burstBtwnShotDelay;
@@ -72,6 +76,7 @@ public abstract class MagazineWeapon : WeaponScript
 		_audioSourceCC.PlayOneShot(_shootSound);
 		_ammoCount--;
 		_instancingPlayerCombatCoreScript.Weapon_RaiseAmmoChangedEvent();
+		if (_effect != null) _effect.SendEvent("Shoot");
 		Shoot();
 	}
 
