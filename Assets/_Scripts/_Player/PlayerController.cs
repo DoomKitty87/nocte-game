@@ -442,7 +442,9 @@ public class PlayerController : MonoBehaviour
                 Vector3 fixedVector = Vector3.ProjectOnPlane(inputDirection, _normalVector).normalized;
                 if (fixedVector.y > 0) fixedVector = inputDirection;
                 
-                _acceleration += fixedVector * _sprintSpeed;
+                float sprintSpeedMult = 1;
+                if (UpgradeInfo._sprintSpeed != -1) sprintSpeedMult = UpgradeInfo._sprintSpeed;
+                _acceleration += fixedVector * _sprintSpeed * sprintSpeedMult;
 
                 // Friction
                 // _acceleration -= Vector3.ProjectOnPlane(_velocity, _normalVector) * _frictionCoefficient;
@@ -653,7 +655,9 @@ public class PlayerController : MonoBehaviour
 
     private void InitiateJump() {
         if (!_jumpReady) return;
-        _acceleration += (_jumpForce - _velocity.y - _acceleration.y) * Vector3.up;
+        float jumpForceMult = 1;
+        if (UpgradeInfo._jumpHeight != -1) jumpForceMult = UpgradeInfo._jumpHeight;
+        _acceleration += (_jumpForce * jumpForceMult - _velocity.y - _acceleration.y) * Vector3.up;
         // _velocity.y = _jumpForce * Time.fixedDeltaTime;
         _jumpingActive = true;
         _jumpReady = false;
