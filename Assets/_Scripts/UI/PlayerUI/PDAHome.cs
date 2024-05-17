@@ -1,16 +1,21 @@
 using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
+using Unity.VisualScripting;
 
 public class PDAHome : MonoBehaviour
 {
 
   [SerializeField] private TextMeshProUGUI _location;
   [SerializeField] private TextMeshProUGUI _elevation;
+  [SerializeField] private TextMeshProUGUI _days;
   [SerializeField] private TextMeshProUGUI _time;
   [SerializeField] private TextMeshProUGUI _timeToSunset;
   [SerializeField] private Image _clockFill;
   [SerializeField] private Transform _compass;
+
+  [SerializeField] private Color _dayColor;
+  [SerializeField] private Color _nightColor;
 
   [SerializeField] private Transform _player;
   
@@ -36,14 +41,27 @@ public class PDAHome : MonoBehaviour
     _location.text = "LOCATION - " + lattext + " " + longtext;
     _elevation.text = "ALTITUDE - " + (_player.position.y + _altitudeOffset).ToString("F2") + "M ASL";
 
+    _days.text = "DAYS - " + WeatherManager.Instance.GetDayCount().ToString("000");
+
     float time = WeatherManager.Instance.GetDayNightCycle();
     _time.text = "TIME - " + Mathf.Floor(time * 24).ToString("00") + ":" + Mathf.Floor((time * 24 % 1) * 60).ToString("00");
     float timeToSunset = time < 0.5f ? 0.5f - time : 1 - time;
     bool isDay = time < 0.5f;
     _timeToSunset.text = "TIME TO " + (isDay ? "SUNSET" : "SUNRISE") + " - " + Mathf.Floor(timeToSunset * 24).ToString("00") + ":" + Mathf.Floor((timeToSunset * 24 % 1) * 60).ToString("00");
     _clockFill.fillAmount = time;
+    _clockFill.color = Color.Lerp(_dayColor, _nightColor, time * 2);
 
     _compass.localRotation = Quaternion.Euler(0, 0, -_player.rotation.eulerAngles.y);
+  }
+
+  public string GetCoordinates(Vector2 position) {
+    position /= _gpsScale;
+    position += _positionOffset;
+    position.x = position.x % 360 - 180;
+    position.y = position.y % 360 - 180;
+    string lattext = "N" + (position.x).ToString("F4") + "°";
+    string longtext = "E" + (position.y).ToString("F4") + "°";
+    return lattext + " " + longtext;
   }
 
 }

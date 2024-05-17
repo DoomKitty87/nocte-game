@@ -78,6 +78,7 @@ public class CommandCenter : MonoBehaviour
   
   private void EnableMainInterface() {
     if (!_powered) return;
+    DroneSpawner._isSpawning = true;
     _fullPowerScreen.SetActive(false);
     _mainInterface.SetActive(true);
   }

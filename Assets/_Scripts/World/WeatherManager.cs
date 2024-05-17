@@ -62,6 +62,8 @@ public class WeatherManager : MonoBehaviour
 
   private Quaternion _sunDesiredRotation;
 
+  private int _dayCount = 0;
+
   public static WeatherManager Instance { get; private set; }
 
   private void Start() {
@@ -98,6 +100,10 @@ public class WeatherManager : MonoBehaviour
     return _weatherState.x;
   }
 
+  public int GetDayCount() {
+    return _dayCount;
+  }
+
   private void Update() {
     //_sunTransform.localRotation = Quaternion.Slerp(_sunTransform.localRotation, _sunDesiredRotation, Time.deltaTime);
     // Texture2D windTex = new Texture2D(512, 512, TextureFormat.RFloat, false, true, true);
@@ -113,6 +119,7 @@ public class WeatherManager : MonoBehaviour
     // windTex.Apply();
     // Shader.SetGlobalTexture("_WindTexture", windTex);
     _weatherState.x += Time.deltaTime / _dayNightCycleSpeed;
+    if (_weatherState.x >= 1) _dayCount++;
     _weatherState.x %= 1;
     _weatherPhases.x += Mathf.PerlinNoise(_seed + Time.time, _seed + Time.time) * _cloudCycleSpeed * Time.deltaTime;
     _weatherPhases.y += Mathf.PerlinNoise(-_seed - Time.time, -_seed - Time.time) * _rainCycleSpeed * Time.deltaTime;

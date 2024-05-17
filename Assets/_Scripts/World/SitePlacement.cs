@@ -29,7 +29,7 @@ public class SitePlacement : MonoBehaviour
         Vector3 pointC = new Vector3(_components[i].transform.position.x, _worldGen.GetHeightValue(new Vector2(_components[i].transform.position.x, _components[i].transform.position.z + 1)), _components[i].transform.position.z + 1);
         Vector3 pointD = new Vector3(_components[i].transform.position.x, _worldGen.GetHeightValue(new Vector2(_components[i].transform.position.x, _components[i].transform.position.z - 1)), _components[i].transform.position.z - 1);
         Vector3 normal = Vector3.Cross(pointA - pointB, pointC - pointD).normalized;
-        _components[i].transform.rotation = Quaternion.LookRotation(normal) * _components[i].transform.localRotation;
+        _components[i].transform.rotation = Quaternion.LookRotation(normal) * _components[i].transform.localRotation * Quaternion.Euler(0, 0, -90);
       }
     }
   }
