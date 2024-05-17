@@ -1,3 +1,4 @@
+using TMPro;
 using UnityEngine;
 
 public class ShipUpgradeTableAnimationHandler : MonoBehaviour {
@@ -7,6 +8,8 @@ public class ShipUpgradeTableAnimationHandler : MonoBehaviour {
 
 	[SerializeField] private float _parallaxFloat = 0.8f;
 	[SerializeField] private float _gain = 0.8f;
+
+  [SerializeField] private TextMeshProUGUI _coreCounter;
     
 	private Material _mat;
 
@@ -27,6 +30,7 @@ public class ShipUpgradeTableAnimationHandler : MonoBehaviour {
 
 	private void Start() {
 		_mat = table.GetComponent<MeshRenderer>().materials[1];
+    _coreCounter.text = PlayerMetaProgression.Instance.AvailableCores.ToString();
 	}
 
 	private void Update() {
