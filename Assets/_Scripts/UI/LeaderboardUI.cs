@@ -11,7 +11,7 @@ public class LeaderboardUI : MonoBehaviour
   public Transform entryParent;
 
   private void Start() {
-    LeaderboardHandler.RetrieveScores(0, 10);
+    LeaderboardHandler.RetrieveScores(0, 20);
     StartCoroutine(UpdateLeaderboard());
   }
 
