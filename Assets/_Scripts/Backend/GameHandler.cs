@@ -5,7 +5,11 @@ public class GameHandler : MonoBehaviour
   public static GameHandler Instance { get; private set; }
 
   private void Start() {
-    UpgradeInfo.Initialize();
+	  Invoke(nameof(Initialize), 1f);
+  }
+
+  private void Initialize() {
+		UpgradeInfo.Initialize();
 	}
 
   private void Awake()

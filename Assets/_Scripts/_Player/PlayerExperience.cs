@@ -26,6 +26,7 @@ public class PlayerExperience : MonoBehaviour
   public void GainExperience(float experience) {
     _experience += experience;
     OnGainExperience.Invoke();
+    Debug.Log("Gained Experience " + experience);
   }
   
 }

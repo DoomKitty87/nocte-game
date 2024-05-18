@@ -73,7 +73,9 @@ public class HealthInterface : MonoBehaviour
   private void Start() {
     _currentHealth = GetMaxHealth();
     _onHealthInitialize?.Invoke(GetMaxHealth());
-  }
+
+    if (!_isPlayer) _onHealthZero.AddListener(AddExperience);
+	}
 
   public void Heal(float healPoints) {
     _onHeal?.Invoke();
@@ -98,4 +100,9 @@ public class HealthInterface : MonoBehaviour
       _onHealthChanged?.Invoke(initialHealth, _currentHealth, GetMaxHealth());
     }
   }
+
+  private void AddExperience() {
+    float experience = UnityEngine.Random.Range(40, 60);
+    PlayerExperience.Instance.GainExperience(experience);
+	}
 }

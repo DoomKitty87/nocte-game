@@ -32,6 +32,15 @@ public static class UpgradeInfo
 		return upgrade;
 	}
 
+  public static void AddLevel(string name) {
+	  for (int i = 0; i < 12; i++) {
+		  if (Upgrades[i].name == name) {
+				Upgrades[i].value++;
+		  }
+	  }
+
+  }
+
   public static void Initialize() {
 		PlayerMetaProgression instance = PlayerMetaProgression.Instance;
 
