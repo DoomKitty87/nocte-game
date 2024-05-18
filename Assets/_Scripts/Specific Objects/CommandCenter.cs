@@ -58,6 +58,9 @@ public class CommandCenter : MonoBehaviour
     _interactCount++;
   }
   
+  public void EnableDroneSpawning() {
+    DroneSpawner._isSpawning = true;
+  }
 
   private bool _scanning;
   private IEnumerator ScanForStructuresCoroutine() {

@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class DialogueTrigger : MonoBehaviour
 {
@@ -12,6 +13,8 @@ public class DialogueTrigger : MonoBehaviour
     [SerializeField] private bool _useTrigger;
     [Header("Settings")]
     [SerializeField] private bool _playOnce;
+
+    [SerializeField] private UnityEvent _dialogueEvent;
     
     // Start is called before the first frame update
     void Start()
