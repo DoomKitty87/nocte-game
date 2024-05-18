@@ -4,7 +4,11 @@ using UnityEngine;
 
 public class DestroyScript : MonoBehaviour
 {
-  private void DestroyObject() {
+  private IEnumerator DestoryCoroutine() {
+    yield return new WaitForSeconds(5);
     Destroy(gameObject);
+  }
+  public void DestroyObject() {
+    StartCoroutine(DestoryCoroutine());
   }
 }
