@@ -186,7 +186,7 @@ public class RadialMenu : MonoBehaviour
 		}
 		float rotationDegrees = Mathf.Atan2(mousefromCenter.y, mousefromCenter.x) * Mathf.Rad2Deg;
 		(float lowerBound, float upperBound) = GetCurrentStepBounds(rotationDegrees);
-		_currentIndexHovered = GetCurrentStepIndex(rotationDegrees + 180);
+		_currentIndexHovered = GetCurrentStepIndex((rotationDegrees + 360) % 360);
 		if (_currentIndexHovered != _lastIndexHovered) {
 			OnHover();
 			_lastIndexHovered = _currentIndexHovered;
