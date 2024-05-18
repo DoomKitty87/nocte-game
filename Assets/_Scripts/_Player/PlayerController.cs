@@ -442,7 +442,7 @@ public class PlayerController : MonoBehaviour
                 if (fixedVector.y > 0) fixedVector = inputDirection;
                 
                 float sprintSpeedMult = 1;
-                if (!UpgradeInfo.GetUpgrade("Sprint Speed").isLocked) sprintSpeedMult = UpgradeInfo.GetUpgrade("Sprint Speed").value;
+                if (!UpgradeInfo.GetUpgrade("Sprint Speed").isLocked) sprintSpeedMult = UpgradeInfo.GetUpgrade("Sprint Speed").value + 1;
                 _acceleration += fixedVector * _sprintSpeed * sprintSpeedMult;
 
                 // Friction
@@ -654,7 +654,7 @@ public class PlayerController : MonoBehaviour
     private void InitiateJump() {
         if (!_jumpReady) return;
         float jumpForceMult = 1;
-        if (!UpgradeInfo.GetUpgrade("Jump Height").isLocked) jumpForceMult = UpgradeInfo.GetUpgrade("Jump Height").value;
+        if (!UpgradeInfo.GetUpgrade("Jump Height").isLocked) jumpForceMult = UpgradeInfo.GetUpgrade("Jump Height").value + 1;
         _acceleration += (_jumpForce * jumpForceMult - _velocity.y - _acceleration.y) * Vector3.up;
         // _velocity.y = _jumpForce * Time.fixedDeltaTime;
         _jumpingActive = true;

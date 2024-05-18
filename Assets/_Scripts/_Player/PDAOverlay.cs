@@ -8,7 +8,12 @@ public class PDAOverlay : MonoBehaviour
     [SerializeField] private FadeElementInOut _pdaCameraCanvas;
     [SerializeField] private FadeElementInOut _mainCanvas;
 
-    private PlayerInput _input;
+    [SerializeField] private FadeElementInOut _canvas1;
+	[SerializeField] private FadeElementInOut _canvas2;
+	[SerializeField] private FadeElementInOut _canvas3;
+	[SerializeField] private FadeElementInOut _canvas4;
+
+	private PlayerInput _input;
     
     void Start() {
         _pdaCanvas._canvasGroup.alpha = 0;
@@ -29,7 +34,12 @@ public class PDAOverlay : MonoBehaviour
 	          _pdaCameraCanvas.FadeIn();
 	          Cursor.lockState = CursorLockMode.None;
 	          Cursor.visible = true;
-        };
+
+	          _canvas1.FadeIn();
+	          _canvas2.FadeOut();
+	          _canvas3.FadeOut();
+	          _canvas4.FadeOut();
+				};
 
         _input.UI.ClosePDA.performed += _ => {
 						InputReader.Instance.EnablePlayer();
@@ -38,6 +48,6 @@ public class PDAOverlay : MonoBehaviour
 						_pdaCameraCanvas.FadeOut();
 						Cursor.lockState = CursorLockMode.Locked;
 						Cursor.visible = false;
-				};
+        };
 		}
 };  

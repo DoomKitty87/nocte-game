@@ -55,7 +55,7 @@ public class HealthInterface : MonoBehaviour
     if (_currentHealth < GetMaxHealth() && _regenRate > 0 && _regenTimer >= _regenDelay) {
       float regenMultiplier = 1;
       if (!UpgradeInfo.GetUpgrade(("Heath Regen")).isLocked) {
-        regenMultiplier = UpgradeInfo.GetUpgrade("Health Regen").value;
+        regenMultiplier = UpgradeInfo.GetUpgrade("Health Regen").value + 0.5f;
       }
       Heal(_regenRate * regenMultiplier * Time.deltaTime);
     }
@@ -63,7 +63,7 @@ public class HealthInterface : MonoBehaviour
 
   private float GetMaxHealth() {
     if (!_isPlayer && UpgradeInfo.GetUpgrade("Max Health").isLocked) {
-      float healthMultiplier = UpgradeInfo.GetUpgrade("Max Health").value;
+      float healthMultiplier = UpgradeInfo.GetUpgrade("Max Health").value + 1;
       return _maxHealth * healthMultiplier;
     } else {
       return _maxHealth;

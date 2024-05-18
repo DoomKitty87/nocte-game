@@ -23,14 +23,14 @@ public class HitscanWeapon : MagazineWeapon
 		if (hitSomething) {
       float damageMultiplier = 1;
       if (!UpgradeInfo.GetUpgrade("Damage").isLocked) {
-        damageMultiplier = UpgradeInfo.GetUpgrade("Damage").value;
+        damageMultiplier = UpgradeInfo.GetUpgrade("Damage").value + 1;
       }
 
       float critChance = 0;
       if (!UpgradeInfo.GetUpgrade("Crit Chance").isLocked) {
-        critChance = UpgradeInfo.GetUpgrade("Crit Chance").value;
+        critChance = UpgradeInfo.GetUpgrade("Crit Chance").value + 0.5f;
       }
-      if (UnityEngine.Random.value < critChance) {
+      if (UnityEngine.Random.value * 10 < critChance) {
         damageMultiplier *= 2;
       }
 			if (hit.collider.GetComponent<HealthInterface>() != null) {
