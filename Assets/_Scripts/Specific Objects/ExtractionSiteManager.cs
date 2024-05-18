@@ -45,6 +45,7 @@ public class ExtractionSiteManager : MonoBehaviour
     _activated.SetActive(false);
     PlayerMetaProgression.Instance.Unlock(9);
     DialogueHandler.Instance.PlayDialogue(_dialogue);
+    CommandCenter.Instance.DoneWithExtraction();
     // Give player coordinates of command center
     Debug.Log("Generator activated; player obtained Utility Blueprint (Grappling Hook)");
   }

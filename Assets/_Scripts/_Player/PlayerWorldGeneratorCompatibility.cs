@@ -16,6 +16,8 @@ public class PlayerWorldGeneratorCompatibility : MonoBehaviour
     [SerializeField] private TutorialHandler _tutorial;
     
     [SerializeField] private bool _ignoreLackOfWorldGenerator;
+    [SerializeField] private PositionOverlayAsWorldSpace _positionOverlay;
+
 
     private void Awake() {
       _playerController = GetComponent<PlayerController>();
@@ -50,6 +52,7 @@ public class PlayerWorldGeneratorCompatibility : MonoBehaviour
       _entryAnimationFinished = false;
       
       InputReader.Instance.EnablePlayer();
+      _positionOverlay.ResetPosition();
       _tutorial.InitialDialogue();
     }
 

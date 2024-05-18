@@ -31,7 +31,7 @@ public class WeatherManager : MonoBehaviour
 
   [SerializeField] private WorldGenerator _worldGenerator;
   [SerializeField] private VolumeProfile _cloudVolume;
-  [SerializeField] private Transform _sunTransform;
+  [SerializeField] public Transform _sunTransform;
   [SerializeField] private ParticleSystem _rainEffect;
   [SerializeField] private VisualEffect _asteroidEffect;
   [SerializeField] private int _frameUpdateDelay;

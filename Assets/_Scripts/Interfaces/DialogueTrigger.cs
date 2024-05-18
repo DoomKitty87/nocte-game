@@ -29,6 +29,7 @@ public class DialogueTrigger : MonoBehaviour
 
     public void PlayDialogue() {
         _dialogueHandler.PlayDialogue(_dialogueToPlay);
+        _dialogueEvent.Invoke();
     }
     
     private void OnTriggerEnter(Collider other) {
@@ -37,6 +38,7 @@ public class DialogueTrigger : MonoBehaviour
                 _collider.enabled = false;
             }
             _dialogueHandler.PlayDialogue(_dialogueToPlay);
+            _dialogueEvent.Invoke();
         }
     }
 }
