@@ -38,7 +38,7 @@ public class BridsonPoisson : MonoBehaviour
     _activeList = new List<Vector2Int>();
     locations = GeneratePoints();
     foreach (Vector2Int location in locations) {
-      Instantiate(_spawnerPrefab, new Vector3(location.x * 5, _worldGenerator.GetHeightValue(new Vector2(location.x * 5, location.y * 5)), location.y * 5), Quaternion.identity);
+      Instantiate(_spawnerPrefab, new Vector3(location.x * 5, _worldGenerator.GetHeightValue(new Vector2(location.x * 5, location.y * 5)), location.y * 5), Quaternion.identity, transform);
     }
   }
 
