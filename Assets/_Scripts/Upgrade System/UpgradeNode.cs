@@ -37,14 +37,15 @@ namespace UpgradeSystem
 
     private void Awake()
     {
-      instance = PlayerMetaProgression.Instance;
 
       image = GetComponent<Image>();
 		}
 
-		private void OnEnable()
+		private void Start()
     {
-      var upgradeLevel = instance.CheckUpgrade(_index);
+	    instance = PlayerMetaProgression.Instance;
+
+			var upgradeLevel = instance._progression.upgrades[_index];
 
 			switch (upgradeLevel)
       {
@@ -58,6 +59,10 @@ namespace UpgradeSystem
           BuyNodeVisual();
           break;
       }
+
+			if (PlayerMetaProgression.Instance.AvailableCores > 0) {
+        _animator.SetBool("Have Cores", true);
+			}
     }
 
     private void LockNode() {
@@ -75,7 +80,8 @@ namespace UpgradeSystem
     private void BuyNode()
     {
       instance.Buy(_index);
-      instance.SaveData();
+      instance.UseCore();
+			instance.SaveData();
 			BuyNodeVisual();
 		}
 

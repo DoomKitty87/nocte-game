@@ -30,6 +30,7 @@ public class ShipUpgradeTableAnimationHandler : MonoBehaviour {
 
 	private void Start() {
 		_mat = table.GetComponent<MeshRenderer>().materials[1];
+		PlayerMetaProgression.Instance.AddCore();
     _coreCounter.text = PlayerMetaProgression.Instance.AvailableCores.ToString();
 	}
 
