@@ -50,10 +50,13 @@ public class PlayerWorldGeneratorCompatibility : MonoBehaviour
       _playerController._disableMovement = false;
       _hasInitialized = true;
       _entryAnimationFinished = false;
-      
+      Invoke("ResetOverlay", 0.1f);
       InputReader.Instance.EnablePlayer();
-      _positionOverlay.ResetPosition();
       _tutorial.InitialDialogue();
+    }
+
+    private void ResetOverlay() {
+      _positionOverlay.ResetPosition();
     }
 
 }
