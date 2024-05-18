@@ -85,6 +85,9 @@ public class HealthInterface : MonoBehaviour
 
   public void Damage(float damagePoints, Vector3 hitPosition) {
     _onDamage?.Invoke(hitPosition);
+    
+    if (_isPlayer && BackgroundInfo._godMode) return;
+    
     if (_currentHealth - damagePoints <= 0) {
       _onHealthZero?.Invoke();
     }
