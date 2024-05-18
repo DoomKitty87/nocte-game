@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8459838783961154260}
   - component: {fileID: 1665127788796279508}
+  - component: {fileID: 3471422746714387776}
   m_Layer: 0
   m_Name: Airfield
   m_TagString: Untagged
@@ -93,6 +94,23 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _corner1: {fileID: 7513921729813962207}
   _corner2: {fileID: 967366604287599893}
+--- !u!114 &3471422746714387776
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4305747732280031451}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 175684d5fca40c440b70f3c95522df4b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _scanData:
+    _scanEvent:
+      m_PersistentCalls:
+        m_Calls: []
+    _transform: {fileID: 8459838783961154260}
 --- !u!1 &5240420951604713856
 GameObject:
   m_ObjectHideFlags: 0
