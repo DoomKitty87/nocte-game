@@ -11,7 +11,7 @@ public class InGameUpgradeHandler : MonoBehaviour
 	private GameObject[] upgradeObjects = new GameObject[12];
 
 	private void Start() {
-		FillUpgradeList();
+		Invoke(nameof(FillUpgradeList), 0.5f);
 	}
 
 	private void FillUpgradeList() {
