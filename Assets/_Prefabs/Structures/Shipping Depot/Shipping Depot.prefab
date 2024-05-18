@@ -473,6 +473,7 @@ GameObject:
   - component: {fileID: 260507367843362422}
   - component: {fileID: 7414579619550660427}
   - component: {fileID: 5726035474586966858}
+  - component: {fileID: 7539021133899253378}
   m_Layer: 0
   m_Name: Shipping Depot
   m_TagString: Untagged
@@ -700,6 +701,23 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _corner1: {fileID: 7301462265185903432}
   _corner2: {fileID: 2752733060308604202}
+--- !u!114 &7539021133899253378
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3560961483075417576}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 175684d5fca40c440b70f3c95522df4b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _scanData:
+    _scanEvent:
+      m_PersistentCalls:
+        m_Calls: []
+    _transform: {fileID: 7348511759378775314}
 --- !u!1 &4774049796591178647
 GameObject:
   m_ObjectHideFlags: 0
