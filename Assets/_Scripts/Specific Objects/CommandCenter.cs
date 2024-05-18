@@ -22,9 +22,6 @@ public class CommandCenter : MonoBehaviour
   [SerializeField] private float _scanTime = 3f;
   [SerializeField] private GameObject _mainInterface;
   [SerializeField] private TextMeshProUGUI _distanceText;
-  [Header("Hologram")]
-  [SerializeField] private VisualEffect _hologramEffect;
-  [SerializeField] private Canvas _holoCanvas;
   [Header("Animation Triggers")]
   [SerializeField] private List<Animator> _animatorsToTrigger;
   [SerializeField] private string _powerTrigger;
@@ -68,8 +65,6 @@ public class CommandCenter : MonoBehaviour
     _fullPowerScreen.SetActive(false);
     _scanningScreen.SetActive(false);
     _mainInterface.SetActive(false);
-    _holoCanvas.enabled = false;
-    _hologramEffect.SetInt("Spawn Rate", 0);
     int nearestSite = (int) PlaceStructures.Instance.GetNearestSite(transform.position);
     _distanceText.text = $"DIST TO NEAREST: <color=\"green\">{nearestSite}M</color>";
   }
@@ -100,8 +95,6 @@ public class CommandCenter : MonoBehaviour
     yield return new WaitForSeconds(_scanTime);
     _scanningScreen.SetActive(false);
     EnableMainInterface();
-    _hologramEffect.SetInt("Spawn Rate", 200);
-    _holoCanvas.enabled = true;
     _scanning = false;
   }
   private void ScanForStructures() {

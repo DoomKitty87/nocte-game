@@ -6,6 +6,7 @@ using TMPro;
 
 public class AmmoUI : MonoBehaviour
 {
+  [SerializeField] private FadeElementInOut _ammoCanvas;
   [SerializeField] private PlayerCombatCore _playerCombatCore;
   [SerializeField] private TextMeshProUGUI _ammoText;
   [SerializeField] private TextMeshProUGUI _weaponTypeText;
@@ -18,11 +19,17 @@ public class AmmoUI : MonoBehaviour
   private void Start() {
     _playerCombatCore.AmmoChanged += UpdateAmmoCount;
     _playerCombatCore._OnInventoryChanged.AddListener(OnInvChanged);
+    print("Ammo UI listener");
+    _ammoCanvas.FadeOut();
   }
   
   private void OnInvChanged() {
+    print("Inventory changed");
     WeaponInventorySlot slot = _playerCombatCore.GetCurrentlyEquippedWeaponSlot();
-    if (slot == null) return;
+    if (slot == null) {
+      _ammoCanvas.FadeOut();
+      return;
+    }
     if (slot._weaponInstance.TryGetComponent<MeleeWeapon>(out _)) {
       _weaponTypeText.text = "MELEE";
     }
@@ -45,6 +52,7 @@ public class AmmoUI : MonoBehaviour
     if (slot._weaponInstance.TryGetComponent<ThrowableWeapon>(out _)) {
       _weaponTypeText.text = "THROWABLE";
     }
+    _ammoCanvas.FadeIn();
   }
   
   private void UpdateAmmoCount(int currentAmmo, int maxAmmo) {
@@ -67,6 +75,7 @@ public class AmmoUI : MonoBehaviour
   }
   
   private void OnDisable() {
-    _playerCombatCore.AmmoChanged -= UpdateAmmoCount;
+    // _playerCombatCore.AmmoChanged -= UpdateAmmoCount;
+    // _playerCombatCore._OnInventoryChanged.RemoveListener(OnInvChanged);
   }
 }
