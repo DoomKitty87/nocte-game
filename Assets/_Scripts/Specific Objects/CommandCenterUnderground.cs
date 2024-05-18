@@ -14,6 +14,10 @@ public class CommandCenterUnderground : MonoBehaviour
     WeatherManager.Instance._sunTransform.gameObject.GetComponent<Light>().enabled = true;
     SceneManager.UnloadSceneAsync("CommandCenter");
     PlayerController.Instance.SetPosition(EntryAnimationHandler._dropPosition + Vector3.up * 2f);
+    Waypoint waypoint = new Waypoint();
+    waypoint._position = PlaceStructures.Instance.GetShippingDepot();
+    waypoint._name = "Shipping Depot";
+    WaypointManager.Instance.CollectedWaypoint(waypoint);
   }
 
 }

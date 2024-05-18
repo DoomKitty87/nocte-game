@@ -70,6 +70,14 @@ public class PlaceStructures : MonoBehaviour
   }
 
   public Vector3 GetExtractionSite() {
+    return _structurePositions[1];
+  }
+
+  public Vector3 GetShippingDepot() {
+    return _structurePositions[4];
+  }
+
+  public Vector3 GetCommandCenter() {
     return _structurePositions[0];
   }
 
