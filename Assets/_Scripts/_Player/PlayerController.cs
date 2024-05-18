@@ -264,7 +264,7 @@ public class PlayerController : MonoBehaviour
 
         if (State is PlayerStates.Driving) {
           if (_rb.interpolation != RigidbodyInterpolation.None)
-            RotateModelOrientation(Vector3.up * 90, 360);
+            _modelOrientation.localRotation = Quaternion.Euler(0, 90, 0);
             _rb.interpolation = RigidbodyInterpolation.None;
         } else {
           if (_rb.interpolation != RigidbodyInterpolation.Interpolate)
@@ -443,7 +443,7 @@ public class PlayerController : MonoBehaviour
                 if (fixedVector.y > 0) fixedVector = inputDirection;
                 
                 float sprintSpeedMult = 1;
-                if (UpgradeInfo._sprintSpeed != -1) sprintSpeedMult = UpgradeInfo._sprintSpeed;
+                if (!UpgradeInfo.GetUpgrade("Sprint Speed").isLocked) sprintSpeedMult = UpgradeInfo.GetUpgrade("Sprint Speed").value;
                 _acceleration += fixedVector * _sprintSpeed * sprintSpeedMult;
 
                 // Friction
@@ -656,7 +656,7 @@ public class PlayerController : MonoBehaviour
     private void InitiateJump() {
         if (!_jumpReady) return;
         float jumpForceMult = 1;
-        if (UpgradeInfo._jumpHeight != -1) jumpForceMult = UpgradeInfo._jumpHeight;
+        if (!UpgradeInfo.GetUpgrade("Jump Height").isLocked) jumpForceMult = UpgradeInfo.GetUpgrade("Jump Height").value;
         _acceleration += (_jumpForce * jumpForceMult - _velocity.y - _acceleration.y) * Vector3.up;
         // _velocity.y = _jumpForce * Time.fixedDeltaTime;
         _jumpingActive = true;

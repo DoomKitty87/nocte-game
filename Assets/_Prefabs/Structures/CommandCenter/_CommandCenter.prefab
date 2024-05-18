@@ -285,6 +285,7 @@ Transform:
   - {fileID: 3533551533112584656}
   - {fileID: 7245264120454926565}
   - {fileID: 3835844025892986341}
+  - {fileID: 3620654223260765247}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &3937910185299302879
@@ -313,6 +314,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 175684d5fca40c440b70f3c95522df4b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _scanData:
+    _scanEvent:
+      m_PersistentCalls:
+        m_Calls: []
+    _transform: {fileID: 0}
 --- !u!114 &8628509573733913029
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -358,6 +364,21 @@ MonoBehaviour:
   _collider: {fileID: 5144252674472812641}
   _useTrigger: 1
   _playOnce: 1
+  _dialogueEvent:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 8628509573733913029}
+        m_TargetAssemblyTypeName: CommandCenter, Assembly-CSharp
+        m_MethodName: EnableDroneSpawning
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!65 &5144252674472812641
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -5087,3 +5108,77 @@ CapsuleCollider:
   m_Height: 3.5591445
   m_Direction: 1
   m_Center: {x: -0.00000667572, y: 0.9123636, z: 0.00003838539}
+--- !u!1001 &4483784651047263161
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 8734217917179194720}
+    m_Modifications:
+    - target: {fileID: 866590772910921606, guid: 773d21071019b894a8d0fb059b83655d,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 11.346418
+      objectReference: {fileID: 0}
+    - target: {fileID: 866590772910921606, guid: 773d21071019b894a8d0fb059b83655d,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 1.944172
+      objectReference: {fileID: 0}
+    - target: {fileID: 866590772910921606, guid: 773d21071019b894a8d0fb059b83655d,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -3.0501683
+      objectReference: {fileID: 0}
+    - target: {fileID: 866590772910921606, guid: 773d21071019b894a8d0fb059b83655d,
+        type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.73343265
+      objectReference: {fileID: 0}
+    - target: {fileID: 866590772910921606, guid: 773d21071019b894a8d0fb059b83655d,
+        type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0.268262
+      objectReference: {fileID: 0}
+    - target: {fileID: 866590772910921606, guid: 773d21071019b894a8d0fb059b83655d,
+        type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0.58658355
+      objectReference: {fileID: 0}
+    - target: {fileID: 866590772910921606, guid: 773d21071019b894a8d0fb059b83655d,
+        type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0.21455017
+      objectReference: {fileID: 0}
+    - target: {fileID: 866590772910921606, guid: 773d21071019b894a8d0fb059b83655d,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 40.181
+      objectReference: {fileID: 0}
+    - target: {fileID: 866590772910921606, guid: 773d21071019b894a8d0fb059b83655d,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: -77.304
+      objectReference: {fileID: 0}
+    - target: {fileID: 866590772910921606, guid: 773d21071019b894a8d0fb059b83655d,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4305607442026776400, guid: 773d21071019b894a8d0fb059b83655d,
+        type: 3}
+      propertyPath: m_Name
+      value: TaserPickup
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 773d21071019b894a8d0fb059b83655d, type: 3}
+--- !u!4 &3620654223260765247 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 866590772910921606, guid: 773d21071019b894a8d0fb059b83655d,
+    type: 3}
+  m_PrefabInstance: {fileID: 4483784651047263161}
+  m_PrefabAsset: {fileID: 0}

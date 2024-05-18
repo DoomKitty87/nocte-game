@@ -34,7 +34,7 @@ public class PlayerMetaProgression : MonoBehaviour
     public int[] upgrades;
   }
 
-  public int AvailableCores { get { return _progression.cores - _progression.usedcores; } }
+  public int AvailableCores => _progression.cores - _progression.usedcores;
 
   public ProgressionData _progression = new ProgressionData();
 

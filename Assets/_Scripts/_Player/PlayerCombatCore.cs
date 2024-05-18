@@ -1,13 +1,10 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using TMPro.EditorUtilities;
 using Unity.Cinemachine;
-using UnityEditor.Build;
 using UnityEngine;
 using UnityEngine.Animations.Rigging;
 using UnityEngine.Events;
-using Object = UnityEngine.Object;
 
 
 [Serializable]
