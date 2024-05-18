@@ -22,13 +22,13 @@ public class HitscanWeapon : MagazineWeapon
 		bool hitSomething = Physics.Raycast(_playerCameraCC.transform.position, _playerCameraCC.transform.forward, out RaycastHit hit, _maxDistance, _layerMask);
 		if (hitSomething) {
       float damageMultiplier = 1;
-      if (UpgradeInfo._damage != -1) {
-        damageMultiplier = UpgradeInfo._damage;
+      if (!UpgradeInfo.GetUpgrade("Damage").isLocked) {
+        damageMultiplier = UpgradeInfo.GetUpgrade("Damage").value;
       }
 
       float critChance = 0;
-      if (UpgradeInfo._critChance != -1) {
-        critChance = UpgradeInfo._critChance;
+      if (!UpgradeInfo.GetUpgrade("Crit Chance").isLocked) {
+        critChance = UpgradeInfo.GetUpgrade("Crit Chance").value;
       }
       if (UnityEngine.Random.value < critChance) {
         damageMultiplier *= 2;
