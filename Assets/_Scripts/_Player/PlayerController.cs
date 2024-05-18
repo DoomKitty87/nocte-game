@@ -264,7 +264,7 @@ public class PlayerController : MonoBehaviour
 
         if (State is PlayerStates.Driving) {
           if (_rb.interpolation != RigidbodyInterpolation.None)
-            RotateModelOrientation(Vector3.up * 90, 360);
+            _modelOrientation.localRotation = Quaternion.Euler(0, 90, 0);
             _rb.interpolation = RigidbodyInterpolation.None;
         } else {
           if (_rb.interpolation != RigidbodyInterpolation.Interpolate)

@@ -4,9 +4,9 @@ using UnityEngine;
 
 public class PDAOverlay : MonoBehaviour
 {
-
     [SerializeField] private FadeElementInOut _pdaCanvas;
     [SerializeField] private FadeElementInOut _pdaCameraCanvas;
+    [SerializeField] private FadeElementInOut _mainCanvas;
 
     private bool _isPDAOpen;
     
@@ -20,15 +20,20 @@ public class PDAOverlay : MonoBehaviour
         _pdaCameraCanvas._canvasGroup.interactable = false;
         _pdaCameraCanvas._canvasGroup.blocksRaycasts = false;
         _isPDAOpen = false;
+        _mainCanvas._canvasGroup.alpha = 1;
+        _mainCanvas._canvasGroup.interactable = true;
+        _mainCanvas._canvasGroup.blocksRaycasts = true;
         _input = InputReader.Instance.PlayerInput;
         _input.Player.Overlay.performed += _ => {
             if (_isPDAOpen) {
+                _mainCanvas.FadeIn();
                 _pdaCanvas.FadeOut();
                 _pdaCameraCanvas.FadeOut();
                 Cursor.lockState = CursorLockMode.Locked;
                 Cursor.visible = false;
             }
             else {
+                _mainCanvas.FadeOut();
                 _pdaCanvas.FadeIn();
                 _pdaCameraCanvas.FadeIn();
                 Cursor.lockState = CursorLockMode.None;

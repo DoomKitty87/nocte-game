@@ -76,8 +76,8 @@ public class PlayerCombatCore : MonoBehaviour
 		_currentInstanceScript = slot._weaponInstance.GetComponent<WeaponScript>();
 		_playerAnimator.SetLayerWeight(_playerAnimator.GetLayerIndex("WeaponLayer"), 1);
 		slot._weaponInstance.SetActive(true);
-		_OnInventoryChanged?.Invoke();
 		_equippedSlotIndex = _weaponInventory.IndexOf(slot);
+		_OnInventoryChanged?.Invoke();
 		float waitTime = slot._weaponInstance.GetComponent<WeaponScript>().OnEquip();
 		yield return new WaitForSeconds(waitTime);
 		slot._equipped = true;
