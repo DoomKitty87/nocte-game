@@ -15,6 +15,8 @@ namespace UpgradeSystem
   {
     private PlayerMetaProgression instance;
 
+    [SerializeField] private Image _lockImage;
+    
     [SerializeField] private int _index;
     [SerializeField] private UpgradeScriptable _data;
 
@@ -63,8 +65,7 @@ namespace UpgradeSystem
       }
     }
 
-    private void LockNode()
-    {
+    private void LockNode() {
       instance.Lock(_index);
       instance.SaveData();
       LockNodeVisual();
@@ -91,6 +92,8 @@ namespace UpgradeSystem
       _upgradeDiscription.text = "This upgrade is\ncurrently locked.";
       _upgradeDiscription.color = _lockedTextDescriptionColor;
 
+      _lockImage.transform.gameObject.SetActive(true);
+      
       _animator.SetBool("Locked", true);
       _animator.SetBool("Unlocked", false);
       _animator.SetBool("Bought", false);
@@ -104,6 +107,8 @@ namespace UpgradeSystem
       _upgradeDiscription.text = _data._upgradeDescription;
       _upgradeDiscription.color = _unlockedTextDescriptionColor;
 
+      _lockImage.transform.gameObject.SetActive(false);
+      
       _animator.SetBool("Locked", false);
       _animator.SetBool("Unlocked", true);
       _animator.SetBool("Bought", false);
@@ -117,6 +122,8 @@ namespace UpgradeSystem
       _upgradeDiscription.text = _data._upgradeDescription;
       _upgradeDiscription.color = _boughtTextDescriptionColor;
 
+      _lockImage.transform.gameObject.SetActive(false);
+      
       _animator.SetBool("Locked", false);
       _animator.SetBool("Unlocked", false);
       _animator.SetBool("Bought", true);
