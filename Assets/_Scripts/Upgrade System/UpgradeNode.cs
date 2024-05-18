@@ -10,7 +10,9 @@ namespace UpgradeSystem
   {
     private PlayerMetaProgression instance;
 
-    [SerializeField] private Image _lockImage;
+    [SerializeField] private ShipUpgradeTableAnimationHandler _shipUpgradeTableAnimationHandler;
+
+		[SerializeField] private Image _lockImage;
     
     [SerializeField] private int _index;
     [SerializeField] private UpgradeScriptable _data;
@@ -65,7 +67,11 @@ namespace UpgradeSystem
 			}
     }
 
-    private void LockNode() {
+		public void Lock() {
+			_animator.SetBool("Have Cores", false);
+		}
+
+		private void LockNode() {
       instance.Lock(_index);
       instance.SaveData();
       LockNodeVisual();
@@ -82,6 +88,7 @@ namespace UpgradeSystem
       instance.Buy(_index);
       instance.UseCore();
 			instance.SaveData();
+			_shipUpgradeTableAnimationHandler.UpdateCoreCounter();
 			BuyNodeVisual();
 		}
 

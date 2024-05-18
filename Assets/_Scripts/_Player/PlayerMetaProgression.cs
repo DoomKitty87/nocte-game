@@ -89,7 +89,7 @@ public class PlayerMetaProgression : MonoBehaviour
   public void AddCore()
   {
     _progression.cores++;
-    Debug.Log("Added core");
+		SaveData();
   }
 
   public void AddCore(int cores)
