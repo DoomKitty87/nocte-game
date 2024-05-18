@@ -181,7 +181,14 @@ public class PlaceStructures : MonoBehaviour
       float heightd = _worldGen.GetHeightValue(new Vector2(outPosition.x, outPosition.z + _normalRadius));
       normal = -Vector3.Cross(new Vector3(1, heightb, 0) - new Vector3(-1, heighta, 0),
         new Vector3(0, heightd, 1) - new Vector3(0, heightc, -1)).normalized;
-      while (normal.y < _normalCutoff || _worldGen.GetWaterSaturation(new Vector2(outPosition.x, outPosition.z)) || _worldGen.GetHeightValue(new Vector2(outPosition.x, outPosition.z)) > _heightCutoff) {
+      float minDist = float.MaxValue;
+
+      for (int j = 0; j < _structurePositions.Length; j++) {
+        float dist = Vector3.Distance(outPosition, _structurePositions[j]);
+        if (dist < minDist) minDist = dist;
+      }
+
+      while (normal.y < _normalCutoff || _worldGen.GetWaterSaturation(new Vector2(outPosition.x, outPosition.z)) || _worldGen.GetHeightValue(new Vector2(outPosition.x, outPosition.z)) > _heightCutoff || minDist < 500) {
         if (s > 10000) {
           Debug.LogError("Could not find a valid outer position");
           break;
@@ -197,6 +204,12 @@ public class PlaceStructures : MonoBehaviour
         heightd = _worldGen.GetHeightValue(new Vector2(outPosition.x, outPosition.z + _normalRadius));
         normal = -Vector3.Cross(new Vector3(1, heightb, 0) - new Vector3(-1, heighta, 0),
           new Vector3(0, heightd, 1) - new Vector3(0, heightc, -1)).normalized;
+
+        minDist = float.MaxValue;
+        for (int j = 0; j < _structurePositions.Length; j++) {
+          float dist = Vector3.Distance(outPosition, _structurePositions[j]);
+          if (dist < minDist) minDist = dist;
+        }
         s++;
       }
 
