@@ -22,8 +22,14 @@ public class TapesMenu : MonoBehaviour
 
   private InventoryManager.AudioTape[] _tapes;
 
+  public static TapesMenu Instance;
+
   private void OnEnable() {
     UpdateTapes();
+  }
+
+  private void Awake() {
+    Instance = this;
   }
 
   public void UpdateTapes() {
@@ -35,9 +41,9 @@ public class TapesMenu : MonoBehaviour
     for (int i = 0; i < _tapes.Length; i++) {
       GameObject tape = Instantiate(_tapePrefab);
       tape.transform.parent = _tapeHolder;
-      tape.transform.GetChild(0).gameObject.GetComponent<Image>().sprite = _tapes[i].icon;
-      tape.transform.GetChild(1).gameObject.GetComponent<TextMeshProUGUI>().text = _tapes[i].name;
-      tape.gameObject.GetComponent<TapeInstance>().tapesMenu = this;
+      tape.transform.GetComponentsInChildren<Image>()[0].sprite = _tapes[i].icon;
+      tape.transform.GetComponentsInChildren<TextMeshProUGUI>()[0].text = _tapes[i].name;
+      tape.gameObject.GetComponent<TapeSelect>().tapeIndex = i;
     }
     //_currentTapeImage.sprite = null;
     _currentTapeName.text = "";
@@ -46,6 +52,9 @@ public class TapesMenu : MonoBehaviour
   }
 
   public void SelectTape(int index) {
+    _currentTapeName.text = _tapes[index].name;
+    _currentTapeText.text = _tapes[index].dialogue;
+    _currentTapeTimestamp.text = _tapes[index].timestamp;
     //Debug.Log("Selected tape: " + index);
     if (_tapes[index].clip != null) {
       _tapeAudioSource.clip = _tapes[index].clip;
@@ -59,9 +68,6 @@ public class TapesMenu : MonoBehaviour
     }
 
     //_currentTapeImage.sprite = _tapes[index].icon;
-    _currentTapeName.text = _tapes[index].name;
-    _currentTapeText.text = _tapes[index].dialogue;
-    _currentTapeTimestamp.text = _tapes[index].timestamp;
 
   }
 
