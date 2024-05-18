@@ -1,7 +1,12 @@
 using UnityEngine;
+using UnityEngine.Events;
 
 public static class UpgradeInfo
 {
+
+	public static int xpLevel = 0;
+
+	public static UnityEvent OnLevelChange = new UnityEvent();
 
 	public struct Upgrade
 	{
@@ -32,7 +37,18 @@ public static class UpgradeInfo
 		return upgrade;
 	}
 
-  public static void AddLevel(string name) {
+  public static void AddXPLevel() {
+		Debug.Log("Increased Level");
+	  xpLevel++;
+	  OnLevelChange?.Invoke();
+  }
+
+  public static void RemoveXPLevel() {
+	  xpLevel--;
+	  OnLevelChange?.Invoke();
+	}
+
+	public static void AddLevel(string name) {
 	  for (int i = 0; i < 12; i++) {
 		  if (Upgrades[i].name == name) {
 				Upgrades[i].value++;
