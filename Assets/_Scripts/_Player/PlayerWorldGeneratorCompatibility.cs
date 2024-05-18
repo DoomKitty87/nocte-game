@@ -50,7 +50,7 @@ public class PlayerWorldGeneratorCompatibility : MonoBehaviour
       _playerController._disableMovement = false;
       _hasInitialized = true;
       _entryAnimationFinished = false;
-      Invoke("ResetOverlay", 1f);
+      Invoke("ResetOverlay", 2f);
       InputReader.Instance.EnablePlayer();
       _tutorial.InitialDialogue();
     }
