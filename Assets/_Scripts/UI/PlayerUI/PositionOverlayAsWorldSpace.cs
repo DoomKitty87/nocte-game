@@ -15,6 +15,8 @@ public class PositionOverlayAsWorldSpace : MonoBehaviour
 	}
 
 	private void Update() {
-		_overlay.position = Camera.main.WorldToScreenPoint(_target.position) + _offset;
+		Vector3 targetPosition = Camera.main.WorldToScreenPoint(_target.position) + _offset;
+    Vector3 newPosition = Vector3.Lerp(_overlay.position, targetPosition, _damping.x * Time.deltaTime);
+    _overlay.position = newPosition;
 	}
 }
