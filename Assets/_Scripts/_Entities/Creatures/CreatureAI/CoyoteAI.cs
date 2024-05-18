@@ -14,7 +14,7 @@ namespace _Scripts._Entities.Creatures.CreatureAI
 	[RequireComponent(typeof(CreatureCombat))]
 	public class CoyoteAI : BehaviorTree
 	{
-		[Header("References")] private Transform _transform;
+		[Header("References")] private Transform transform;
 		private CreatureCombat _creatureCombat;
 		private EnemyController _controller;
 		private Transform _playerTransform;
@@ -32,7 +32,6 @@ namespace _Scripts._Entities.Creatures.CreatureAI
 		[SerializeField] private List<CreatureAttack> _attacks;
 		
 		protected override TreeNode SetupTree() {
-			_transform = transform;
 			_controller = gameObject.GetComponent<EnemyController>();
 			_creatureCombat = gameObject.GetComponent<CreatureCombat>();
 			_playerTransform = GameObject.FindGameObjectWithTag("Player").transform;
@@ -47,7 +46,7 @@ namespace _Scripts._Entities.Creatures.CreatureAI
 					}),
 					new Selector(new List<TreeNode> {
 						new Sequencer(new List<TreeNode> { // checks if very close to player and attacks
-							new DistanceTransformLessThan(_transform, _playerTransform, _distanceAttack),
+							new DistanceTransformLessThan(transform, _playerTransform, _distanceAttack),
 							new CheckAttackRecent(_creatureCombat, _recencyLimit),
 							new SetState(_controller, EnemyController.PlayerStates.Idle),
 							new UseAttack(_creatureCombat, _attacks[0]),
@@ -55,50 +54,50 @@ namespace _Scripts._Entities.Creatures.CreatureAI
 							new SetState(_controller, EnemyController.PlayerStates.Idle),
 						}),
 						new Sequencer(new List<TreeNode> {  // checks if the enemy is close to the player and starts chasing
-							new DistanceTransformLessThan(_transform, _playerTransform, _distanceChase),
-							new FaceTransform(_transform, _playerTransform, true, false, true, false),
-							new SetMovementToDirection(_transform.forward, _controller),
+							new DistanceTransformLessThan(transform, _playerTransform, _distanceChase),
+							new FaceTransform(transform, _playerTransform, true, false, true, false),
+							new SetMovementToDirection(transform.forward, _controller),
 							new Invertor(new CheckAttackRecent(_creatureCombat, _recencyLimit)),
 							new SetState(_controller, EnemyController.PlayerStates.Sprinting),
 							new ChangeStamina(_controller, -0.5f * Time.deltaTime),
 						}),
 						new Sequencer(new List<TreeNode> { // checks if the enemy is far from the player and starts roaming
-							// new Invertor(new DistanceTransformLessThan(_transform, _playerTransform, _distanceChase)),
+							// new Invertor(new DistanceTransformLessThan(transform, _playerTransform, _distanceChase)),
 							// new Invertor(new CheckGoalExists(_controller)),
-							// new PlaceRandomGoal(_controller, _transform, _range),
+							// new PlaceRandomGoal(_controller, transform, _range),
 							new SetState(_controller, EnemyController.PlayerStates.Walking),
 							new CheckGoalExists(_controller),
-							new FaceGoal(_controller, _transform, true, false, true),
-							new SetMovementToDirection(_transform.forward, _controller),
+							new FaceGoal(_controller, transform, true, false, true),
+							new SetMovementToDirection(transform.forward, _controller),
 						}),
 						new Sequencer(new List<TreeNode> {
-							new CheckStuck(_transform),
-							//new PlaceRandomGoal(_controller, _transform, _range, _worldGenerator)
+							new CheckStuck(transform),
+							//new PlaceRandomGoal(_controller, transform, _range, _worldGenerator)
 						})
 					})
 				}),
 				new Sequencer(new List<TreeNode> { // checks if the enemy is close to the goal and makes a new one
-					new DistanceGoalLessThan(_controller, _transform, _distanceGoal),
-					//new PlaceRandomGoal(_controller, _transform, _range, _worldGenerator)
+					new DistanceGoalLessThan(_controller, transform, _distanceGoal),
+					//new PlaceRandomGoal(_controller, transform, _range, _worldGenerator)
 				}),
 				new Selector(new List<TreeNode> {
 					new Sequencer(new List<TreeNode> { // keeps coyote at den to heal up before leaving
 						new StaminaLessThan(_controller, _leaveLimit),
-						new DistanceDenLessThan(_controller, _transform, _distanceHeal),
-						new FaceDen(_controller, _transform, true, false, true),
-						new SetMovementToDirection(_transform.forward, _controller),
+						new DistanceDenLessThan(_controller, transform, _distanceHeal),
+						new FaceDen(_controller, transform, true, false, true),
+						new SetMovementToDirection(transform.forward, _controller),
 						new ChangeStamina(_controller, 5 * Time.deltaTime)
 					}),
 					new Sequencer(new List<TreeNode> { // goes to den after lack of stamina
 						new StaminaLessThan(_controller, _staminaLimit),
-						new FaceDen(_controller, _transform, true, false, true),
-						new SetMovementToDirection(_transform.forward, _controller),
+						new FaceDen(_controller, transform, true, false, true),
+						new SetMovementToDirection(transform.forward, _controller),
 						new SetState(_controller, EnemyController.PlayerStates.Walking)
 					})
 				}),
 				new Sequencer(new List<TreeNode> { // refills stamina
 					new StaminaLessThan(_controller, _staminaLimit),
-					new DistanceDenLessThan(_controller, _transform, _distanceHeal),
+					new DistanceDenLessThan(_controller, transform, _distanceHeal),
 					new ChangeStamina(_controller, 5 * Time.deltaTime)
 				})
 			});

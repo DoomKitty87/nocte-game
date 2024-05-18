@@ -1,14 +1,18 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditorInternal;
 using UnityEngine;
 
 public class PlayerMetaProgression : MonoBehaviour
 {
-  private static PlayerMetaProgression _instance;
-  public static PlayerMetaProgression Instance { get { return _instance; } }
+	private static PlayerMetaProgression _instance;
+
+  public static PlayerMetaProgression Instance {
+	  get { return _instance; }
+  }
 
   // 0 = Locked, 1 = Unlocked but not purchased, 2 = Purchased
-  public int[] DefaultUpgrades = new int[12] {
+  public int[] DefaultUpgrades = new int[] {
     // Movement
     1, // Jump height     * 0
     1, // Sprint speed    * 1
@@ -38,16 +42,15 @@ public class PlayerMetaProgression : MonoBehaviour
 
   public ProgressionData _progression = new ProgressionData();
 
-  private void OnEnable()
+  private void Awake()
   {
-    if (_instance == null)
+		if (Instance != null && Instance != this)
     {
-      _instance = this;
-    }
-    else
-    {
-      Destroy(this);
-    }
+			Destroy(this);
+		}
+    else {
+			_instance = this;
+		}
 
     LoadProgressionData();
     // Load player cores from save file
@@ -86,6 +89,7 @@ public class PlayerMetaProgression : MonoBehaviour
   public void AddCore()
   {
     _progression.cores++;
+		SaveData();
   }
 
   public void AddCore(int cores)

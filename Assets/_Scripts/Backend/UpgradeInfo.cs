@@ -16,7 +16,12 @@ public static class UpgradeInfo
 
   public static Upgrade GetUpgrade(string name) {
 	  Upgrade upgrade;
-	  try {
+	  if (Upgrades == null) {
+			Debug.LogWarning("Upgrade is null");
+		  return new Upgrade { name = "Error", isLocked = true, value = -1 };
+	  }
+	  
+		try {
 		  upgrade = System.Array.Find(Upgrades, upgrade => upgrade.name == name);
 	  }
 	  catch {

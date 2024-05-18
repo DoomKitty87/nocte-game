@@ -88,7 +88,7 @@ public class PlayerGrapple : MonoBehaviour
         RaycastHit hit;
         float grappleDistanceMultiplier = 1;
         if (!UpgradeInfo.GetUpgrade("Grapple Range").isLocked) {
-            grappleDistanceMultiplier = UpgradeInfo.GetUpgrade("Grapple Range").value;
+            grappleDistanceMultiplier = UpgradeInfo.GetUpgrade("Grapple Range").value + 1;
         }
         if(Physics.Raycast(_camera.position, _camera.forward, out hit, _maxGrappleDistance * grappleDistanceMultiplier, _grapplable))
         {
@@ -119,7 +119,7 @@ public class PlayerGrapple : MonoBehaviour
         float animationForce = _grapplingForceCurve.Evaluate(_time);
         float grappleForceMultiplier = 1;
         if (!UpgradeInfo.GetUpgrade("Grapple Strength").isLocked) {
-            grappleForceMultiplier = UpgradeInfo.GetUpgrade("Grapple Strength").value;
+            grappleForceMultiplier = UpgradeInfo.GetUpgrade("Grapple Strength").value + 1;
         }
         return _grappleForce * animationForce * direction * grappleForceMultiplier;
     }

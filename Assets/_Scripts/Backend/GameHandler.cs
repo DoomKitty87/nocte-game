@@ -4,7 +4,7 @@ public class GameHandler : MonoBehaviour
 {
   public static GameHandler Instance { get; private set; }
 
-  private void OnEnable() {
+  private void Start() {
     UpgradeInfo.Initialize();
 	}
 

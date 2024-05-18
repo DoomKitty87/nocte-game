@@ -29,7 +29,7 @@ public abstract class MagazineWeapon : WeaponScript
   private float MagazineMultiplier() {
     float magazineMultiplier = 1;
     if (!UpgradeInfo.GetUpgrade(("Mag Size")).isLocked) {
-      magazineMultiplier = UpgradeInfo.GetUpgrade("Mag Size").value;
+      magazineMultiplier = UpgradeInfo.GetUpgrade("Mag Size").value + 1;
     }
     return magazineMultiplier;
   }
@@ -40,7 +40,7 @@ public abstract class MagazineWeapon : WeaponScript
 	private float GetReloadTime() {
     float reloadTimeMultiplier = 1;
     if (!UpgradeInfo.GetUpgrade("Reload Speed").isLocked) {
-      reloadTimeMultiplier =  1f / UpgradeInfo.GetUpgrade("Reload Speed").value;
+      reloadTimeMultiplier =  1f / UpgradeInfo.GetUpgrade("Reload Speed").value + 1;
     }
 		if (_reloadAnimation != null) {
 			return _reloadAnimation.length * reloadTimeMultiplier;

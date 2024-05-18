@@ -59,7 +59,7 @@ float3x3 AngleAxis3x3(float angle, float3 axis)
 		worldToObject._14_24_34_44 = float4(w2oPosition, 1.0f);
 	}
 
-	void vertInstancingSetup() {
+	void UNITY_INSTANCING_PROCEDURAL_FUNC() {
 		vertInstancingMatrices(unity_ObjectToWorld, unity_WorldToObject);
 	}
 

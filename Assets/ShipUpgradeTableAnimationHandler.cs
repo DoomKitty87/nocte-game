@@ -1,5 +1,6 @@
 using TMPro;
 using UnityEngine;
+using UpgradeSystem;
 
 public class ShipUpgradeTableAnimationHandler : MonoBehaviour {
 	[SerializeField] private GameObject table;
@@ -10,7 +11,9 @@ public class ShipUpgradeTableAnimationHandler : MonoBehaviour {
 	[SerializeField] private float _gain = 0.8f;
 
   [SerializeField] private TextMeshProUGUI _coreCounter;
-    
+
+	[SerializeField] private UpgradeNode[] _upgradeNodes;
+
 	private Material _mat;
 
 	private Camera _mainCamera;
@@ -57,6 +60,16 @@ public class ShipUpgradeTableAnimationHandler : MonoBehaviour {
 		_mat.SetVector(Center, _mainPosition);
 		_pannableTransform.anchoredPosition = new Vector2((_mainPosition.z * (1 / .0025f / _parallaxFloat)) * -1, _mainPosition.x * (1 / 0.0025f / _parallaxFloat)) * _gain; // Weird numbers are due to scaling of parent canvas and orientation of table
 		// _mat.SetVector(Offset, mousePosition - _mainPosition);
+	}
+
+	public void UpdateCoreCounter() {
+		_coreCounter.text = PlayerMetaProgression.Instance.AvailableCores.ToString();
+
+		if (PlayerMetaProgression.Instance.AvailableCores == 0) {
+			foreach (var upgradeNode in _upgradeNodes) {
+				upgradeNode.Lock();
+			}
+		}
 	}
 
 	private void LerpTowardsPoint() {
