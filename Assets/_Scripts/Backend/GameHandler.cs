@@ -5,7 +5,7 @@ public class GameHandler : MonoBehaviour
   public static GameHandler Instance { get; private set; }
 
   private void Start() {
-	  Invoke(nameof(Initialize), 1f);
+	  Invoke(nameof(Initialize), 0.5f);
   }
 
   private void Initialize() {
