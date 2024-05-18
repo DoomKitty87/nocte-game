@@ -1,6 +1,6 @@
 namespace Console.Commands
 {
-    public class GodCommand : ConsoleCommand
+    public class _GodCommand : ConsoleCommand
     {
         private const string _wrongAmountMsg = "This command takes one input.";
         private const string _wrongInputMsg = "Must be a value of either 1 or 0.";
@@ -32,11 +32,11 @@ namespace Console.Commands
             if (TryValue(value)) {
                 if (value == 1) {
                     _currentSuccessMessage = BuildSuccessMessage("enabled");
-                    BackgroundInfo._fpsEnabled = true;
+                    BackgroundInfo._godMode = true;
                 }
                 else {
                     _currentSuccessMessage = BuildSuccessMessage("disabled");
-                    BackgroundInfo._fpsEnabled = false;
+                    BackgroundInfo._godMode = false;
                 }
 
                 return true;
@@ -62,7 +62,7 @@ namespace Console.Commands
         }
 
         private string BuildCallbackMessage() =>
-            $"God mode {(BackgroundInfo._fpsEnabled ? 1 : 0)}";
+            $"God mode is {(BackgroundInfo._godMode ? "enabled" : "disabled")}";
     
         private string BuildSuccessMessage(string arg) =>
             $"{arg} god mode";

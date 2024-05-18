@@ -13,9 +13,4 @@ public class GameHandler : MonoBehaviour
       Destroy(gameObject);
     }
   }
-
-  public void EnableGodMode() {
-    
-  }
-
 }
