@@ -78,6 +78,7 @@ public class PlayerCombatCore : MonoBehaviour
 		slot._weaponInstance.SetActive(true);
 		_equippedSlotIndex = _weaponInventory.IndexOf(slot);
 		_OnInventoryChanged?.Invoke();
+		print("Equipping weapon: " + slot._weaponItem._weaponName);
 		float waitTime = slot._weaponInstance.GetComponent<WeaponScript>().OnEquip();
 		yield return new WaitForSeconds(waitTime);
 		slot._equipped = true;
@@ -138,7 +139,7 @@ public class PlayerCombatCore : MonoBehaviour
 		_unequipping = false;
 	}
 	public void UnequipCurrentWeapon(bool disableImmediately = false) {
-		if (_unequipping) return;
+		if (_unequipping || _currentWeaponItem == null) return;
 		WeaponInventorySlot slot = _weaponInventory[_equippedSlotIndex];
 		_playerAnimator.SetLayerWeight(_playerAnimator.GetLayerIndex("WeaponLayer"), 0);
 		if (disableImmediately) {
