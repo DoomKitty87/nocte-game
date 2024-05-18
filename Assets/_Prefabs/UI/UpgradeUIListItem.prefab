@@ -163,8 +163,8 @@ GameObject:
   - component: {fileID: 6031012573941776621}
   - component: {fileID: 4205502509069107328}
   - component: {fileID: 7881045855774157012}
-  - component: {fileID: 5096635565098326641}
   - component: {fileID: 5276679987922936643}
+  - component: {fileID: 8404521098745531283}
   m_Layer: 0
   m_Name: UpgradeUIListItem
   m_TagString: Untagged
@@ -276,20 +276,6 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
---- !u!114 &5096635565098326641
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4245532959134957887}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1b529f7400ad5f645be77090b394b1cf, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  upgradeName: {fileID: 6042958024631215432}
-  upgradeLevel: {fileID: 65802264764705278}
 --- !u!95 &5276679987922936643
 Animator:
   serializedVersion: 7
@@ -312,6 +298,20 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &8404521098745531283
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4245532959134957887}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8199d09f1196af54ab775e242c7c0266, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  upgradeName: {fileID: 6042958024631215432}
+  upgradeLevel: {fileID: 65802264764705278}
 --- !u!1 &7643734112472323215
 GameObject:
   m_ObjectHideFlags: 0
