@@ -24,19 +24,19 @@ public class HealthUI : MonoBehaviour
     _changingHealth = true;
     float time = 0;
     while (time < _healthAnimateTime) {
-      _healthNumber.text = $"{Mathf.FloorToInt(Mathf.Lerp(initialHealth, currentHealth, _healthChangeCurve.Evaluate(time)))} <sup>/ {maxHealth.ToString()}</sup>";
+      _healthNumber.text = $"{Mathf.FloorToInt(Mathf.Lerp(initialHealth, currentHealth, _healthChangeCurve.Evaluate(time)))} <sup>/ {((int)maxHealth).ToString()}</sup>";
       _healthBar.fillAmount = Mathf.Lerp(initialHealth / maxHealth, currentHealth / maxHealth, _healthChangeCurve.Evaluate(time));
       time += Time.deltaTime;
       yield return null;
     }
-    _healthNumber.text = $"{currentHealth.ToString()} <sup>/ {maxHealth.ToString()}</sup>";
+    _healthNumber.text = $"{((int)currentHealth).ToString()} <sup>/ {((int)maxHealth).ToString()}</sup>";
     _healthBar.fillAmount = currentHealth / maxHealth;
     _changingHealth = false;
   }
 
   private void Start() {
     _playerHealth._onHealthChanged.AddListener(OnHealthChanged);
-    _healthNumber.text = $"{_playerHealth.CurrentHealth.ToString()} <sup>/ {_playerHealth.MaxHealth.ToString()}</sup>";
+    _healthNumber.text = $"{((int)_playerHealth.CurrentHealth).ToString()} <sup>/ {((int)_playerHealth.MaxHealth).ToString()}</sup>";
     _healthBar.fillAmount = _playerHealth.CurrentHealth / _playerHealth.MaxHealth;
   }
 }
