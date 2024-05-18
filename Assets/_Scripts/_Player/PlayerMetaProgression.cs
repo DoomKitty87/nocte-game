@@ -24,10 +24,10 @@ public class PlayerMetaProgression : MonoBehaviour
     1, // Bullet capacity * 6
     1, //                 * 7
     // Utility
-    0, // Scan range      * 8
-    0, // Grapple range   * 9
-    0, //                 * 10
-    0  //                 * 11
+    1, // Scan range      * 8
+    1, // Grapple range   * 9
+    1, //                 * 10
+    1  //                 * 11
     };
 
   [System.Serializable]

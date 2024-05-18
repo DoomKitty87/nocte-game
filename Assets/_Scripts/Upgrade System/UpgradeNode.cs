@@ -115,7 +115,7 @@ namespace UpgradeSystem
       _upgradeDiscription.text = _data._upgradeDescription;
       _upgradeDiscription.color = _unlockedTextDescriptionColor;
 
-      _lockImage.transform.gameObject.SetActive(false);
+      _lockImage.transform.gameObject.SetActive(true);
       
       _animator.SetBool("Locked", false);
       _animator.SetBool("Unlocked", true);
