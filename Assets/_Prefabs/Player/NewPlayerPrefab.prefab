@@ -874,7 +874,7 @@ MonoBehaviour:
     m_Top: 0
     m_Bottom: 0
   m_ChildAlignment: 3
-  m_Spacing: 0
+  m_Spacing: 10.75
   m_ChildForceExpandWidth: 0
   m_ChildForceExpandHeight: 0
   m_ChildControlWidth: 0
@@ -890,7 +890,7 @@ CanvasGroup:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 212024458088834411}
   m_Enabled: 1
-  m_Alpha: 0
+  m_Alpha: 1
   m_Interactable: 0
   m_BlocksRaycasts: 0
   m_IgnoreParentGroups: 0
@@ -4214,7 +4214,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1198251880453041267}
   serializedVersion: 2
-  m_LocalRotation: {x: -0.000000030671135, y: 6.389819e-10, z: 1.9598301e-17, w: 1}
+  m_LocalRotation: {x: -0.00000003041966, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0.75, y: 1.1899772, z: -2.3999999}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -6036,7 +6036,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 25, y: -15}
-  m_SizeDelta: {x: 850, y: 19.21}
+  m_SizeDelta: {x: 700, y: 19.21}
   m_Pivot: {x: 0, y: 1}
 --- !u!222 &4047475598567823666
 CanvasRenderer:
@@ -10598,7 +10598,7 @@ CanvasGroup:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4226662057842322141}
   m_Enabled: 1
-  m_Alpha: 1
+  m_Alpha: 0
   m_Interactable: 1
   m_BlocksRaycasts: 1
   m_IgnoreParentGroups: 0
@@ -12310,7 +12310,55 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 3539821472478853562}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 3660022511276655984}
+        m_TargetAssemblyTypeName: FadeElementInOut, Assembly-CSharp
+        m_MethodName: FadeOut
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 8974128532549718257}
+        m_TargetAssemblyTypeName: FadeElementInOut, Assembly-CSharp
+        m_MethodName: FadeOut
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 1467261830874355969}
+        m_TargetAssemblyTypeName: FadeElementInOut, Assembly-CSharp
+        m_MethodName: FadeOut
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 1387689061794697777}
+        m_TargetAssemblyTypeName: FadeElementInOut, Assembly-CSharp
+        m_MethodName: FadeIn
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &4833790205910398321
 GameObject:
   m_ObjectHideFlags: 0
@@ -13152,9 +13200,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Padding:
-    m_Left: 0
+    m_Left: 269
     m_Right: 0
-    m_Top: 0
+    m_Top: 21
     m_Bottom: 0
   m_ChildAlignment: 4
   m_Spacing: 0
@@ -15938,7 +15986,55 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 8543464319931451658}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 3660022511276655984}
+        m_TargetAssemblyTypeName: FadeElementInOut, Assembly-CSharp
+        m_MethodName: FadeOut
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 8974128532549718257}
+        m_TargetAssemblyTypeName: FadeElementInOut, Assembly-CSharp
+        m_MethodName: FadeIn
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 1467261830874355969}
+        m_TargetAssemblyTypeName: FadeElementInOut, Assembly-CSharp
+        m_MethodName: FadeOut
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 1387689061794697777}
+        m_TargetAssemblyTypeName: FadeElementInOut, Assembly-CSharp
+        m_MethodName: FadeOut
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &6821664684782414968
 GameObject:
   m_ObjectHideFlags: 0
@@ -16271,7 +16367,55 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 6924304043411969055}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 3660022511276655984}
+        m_TargetAssemblyTypeName: FadeElementInOut, Assembly-CSharp
+        m_MethodName: FadeOut
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 8974128532549718257}
+        m_TargetAssemblyTypeName: FadeElementInOut, Assembly-CSharp
+        m_MethodName: FadeOut
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 1467261830874355969}
+        m_TargetAssemblyTypeName: FadeElementInOut, Assembly-CSharp
+        m_MethodName: FadeIn
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 1387689061794697777}
+        m_TargetAssemblyTypeName: FadeElementInOut, Assembly-CSharp
+        m_MethodName: FadeOut
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &7060790136478253405
 GameObject:
   m_ObjectHideFlags: 0
@@ -16769,9 +16913,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: '
-
-    UGPRADES'
+  m_text: UPGRADES
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 4f2134d8e84b02644b89a97ce0274551, type: 2}
   m_sharedMaterial: {fileID: 4012584098225157157, guid: 4f2134d8e84b02644b89a97ce0274551,
@@ -16799,8 +16941,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 36
-  m_fontSizeBase: 36
+  m_fontSize: 48
+  m_fontSizeBase: 48
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -18252,7 +18394,7 @@ MonoBehaviour:
   m_Elasticity: 0.1
   m_Inertia: 1
   m_DecelerationRate: 0.135
-  m_ScrollSensitivity: 100
+  m_ScrollSensitivity: 200
   m_Viewport: {fileID: 6150706416727447689}
   m_HorizontalScrollbar: {fileID: 0}
   m_VerticalScrollbar: {fileID: 0}
@@ -19619,7 +19761,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6229939270574553421}
   - component: {fileID: 7338410974540940135}
-  m_Layer: 3
+  m_Layer: 2
   m_Name: Player Wall Collider
   m_TagString: Invisible
   m_Icon: {fileID: 0}
@@ -20900,6 +21042,7 @@ MonoBehaviour:
     m_Bits: 64
   _tutorial: {fileID: 0}
   _ignoreLackOfWorldGenerator: 1
+  _positionOverlay: {fileID: 0}
 --- !u!120 &8791546486851282730
 LineRenderer:
   serializedVersion: 2
@@ -21359,6 +21502,10 @@ MonoBehaviour:
   _pdaCanvas: {fileID: 2040514439159417654}
   _pdaCameraCanvas: {fileID: 8653356196529516306}
   _mainCanvas: {fileID: 6920962454045555371}
+  _canvas1: {fileID: 3660022511276655984}
+  _canvas2: {fileID: 8974128532549718257}
+  _canvas3: {fileID: 1467261830874355969}
+  _canvas4: {fileID: 1387689061794697777}
 --- !u!114 &2238562991987736133
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -21419,6 +21566,10 @@ MonoBehaviour:
   _pdaCanvas: {fileID: 9058377141601197083}
   _pdaCameraCanvas: {fileID: 0}
   _mainCanvas: {fileID: 0}
+  _canvas1: {fileID: 0}
+  _canvas2: {fileID: 0}
+  _canvas3: {fileID: 0}
+  _canvas4: {fileID: 0}
 --- !u!1 &8925452881639838748
 GameObject:
   m_ObjectHideFlags: 0
