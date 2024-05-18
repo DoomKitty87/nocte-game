@@ -32,6 +32,8 @@ public class PlaceStructures : MonoBehaviour
   [SerializeField] private float _roadMaxAngle;
   [SerializeField] private Material _roadMaterial;
 
+  [SerializeField] private float _heightCutoff;
+
   private Vector3[] _structurePositions;
   private List<Transform> _structures = new List<Transform>();
 
@@ -81,7 +83,7 @@ public class PlaceStructures : MonoBehaviour
     Vector3 normal = -Vector3.Cross(new Vector3(1, pointB, 0) - new Vector3(-1, pointA, 0),
       new Vector3(0, pointD, 1) - new Vector3(0, pointC, -1)).normalized;
     int s = 1;
-    while (normal.y < _normalCutoff || _worldGen.GetWaterSaturation(new Vector2(mainPosition.x, mainPosition.z))) {
+    while (normal.y < _normalCutoff || _worldGen.GetWaterSaturation(new Vector2(mainPosition.x, mainPosition.z)) || _worldGen.GetHeightValue(new Vector2(mainPosition.x, mainPosition.z)) > _heightCutoff) {
       if (s > 10000) {
         Debug.LogError("Could not find a valid central position");
         break;
@@ -179,7 +181,7 @@ public class PlaceStructures : MonoBehaviour
       float heightd = _worldGen.GetHeightValue(new Vector2(outPosition.x, outPosition.z + _normalRadius));
       normal = -Vector3.Cross(new Vector3(1, heightb, 0) - new Vector3(-1, heighta, 0),
         new Vector3(0, heightd, 1) - new Vector3(0, heightc, -1)).normalized;
-      while (normal.y < _normalCutoff || _worldGen.GetWaterSaturation(new Vector2(outPosition.x, outPosition.z))) {
+      while (normal.y < _normalCutoff || _worldGen.GetWaterSaturation(new Vector2(outPosition.x, outPosition.z)) || _worldGen.GetHeightValue(new Vector2(outPosition.x, outPosition.z)) > _heightCutoff) {
         if (s > 10000) {
           Debug.LogError("Could not find a valid outer position");
           break;
