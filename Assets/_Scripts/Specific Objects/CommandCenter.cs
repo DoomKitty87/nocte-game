@@ -29,7 +29,7 @@ public class CommandCenter : MonoBehaviour
   [SerializeField] private string _powerTrigger;
   [SerializeField] private string _scanTrigger;
   
-
+  [SerializeField] private Dialogue _endDialogue;
   
   private bool _powered = false;
 
@@ -58,9 +58,6 @@ public class CommandCenter : MonoBehaviour
     _interactCount++;
   }
   
-  public void EnableDroneSpawning() {
-    DroneSpawner._isSpawning = true;
-  }
 
   private bool _scanning;
   private IEnumerator ScanForStructuresCoroutine() {
@@ -82,6 +79,8 @@ public class CommandCenter : MonoBehaviour
   private void EnableMainInterface() {
     if (!_powered) return;
     DroneSpawner._isSpawning = true;
+    DialogueHandler.Instance.PlayDialogue(_endDialogue);
+    // Give player coordinates of extraction site
     _fullPowerScreen.SetActive(false);
     _mainInterface.SetActive(true);
   }

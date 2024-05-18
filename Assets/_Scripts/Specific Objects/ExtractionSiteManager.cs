@@ -13,6 +13,8 @@ public class ExtractionSiteManager : MonoBehaviour
   [SerializeField] private TextMeshProUGUI[] _extractorStatus;
   [SerializeField] private GameObject _activated;
 
+  [SerializeField] private Dialogue _dialogue;
+
   private bool[] extractorsActive = new bool[3] {false, false, false};
   private int extractorsActiveCount = 0;
   
@@ -42,6 +44,8 @@ public class ExtractionSiteManager : MonoBehaviour
   public void ActivateTerminal() {
     _activated.SetActive(false);
     PlayerMetaProgression.Instance.Unlock(9);
+    DialogueHandler.Instance.PlayDialogue(_dialogue);
+    // Give player coordinates of command center
     Debug.Log("Generator activated; player obtained Utility Blueprint (Grappling Hook)");
   }
   

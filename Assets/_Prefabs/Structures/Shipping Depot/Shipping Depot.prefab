@@ -439,6 +439,8 @@ GameObject:
   m_Component:
   - component: {fileID: 7348511759378775314}
   - component: {fileID: 7887714696258420694}
+  - component: {fileID: 260507367843362422}
+  - component: {fileID: 7414579619550660427}
   m_Layer: 0
   m_Name: Shipping Depot
   m_TagString: Untagged
@@ -607,6 +609,47 @@ MonoBehaviour:
   _components:
   - transform: {fileID: 4122409028572248207}
     alignToNormal: 1
+--- !u!114 &260507367843362422
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3560961483075417576}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d6e564b7adfbb2b4189d38883dce4d44, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _dialogueHandler: {fileID: 0}
+  _dialogueToPlay: {fileID: 11400000, guid: bcb32c3c157caa64484cf91d2aaa2d91, type: 2}
+  _collider: {fileID: 7414579619550660427}
+  _useTrigger: 1
+  _playOnce: 1
+  _dialogueEvent:
+    m_PersistentCalls:
+      m_Calls: []
+--- !u!65 &7414579619550660427
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3560961483075417576}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 100, y: 100, z: 100}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &4774049796591178647
 GameObject:
   m_ObjectHideFlags: 0
@@ -11138,8 +11181,91 @@ PrefabInstance:
         type: 3}
       insertIndex: -1
       addedObject: {fileID: 7012530310565901105}
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 1572119162206867337, guid: e700772253099e54691df55d5e40919b,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 5767955099031723365}
+    - targetCorrespondingSourceObject: {fileID: 1572119162206867337, guid: e700772253099e54691df55d5e40919b,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 5310376990228349686}
+    - targetCorrespondingSourceObject: {fileID: 1572119162206867337, guid: e700772253099e54691df55d5e40919b,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 8541450306853085055}
   m_SourcePrefab: {fileID: 100100000, guid: e700772253099e54691df55d5e40919b, type: 3}
+--- !u!1 &5529199012798091715 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1572119162206867337, guid: e700772253099e54691df55d5e40919b,
+    type: 3}
+  m_PrefabInstance: {fileID: 6443212052565171786}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &5767955099031723365
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5529199012798091715}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d6e564b7adfbb2b4189d38883dce4d44, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _dialogueHandler: {fileID: 0}
+  _dialogueToPlay: {fileID: 11400000, guid: bea5ac631b970f04598bbc797c42a49f, type: 2}
+  _collider: {fileID: 5310376990228349686}
+  _useTrigger: 1
+  _playOnce: 1
+  _dialogueEvent:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 8541450306853085055}
+        m_TargetAssemblyTypeName: PlayerInterface, Assembly-CSharp
+        m_MethodName: PlayerDeath
+        m_Mode: 4
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 30
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+--- !u!65 &5310376990228349686
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5529199012798091715}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 4, y: 5, z: 12}
+  m_Center: {x: 0, y: 1.7, z: 0}
+--- !u!114 &8541450306853085055
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5529199012798091715}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1a8050faa46939e4188ce88c3faf002a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!4 &7382064984414007197 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4546594675409105367, guid: e700772253099e54691df55d5e40919b,
