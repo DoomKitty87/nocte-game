@@ -53,7 +53,7 @@ public class CommandCenter : MonoBehaviour
   }
 
   private void TransportPlayer() {
-    WorldGenInfo._worldGenerator.gameObject.SetActive(false);
+    WeatherManager.Instance._sunTransform.gameObject.GetComponent<Light>().enabled = false;
     SceneManager.LoadScene("CommandCenter", LoadSceneMode.Additive);
     PlayerController.Instance.transform.position = new Vector3(0, 0, 0);
   }
