@@ -222,7 +222,7 @@ public class EnemyController : MonoBehaviour
     
     void OnDrawGizmos() {
         Gizmos.color = Color.yellow;
-        Gizmos.DrawSphere(new Vector3(_goalPos.x, transform.position.y, _goalPos.y), 1);
+        Gizmos.DrawSphere(new Vector3(_goalPos.x, transform.position.y + 5, _goalPos.y), 1);
     }
 
     #endregion
