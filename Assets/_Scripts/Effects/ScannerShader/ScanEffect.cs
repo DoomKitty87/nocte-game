@@ -40,8 +40,8 @@ public class ScanEffect : MonoBehaviour
         while (durationLeft > 0) {
             float t = 1 - durationLeft / _scanDuration;
             float scanDistanceMultiplier = 1;
-            if (UpgradeInfo._scanRange != -1) {
-                scanDistanceMultiplier = UpgradeInfo._scanRange;
+            if (!UpgradeInfo.GetUpgrade("Scan Range").isLocked) {
+                scanDistanceMultiplier = UpgradeInfo.GetUpgrade("Scan Range").value;
             }
             _effect._scanDistance.value = _scanDistance * _scanSpeedCurve.Evaluate(t) * scanDistanceMultiplier;
             durationLeft -= Time.deltaTime;
@@ -101,8 +101,8 @@ public class ScanEffect : MonoBehaviour
 
     private void TriggerScan() {
         float scanCooldownMultiplier = 1; 
-        if (UpgradeInfo._scanCooldown != -1) {
-            scanCooldownMultiplier = 1f / UpgradeInfo._scanCooldown;
+        if (!UpgradeInfo.GetUpgrade("Scan Cooldown").isLocked) {
+            scanCooldownMultiplier = 1f / UpgradeInfo.GetUpgrade("Scan Cooldown").value;
         }
         if (!_scanning && _timeSinceLastScan > _scanCooldown * scanCooldownMultiplier) {
             _timeSinceLastScan = 0;

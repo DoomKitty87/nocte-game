@@ -1,23 +1,48 @@
+using UnityEngine;
+
 public static class UpgradeInfo
 {
 
+	public struct Upgrade
+	{
+		public string name;
+		public bool isLocked;
+		public int value;
+	}
+
   // All values should default to 1 as they are multipliers, but -1 if the upgrade is locked.
-  // All speed multpliers are already taken as inverses, just treat them as speed increases instead of time decreases (1+).
+  // All speed multipliers are already taken as inverses, just treat them as speed increases instead of time decreases (1+).
+  public static Upgrade[] Upgrades;
 
-  public static int _jumpHeight = -1;
-  public static int _sprintSpeed = -1;
+  public static Upgrade GetUpgrade(string name) {
+	  Upgrade upgrade;
+	  try {
+		  upgrade = System.Array.Find(Upgrades, upgrade => upgrade.name == name);
+	  }
+	  catch {
+			upgrade = new Upgrade { name = "Error", isLocked = true, value = -1 };
+			Debug.LogError("Upgrade not found: " + name);
+	  }
 
-  public static int _maxHealth = -1;
-  public static int _healthRegen = -1;
+		return upgrade;
+	}
 
-  public static int _damage = -1;
-  public static int _reloadSpeed = -1;
-  public static int _magSize = -1;
-  public static int _critChance = -1; // Crit chance is a value from 0-1, only exception for multiplier.
+  public static void Initialize() {
+		PlayerMetaProgression instance = PlayerMetaProgression.Instance;
 
-  public static int _scanRange = -1;
-  public static int _grappleRange = -1;
-  public static int _grappleStrength = -1;
-  public static int _scanCooldown = -1;
-
+		Upgrades = new Upgrade[] {
+			new Upgrade { name = "Jump Height", isLocked = (instance.CheckUpgrade(0) != 2), value = 0 },
+			new Upgrade { name = "Sprint Speed", isLocked = (instance.CheckUpgrade(1) != 2), value = 0 },
+			new Upgrade { name = "Max Health", isLocked = (instance.CheckUpgrade(2) != 2), value = 0 },
+			new Upgrade { name = "Health Regen", isLocked = (instance.CheckUpgrade(3) != 2), value = 0 },
+			new Upgrade { name = "Damage", isLocked = (instance.CheckUpgrade(4) != 2), value = 0 },
+			new Upgrade { name = "Reload Speed", isLocked = (instance.CheckUpgrade(5) != 2), value = 0 },
+			new Upgrade { name = "Mag Size", isLocked = (instance.CheckUpgrade(6) != 2), value = 0 },
+			new Upgrade { name = "Crit Chance", isLocked = (instance.CheckUpgrade(7) != 2), value = 0 },
+			new Upgrade { name = "Scan Range", isLocked = (instance.CheckUpgrade(8) != 2), value = 0 },
+			new Upgrade { name = "Grapple Range", isLocked = (instance.CheckUpgrade(9) != 2), value = 0 },
+			new Upgrade { name = "Grapple Strength", isLocked = (instance.CheckUpgrade(10) != 2), value = 0 },
+			new Upgrade { name = "Scan Cooldown", isLocked = (instance.CheckUpgrade(11) != 2), value = 0 }
+		};
+	}
 }

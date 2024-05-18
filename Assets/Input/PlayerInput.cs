@@ -1374,6 +1374,15 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""ClosePDA"",
+                    ""type"": ""Button"",
+                    ""id"": ""a7d69b1e-ed0c-43cc-8ba0-77be22f68908"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -1794,6 +1803,17 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
                     ""action"": ""TrackedDeviceOrientation"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""cac2f98a-4410-44b9-8604-018843812b92"",
+                    ""path"": ""<Keyboard>/tab"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""KeyboardMouse"",
+                    ""action"": ""ClosePDA"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         },
@@ -1900,6 +1920,7 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
         m_UI_Cancel = m_UI.FindAction("Cancel", throwIfNotFound: true);
         m_UI_Submit = m_UI.FindAction("Submit", throwIfNotFound: true);
         m_UI_Navigate = m_UI.FindAction("Navigate", throwIfNotFound: true);
+        m_UI_ClosePDA = m_UI.FindAction("ClosePDA", throwIfNotFound: true);
         // AlwaysOn
         m_AlwaysOn = asset.FindActionMap("AlwaysOn", throwIfNotFound: true);
         m_AlwaysOn_OpenEquipMenu = m_AlwaysOn.FindAction("OpenEquipMenu", throwIfNotFound: true);
@@ -2344,6 +2365,7 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
     private readonly InputAction m_UI_Cancel;
     private readonly InputAction m_UI_Submit;
     private readonly InputAction m_UI_Navigate;
+    private readonly InputAction m_UI_ClosePDA;
     public struct UIActions
     {
         private @PlayerInput m_Wrapper;
@@ -2358,6 +2380,7 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
         public InputAction @Cancel => m_Wrapper.m_UI_Cancel;
         public InputAction @Submit => m_Wrapper.m_UI_Submit;
         public InputAction @Navigate => m_Wrapper.m_UI_Navigate;
+        public InputAction @ClosePDA => m_Wrapper.m_UI_ClosePDA;
         public InputActionMap Get() { return m_Wrapper.m_UI; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -2397,6 +2420,9 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
             @Navigate.started += instance.OnNavigate;
             @Navigate.performed += instance.OnNavigate;
             @Navigate.canceled += instance.OnNavigate;
+            @ClosePDA.started += instance.OnClosePDA;
+            @ClosePDA.performed += instance.OnClosePDA;
+            @ClosePDA.canceled += instance.OnClosePDA;
         }
 
         private void UnregisterCallbacks(IUIActions instance)
@@ -2431,6 +2457,9 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
             @Navigate.started -= instance.OnNavigate;
             @Navigate.performed -= instance.OnNavigate;
             @Navigate.canceled -= instance.OnNavigate;
+            @ClosePDA.started -= instance.OnClosePDA;
+            @ClosePDA.performed -= instance.OnClosePDA;
+            @ClosePDA.canceled -= instance.OnClosePDA;
         }
 
         public void RemoveCallbacks(IUIActions instance)
@@ -2565,6 +2594,7 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
         void OnCancel(InputAction.CallbackContext context);
         void OnSubmit(InputAction.CallbackContext context);
         void OnNavigate(InputAction.CallbackContext context);
+        void OnClosePDA(InputAction.CallbackContext context);
     }
     public interface IAlwaysOnActions
     {

@@ -1352,6 +1352,15 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
+                },
+                {
+                    "name": "ClosePDA",
+                    "type": "Button",
+                    "id": "a7d69b1e-ed0c-43cc-8ba0-77be22f68908",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -1770,6 +1779,17 @@
                     "processors": "",
                     "groups": "",
                     "action": "TrackedDeviceOrientation",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "cac2f98a-4410-44b9-8604-018843812b92",
+                    "path": "<Keyboard>/tab",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "KeyboardMouse",
+                    "action": "ClosePDA",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
