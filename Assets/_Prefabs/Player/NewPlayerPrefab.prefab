@@ -2850,6 +2850,37 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!1 &834408747811917608
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3862497462209649644}
+  m_Layer: 3
+  m_Name: ConnectionTarget
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &3862497462209649644
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 834408747811917608}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0.25, y: 1, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 5766149443483151228}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &846069443805879728
 GameObject:
   m_ObjectHideFlags: 0
@@ -12983,6 +13014,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 2351420530443419182}
+  - {fileID: 3862497462209649644}
   m_Father: {fileID: 7579844485692665664}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &3388980455895734428
@@ -13104,16 +13136,16 @@ RectTransform:
   m_LocalRotation: {x: 0.069586545, y: 0.069586545, z: -0.0048659644, w: 0.99513406}
   m_LocalPosition: {x: 0, y: 0, z: -3.7900133}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
+  m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 4263800345410222980}
   - {fileID: 6576611718588815087}
   m_Father: {fileID: 6991481623064437117}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 1164.4673, y: -847.23236}
-  m_SizeDelta: {x: 200, y: 60}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 60}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &8888522844656030639
 MonoBehaviour:
@@ -13697,6 +13729,7 @@ MonoBehaviour:
   _damping: {x: 2, y: 0, z: 0}
   _overlayConnection: {fileID: 2450342993125089793}
   _connectionOffset: {x: 100, y: 380, z: 0}
+  _connectionTarget: {fileID: 0}
 --- !u!1 &5942056771828637686
 GameObject:
   m_ObjectHideFlags: 0
@@ -16760,7 +16793,7 @@ Transform:
   m_GameObject: {fileID: 7458155996027251309}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0.8, y: 0.4, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
