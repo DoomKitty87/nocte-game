@@ -199,7 +199,10 @@ public class PlayerController : MonoBehaviour
             case PlayerStates.Driving:
                 _useVelocity = true;
                 _useGravity = true;
-                
+                if (_rb.interpolation != RigidbodyInterpolation.Interpolate) {
+                  _rb.interpolation = RigidbodyInterpolation.Interpolate;
+                }
+                _modelOrientation.localRotation = Quaternion.identity;
                 EnableColliders();
                 break;
             
@@ -234,6 +237,10 @@ public class PlayerController : MonoBehaviour
                 DisableColliders();
                 _useVelocity = false;
                 _useGravity = false;
+                if (_rb.interpolation != RigidbodyInterpolation.None) {
+                  _modelOrientation.localRotation = Quaternion.Euler(0, 90, 0);
+                  _rb.interpolation = RigidbodyInterpolation.None;
+                }
                 break;
             
             case PlayerStates.Frozen:
@@ -260,15 +267,6 @@ public class PlayerController : MonoBehaviour
             }
             else
                 _disableWorldGen = true;
-        }
-
-        if (State is PlayerStates.Driving) {
-          if (_rb.interpolation != RigidbodyInterpolation.None)
-            _modelOrientation.localRotation = Quaternion.Euler(0, 90, 0);
-            _rb.interpolation = RigidbodyInterpolation.None;
-        } else {
-          if (_rb.interpolation != RigidbodyInterpolation.Interpolate)
-            _rb.interpolation = RigidbodyInterpolation.Interpolate;
         }
 
         if (State is PlayerStates.Frozen or PlayerStates.Noclip or PlayerStates.Grappling or PlayerStates.Driving)
@@ -387,6 +385,7 @@ public class PlayerController : MonoBehaviour
     #region Movement
     private void Move() {
         if (_disableMovement) return;
+        transform.localRotation = Quaternion.identity;
 
         if (State is PlayerStates.Frozen) return;
 
@@ -594,7 +593,6 @@ public class PlayerController : MonoBehaviour
 
             case PlayerStates.Driving: {
                 transform.localPosition = Vector3.zero;
-                transform.localRotation = Quaternion.identity;
 
                 break;
             }

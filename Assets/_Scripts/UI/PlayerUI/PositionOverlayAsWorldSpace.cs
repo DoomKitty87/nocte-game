@@ -10,9 +10,14 @@ public class PositionOverlayAsWorldSpace : MonoBehaviour
 	[SerializeField] private RectTransform _overlay;
 	[SerializeField] private Vector3 _offset;
 	[SerializeField] private Vector3 _damping;
+  
 	private void Start() {
 		_overlay.position = Camera.main.WorldToScreenPoint(_target.position) + _offset;	
 	}
+
+  public void ResetPosition() {
+    _overlay.position = Camera.main.WorldToScreenPoint(_target.position) + _offset;
+  }
 
 	private void Update() {
 		Vector3 targetPosition = Camera.main.WorldToScreenPoint(_target.position) + _offset;
