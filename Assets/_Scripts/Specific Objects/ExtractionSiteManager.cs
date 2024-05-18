@@ -46,6 +46,11 @@ public class ExtractionSiteManager : MonoBehaviour
     PlayerMetaProgression.Instance.Unlock(9);
     DialogueHandler.Instance.PlayDialogue(_dialogue);
     CommandCenter.Instance.DoneWithExtraction();
+    Vector3 commandPosition = PlaceStructures.Instance.GetCommandCenter();
+    Waypoint waypoint = new Waypoint();
+    waypoint._position = commandPosition;
+    waypoint._name = "Command Center";
+    WaypointManager.Instance.CollectedWaypoint(waypoint);
     // Give player coordinates of command center
     Debug.Log("Generator activated; player obtained Utility Blueprint (Grappling Hook)");
   }
