@@ -47,15 +47,20 @@ public class CommandCenter : MonoBehaviour
 
   public void ActivateElevator() {
     Debug.Log("Elevator activated");
-    _elevatorAnimator.enabled = true;
-    Invoke("TransportPlayer", 1f);
+    Invoke("ElevatorAnimate", 8f);
+    Invoke("TransportPlayer", 10f);
     if (_elevatorSound != null) _cmdCenterAudio.PlayOneShot(_elevatorSound);
+  }
+
+  private void ElevatorAnimate() {
+    _elevatorAnimator.enabled = true;
   }
 
   private void TransportPlayer() {
     WeatherManager.Instance._sunTransform.gameObject.GetComponent<Light>().enabled = false;
     SceneManager.LoadScene("CommandCenter", LoadSceneMode.Additive);
-    PlayerController.Instance.transform.position = new Vector3(0, 0, 0);
+    PlayerController.Instance.SetPosition(Vector3.up * -500f);
+    _elevatorAnimator.enabled = false;
   }
 
   private void Start() {
