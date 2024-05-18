@@ -69,7 +69,7 @@ public class EntryAnimationHandler : MonoBehaviour
     int attempts = 0;
     bool foundPos = false;
     while (foundPos == false) {
-      if (attempts > 100) {
+      if (attempts > 500) {
         Debug.LogError("Could not find a valid landing position");
         landPos = PlaceStructures.CentralPosition + new Vector2(_dropRange, _dropRange) / 2;
         break;
