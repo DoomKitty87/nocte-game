@@ -23,6 +23,8 @@ public class EntryAnimationHandler : MonoBehaviour
   [SerializeField] private GameObject[] _disableOnFinish;
   [SerializeField] private VisualEffect _entryEffect;
 
+  [SerializeField] private PositionOverlayAsWorldSpace _positionOverlay;
+
   private Vector3 _startingPosition;
   private Vector3 _landingPosition;
 
@@ -69,7 +71,7 @@ public class EntryAnimationHandler : MonoBehaviour
     int attempts = 0;
     bool foundPos = false;
     while (foundPos == false) {
-      if (attempts > 100) {
+      if (attempts > 500) {
         Debug.LogError("Could not find a valid landing position");
         landPos = PlaceStructures.CentralPosition + new Vector2(_dropRange, _dropRange) / 2;
         break;
@@ -109,6 +111,7 @@ public class EntryAnimationHandler : MonoBehaviour
 
     _camera.enabled = false;
     _uiCanvas.SetActive(true);
+    _positionOverlay.ResetPosition();
     PlayerWorldGeneratorCompatibility._entryAnimationFinished = true;
   }
 

@@ -11,7 +11,11 @@ public class PlayerInterface : MonoBehaviour
     SubmitRunScore();
     SceneHandler.Instance.ExitToMenu();
   }
-  public void PlayerDeath() {
+  public void PlayerDeath(float delay = 0) {
+    Invoke("KillPlayer", delay);
+  }
+
+  private void KillPlayer() {
     StartCoroutine(PlayerDeathCoroutine());
   }
 
