@@ -117,11 +117,11 @@ namespace Console
             if (_input.Player.Movement.ReadValue<Vector2>().y == 0) vectorY = _input.Driving.Movement.ReadValue<Vector2>().y;
             else vectorY = _input.Player.Movement.ReadValue<Vector2>().y;
 
-            if (_console.activeInHierarchy && vectorY > 0) 
-                _consoleUI.GetPreviousMessage(1);
-            
-            if (_console.activeInHierarchy && vectorY < 0) 
-                _consoleUI.GetPreviousMessage(-1);
+            // if (_console.activeInHierarchy && vectorY > 0) 
+            //     _consoleUI.GetPreviousMessage(1);
+            // 
+            // if (_console.activeInHierarchy && vectorY < 0) 
+            //     _consoleUI.GetPreviousMessage(-1);
         }
 
         private void TryNoclip(InputAction.CallbackContext context) {
