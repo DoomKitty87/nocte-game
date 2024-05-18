@@ -1,12 +1,13 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Numerics;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class ScanHighlight : MonoBehaviour
 {
   
-  [HideInInspector] public Vector3 _position;
+  [HideInInspector] public UnityEngine.Vector3 _position;
   [HideInInspector] public Camera _camera;
   [HideInInspector] public float _startOffset;
 
@@ -25,7 +26,9 @@ public class ScanHighlight : MonoBehaviour
     if (t >= _highlightDuration && _started == true) {
       Destroy(gameObject);
     }
-    transform.position = _camera.WorldToScreenPoint(_position);
+    UnityEngine.Vector3 desiredPosition = _camera.WorldToScreenPoint(_position);
+    desiredPosition.z = 0;
+    transform.position = UnityEngine.Vector3.Lerp(transform.position, desiredPosition, Time.deltaTime * 20f);
   }
 
 }
