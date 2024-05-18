@@ -69,6 +69,10 @@ public class PlaceStructures : MonoBehaviour
     return minDistance;
   }
 
+  public Vector3 GetExtractionSite() {
+    return _structurePositions[0];
+  }
+
   private void Start() {
     Random.InitState(_worldGen.Seed);
     float offsetAngle = Random.value * Mathf.PI * 2;

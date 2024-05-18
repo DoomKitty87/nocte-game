@@ -114,6 +114,11 @@ public class CommandCenter : MonoBehaviour
     DroneSpawner._isSpawning = true;
     DialogueHandler.Instance.PlayDialogue(_endDialogue);
     // Give player coordinates of extraction site
+    Vector3 extractionPosition = PlaceStructures.Instance.GetExtractionSite();
+    Waypoint waypoint = new Waypoint();
+    waypoint._position = extractionPosition;
+    waypoint._name = "Extraction Site";
+    WaypointManager.Instance.CollectedWaypoint(waypoint);
     _fullPowerScreen.SetActive(false);
     _mainInterface.SetActive(true);
   }

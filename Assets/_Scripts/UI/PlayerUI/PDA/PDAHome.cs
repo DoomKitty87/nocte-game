@@ -52,7 +52,7 @@ public class PDAHome : MonoBehaviour
     _timeToSunValue.text = Mathf.Floor(timeToSunset * 24).ToString("00") + ":" + Mathf.Floor((timeToSunset * 24 % 1) * 60).ToString("00");
     _clockFill.fillAmount = time;
     _clockFill.color = Color.Lerp(_dayColor, _nightColor, time * 2);
-    _compass.localEulerAngles = new Vector3(0, 0, -_player.rotation.eulerAngles.y);
+    _compass.localEulerAngles = new Vector3(0, 0, _player.rotation.eulerAngles.y);
   }
 
   public string GetCoordinates(Vector2 position) {

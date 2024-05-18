@@ -12,6 +12,8 @@ public class WaypointManager : MonoBehaviour
 
   [SerializeField] private GameObject _waypointPrefab;
 
+  [SerializeField] private Transform _waypointHolder;
+
   [SerializeField] private TextMeshProUGUI _waypointName;
   [SerializeField] private TextMeshProUGUI _waypointDistance;
   [SerializeField] private TextMeshProUGUI _playerCoordinates;
@@ -40,16 +42,16 @@ public class WaypointManager : MonoBehaviour
   }
 
   public void UpdateWaypoints() {
-    _currentWaypoint = -1;
-    for (int i = transform.childCount; i > 0; i--) {
-      Destroy(transform.GetChild(i - 1).gameObject);
+    for (int i = _waypointHolder.childCount; i > 0; i--) {
+      Destroy(_waypointHolder.GetChild(i - 1).gameObject);
     }
     for (int i = 0; i < _waypoints.Count; i++) {
       GameObject waypoint = Instantiate(_waypointPrefab);
-      waypoint.transform.parent = transform;
+      waypoint.transform.parent = _waypointHolder;
       waypoint.transform.position = _waypoints[i]._position;
-      waypoint.transform.GetChild(0).gameObject.GetComponent<TextMeshProUGUI>().text = _waypoints[i]._name;
-      waypoint.transform.GetChild(1).gameObject.GetComponent<TextMeshProUGUI>().text = _pdaHome.GetCoordinates(_waypoints[i]._position);
+      waypoint.transform.GetChild(0).GetChild(0).gameObject.GetComponent<TextMeshProUGUI>().text = _waypoints[i]._name;
+      waypoint.GetComponent<WaypointSelect>().index = i;
+      //waypoint.transform.GetChild(1).gameObject.GetComponent<TextMeshProUGUI>().text = _pdaHome.GetCoordinates(_waypoints[i]._position);
     }
   }
 
@@ -66,14 +68,14 @@ public class WaypointManager : MonoBehaviour
 
     Vector2 waypoint = _waypoints[_currentWaypoint]._position;
     Vector2 player = new Vector2(_player.position.x, _player.position.z);
-    _waypointDistance.text = "DISTANCE - " + Vector2.Distance(player, waypoint).ToString("F2") + "M";
-    _playerCoordinates.text = "PLAYER - " + _pdaHome.GetCoordinates(player);
-    float currBearing = _compass.localRotation.eulerAngles.y;
+    _waypointDistance.text = Vector2.Distance(player, waypoint).ToString("F2") + "M";
+    _playerCoordinates.text = _pdaHome.GetCoordinates(player);
+    float currBearing = _compass.localRotation.eulerAngles.z;
     float desiredBearing = Mathf.Atan2(waypoint.x - player.x, waypoint.y - player.y) * Mathf.Rad2Deg;
     desiredBearing = (desiredBearing + 360) % 360;
-    _currentBearing.text = "CURRENT - " + (currBearing).ToString("F2") + "°";
-    _desiredBearing.text = "DESIRED - " + (desiredBearing).ToString("F2") + "°";
-    _compassFill.fillAmount = currBearing - desiredBearing / 360;
+    _currentBearing.text = (currBearing).ToString("F2") + "°";
+    _desiredBearing.text = (desiredBearing).ToString("F2") + "°";
+    _compassFill.fillAmount = (desiredBearing - currBearing) / 360;
   }
 
 }

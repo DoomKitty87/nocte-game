@@ -39,7 +39,7 @@ public class TapesMenu : MonoBehaviour
       tape.transform.GetChild(1).gameObject.GetComponent<TextMeshProUGUI>().text = _tapes[i].name;
       tape.gameObject.GetComponent<TapeInstance>().tapesMenu = this;
     }
-    _currentTapeImage.sprite = null;
+    //_currentTapeImage.sprite = null;
     _currentTapeName.text = "";
     _currentTapeText.text = "";
     _currentTapeTimestamp.text = "";
@@ -58,7 +58,7 @@ public class TapesMenu : MonoBehaviour
       _currentTapeMaxTime.text = "00:00";
     }
 
-    _currentTapeImage.sprite = _tapes[index].icon;
+    //_currentTapeImage.sprite = _tapes[index].icon;
     _currentTapeName.text = _tapes[index].name;
     _currentTapeText.text = _tapes[index].dialogue;
     _currentTapeTimestamp.text = _tapes[index].timestamp;
