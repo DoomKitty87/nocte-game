@@ -8,7 +8,6 @@ using UnityEngine.Rendering;
 using IEnumerator = System.Collections.IEnumerator;
 using static AmalgamNoise;
 using System;
-using TMPro.EditorUtilities;
 
 public class WorldGenerator : MonoBehaviour
 {
