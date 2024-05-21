@@ -7,16 +7,20 @@ using UnityEngine;
 public class PlayerInterface : MonoBehaviour
 {
   private IEnumerator PlayerDeathCoroutine() {
-    yield return new WaitForSeconds(5f);
+    yield return new WaitForSeconds(0f);
     SubmitRunScore();
     SceneHandler.Instance.ExitToMenu();
   }
   public void PlayerDeath(float delay = 0) {
-    Invoke("KillPlayer", delay);
+    Invoke(nameof(KillPlayer), delay);
   }
 
-  private void KillPlayer() {
+  public void KillPlayer() {
     StartCoroutine(PlayerDeathCoroutine());
+  }
+
+  public void LeaveGame() {
+    SceneHandler.Instance.ExitToMenu();
   }
 
   private void SubmitRunScore() {

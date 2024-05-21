@@ -41,13 +41,14 @@ public class SceneHandler : MonoBehaviour
 
   private IEnumerator ToMenu() {
     if (_inGame) {
-      _inGame = false;
-      if (CheckJobs()) {
-        yield return new WaitUntil(() => !CheckJobs());
-      }
+      // if (CheckJobs()) {
+      //   yield return new WaitUntil(() => !CheckJobs());
+      // }
       Cursor.lockState = CursorLockMode.None;
       Cursor.visible = true;
+      _inGame = false;
       SceneManager.LoadScene(_menuScene);
+      yield return null;
     }
   }
 
